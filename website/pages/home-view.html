@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webpage Layout</title>
+    <link rel="stylesheet" href="../css/home_view.css">
+    <script defer src="../js/home_view.js"></script>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="search-container">
+            <input type="text" placeholder="Search for friends...">
+			<button type="button" id="searchButton">
+				<img id="search-icon" src="../assets/icons/binoculars.png">
+			</button>
+        </div>
+        <div class="top-right">
+            <img class="bell-icon" src="../assets/icons/Doorbell.png">
+            <img  class="profile-pic" src="../assets/icons/avatar.png" alt="Profile">
+        </div>
+    </div>
+	<button class="toggle-button" onclick="toggleSidebar()">
+		<img src="../assets/icons/Puxador.png">
+	</button>
+    <div class="left-div">
+        <img class="icon expandable-pic" src="../assets/icons/placeholder.png" alt="Expandable">
+		<div class="selects">
+			<img class="icon" src="../assets/icons/pingpong.png">
+			<img class="icon" src="../assets/icons/tournament.png">
+			<img class="icon" src="../assets/icons/user.png">
+		</div>
+		<img class="icon logout-icon" src="../assets/icons/logout.png" alt="logout">
+    </div>
+    <div class="main-content">
+        <div class="local options">
+            <button class="main-button"></button>
+            <h3>LOCAL</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vestibulum sollicitudin diam sed aliquet. Nullam venenatis ultrices nulla at egestas. </p>
+        </div>
+        <div class="online options">
+            <button class="main-button"></button>
+            <h3>ONLINE</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vestibulum sollicitudin diam sed aliquet. Nullam venenatis ultrices nulla at egestas. </p>
+
+        </div>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <h2>Friends</h2>
+        <!-- Friends content goes here -->
+    </div>
+</body>
+</html>
