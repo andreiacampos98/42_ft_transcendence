@@ -6,7 +6,7 @@ services:
             dockerfile: Dockerfile
         image: django
         volumes:
-            - /home/anaraujo/Desktop/42_transcendence/backend:/code
+            - ./backend:/code
         ports:
             - "8002:8002"
         networks:
@@ -16,12 +16,3 @@ networks:
     Inception:
         name: inception
         driver: bridge
-
-volumes:
-  django:
-    name: django
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/home/anaraujo/Desktop/42_transcendence/backend'
