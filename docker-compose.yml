@@ -29,18 +29,22 @@ services:
             POSTGRES_PASSWORD: "1234"
 
     pgadmin4:
-        container_name: pgadmin
-        image: "elestio/pgadmin:REL-8_7"
+        container_name: pgadmin4
+        image: pgadmin4
+        build:
+            context: ./pgadmin
+            dockerfile: Dockerfile
         restart: always
         environment:
             PGADMIN_DEFAULT_EMAIL: "admin@email.com"
             PGADMIN_DEFAULT_PASSWORD: "1234"
             PGADMIN_LISTEN_PORT: "8080"
-        depends_on: postgres
         networks:
             - Inception
         ports:
             - "8080:8080"
+        depends_on:
+            - postgres
 
 networks:
     Inception:
