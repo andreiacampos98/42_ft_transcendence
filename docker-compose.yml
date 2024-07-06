@@ -19,7 +19,8 @@ services:
             dockerfile: Dockerfile
         image: postgres
         volumes:
-            - ./postgres:/settings
+            - postgres_data:/var/lib/postgresql/data
+            # - path:/var/lib/postgresql/data
         ports:
             - "5432:5432"
         networks:
@@ -51,3 +52,11 @@ networks:
         name: inception
         driver: bridge
 
+volumes:
+  postgres_data:
+    name: postgres_data
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/anaraujo/Desktop/42_transcendence/data'
