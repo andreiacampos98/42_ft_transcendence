@@ -12,7 +12,38 @@ services:
         networks:
             - Inception
 
+    postgres:
+        container_name: postgres
+        build:
+            context: ./postgres
+            dockerfile: Dockerfile
+        image: postgres
+        volumes:
+            - ./postgres:/settings
+        ports:
+            - "5432:5432"
+        networks:
+            - Inception
+        environment:
+            POSTGRES_USER: "anaraujo"            
+            POSTGRES_PASSWORD: "1234"
+
+    pgadmin4:
+        container_name: pgadmin
+        image: "elestio/pgadmin:REL-8_7"
+        restart: always
+        environment:
+            PGADMIN_DEFAULT_EMAIL: "admin@email.com"
+            PGADMIN_DEFAULT_PASSWORD: "1234"
+            PGADMIN_LISTEN_PORT: "8080"
+        depends_on: postgres
+        networks:
+            - Inception
+        ports:
+            - "8080:8080"
+
 networks:
     Inception:
         name: inception
         driver: bridge
+
