@@ -1,4 +1,4 @@
-
+/* 
 .top-bar {
     width: 100%;
     display: flex;
@@ -14,37 +14,37 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 300px; /* Adjust width as needed */
+    width: 300px; 
     display: flex;
     align-items: center;
 }
 
 .search-container input {
-    width: calc(100% - 10px); /* Adjust width to leave space for icon */
+    width: calc(100% - 10px); 
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #D9D9D9;
-    outline: none; /* Remove default focus outline */
+    outline: none; 
 }
 
 #searchButton {
     position: absolute;
-    right: 10px; /* Adjust as needed */
+    right: 10px; 
     background: none;
     border: none;
     cursor: pointer;
 }
 
 #searchButton img {
-    width: 20px; /* Adjust icon size as needed */
+    width: 20px; 
     height: 20px;
 }
 
 .top-right {
     display: flex;
     align-items: center;
-    margin-left: auto; /* Ensures this section is pushed to the far right */
+    margin-left: auto; 
     margin-right: 20px;
 }
 
@@ -59,6 +59,7 @@
     border-radius: 50%;
     cursor: pointer;
 }
+*/
 
 .toggle-button {
     border: none;
@@ -85,7 +86,7 @@
 }
 
 .left-div .expandable-pic {
-    margin-bottom: 10px; /* Add margin to separate from selects */
+    margin-bottom: 10px; 
 }
 
 .left-div .selects {
@@ -97,14 +98,14 @@
 }
 
 .left-div .icon {
-    width: 20px; /* Adjust icon size as needed */
+    width: 20px; 
     height: 20px;
-    margin: 5px 0; /* Vertical margin between icons */
+    margin: 5px 0; 
     margin-bottom: 25px;
 }
 
 .left-div .logout-icon {
-    margin-top: auto; /* Push the logout icon to the bottom */
+    margin-top: auto; 
     margin-bottom: 20px;
 }
 
