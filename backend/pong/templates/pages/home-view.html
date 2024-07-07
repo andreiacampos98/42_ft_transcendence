@@ -1,0 +1,23 @@
+{% extends 'navs.html' %}
+{% load static %}
+
+{% block styles %}
+    {{ block.super }} 
+    <link rel="stylesheet" href="{% static 'css/home_view.css' %}">
+{% endblock %}
+
+{% block main_content %}
+    <div class="main-content">
+        <div class="local options">
+            <button class="main-button"></button>
+            <h3>LOCAL</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vestibulum sollicitudin diam sed aliquet. Nullam venenatis ultrices nulla at egestas. </p>
+        </div>
+        <div class="online options">
+            <button class="main-button"></button>
+            <h3>ONLINE</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vestibulum sollicitudin diam sed aliquet. Nullam venenatis ultrices nulla at egestas. </p>
+
+        </div>
+    </div>
+{% endblock %}

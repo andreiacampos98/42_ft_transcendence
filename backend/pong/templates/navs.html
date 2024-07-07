@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/navs.css' %}">
+    <script src="{% static 'js/navs.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="top-bar">
+        <div class="search-container">
+            <input type="text" placeholder="Search for friends...">
+            <button type="button" id="searchButton">
+                <img id="search-icon" src="{% static 'assets/icons/binoculars.png' %}">
+            </button>
+        </div>
+        <div class="top-right">
+            <img class="bell-icon" src="{% static 'assets/icons/Doorbell.png' %}">
+            <img  class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+        </div>
+    </div>
+
+    <button class="toggle-button" onclick="toggleSidebar()">
+        <img src="{% static 'assets/icons/Puxador.png' %}">
+    </button>
+
+    <div class="left-div">
+        <img class="icon expandable-pic" src="{% static 'assets/icons/placeholder.png' %}" alt="Expandable">
+        <div class="selects">
+            <img class="icon" src="{% static 'assets/icons/pingpong.png' %}">
+            <img class="icon" src="{% static 'assets/icons/tournament.png' %}">
+            <img class="icon" src="{% static 'assets/icons/user.png' %}">
+        </div>
+        <img class="icon logout-icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
+    </div>
+    
+    <div class="sidebar" id="sidebar">
+        <h2>Friends</h2>
+        <!-- Friends content goes here -->
+    </div>
+
+    {% block main_content %}
+    {% endblock %}
+{% endblock %}
