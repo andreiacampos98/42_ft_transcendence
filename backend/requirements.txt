@@ -1,3 +1,4 @@
 django
 tzdata
 psycopg2-binary
+Pillow
