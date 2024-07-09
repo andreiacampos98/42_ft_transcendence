@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = loginForm.password.value.trim();
 
         if (username === 'admin' && password === 'password') {
-            alert('Login successful!');
+            window.location.href = '/website/pages/home-view.html';
             passwordInput.removeAttribute('id', 'input-error');
             passwordInput2.removeAttribute('id', 'input-error2');
             // Redirect to another page or perform other actions

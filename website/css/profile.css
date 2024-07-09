@@ -8,6 +8,17 @@ html, body {
     align-items: center;
 }
 
+.toggle-button {
+    border: none;
+    color: white;
+    cursor: pointer;
+    margin-top: 100px;
+    padding: 0px;
+    background-color: white;
+    right: 0;
+    position: fixed;
+}
+
 .main-content {
     display: flex;
     /*margin-top: 100px;*/
@@ -60,4 +71,11 @@ p {
 
 .sidebar.show {
     transform: translateX(0);
+}
+
+.left-content, .right-content {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    flex-grow: 1;
 }
