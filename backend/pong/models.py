@@ -6,12 +6,12 @@ class Users(models.Model):
     id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=64)
     password = models.CharField(max_length=255)
-    description = models.TextField()
-    email = models.EmailField()
+    description = models.TextField(null=True)
+    email = models.EmailField(null=True)
     picture = models.ImageField(default='default.jpg', upload_to='upload')
     status = models.CharField(default='Offline')
     created_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         if self.status not in ['Offline', 'Online', 'Playing']:
@@ -33,7 +33,7 @@ class UserStats(models.Model):
     nb_goals_scored = models.IntegerField()
     nb_goals_suffered = models.IntegerField()
     user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
-    update_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class Notifications(models.Model):
     id = models.AutoField(primary_key=True)
@@ -70,7 +70,7 @@ class Tournaments(models.Model):
     winner_id = models.ForeignKey(Users, related_name="tournament_winner", null=True, on_delete=models.SET_NULL)
     host_id = models.ForeignKey(Users, related_name="tournament_host", null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     
     def save(self, *args, **kwargs):

@@ -16,4 +16,6 @@ RUN apk add --update --no-cache python3-dev python3 py3-pip gcc musl-dev libpq-d
     && rm -rf /var/cache/apk/*
 
 
+
+
 CMD source /.venv/bin/activate && python3 ./manage.py runserver 0.0.0.0:8002

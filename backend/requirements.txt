@@ -2,3 +2,7 @@ django
 tzdata
 psycopg2-binary
 Pillow
+django_rest_framework
+django-rest-swagger
+setuptools
+drf-yasg

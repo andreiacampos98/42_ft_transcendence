@@ -7,6 +7,12 @@ detach:
 django:
 	docker exec -it django sh -c 'source /.venv/bin/activate; sh'
 
+migrations:
+	docker exec -it django sh -c \
+		'source /.venv/bin/activate; \
+		python3 manage.py makemigrations; \
+		python3 manage.py migrate'
+
 prune:
 	docker system prune
 

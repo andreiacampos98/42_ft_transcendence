@@ -1,5 +1,33 @@
 from django.shortcuts import render
 
+from .models import Users
+from .serializers import UsersSerializer
+
+from rest_framework.mixins import (
+    CreateModelMixin,   #POST
+    RetrieveModelMixin, #GET 
+    UpdateModelMixin,   #PUT
+    DestroyModelMixin,  #DELETE
+    ListModelMixin,     # add a list method to list several
+)
+from rest_framework.viewsets import GenericViewSet
+
+from .models import Users
+from .serializers import UsersSerializer
+
+
+class UsersViewSet(GenericViewSet,  # generic view functionality
+    CreateModelMixin,               # handles POSTs
+    RetrieveModelMixin,             # handles GETs for 1 Users
+    UpdateModelMixin,               # handles PUTs and PATCHes
+    ListModelMixin):                # handles GETs for many Companies
+
+      serializer_class = UsersSerializer
+      queryset = Users.objects.all()
+
+
+
+
 def base(request):
     """
     BASE PARA TEMPLATES
