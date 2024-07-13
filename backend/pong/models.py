@@ -1,6 +1,17 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.hashers import make_password
 
+class UserManager(models.Manager):    
+    def create_user(self, username, password, **extra_fields):
+        if not username:
+            raise ValueError('The Username field must be set')
+        if not password:
+            raise ValueError('The Password field must be set')
+
+        user = self.model(username=username, password=make_password(password), **extra_fields)
+        user.save(using=self._db)
+        return user
 
 class Users(models.Model):
     id = models.AutoField(primary_key=True)
@@ -13,10 +24,13 @@ class Users(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    objects = UserManager()
+
     def save(self, *args, **kwargs):
         if self.status not in ['Offline', 'Online', 'Playing']:
             raise ValidationError('Status must be one of "[\'Offline\', \'Online\'], \'Playing\']"')
         super().save(*args, **kwargs)
+
 
 class Friends(models.Model):
     user1_id = models.ForeignKey(Users, related_name="friends_with", on_delete=models.CASCADE)

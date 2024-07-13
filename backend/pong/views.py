@@ -3,6 +3,9 @@ from django.shortcuts import render
 from .models import Users
 from .serializers import UsersSerializer
 
+# Since we want to create an API endpoint for reading, creating, and updating 
+# Company objects, we can use Django Rest Framework mixins for such actions.
+from rest_framework import generics
 from rest_framework.mixins import (
     CreateModelMixin,   #POST
     RetrieveModelMixin, #GET 
@@ -16,16 +19,31 @@ from .models import Users
 from .serializers import UsersSerializer
 
 
-class UsersViewSet(GenericViewSet,  # generic view functionality
-    CreateModelMixin,               # handles POSTs
-    RetrieveModelMixin,             # handles GETs for 1 Users
-    UpdateModelMixin,               # handles PUTs and PATCHes
-    ListModelMixin):                # handles GETs for many Companies
+# ViewSets define the view behavior.
+class UserListView(generics.ListAPIView):
+    serializer_class = UsersSerializer
+    queryset = Users.objects.all()
 
-      serializer_class = UsersSerializer
-      queryset = Users.objects.all()
+class UserDetailView(generics.RetrieveAPIView):
+    queryset = Users.objects.all()
+    serializer_class = UsersSerializer
 
+class UserCreateView(CreateModelMixin, generics.GenericAPIView):
+    queryset = Users.objects.all()
+    serializer_class = UsersSerializer
 
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+class UserUpdateView(UpdateModelMixin, generics.GenericAPIView):
+    queryset = Users.objects.all()
+    serializer_class = UsersSerializer
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
 
 
 def base(request):
