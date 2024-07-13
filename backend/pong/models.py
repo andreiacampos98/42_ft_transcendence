@@ -1,7 +1,10 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
+#from django.contrib.auth.models import User
 
+
+#make_password Creates a hashed password in the format used by this application.
 class UserManager(models.Manager):    
     def create_user(self, username, password, **extra_fields):
         if not username:
