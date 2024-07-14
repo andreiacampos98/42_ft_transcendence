@@ -92,12 +92,10 @@ def loginview(request):
             if user is not None:
                 login(request, user)
                 # Redirect to a success page (optional)
-                return redirect('pages/home-view.html')  # Replace 'success_url' with your URL name or path
+                return render(request, 'pages/home-view.html')  # Replace 'success_url' with your URL name or path
             else:
                 # Return an 'invalid login' error message (optional)
                 return render(request, 'pages/login.html', {'error': 'Invalid username or password'})
-    else:
-        form = AuthenticationForm()
     return render(request, 'pages/login.html')
     
 

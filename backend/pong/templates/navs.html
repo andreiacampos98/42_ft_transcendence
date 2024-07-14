@@ -50,11 +50,15 @@
     <div class="left-div">
         <img class="icon expandable-pic" src="{% static 'assets/icons/placeholder.png' %}" alt="Expandable">
         <div class="selects">
-            <img class="icon" src="{% static 'assets/icons/pingpong.png' %}">
+            <img class="icon" src="{% static 'assets/icons/pingpong.png' %}" href="{% url 'home' %}">
             <img class="icon" src="{% static 'assets/icons/tournament.png' %}">
             <img class="icon" src="{% static 'assets/icons/user.png' %}">
+            <a href="{% url 'login' %}">
+                <button >
+                    <img class="icon logout-icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
+                </button>
+            </a>
         </div>
-        <img class="icon logout-icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
     </div>
     
     <div class="sidebar" id="sidebar">
