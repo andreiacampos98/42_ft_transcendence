@@ -23,5 +23,5 @@ urlpatterns =[
     path('api/users/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
     path('register/', UserCreateView.as_view(), name='user-create'),
     path('api/users/<int:pk>/update', UserUpdateView.as_view(), name='user-update'),
-    path('login/', loginview, name="login"),
+    # path('login/', loginview, name="login"),
 ]

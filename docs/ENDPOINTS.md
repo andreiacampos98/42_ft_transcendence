@@ -53,6 +53,7 @@
 | `/tournaments/{id}/games/create` | `POST` | Create a game for a given tournament | `id` - the tournament's id |
 | `/tournaments/{id}/games`| `GET` | List all games for a given tournament | `id` - the tournament's id  |
 | `/tournaments/games/user/{id}` | `GET` | List all tournament games for a given user | `id` - the user's id |
+
 ## Friends
 
 > [!WARNING]
