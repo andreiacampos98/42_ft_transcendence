@@ -6,3 +6,4 @@ django_rest_framework
 django-rest-swagger
 setuptools
 drf-yasg
+icecream

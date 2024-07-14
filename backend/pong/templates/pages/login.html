@@ -11,7 +11,7 @@
         <div class="login-container2">
             <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
             <h2 class="title" >Nice to see you back :)</h2>
-            <form id="loginForm" method="post" action="loginview>
+            <form id="loginForm" method="POST" action="/loginview/">
                 {% csrf_token %}
                 <div class="input-group">
                     <label for="username">Username</label>
@@ -36,6 +36,6 @@
             </form>
         </div>
     </div>
-    <script defer src="{% static 'js/script.js' %}"></script>
+    {% comment %} <script defer src="{% static 'js/script.js' %}"></script> {% endcomment %}
 {% endblock %}
     

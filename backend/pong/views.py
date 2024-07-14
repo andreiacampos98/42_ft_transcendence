@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from icecream import ic
 from .models import Users
+
 from .forms import (
     UserRegisterForm,
     UserUpdateForm
@@ -83,19 +85,24 @@ def contact(request):
     return render(request,"website/pages/home-view.html")
 
 def loginview(request):
+    # print(request.POST.get('username'), request.POST.get('password'))
+    ic(request.POST)
     if request.method == 'POST':
         form = AuthenticationForm(request, request.POST)
+        ic(form.is_valid())
         if form.is_valid():
             username = request.POST.get('username')
             password = request.POST.get('password')
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                # Redirect to a success page (optional)
-                return render(request, 'pages/home-view.html')  # Replace 'success_url' with your URL name or path
+                # Redirect to a success page (optional
+                print('YES')
+                return render(status=200, request=request, template_name='pages/home-view.html')  # Replace 'success_url' with your URL name or path
             else:
+                print('NO')
                 # Return an 'invalid login' error message (optional)
-                return render(request, 'pages/login.html', {'error': 'Invalid username or password'})
+                return render(status=404, request=request, template_name='pages/login.html', context={'error': 'Invalid username or password'})
     return render(request, 'pages/login.html')
     
 

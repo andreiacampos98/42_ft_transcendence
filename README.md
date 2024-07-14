@@ -18,3 +18,9 @@ Django REST framework is a powerful and flexible toolkit for building Web APIs.
 
 https://www.caktusgroup.com/blog/2019/02/01/creating-api-endpoint-django-rest-framework/
 https://www.django-rest-framework.org/#example
+
+
+
+
+
+https://www.youtube.com/watch?v=1UvTNMH7zDo
