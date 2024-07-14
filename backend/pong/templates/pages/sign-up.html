@@ -1,20 +1,18 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up Page</title>
+
+{% block styles %}
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
     <script defer src="{% static 'js/signup.js' %}"></script>
+{% endblock %}
 
-</head>
-<body>
+{% block body %}
     <div class="login-container">
         <div class="login-container2">
             <h4 class="title" ><img src="{% static '/assets/icons/42logosmall.png' %}"> My Website</h4>
             <h2 class="title" >Welcome to our platform</h2>
-            <form id="loginForm">
+            <form id="loginForm" method="post">
+                {% csrf_token %}
                 <div class="input-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" placeholder="Username" required>
@@ -34,14 +32,15 @@
                     </button>
                 </div>
                 <p id="errorMessage" class="error-message"></p>
-                <button type="submit">Sign in</button>
+                <button type="submit">Sign up</button>
                 <img class="divider" src="{% static '/assets/icons/divider.png' %}" width="100%">
-                <button type="submit2"><img src="{% static '/assets/icons/42logosmall.png' %}"> Sign in with 42</button>
-                Do you already have an account? <a class="sign-up" href="#">Log in</a>
+                <button type="submit2">
+                    <img src="{% static '/assets/icons/42logosmall.png' %}"> Sign in with 42
+                </button>
+                <p> Do you already have an account? <a class="sign-up" href="{% url 'login' %}">Log in</a></p>
                 <br>
                 <h6>© 42 Porto 2024</h6>
             </form>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}
