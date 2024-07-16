@@ -11,7 +11,7 @@
         <div class="login-container2">
             <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
             <h2 class="title" >Nice to see you back :)</h2>
-            <form id="loginForm" method="POST" action="/loginview/">
+            <form id="loginForm" method="POST" action="{% url 'login' %}">
                 {% csrf_token %}
                 <div class="input-group">
                     <label for="username">Username</label>
@@ -26,8 +26,9 @@
                 </div>
                 <a href="{% url 'password_reset' %}" class="forgot-password">Forgot Password?</a>
                 <p id="errorMessage" class="error-message"></p>
-                <button type="submit">Sign in</button>
-
+                <button type="submit">
+                    <a href="{% url 'home' %}"> Sign in </a>
+                </button>
                 <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
                 <button type="submit2"><img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42</button>
                 Your first time? <a class="sign-up" href="{% url 'signup' %}">Sign up now</a>

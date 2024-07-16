@@ -1,14 +1,12 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+#from django.contrib.auth.models import User
+
 from icecream import ic
 from .models import Users
 
-from .forms import (
-    UserRegisterForm,
-    UserUpdateForm
-)
 from .serializers import UsersSerializer
 
 # Since we want to create an API endpoint for reading, creating, and updating 
@@ -52,68 +50,54 @@ class UserUpdateView(UpdateModelMixin, generics.GenericAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
-
-
-def base(request):
-    """
-    BASE PARA TEMPLATES
-    """
-    return render(request, 'pages/home-view.html')
-
-def index(request):
-    """
-    Não necessita de uma verificação do tipo de requisição,
-    pois retornaremos apenas um layout
-    """
-    return render(request,"website/navs.html")
-    
-    
-def about(request):
-    """
-    Não necessita de uma verificação do tipo de requisição,
-    pois retornaremos apenas um layout
-    """
-    return render(request,"website/pages/sign-up.html")
-    
-def contact(request):
-    """
-    Não necessita de uma verificação do tipo de requisição,
-    pois retornaremos apenas um layout,neste caso para enviar
-    um formulário, deve-se criar outra view com um template próprio
-    para seu formulário.
-    """
-    return render(request,"website/pages/home-view.html")
-
-def loginview(request):
-    # print(request.POST.get('username'), request.POST.get('password'))
-    ic(request.POST)
-    if request.method == 'POST':
-        form = AuthenticationForm(request, request.POST)
-        ic(form.is_valid())
-        if form.is_valid():
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                # Redirect to a success page (optional
-                print('YES')
-                return render(status=200, request=request, template_name='pages/home-view.html')  # Replace 'success_url' with your URL name or path
-            else:
-                print('NO')
-                # Return an 'invalid login' error message (optional)
-                return render(status=404, request=request, template_name='pages/login.html', context={'error': 'Invalid username or password'})
-    return render(request, 'pages/login.html')
-    
+  
 
 def signup(request):
-    if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Your account has been created! You are now able to Log in')
-            return redirect('pages/login.html')
-    else:
-        form = UserRegisterForm()
-    return render(request, 'pages/sign-up.html', {'form': form})
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password1 = request.POST.get('password')
+        password2 = request.POST.get('reconfirm')
+
+        if Users.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists! Please try another username.")
+            return redirect('signup')
+
+        if password1 != password2:
+            messages.error(request, "Passwords didn't match.")
+            return redirect('signup')
+
+        if not username.isalnum():
+            messages.error(request, "Username must be alphanumeric.")
+            return redirect('signup')
+
+        myuser = Users.objects.create_user(username=username, password1=password1)
+        myuser.save()
+
+        messages.success(request, "Your account has been successfully created.")
+        return redirect('login')
+
+    return render(request, 'pages/sign-up.html')
+
+def loginview(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, "Bad Credentials")
+            return redirect('login')
+
+    return render(request, 'pages/login.html')
+
+def home(request):
+    return render(request, 'pages/home-view.html')
+
+
+def signout(request):
+    logout(request)
+    return redirect('home')

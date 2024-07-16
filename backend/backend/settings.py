@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-b4amhal1@gob1$prnqgr*chry7pneej76qsy^p+5$m!w&#$qyy
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+APPEND_SLASH = False
 
 # Application definition
 
@@ -115,6 +115,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTH_USER_MODEL = 'pong.Users'
 
 
 # Internationalization

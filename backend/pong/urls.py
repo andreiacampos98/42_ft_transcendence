@@ -15,8 +15,8 @@ from .views import (
 
 
 urlpatterns =[
-    path('', auth_views.LoginView.as_view(template_name='pages/login.html'), name='login'),
-    path('home/', views.base, name="home"),
+    path('', views.loginview, name="login"),
+    path('home/', views.home, name="home"),
     path('signup/', views.signup, name='signup'),
     path('password_reset/', auth_views.LoginView.as_view(template_name='pages/password_reset.html'), name='password_reset'),
     #re_path('^', include(router.urls)),
@@ -24,9 +24,4 @@ urlpatterns =[
     path('api/users/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
     path('register/', UserCreateView.as_view(), name='user-create'),
     path('api/users/<int:pk>/update', UserUpdateView.as_view(), name='user-update'),
-    #path('login/', views.loginview, name="login"),
-    path('index/', views.index, name="index"),
-    path('about/', views.about, name="about"),
-    path('contact/', views.contact, name="contact"),
-    path('loginview/', views.loginview, name="loginview"),
-]
+] 

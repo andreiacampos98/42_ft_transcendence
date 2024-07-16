@@ -11,7 +11,7 @@
         <div class="login-container2">
             <h4 class="title" ><img src="{% static '/assets/icons/42logosmall.png' %}"> My Website</h4>
             <h2 class="title" >Welcome to our platform</h2>
-            <form id="loginForm" method="post" >
+            <form id="loginForm" method="post" action="{% url 'signup' %}">
                 {% csrf_token %}
                 <div class="input-group">
                     <label for="username">Username</label>
@@ -32,7 +32,8 @@
                     </button>
                 </div>
                 <p id="errorMessage" class="error-message"></p>
-                <button type="submit">Sign up</button>
+                <button type="submit"> Sign up </button>
+                
                 <img class="divider" src="{% static '/assets/icons/divider.png' %}" width="100%">
                 <button type="submit2">
                     <img src="{% static '/assets/icons/42logosmall.png' %}"> Sign in with 42

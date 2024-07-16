@@ -1,40 +1,57 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
-#from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
 
 
 #make_password Creates a hashed password in the format used by this application.
-class UserManager(models.Manager):    
-    def create_user(self, username, password, **extra_fields):
+
+class UserManager(BaseUserManager):
+    def create_user(self, username, password1, **extra_fields):
         if not username:
             raise ValueError('The Username field must be set')
-        if not password:
+        if not password1:
             raise ValueError('The Password field must be set')
-
-        user = self.model(username=username, password=make_password(password), **extra_fields)
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password1)
         user.save(using=self._db)
         return user
 
-class Users(models.Model):
-    id = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=64)
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(username, password, **extra_fields)
+
+class Users(AbstractBaseUser, PermissionsMixin):
+    id = models.AutoField(primary_key=True, unique=True)
+    username = models.CharField(max_length=64, unique=True)
     password = models.CharField(max_length=255)
-    description = models.TextField(null=True)
-    email = models.EmailField(null=True)
+    description = models.TextField(null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
     picture = models.ImageField(default='default.jpg', upload_to='upload')
-    status = models.CharField(default='Offline')
+    status = models.CharField(max_length=7, default='Offline')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'username'
-    
+    REQUIRED_FIELDS = []
+
     objects = UserManager()
 
-    def save(self, *args, **kwargs):
-        if self.status not in ['Offline', 'Online', 'Playing']:
-            raise ValidationError('Status must be one of "[\'Offline\', \'Online\'], \'Playing\']"')
-        super().save(*args, **kwargs)
+    @property
+    def is_authenticated(self):
+        return True  # Implemente a lógica de autenticação conforme necessário
+
+    def is_active(self):
+        return True  # Implemente conforme necessário
+
+    def has_perm(self, perm, obj=None):
+        return True  # Implemente conforme necessário
+
+    def has_module_perms(self, app_label):
+        return True  # Implemente conforme necessário
 
 
 class Friends(models.Model):
