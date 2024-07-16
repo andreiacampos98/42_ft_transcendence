@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/profile.css">
+    <link rel="stylesheet" href="../css/side-menu.css">
+    <link rel="stylesheet" href="../css/top-bar.css">
+    <link rel="stylesheet" href="../css/friend-bar.css">
+    
+    <script defer src="../js/profile.js"></script>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="search-container">
+            <input type="text" placeholder="Search for friends...">
+            <button type="button" id="searchButton">
+                <img id="search-icon" src="../assets/icons/binoculars.png">
+            </button>
+        </div>
+        <div class="top-right">
+            <img class="bell-icon" src="../assets/icons/Doorbell.png">
+            <img class="profile-pic" src="../assets/icons/avatar.png" alt="Profile">
+        </div>
+    </div>
+    <button class="toggle-button" onclick="toggleSidebar()">
+        <img src="../assets/icons/Puxador.png">
+    </button>
+    <div class="left-div" id="left-div">
+        <div class="expandable-section" onclick="toggleLeftDiv()">
+            <img class="icon expandable-pic" src="../assets/icons/placeholder.png" alt="Expandable">
+        </div>
+        <div class="selects">
+            <button class="select-item">
+                <img class="icon" src="../assets/icons/pingpong.png" alt="Ping Pong">
+                <span class="icon-title">Singles</span>
+            </button>
+            <button class="select-item">
+                <img class="icon" src="../assets/icons/tournament.png" alt="Tournament">
+                <span class="icon-title">Tournament</span>
+            </button>
+            <button class="select-item">
+                <img class="icon" src="../assets/icons/user.png" alt="User">
+                <span class="icon-title">User</span>
+            </button>
+            <button class="select-item logout-icon" onclick="window.location.href='../index.html'">
+                <img class="icon" src="../assets/icons/logout.png" alt="logout">
+                <span class="icon-title">Logout</span>
+            </button>
+        </div>
+    </div>
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="row w-100">
+            <div class="col-3 d-flex justify-content-center align-items-center">
+                <!-- Left Div Content -->
+                <p>Left Div</p>
+            </div>
+            <div class="col-9 d-flex justify-content-center align-items-center">
+                <!-- Right Div Content -->
+                <p>Right Div with Graphs</p>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <h2>Friends</h2>
+        <!-- Friends content goes here -->
+    </div>
+</body>
+</html>
