@@ -1,0 +1,45 @@
+.main-content {
+	background-color: #162728;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+	margin-left: 70px;
+    display: flex;
+    position: fixed;
+    justify-content: center;
+	align-items: center;
+    text-align: center;
+}
+
+.main {
+
+    display: flex;
+    position: fixed;
+    justify-content: center;
+	align-items: flex-start;
+    text-align: center;
+}
+.main-button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    width: 25vw;
+    height: 13vw;
+}
+
+h3 {
+    margin: 0;
+    color: #E65C19;
+    padding: 0; /* Ensure no padding */
+}
+
+p {
+    color: #FFFFFF;
+    font-size: x-small;
+    font-weight: bold;
+    text-align: center;
+    padding-left: 20px;
+    padding-right: 20px;
+	width: 25vw;
+}
