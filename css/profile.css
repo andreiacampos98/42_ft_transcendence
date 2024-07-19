@@ -49,12 +49,20 @@
 .side-profile button {
     margin-top: 10px;
     padding: 10px 20px;
-    border: none;
-    background-color: #007bff; /* Blue background for buttons */
     color: #fff;
     cursor: pointer;
     border-radius: 5px;
-    margin-bottom: 10px;
+    border: 1px solid #3A00E5;
+    width: 100%;
+}
+
+.edit {
+    background-color: #3A00E5;
+}
+
+#change {
+    color: #3A00E5;
+
 }
 
 .stats-history {
@@ -105,7 +113,12 @@
 }
 
 .stat {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
     text-align: center;
+    height: inherit;
+    padding: 10px;
 }
 
 .graphs {
@@ -114,8 +127,9 @@
 }
 
 .graph1, .graph2, .graph3, .graph4 {
-    width: 100px;
+    width: 15vw;
     height: 100px;
+    margin-left: 10px;
     background-color: #1B3E40; /* Light gray background for graphs */
     display: flex;
     align-items: center;
@@ -130,4 +144,9 @@
 }
 .numbers-stat h4 {
     margin: 0;
+}
+
+.graph-img {
+    max-width: 50%;
+    max-height: 50%;
 }
