@@ -10,7 +10,7 @@
     left: 0;
     transition: width 0.3s ease;
     overflow: hidden;
-    width: 50px; /* Expanded width */
+    width: 70px; /* Expanded width */
     transition: filter 0.3s ease;
 }
 

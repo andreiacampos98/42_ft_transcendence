@@ -2,20 +2,23 @@
 {% load static %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/navs.css' %}">
-    <link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
-    <link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
-    
-    <script src="{% static 'js/navs.js' %}"></script>
-    <script defer src="../../js/friends.js"></script>
-	<script defer src="../../js/friend-block.js"></script>
+<link rel="stylesheet" href="{% static 'css/navs.css' %}">
+<link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
+<link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
+<link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
+<link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
+
+<script src="{% static 'js/navs.js' %}"></script>
+<script defer src="{% static 'js/friends.js' %}"></script>
+<script defer src="{% static 'js/friend-block.js' %}"></script>
 {% endblock %}
 
 {% block body %}
 
+    {% block main_content %}
+    {% endblock %}
     {% block top-bar %}
+    
     <div class="top-bar">
         <div class="search-container">
             <input type="text" placeholder="Search for friends...">
@@ -54,8 +57,8 @@
                         <span class="icon-title">User</span>
                     </button>
                 </a>
-                <a href="{% url 'login' %}">
-                    <button class="select-item logout-icon">
+                <a class="logout-icon" href="{% url 'login' %}">
+                    <button class="select-item">
                         <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout" >
                         <span class="icon-title">Logout</span>
                     </button>
@@ -79,7 +82,5 @@
                 </div>
             {% endblock %} 
         </div>
-    {% endblock %}
-    {% block main_content %}
     {% endblock %}
 {% endblock %}
