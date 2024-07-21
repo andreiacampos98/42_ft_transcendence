@@ -1,0 +1,97 @@
+{% extends 'navs.html' %}
+{% load static %}
+
+{% block styles %}
+    {{ block.super }} 
+    <link rel="stylesheet" href="{% static 'css/tournament.css' %}">
+{% endblock %}
+
+{% block main_content %}
+    <div class="main-content">
+        <div class="main">
+            <div class="top">
+                <div class="leaderboard">
+                    <div class="topic">
+                        <img class="icon" src="../assets/icons/laurel.png" alt="laurel">
+                        <span class="icon-title3">Leaderboard</span>
+                    </div>
+                    <div class="results">
+                        <div class="profile-winner">
+                            <img  class="profile-pic2 first" src="../assets/icons/avatar.png" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="first2" >#1 Name</h4>
+                                <span class="victories">x tournaments won</span>
+                            </div>
+                        </div>
+                        <div class="profile-winner">
+                            <img  class="profile-pic2 second" src="../assets/icons/avatar.png" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="second2" >#2 Name</h4>
+                                <span class="victories">x tournaments won</span>
+                            </div>
+                        </div>
+                        <div class="profile-winner">
+                            <img  class="profile-pic2 third" src="../assets/icons/avatar.png" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="third2" >#3 Name</h4>
+                                <span class="victories">x tournaments won</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="topic">
+                        <img class="icon" src="../assets/icons/chart.png" alt="chart">
+                        <span class="icon-title3">Your Stats</span>
+                    </div>
+                    <div class="stats2">
+                        <div class="profile-square">
+                            <img  class="profile-pic2" src="../assets/icons/avatar.png" alt="Profile">
+                        </div>
+                        <div class="podium">
+                            <div class="tournament-info">
+                                <span class="numbers" id="nbr2">30</span>
+                                <span class="numbers" id="nbr1">30</span>
+                                <span class="numbers" id="nbr3">30</span>
+                                <img  class="podium-img" src="../assets/icons/podium.png" alt="Podium">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bot">
+                <div class="avail-tournaments">
+                    <div class="topic">
+                        <img class="icon" src="../assets/icons/tournament.png" alt="tournament">
+                        <span class="icon-title3">Available Tournaments</span>
+                    </div>
+                    <div class="tournament-button">
+                        <button class="tournament2">
+                            <img class="icon" src="../assets/icons/tournament-button.png" alt="Button">
+                        </button>
+                    </div>
+                </div>
+                <div class="tournament-avail">
+                    <div class="table-head">
+                        <h4 class="table-title">Name</h4>
+                        <h4 class="table-title">Host</h4>
+                        <h4 class="table-title">Players registered</h4>
+                        <h4 class="table-title">Action</h4>
+                    </div>
+                    <div class="table-content">
+                        <h4 class="table-info">Tournament Name</h4>
+                        <div class="host">
+                            <img class="icon" src="../assets/icons/crown.png" alt="crown">
+                            <h4 class="able-info">Host</h4>
+                        </div>
+                        <div class="host">
+                            <img class="icon" src="../assets/icons/user.png" alt="user">
+                            <h4 class="able-info">x/16</h4>
+                        </div>
+                        <h4 class="table-info">Register</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

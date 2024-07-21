@@ -1,0 +1,104 @@
+{% extends 'navs.html' %}
+{% load static %}
+
+{% block styles %}
+    {{ block.super }} 
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block main_content %}
+    <div class="main-content">
+        <div class="main">
+            <div class="side-profile">
+                <img class="profile-big" src="../assets/icons/user.png" alt="User">
+                <h3 class="description"> Blah blah blah</h3>
+                <h5 class="description"> Blah blah blah</h5>
+                <div class="text-block">
+                    <span> dasdasds fgdfgfdgfdg dfg fdg fdg d</span>
+                    <span> dasdasds fgdfgfdgfdg dfg fdg fdg d</span>
+                </div>
+                <button class="edit">
+                    <span class="edit-b" id="edit">Edit Profile</span>
+                </button>
+                <button class="change">
+                    <span class="change-b" id="change">Change Password</span>
+                </button>
+            </div>
+            <div class="stats-history">
+                <div class="stats">
+                    <div class="topic">
+                        <img class="icon" src="../assets/icons/chart.png" alt="chart">
+                        <span class="icon-title3">Your Stats</span>
+                    </div>
+                    <div class="stats2">
+                        <div class="percentages">
+                            <div class="stats-head">
+                                <div class="stat">
+                                    <h4 class="stats-title">WIN Rate</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">WINS</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">LOSSES</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">GOALS SCORED</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">GOALS SUFFERED</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="graphs">
+                            <div class="graph1">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="../assets/icons/graph.png" alt="graph">
+                            </div>
+                            <div class="graph2">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="../assets/icons/graph.png" alt="graph">
+                            </div>
+                            <div class="graph3">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="../assets/icons/graph.png" alt="graph">
+                            </div>
+                            <div class="graph4">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="../assets/icons/graph.png" alt="graph">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="topic">
+                        <img class="icon" src="../assets/icons/history.png" alt="chart">
+                        <span class="icon-title3">Match History</span>
+                    </div>
+                    <div class="stats2">
+                        <div class="percentages">
+                            blocks
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

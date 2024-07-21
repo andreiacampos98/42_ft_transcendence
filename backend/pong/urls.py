@@ -17,6 +17,8 @@ from .views import (
 urlpatterns =[
     path('', views.loginview, name="login"),
     path('home/', views.home, name="home"),
+    path('tournaments/', views.tournaments, name="tournaments"),
+    path('profile/', views.profile, name="profile"),
     path('signup/', views.signup, name='signup'),
     path('password_reset/', auth_views.LoginView.as_view(template_name='pages/password_reset.html'), name='password_reset'),
     #re_path('^', include(router.urls)),

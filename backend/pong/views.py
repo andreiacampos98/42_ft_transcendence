@@ -101,3 +101,10 @@ def home(request):
 def signout(request):
     logout(request)
     return redirect('home')
+
+
+def tournaments(request):
+    return render(request,"pages/tournaments.html")
+
+def profile(request):
+    return render(request,"pages/profile.html")

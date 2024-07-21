@@ -1,0 +1,66 @@
+.top-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #1B3E40;
+    border-bottom: 1px solid #295C5F;
+    transition: filter 0.3s ease, transform 0.3s ease;
+
+}
+
+.search-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60vw; /* Adjust width as needed */
+    display: flex;
+    align-items: center;
+}
+
+.search-container input {
+    width: 100%; /* Adjust width to leave space for icon */
+    padding: 10px;
+    border: 1px solid #162728;
+    border-radius: 5px;
+    background-color: #162728;
+    outline: none; /* Remove default focus outline */
+    color: #FFFFFF;
+}
+
+#searchButton {
+    position: absolute;
+    right: 10px; /* Adjust as needed */
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#searchButton img {
+    width: 20px; /* Adjust icon size as needed */
+    height: 20px;
+}
+
+.top-right {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Ensures this section is pushed to the far right */
+    margin-right: 45px;
+}
+
+.bell-icon {
+    margin-right: 30px;
+    cursor: pointer;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+}
