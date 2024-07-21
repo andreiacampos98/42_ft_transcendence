@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 #from django.contrib.auth.models import User
 
 from icecream import ic
@@ -94,17 +95,19 @@ def loginview(request):
 
     return render(request, 'pages/login.html')
 
+@login_required
 def home(request):
     return render(request, 'pages/home-view.html')
 
-
+@login_required
 def signout(request):
     logout(request)
     return redirect('home')
 
-
+@login_required
 def tournaments(request):
     return render(request,"pages/tournaments.html")
 
+@login_required
 def profile(request):
     return render(request,"pages/profile.html")

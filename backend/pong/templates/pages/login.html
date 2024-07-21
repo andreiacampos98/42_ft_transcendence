@@ -1,17 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block styles %}
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-{% endblock %}
-
-
 {% block body %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
     <div class="login-container">
         <div class="login-container2">
             <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
             <h2 class="title" >Nice to see you back :)</h2>
-            <form id="loginForm" method="POST" action="{% url 'login' %}">
+            <form id="loginForm" method="POST" hx-post="{% url 'login' %}" hx-target="#main" hx-swap="innerHTML">
                 {% csrf_token %}
                 <div class="input-group">
                     <label for="username">Username</label>
@@ -24,17 +20,18 @@
                         <img id="togglePasswordImage" src="{% static 'assets/icons/eyeopen.png' %}">
                     </button>
                 </div>
-                <a href="{% url 'password_reset' %}" class="forgot-password">Forgot Password?</a>
+                <a href="{% url 'password_reset' %}" hx-get="{% url 'password_reset' %}" hx-target="#main" hx-swap="innerHTML">Forgot Password?</a>
                 <p id="errorMessage" class="error-message"></p>
                 <button type="submit">
                     <a href="{% url 'home' %}"> Sign in </a>
                 </button>
-                <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
-                <button type="submit2"><img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42</button>
-                Your first time? <a class="sign-up" href="{% url 'signup' %}">Sign up now</a>
-                <br>
-                <h6>© 42 Porto 2024</h6>
             </form>
+            <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
+            
+            <button type="submit2"><img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42</button>
+            Your first time? <a class="sign-up" href="{% url 'signup' %}" hx-get="{% url 'signup' %}" hx-target="#main" hx-swap="innerHTML">Sign Up now</a>
+            <br>
+            <h6>© 42 Porto 2024</h6>
         </div>
     </div>
     {% comment %} <script defer src="{% static 'js/script.js' %}"></script> {% endcomment %}
