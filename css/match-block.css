@@ -1,0 +1,60 @@
+.match-block {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 10px;
+    border-radius: 10px;
+    background-color: #1B3E40;
+}
+
+.match-block.tournament.third-place .details .result {
+    color: #E65C19;
+}
+
+.match-block.tournament.below-third-place .details .result {
+    color: grey;
+}
+
+.match-block.pingpong.victory .details .result {
+    color: green;
+}
+
+.match-block.pingpong.defeat .details .result {
+    color: red;
+}
+
+.match-block .icon {
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background-color: grey;
+    margin: 0px;
+    height: 100%;
+}
+.match-block .icon img,
+.match-block .opponent img {
+    width: 40px;
+    height: 40px;
+}
+
+.match-block .details {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    flex: 1;
+    height: 64px;
+}
+
+.match-block .details .type {
+    font-weight: bold;
+}
+
+.match-block .details .result {
+    margin-top: 5px;
+}
+
+.match-block .opponent {
+    margin-left: 10px;
+}

@@ -40,10 +40,13 @@
 }
 .text-block{
     display: flex;
+    text-align: justify;
 }
 .side-profile .text-block span {
     display: block;
     margin: 5px 0;
+    padding-right: 5px;
+    padding-left: 5px;
 }
 
 .side-profile button {
