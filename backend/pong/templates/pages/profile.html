@@ -9,19 +9,20 @@
         <script defer src="{% static 'js/match-block.js' %}"></script>
         <div class="main">
             <div class="side-profile">
-                <img class="profile-big" src="{% static 'assets/icons/user.png' %}" alt="User">
-                <h3 class="description"> Blah blah blah</h3>
-                <h5 class="description"> Blah blah blah</h5>
-                <div class="text-block">
-                    <span> dasdasds fgdfgfdgfdg dfg fdg fdg d</span>
-                    <span> dasdasds fgdfgfdgfdg dfg fdg fdg d</span>
-                </div>
+                <img class="profile-big" src="{{ user.picture.url }}" alt="User">
+                <h3 class="description"> {{ user.username }} </h3>
+                <h3 class="description"> {{ user.status }} </h3>
                 <button class="edit">
                     <span class="edit-b" id="edit">Edit Profile</span>
                 </button>
                 <button class="change">
                     <span class="change-b" id="change">Change Password</span>
                 </button>
+                <div class="text-block">
+                    <span> {{ user.description }}</span>
+                </div>
+                <h5 class="text-block"> Email {{ user.email }}</h5>
+                <h5 class="text-block"> Joined {{ user.created_at }}</h5>
             </div>
             <div class="stats-history">
                 <div class="stats">

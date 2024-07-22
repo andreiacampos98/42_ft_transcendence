@@ -27,7 +27,7 @@
             </div>
             <div class="top-right">
                 <img class="bell-icon" src="{% static 'assets/icons/Doorbell.png' %}">
-                <img class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
             </div>
         </div>
         {% endblock %}
@@ -42,7 +42,6 @@
                     <a hx-get="{% url 'home' %}"
                        hx-trigger="click"
                        hx-target="#MainPage"
-                       hx-push-url="true"
                        hx-swap="outerHTML">
                         <button class="select-item">
                             <img class="icon" src="{% static 'assets/icons/pingpong.png' %}" alt="Ping Pong">
@@ -52,7 +51,6 @@
                     <a hx-get="{% url 'tournaments' %}"
                        hx-trigger="click"
                        hx-target="#MainPage"
-                       hx-push-url="true"
                        hx-swap="outerHTML">
                         <button class="select-item">
                             <img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="Tournament">
@@ -62,7 +60,6 @@
                     <a hx-get="{% url 'profile' %}"
                        hx-trigger="click"
                        hx-target="#MainPage"
-                       hx-push-url="true"
                        hx-swap="outerHTML">
                         <button class="select-item">
                             <img class="icon" src="{% static 'assets/icons/user.png' %}" alt="User">
@@ -72,7 +69,6 @@
                     <a hx-get="{% url 'login' %}"
                        hx-trigger="click"
                        hx-target="#main"
-                       hx-push-url="true"
                        hx-swap="outerHTML">
                         <button class="select-item logout-icon">
                             <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">

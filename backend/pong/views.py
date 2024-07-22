@@ -110,4 +110,4 @@ def tournaments(request):
 
 @login_required
 def profile(request):
-    return render(request,"pages/profile.html")
+    return render(request,'pages/profile.html', {'user': request.user})

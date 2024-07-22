@@ -17,11 +17,14 @@ const routes = {
 const navigateTo = (path) => {
     const route = routes[path];
     if (route) {
-        app.setAttribute('hx-get', route);
-        app.setAttribute('hx-target', 'this');
-        app.setAttribute('hx-push-url', 'true');
-        app.setAttribute('hx-swap', 'innerHTML');
-        app.click(); // Trigger the request
+        fetch(route)
+            .then(response => response.text())
+            .then(html => {
+                app.innerHTML = html;
+                if (window.history.pushState) {
+                    window.history.pushState(null, '', path);
+                }
+            });
     }
 };
 
