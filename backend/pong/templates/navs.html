@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block body %}
     <link rel="stylesheet" href="{% static 'css/navs.css' %}">
     <link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
@@ -13,7 +12,7 @@
     <script defer src="{% static 'js/friends.js' %}"></script>
     <script defer src="{% static 'js/friend-block.js' %}"></script>
     
-    <main id="MainPage">
+    <main id="MainPage" hx-boost="true">
         {% block main_content %}
         {% endblock %}
     </main>
@@ -28,10 +27,11 @@
             </div>
             <div class="top-right">
                 <img class="bell-icon" src="{% static 'assets/icons/Doorbell.png' %}">
-                <img  class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                <img class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
             </div>
         </div>
         {% endblock %}
+        
         {% block side-menu %}
             <div class="left-div" id="left-div">
                 <button class="select-item expandable-section" onclick="toggleLeftDiv()">
@@ -39,40 +39,43 @@
                     <span class="icon-title2 bold">Pong Game</span>
                 </button>
                 <div class="selects">
-                    <a hx-get="{% url 'home'%}"
-                        hx-trigger="click"
-                        hx-target="#MainPage"
-                        hx-swap="outterHTML">
+                    <a hx-get="{% url 'home' %}"
+                       hx-trigger="click"
+                       hx-target="#MainPage"
+                       hx-push-url="true"
+                       hx-swap="outerHTML">
                         <button class="select-item">
-                            <img class="icon" src="{% static 'assets/icons/pingpong.png' %}" alt="Ping Pong" >
+                            <img class="icon" src="{% static 'assets/icons/pingpong.png' %}" alt="Ping Pong">
                             <span class="icon-title">Singles</span>
                         </button>
                     </a>
-                    <a hx-get="{% url 'tournaments'%}"
-                        hx-trigger="click"
-                        hx-target="#MainPage"
-                        hx-swap="outterHTML" >
+                    <a hx-get="{% url 'tournaments' %}"
+                       hx-trigger="click"
+                       hx-target="#MainPage"
+                       hx-push-url="true"
+                       hx-swap="outerHTML">
                         <button class="select-item">
                             <img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="Tournament">
                             <span class="icon-title">Tournament</span>
                         </button>
                     </a>
-                    <a  hx-get="{% url 'profile'%}"
-                        hx-trigger="click"
-                        hx-target="#MainPage"
-                        hx-swap="outterHTML"
-                    >
-                        <button class="select-item" >
+                    <a hx-get="{% url 'profile' %}"
+                       hx-trigger="click"
+                       hx-target="#MainPage"
+                       hx-push-url="true"
+                       hx-swap="outerHTML">
+                        <button class="select-item">
                             <img class="icon" src="{% static 'assets/icons/user.png' %}" alt="User">
                             <span class="icon-title">User</span>
                         </button>
                     </a>
-                    <a hx-get="{% url 'login'%}"
-                        hx-trigger="click"
-                        hx-target="#MainPage"
-                        hx-swap="outterHTML">
+                    <a hx-get="{% url 'login' %}"
+                       hx-trigger="click"
+                       hx-target="#main"
+                       hx-push-url="true"
+                       hx-swap="outerHTML">
                         <button class="select-item logout-icon">
-                            <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout" >
+                            <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
                             <span class="icon-title">Logout</span>
                         </button>
                     </a>
@@ -87,13 +90,13 @@
             <div class="sidebar" id="sidebar">
                 {% block friend-block %}
                     <div class="friend-block" id="friend2" data-status="online">
-                        <img  class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                        <img class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
                         <div class="friend-info">
                             <h4>User Name</h4>
                             <span class="status">Status</span>
                         </div>
                     </div>
-                {% endblock %} 
+                {% endblock %}
             </div>
         {% endblock %}
     {% endif %}
