@@ -2,30 +2,21 @@ document.addEventListener('DOMContentLoaded', () => {
     navigateTo(window.location.pathname);
 });
 
-const app = document.getElementById('main');
-
-const routes = {
-    '/': '/pages/login.html',
-    '/home': '/pages/home.html',
-    '/tournaments': '/pages/tournaments.html',
-    '/profile': '/pages/profile.html',
-    '/signup': '/pages/signup.html',
-    '/password_reset': '/pages/password_reset.html',
-    '/logout': '/pages/login.html',
-};
-
 const navigateTo = (path) => {
-    const route = routes[path];
-    if (route) {
-        fetch(route)
-            .then(response => response.text())
-            .then(html => {
-                app.innerHTML = html;
-                if (window.history.pushState) {
-                    window.history.pushState(null, '', path);
-                }
-            });
-    }
+    fetch(path)
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(html => {
+            document.getElementById('MainPage').innerHTML = html;
+            if (window.history.pushState) {
+                window.history.pushState(null, '', path);
+            }
+        })
+        .catch(error => console.error('There was a problem with the fetch operation:', error));
 };
 
 window.addEventListener('popstate', () => {

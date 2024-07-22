@@ -30,3 +30,26 @@ class UsersSerializer(serializers.ModelSerializer):
             instance.password = make_password(validated_data['password'])
         instance.save()
         return instance
+
+
+class FriendsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Users
+        fields = ['id', 'username', 'password', 'description', 'email', 'picture', 'status', 'created_at', 'updated_at']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = Users.objects.create_user(**validated_data)
+        return user
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.description = validated_data.get('description', instance.description)
+        instance.picture = validated_data.get('picture', instance.picture)
+        instance.status = validated_data.get('status', instance.status)
+        if 'password' in validated_data:
+            instance.password = make_password(validated_data['password'])
+        instance.save()
+        return instance
