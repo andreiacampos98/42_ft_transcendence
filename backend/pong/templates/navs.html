@@ -19,12 +19,14 @@
     {% if user.is_authenticated %}
         {% block top-bar %}
         <div class="top-bar">
-            <div class="search-container">
-                <input type="text" placeholder="Search for friends...">
-                <button type="button" id="searchButton">
-                    <img id="search-icon" src="{% static 'assets/icons/binoculars.png' %}">
-                </button>
-            </div>
+            {% comment %} <form method=POST action="{% url 'search-users' %}"> {% endcomment %}
+                <div class="search-container">
+                    <input type="text" placeholder="Search for friends..." name="searched">
+                    <button type="button" id="searchButton">
+                        <img id="search-icon" src="{% static 'assets/icons/binoculars.png' %}">
+                    </button>
+                </div>
+           {% comment %}  </form> {% endcomment %}
             <div class="top-right">
                 <img class="bell-icon" src="{% static 'assets/icons/Doorbell.png' %}">
                 <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
@@ -85,15 +87,33 @@
             </button>
             <div class="sidebar" id="sidebar">
                 {% block friend-block %}
-                    <div class="friend-block" id="friend2" data-status="online">
-                        <img class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
-                        <div class="friend-info">
-                            <h4>User Name</h4>
-                            <span class="status">Status</span>
-                        </div>
-                    </div>
+                    {% for friend in friends %}
+                    {% if friend.user1_id.id == user_id %}
+                    <a href="{% url 'user_profile' friend.user2_id.username %}">
+                {% else %}
+                    <a href="{% url 'user_profile' friend.user1_id.username %}">
+                {% endif %}
+                            <div class="friend-block" id="friend2" data-status="online">
+                                {% if friend.user1_id.id == user_id %}
+                                    <img class="profile-pic" src="{{ friend.user2_id.picture.url }}" alt="Profile">
+                                    <div class="friend-info">
+                                        <h4>{{ friend.user2_id.username }}</h4>
+                                        <span class="status">{{ friend.user2_id.status }}</span>
+                                    </div>
+                                {% else %}
+                                    <img class="profile-pic" src="{{ friend.user1_id.picture.url }}" alt="Profile">
+                                    <div class="friend-info">
+                                        <h4>{{ friend.user1_id.username }}</h4>
+                                        <span class="status">{{ friend.user1_id.status }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endfor %}
                 {% endblock %}
             </div>
         {% endblock %}
     {% endif %}
+        
+
 {% endblock %}

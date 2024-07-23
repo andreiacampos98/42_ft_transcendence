@@ -7,7 +7,11 @@ from .views import (
     UserListView, 
     UserCreateView, 
     UserUpdateView,
-    UserDetailView
+    UserDetailView,
+    FriendsListView,
+    FriendDetailView,
+    FriendAddView,
+    UserViewProfile
 )
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -23,9 +27,14 @@ urlpatterns =[
     path('signup/', views.signup, name='signup'),
     path('password_reset/', auth_views.LoginView.as_view(template_name='pages/password_reset.html'), name='password_reset'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+    path('profile/<str:username>/', views.UserViewProfile, name='user_profile'),
     #re_path('^', include(router.urls)),
     path('api/users/', UserListView.as_view(), name='user-list'),
     path('api/users/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
     path('register/', UserCreateView.as_view(), name='user-create'),
     path('api/users/<int:pk>/update', UserUpdateView.as_view(), name='user-update'),
+    path('api/friends/', FriendsListView.as_view(), name='friend-list'),
+    path('api/friends/<int:user_id>/', FriendDetailView.as_view(), name='friend-detail'),
+    path('api/friends/add', FriendAddView.as_view(), name='friend-add'),
+
 ] 
