@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
 
     <script src="{% static 'js/navs.js' %}"></script>
+    <script src="{% static 'js/suggest_users.js' %}"></script>
     <script defer src="{% static 'js/friends.js' %}"></script>
     <script defer src="{% static 'js/friend-block.js' %}"></script>
     
@@ -19,14 +20,16 @@
     {% if user.is_authenticated %}
         {% block top-bar %}
         <div class="top-bar">
-            {% comment %} <form method=POST action="{% url 'search-users' %}"> {% endcomment %}
+            <form method=POST action="{% url 'search-players' %}">
+                {% csrf_token %}
                 <div class="search-container">
-                    <input type="text" placeholder="Search for friends..." name="searched">
+                    <input type="text" placeholder="Search for players..." name="searched" id="search" onkeyup="getSuggestions()">
                     <button type="button" id="searchButton">
                         <img id="search-icon" src="{% static 'assets/icons/binoculars.png' %}">
                     </button>
+                    <div id="suggestions" style="position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #ccc; background-color: #fff; z-index: 1000;"></div>
                 </div>
-           {% comment %}  </form> {% endcomment %}
+            </form>
             <div class="top-right">
                 <img class="bell-icon" src="{% static 'assets/icons/Doorbell.png' %}">
                 <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">

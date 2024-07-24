@@ -23,6 +23,7 @@ from rest_framework.mixins import (
 )
 from rest_framework.viewsets import GenericViewSet
 from django.db.models import Q
+from django.http import JsonResponse
 from .models import Users, Friends
 from .serializers import UsersSerializer, FriendsSerializer
 
@@ -131,10 +132,17 @@ def loginview(request):
 def search_users(request):
     if request.method == "POST":
         searched = request.POST.get('searched')
-
-        return render (request, 'pages/users_list.html', {'searched':searched})
+        userss = Users.objects.filter(username__icontains=searched)
+        return render (request, 'pages/search_players.html', {'searched':searched, 'userss':userss})
     
 
+def suggest_users(request):
+    if 'term' in request.GET:
+        term = request.GET.get('term')
+        users = Users.objects.filter(username__icontains=term)
+        suggestions = list(users.values('username'))
+        return JsonResponse(suggestions, safe=False)
+    return JsonResponse([], safe=False)
 
 
 @login_required
