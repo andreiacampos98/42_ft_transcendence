@@ -137,12 +137,12 @@ def search_users(request):
     
 
 def suggest_users(request):
-    if 'term' in request.GET:
-        term = request.GET.get('term')
-        users = Users.objects.filter(username__icontains=term)
-        suggestions = list(users.values('username'))
-        return JsonResponse(suggestions, safe=False)
-    return JsonResponse([], safe=False)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            term = request.GET.get('term', '')
+            users = Users.objects.filter(username__icontains=term).values('username')
+            return JsonResponse(list(users), safe=False)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 @login_required

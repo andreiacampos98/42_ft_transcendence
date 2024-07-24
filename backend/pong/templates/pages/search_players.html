@@ -8,7 +8,10 @@
             <h3>You searched for {{ searched }} </h3>
             <br/>
             {% for users in userss %}
-                <a href="{% url 'user_profile' users.username %}">
+                <a hx-get="{% url 'user_profile' users.username %}"
+                       hx-trigger="click"
+                       hx-target="#MainPage"
+                       hx-swap="outerHTML">
                     <div class="side-profile">
                         <img class="profile-big" src="{{ users.picture.url }}" alt="User">
                         <h3 class="description"> {{ users.username }} </h3>
