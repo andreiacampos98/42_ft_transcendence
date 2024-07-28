@@ -129,6 +129,15 @@ def loginview(request):
     return render(request, 'pages/login.html')
 
 
+def resetpassword(request):
+    return render(request, 'pages/password_reset.html')
+
+def resetcode(request):
+    return render(request, 'pages/reset_code.html')
+
+def setnewpassword(request):
+    return render(request, 'pages/set_new_password.html')
+
 def search_users(request):
     if request.method == "POST":
         searched = request.POST.get('searched')
