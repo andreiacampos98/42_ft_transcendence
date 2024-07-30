@@ -8,11 +8,12 @@
     <link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
     <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
 
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/navs.js' %}"></script>
     <script src="{% static 'js/suggest_users.js' %}"></script>
     <script defer src="{% static 'js/friends.js' %}"></script>
     <script defer src="{% static 'js/friend-block.js' %}"></script>
+    <script defer src="{% static 'js/description.js' %}"></script>
     
     <main id="MainPage" hx-boost="true">
         {% block main_content %}
@@ -75,8 +76,9 @@
                     <a hx-get="{% url 'login' %}"
                        hx-trigger="click"
                        hx-target="#main"
-                       hx-swap="outerHTML">
-                        <button class="select-item logout-icon">
+                       hx-swap="outerHTML"
+                       class="logout-icon">
+                        <button class="select-item">
                             <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
                             <span class="icon-title">Logout</span>
                         </button>

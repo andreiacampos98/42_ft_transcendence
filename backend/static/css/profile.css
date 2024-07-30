@@ -38,6 +38,20 @@
     text-align: center;
     margin: 10px 0;
 }
+
+#description-form{
+    width: inherit;
+    display: none;
+}
+
+textarea {
+    width: inherit;
+}
+
+.description{
+    width: inherit;
+}
+
 .text-block{
     display: flex;
     text-align: justify;

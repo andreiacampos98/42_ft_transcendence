@@ -12,15 +12,22 @@
                 <img class="profile-big" src="{{ user.picture.url }}" alt="User">
                 <h3 class="description"> {{ user.username }} </h3>
                 <h3 class="description"> {{ user.status }} </h3>
-                <button class="edit">
-                    <span class="edit-b" id="edit">Edit Profile</span>
-                </button>
+                
+                <div class="text-block">
+                    <ul id="descriptions-list">
+                        {% for description in descriptions %}
+                        <li id="description-{{ description.id }}">{{ description.content }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <button class="edit" id="edit-profile-button">Edit Profile</button>
                 <button class="change">
                     <span class="change-b" id="change">Change Password</span>
                 </button>
-                <div class="text-block">
-                    <span> {{ user.description }}</span>
-                </div>
+                <form id="description-form">
+                    <textarea id="description" name="description" rows="4" cols="50"></textarea>
+                </form>
                 <h5 class="text-block"> Email {{ user.email }}</h5>
                 <h5 class="text-block"> Joined {{ user.created_at }}</h5>
             </div>
@@ -99,4 +106,5 @@
             </div>
         </div>
     </div>
+
 {% endblock %}
