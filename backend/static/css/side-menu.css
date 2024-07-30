@@ -1,0 +1,93 @@
+.left-div {
+    height: 100vh;
+    background-color: #1B3E40;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    width: 70px; /* Expanded width */
+    transition: filter 0.3s ease;
+}
+
+.left-div.expanded {
+    width: 200px; /* Expanded width */
+}
+
+.left-div .expandable-pic {
+    margin-bottom: 10px; /* Add margin to separate from selects */
+}
+
+.left-div .selects {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+    padding-top: 30px;
+    width: 100%;
+    margin-left: 20px;
+}
+
+.select-item {
+    display: flex;
+    align-items: center;
+    margin-top: 35px;
+    border: none;
+    background-color: #1B3E40;
+    cursor: pointer;
+    width: 100%;
+}
+
+.expandable-section {
+    margin-top: 0px;
+}
+
+.icon-title {
+    display: none;
+    margin-left: 30px;
+    color: #FFFFFF;
+}
+
+.icon-title2 {
+    display: none;
+    margin-left: 10px;
+    color: #FFFFFF;
+}
+
+.left-div .icon {
+    width: 30px; /* Adjust icon size as needed */
+    height: 30px;
+    margin: 5px 0; /* Vertical margin between icons */
+}
+
+.left-div .icon2 {
+    width: 50px; /* Adjust icon size as needed */
+    height: 50px;
+    margin: 5px 0; /* Vertical margin between icons */
+}
+
+.left-div.expanded .icon-title {
+    display: inline;
+    font-size: large;
+}
+
+.left-div.expanded .icon-title2 {
+    display: inline;
+    font-size: large;
+    font-weight: bold;
+}
+
+.left-div .logout-icon {
+    margin-top: auto; /* Push the logout icon to the bottom */
+    margin-bottom: 90px;
+    
+}
+
+.expandable-pic {
+    width: 100px;
+    cursor: pointer;
+}

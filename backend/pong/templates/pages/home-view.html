@@ -1,12 +1,8 @@
 {% extends 'navs.html' %}
 {% load static %}
-
-{% block styles %}
-    {{ block.super }} 
-    <link rel="stylesheet" href="{% static 'css/home_view.css' %}">
-{% endblock %}
-
+  
 {% block main_content %}
+    <link rel="stylesheet" href="{% static 'css/home_view.css' %}">
     <div class="main-content">
         <div class="local options">
             <button class="main-button"></button>

@@ -1,71 +1,123 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block styles %}
-    <link rel="stylesheet" href="{% static 'css/navs.css' %}">
-    <script src="{% static 'js/navs.js' %}"></script>
-{% endblock %}
-
 {% block body %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-        </button>
+    <link rel="stylesheet" href="{% static 'css/navs.css' %}">
+    <link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
+    <link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
+
+
+    <script src="{% static 'js/navs.js' %}"></script>
+    <script src="{% static 'js/suggest_users.js' %}"></script>
+    <script defer src="{% static 'js/friends.js' %}"></script>
+    <script defer src="{% static 'js/friend-block.js' %}"></script>
     
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Dropdown
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
+    <main id="MainPage" hx-boost="true">
+        {% block main_content %}
+        {% endblock %}
+    </main>
+    {% if user.is_authenticated %}
+        {% block top-bar %}
+        <div class="top-bar">
+            <form method=POST action="{% url 'search-players' %}">
+                {% csrf_token %}
+                <div class="search-container">
+                    <input type="text" placeholder="Search for players..." name="searched" id="search" onkeyup="getSuggestions()">
+                    <button type="button" id="searchButton">
+                        <img id="search-icon" src="{% static 'assets/icons/binoculars.png' %}">
+                    </button>
+                    <div id="suggestions" style="position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #ccc; background-color: #fff; z-index: 1000;"></div>
+                </div>
+            </form>
+            <div class="top-right">
+                <img class="bell-icon" src="{% static 'assets/icons/Doorbell.png' %}">
+                <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
             </div>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
         </div>
-    </nav>
-
-    <button class="toggle-button" onclick="toggleSidebar()">
-        <img src="{% static 'assets/icons/Puxador.png' %}">
-    </button>
-
-    <div class="left-div">
-        <img class="icon expandable-pic" src="{% static 'assets/icons/placeholder.png' %}" alt="Expandable">
-        <div class="selects">
-            <img class="icon" src="{% static 'assets/icons/pingpong.png' %}" href="{% url 'home' %}">
-            <img class="icon" src="{% static 'assets/icons/tournament.png' %}">
-            <img class="icon" src="{% static 'assets/icons/user.png' %}">
-            <a href="{% url 'login' %}">
-                <button >
-                    <img class="icon logout-icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
+        {% endblock %}
+        
+        {% block side-menu %}
+            <div class="left-div" id="left-div">
+                <button class="select-item expandable-section" onclick="toggleLeftDiv()">
+                    <img class="icon2" src="{% static 'assets/icons/logo2.png' %}" alt="Ping Pong">
+                    <span class="icon-title2 bold">Pong Game</span>
                 </button>
-            </a>
-        </div>
-    </div>
-    
-    <div class="sidebar" id="sidebar">
-        <h2>Friends</h2>
-        <!-- Friends content goes here -->
-    </div>
+                <div class="selects">
+                    <a hx-get="{% url 'home' %}"
+                       hx-trigger="click"
+                       hx-target="#MainPage"
+                       hx-swap="outerHTML">
+                        <button class="select-item">
+                            <img class="icon" src="{% static 'assets/icons/pingpong.png' %}" alt="Ping Pong">
+                            <span class="icon-title">Singles</span>
+                        </button>
+                    </a>
+                    <a hx-get="{% url 'tournaments' %}"
+                       hx-trigger="click"
+                       hx-target="#MainPage"
+                       hx-swap="outerHTML">
+                        <button class="select-item">
+                            <img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="Tournament">
+                            <span class="icon-title">Tournament</span>
+                        </button>
+                    </a>
+                    <a hx-get="{% url 'profile' %}"
+                       hx-trigger="click"
+                       hx-target="#MainPage"
+                       hx-swap="outerHTML">
+                        <button class="select-item">
+                            <img class="icon" src="{% static 'assets/icons/user.png' %}" alt="User">
+                            <span class="icon-title">User</span>
+                        </button>
+                    </a>
+                    <a hx-get="{% url 'login' %}"
+                       hx-trigger="click"
+                       hx-target="#main"
+                       hx-swap="outerHTML">
+                        <button class="select-item logout-icon">
+                            <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
+                            <span class="icon-title">Logout</span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        {% endblock %}
 
-    {% block main_content %}
-    {% endblock %}
+        {% block friend-bar %}
+            <button class="toggle-button" id="toggle-button" onclick="toggleSidebar()">
+                <img src="{% static 'assets/icons/puxador.png' %}">
+            </button>
+            <div class="sidebar" id="sidebar">
+                {% block friend-block %}
+                    {% for friend in friends %}
+                    {% if friend.user1_id.id == user_id %}
+                    <a href="{% url 'user_profile' friend.user2_id.username %}">
+                {% else %}
+                    <a href="{% url 'user_profile' friend.user1_id.username %}">
+                {% endif %}
+                            <div class="friend-block" id="friend2" data-status="online">
+                                {% if friend.user1_id.id == user_id %}
+                                    <img class="profile-pic" src="{{ friend.user2_id.picture.url }}" alt="Profile">
+                                    <div class="friend-info">
+                                        <h4>{{ friend.user2_id.username }}</h4>
+                                        <span class="status">{{ friend.user2_id.status }}</span>
+                                    </div>
+                                {% else %}
+                                    <img class="profile-pic" src="{{ friend.user1_id.picture.url }}" alt="Profile">
+                                    <div class="friend-info">
+                                        <h4>{{ friend.user1_id.username }}</h4>
+                                        <span class="status">{{ friend.user1_id.status }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endfor %}
+                {% endblock %}
+            </div>
+        {% endblock %}
+    {% endif %}
+        
+
 {% endblock %}
