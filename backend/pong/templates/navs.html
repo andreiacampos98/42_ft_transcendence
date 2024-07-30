@@ -86,36 +86,10 @@
         {% endblock %}
 
         {% block friend-bar %}
-            <button class="toggle-button" id="toggle-button" onclick="toggleSidebar()">
+            <button class="toggle-button" id="toggle-button" onclick="toggleSidebar('{{user_id}}')">
                 <img src="{% static 'assets/icons/puxador.png' %}">
             </button>
-            <div class="sidebar" id="sidebar">
-                {% block friend-block %}
-                    {% for friend in friends %}
-                    {% if friend.user1_id.id == user_id %}
-                    <a href="{% url 'user_profile' friend.user2_id.username %}">
-                {% else %}
-                    <a href="{% url 'user_profile' friend.user1_id.username %}">
-                {% endif %}
-                            <div class="friend-block" id="friend2" data-status="online">
-                                {% if friend.user1_id.id == user_id %}
-                                    <img class="profile-pic" src="{{ friend.user2_id.picture.url }}" alt="Profile">
-                                    <div class="friend-info">
-                                        <h4>{{ friend.user2_id.username }}</h4>
-                                        <span class="status">{{ friend.user2_id.status }}</span>
-                                    </div>
-                                {% else %}
-                                    <img class="profile-pic" src="{{ friend.user1_id.picture.url }}" alt="Profile">
-                                    <div class="friend-info">
-                                        <h4>{{ friend.user1_id.username }}</h4>
-                                        <span class="status">{{ friend.user1_id.status }}</span>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </a>
-                    {% endfor %}
-                {% endblock %}
-            </div>
+            <div class="sidebar" id="sidebar"></div>
         {% endblock %}
     {% endif %}
         

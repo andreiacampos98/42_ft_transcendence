@@ -59,12 +59,12 @@ class FriendsListView(generics.ListAPIView):
     serializer_class = FriendsSerializer
     queryset = Friends.objects.all()
 
-class FriendDetailView(generics.ListAPIView):
-    serializer_class = FriendsSerializer
+# class FriendDetailView(generics.ListAPIView):
+#     serializer_class = FriendsSerializer
 
-    def get_queryset(self):
-        user_id = self.kwargs['user_id']
-        return Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+#     def get_queryset(self):
+#         user_id = self.kwargs['user_id']
+#         return Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 
 class FriendAddView(CreateModelMixin, generics.GenericAPIView):
     queryset = Friends.objects.all()
@@ -129,13 +129,23 @@ def loginview(request):
     return render(request, 'pages/login.html')
 
 
+def resetpassword(request):
+    return render(request, 'pages/password_reset.html')
+
+def resetcode(request):
+    return render(request, 'pages/reset_code.html')
+
+def setnewpassword(request):
+    return render(request, 'pages/set_new_password.html')
+
+#when the user click in the search
 def search_users(request):
     if request.method == "POST":
         searched = request.POST.get('searched')
         userss = Users.objects.filter(username__icontains=searched)
         return render (request, 'pages/search_players.html', {'searched':searched, 'userss':userss})
-    
 
+#when the user type in the search
 def suggest_users(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             term = request.GET.get('term', '')
@@ -143,6 +153,13 @@ def suggest_users(request):
             return JsonResponse(list(users), safe=False)
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def get_user_friends(request, user_id):
+    if request.method == "GET":
+        friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+        return JsonResponse(list(friends), safe=False)
+    
+
 
 
 @login_required
