@@ -1,0 +1,96 @@
+.main-content {
+    background-color: #162728;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+	margin-left: 3vw;
+    
+}
+
+.main {
+    width: 90%;
+	margin-left: 3vw;
+    height: 80%;
+    display: flex;
+    position: fixed;
+    justify-content: space-between;
+	align-items: center;
+    text-align: center;
+}
+
+.round {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 20%;
+    position: relative;
+}
+
+.matchup {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.player {
+    background-color: #1A3141;
+    border: 2px solid #1A3141;
+    color: #8E8E8E;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 150px;
+}
+
+.player:hover {
+    border-color: #007bff;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.name {
+    flex-grow: 1;
+    font-weight: bold;
+}
+
+.score {
+    font-size: 14px;
+    color: #666;
+}
+
+.line {
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: #ccc;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: -1;
+    transition: background-color 0.3s ease;
+}
+
+.round-1 .matchup .line {
+    top: 25%;
+}
+
+.round-2 .matchup .line {
+    top: 25%;
+}
+
+.round-3 .matchup .line {
+    top: 50%;
+    height: 50%;
+}
