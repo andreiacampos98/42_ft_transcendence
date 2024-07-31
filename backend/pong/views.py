@@ -59,32 +59,6 @@ class FriendsListView(generics.ListAPIView):
     serializer_class = FriendsSerializer
     queryset = Friends.objects.all()
 
-# class FriendDetailView(generics.ListAPIView):
-#     serializer_class = FriendsSerializer
-
-#     def get_queryset(self):
-#         user_id = self.kwargs['user_id']
-#         return Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
-
-class FriendAddView(CreateModelMixin, generics.GenericAPIView):
-    queryset = Friends.objects.all()
-    serializer_class = FriendsSerializer
-
-    def post(self, request, *args, **kwargs):
-        user1_id = request.data.get('user1_id')
-        user2_id = request.data.get('user2_id')
-
-        if user1_id == user2_id:
-            return Response({"error": "Users cannot be friends with themselves."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
-            return Response({"error": "Friendship already exists."}, status=status.HTTP_400_BAD_REQUEST)
-
-        return self.create(request, *args, **kwargs)
-
-
-
-
 
 def signup(request):
     if request.method == "POST":
@@ -158,8 +132,22 @@ def get_user_friends(request, user_id):
     if request.method == "GET":
         friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
         return JsonResponse(list(friends), safe=False)
-    
 
+@login_required
+def add_friend(request, user1_id, user2_id):
+	if request.method == "POST":
+		if user1_id == user2_id:
+			return Response({"error": "Users cannot be friends with themselves."}, status=status.HTTP_400_BAD_REQUEST)		
+
+		if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
+			return Response({"error": "Friendship already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+		user1 = Users.objects.get(id=user1_id)
+		user2 = Users.objects.get(id=user2_id)
+		friend = Friends.objects.create(user1_id=user1, user2_id=user2)
+		friend.save()
+
+		return redirect('UserViewProfile', user1.username)
 
 
 @login_required

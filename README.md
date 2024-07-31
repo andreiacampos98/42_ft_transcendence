@@ -24,3 +24,9 @@ https://www.django-rest-framework.org/#example
 
 
 https://www.youtube.com/watch?v=1UvTNMH7zDo
+
+## Queries
+
+- Insert new user
+```sql
+```	

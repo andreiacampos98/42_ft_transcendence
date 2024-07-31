@@ -13,6 +13,10 @@ migrations:
 		python3 manage.py makemigrations; \
 		python3 manage.py migrate'
 
+clean:
+	docker exec -it django sh -c \
+		'rm -rf data/'
+
 prune:
 	docker system prune
 

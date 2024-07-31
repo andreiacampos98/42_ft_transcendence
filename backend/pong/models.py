@@ -8,13 +8,13 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Permis
 #make_password Creates a hashed password in the format used by this application.
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, password1=None, **extra_fields):
+    def create_user(self, username, password=None, **extra_fields):
         if not username:
             raise ValueError('The Username field must be set')
-        if not password1:
+        if not password:
             raise ValueError('The Password field must be set')
         user = self.model(username=username, **extra_fields)
-        user.set_password(password1)
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -29,7 +29,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=64, unique=True)
     description = models.TextField(null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
-    picture = models.ImageField(default='default.jpg', upload_to='upload')
+    picture = models.ImageField(default='default.jpg', upload_to='upload', null=True)
     status = models.CharField(max_length=7, default='Offline')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -62,6 +62,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
 class Friends(models.Model):
     user1_id = models.ForeignKey(Users, related_name="friends_with", on_delete=models.CASCADE)
     user2_id = models.ForeignKey(Users, related_name="friends_of", on_delete=models.CASCADE)
+	accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -81,7 +82,8 @@ class Notifications(models.Model):
     type = models.CharField()
     status = models.CharField(default='Pending')
     description = models.CharField(max_length=255)
-    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(Users, related_name="me", on_delete=models.CASCADE)
+    other_user_id = models.ForeignKey(Users, related_name="other", on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):

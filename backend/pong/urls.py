@@ -10,7 +10,7 @@ from .views import (
     UserDetailView,
     FriendsListView,
 #     FriendDetailView,
-    FriendAddView,
+    # FriendAddView,
     UserViewProfile
 )
 
@@ -52,6 +52,6 @@ urlpatterns =[
     path('api/friends/', FriendsListView.as_view(), name='friend-list'),
     path('api/friends/<int:user_id>', views.get_user_friends, name='friend-detail'),
 #     path('api/friends/<int:user_id>/', FriendDetailView.as_view(), name='friend-detail'),
-    path('api/friends/add', FriendAddView.as_view(), name='friend-add'),
+    path('friends/<int:user1_id>/<int:user2_id>', views.add_friend, name='friend-add'),
 
 ] 
