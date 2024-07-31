@@ -6,11 +6,11 @@
 | --- | :--: | --- | --- |
 | `/users/create` | `POST` | Create user | |
 | `/users/{id}` | `GET` | Retrieve user | `id` - the user's id |
-| `/users/{id}`| `PUT` | Update user | `id` - the user's id |
+| `/users/{id}/update`| `PUT` | Update user | `id` - the user's id |
 | `/users/login`| `POST` | Login user | |
 | `/users/auth` | `POST` | Login user with 42 | |
-| `/users/{id}/password` | `PUT` | Update user's password | `id` - the user's id|
 | `/users/{prefix}` | `GET` | List/Search users that match a given prefix | `prefix` - a prefix to be matched with all available usernames | 
+| `/users/{id}/password` | `PUT` | Update user's password | `id` - the user's id|
 
 ## Games
 

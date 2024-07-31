@@ -62,7 +62,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
 class Friends(models.Model):
     user1_id = models.ForeignKey(Users, related_name="friends_with", on_delete=models.CASCADE)
     user2_id = models.ForeignKey(Users, related_name="friends_of", on_delete=models.CASCADE)
-	accepted = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
