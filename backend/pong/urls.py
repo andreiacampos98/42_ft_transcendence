@@ -4,9 +4,6 @@ from django.contrib.auth.views import LogoutView
 from rest_framework.routers import DefaultRouter
 from . import views
 from .views import ( 
-    UserListView, 
-    UserUpdateView,
-    UserDetailView,
     UserViewProfile
 )
 
@@ -40,16 +37,16 @@ urlpatterns =[
     path('profile/<str:username>/', views.UserViewProfile, name='user_profile'),
     #re_path('^', include(router.urls)),
 
-    path('users', UserListView.as_view(), name='user-list'),
-    path('users/<int:pk>', UserDetailView.as_view(), name='user-detail'),
+
+    path('users/<int:pk>', views.user_detail, name='user-detail'),
     path('users/create', views.user_create, name='user-create'),
-    path('users/<int:pk>/update', UserUpdateView.as_view(), name='user-update'),
-    #path('users/<int:pk>/password', UserPasswordView.as_view(), name='user-update'),
+    path('users/<int:pk>/update', views.user_update, name='user-update'),
+    path('users/<int:pk>/password', views.user_password, name='user-update-password'),
 
 
-
-    path('search_players/', views.search_users, name='search-players'),
-    path('suggest_users/', views.suggest_users, name='suggest_users'),
+    path('users/<str:value>', views.search_users, name='search-users'),
+    path('users/suggest', views.suggest_users, name='suggest-users'),
+    
     path('friends/<int:user_id>', views.get_user_friends, name='friends-detail'),
     path('friends/<int:user1_id>/<int:user2_id>', views.add_friend, name='friend-add'),
 #     path('api/friends/<int:user_id>/', FriendDetailView.as_view(), name='friend-detail'),

@@ -4,13 +4,14 @@
 
 | Route | HTTP Method | Description | Parameters | View | URL - Name |
 | --- | :--: | --- | --- | --- | --- |
-| `/users/create` | `POST` | Create user | | user_create | 'users/create' -  user-create
-| `/users/{id}` | `GET` | Retrieve user | `id` - the user's id |
-| `/users/{id}/update`| `PUT` | Update user | `id` - the user's id |
+| `/users/{id}` | `GET` | Retrieve user | `id` - the user's id | user_detail | 'users/<int:pk>' - user-detail |
+| `/users/create` | `POST` | Create user | | user_create | 'users/create' -  user-create |
+| `/users/{id}/update`| `PUT`  `PATCH` | Update user | `id` - the user's id | user_update | 'users/<int:pk>/update' - user-update |
+| `/users/{id}/password` | `PUT` | Update user's password | `id` - the user's id| user_password | 'users/<int:pk>/password' - user-update-password |
+| `/users/{prefix}` | `GET` | List/Search users that match a given prefix | `prefix` - a prefix to be matched with all available usernames | search_users | 'users/<str:value>' - search-users
+| `/users/suggest` | `GET` | List users that match a given prefix while the user is typing |  | search_users |  users/suggest - suggest-users
 | `/users/login`| `POST` | Login user | |
 | `/users/auth` | `POST` | Login user with 42 | |
-| `/users/{prefix}` | `GET` | List/Search users that match a given prefix | `prefix` - a prefix to be matched with all available usernames | 
-| `/users/{id}/password` | `PUT` | Update user's password | `id` - the user's id|
 
 ## Games
 

@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
-
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from rest_framework.parsers import JSONParser, MultiPartParser
+from django.contrib.auth.hashers import make_password 
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 #from django.contrib.auth.models import User
-
+import json
 from icecream import ic
 from .models import Users
 
@@ -31,41 +33,121 @@ from .models import Users, Friends
 from .serializers import UsersSerializer
 
 
+def user_detail(request, pk):
+    if request.method == "GET":
+        user = get_object_or_404(Users, pk=pk)
+        serializer = UsersSerializer(user)
+        return JsonResponse(serializer.data, safe=False)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-# ViewSets define the view behavior.
-class UserListView(generics.ListAPIView):
-    serializer_class = UsersSerializer
-    queryset = Users.objects.all()
 
-class UserDetailView(generics.RetrieveAPIView):
-    queryset = Users.objects.all()
-    serializer_class = UsersSerializer
-
-# class UserCreateView(CreateModelMixin, generics.GenericAPIView):
-#     queryset = Users.objects.all()
-#     serializer_class = UsersSerializer
-
-#     def post(self, request, *args, **kwargs):
-#         return self.create(request, *args, **kwargs)
-
+@csrf_exempt
+@require_POST
 def user_create(request):
-    if request.method == 'POST':
-        serializer_class = UsersSerializer(data=request.data)
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+        serializer = UsersSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except KeyError as e:
+        return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+
+@csrf_exempt
+def user_update(request, pk):
+    if request.method in ['PUT', 'PATCH']:
+        user = get_object_or_404(Users, pk=pk)
+
+        if request.content_type == 'application/json':
+            data = json.loads(request.body.decode('utf-8'))
+        else:
+                # Merge request.POST and request.FILES for form-data handling
+            data = request.POST.copy()
+            data.update(request.FILES)
+
+        serializer = UsersSerializer(user, data=data, partial=(request.method == 'PATCH'))
+
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, safe=False)
+        return JsonResponse(serializer.errors, status=400)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+@csrf_exempt
+def user_password(request, pk):
+    if request.method =='POST':
+        user = get_object_or_404(Users, pk=pk)
+        new_password1 = request.POST.get('password1')
+        new_password2 = request.POST.get('password2')
+
+        if not new_password1:
+            return JsonResponse({'error': 'Password is required'}, status=400)
+
+        if new_password1 != new_password2:
+            return JsonResponse({'error': 'Passwords did not match.'}, status=400)
+        
+        user.password = make_password(new_password1)
+        user.save()
+
+        return JsonResponse({'message': 'Password updated successfully'}, status=200)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+# #when the user click in the search
+@csrf_exempt
+def search_users(request, value):
+    if request.method == "GET":
+        userss = Users.objects.filter(username__icontains=value)
+        serializer = UsersSerializer(userss, many=True)  # Set many=True for querysets
+        return JsonResponse(serializer.data, safe=False)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+#when the user type in the search
+def suggest_users(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            term = request.GET.get('term', '')
+            users = Users.objects.filter(username__icontains=term).values('username')
+            return JsonResponse(list(users), safe=False)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
-class UserUpdateView(UpdateModelMixin, generics.GenericAPIView):
-    queryset = Users.objects.all()
-    serializer_class = UsersSerializer
+#---------------------------Friends----------------------------------
 
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
+#friends displayed in he side bar right
+def get_user_friends(request, user_id):
+    if request.method == "GET":
+        friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+        serializer = FriendsSerializer(friends, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
-    def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
+
+
+@login_required
+def add_friend(request, user1_id, user2_id):
+	if request.method == "POST":
+		if user1_id == user2_id:
+			return Response({"error": "Users cannot be friends with themselves."}, status=status.HTTP_400_BAD_REQUEST)		
+
+		if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
+			return Response({"error": "Friendship already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+		user1 = Users.objects.get(id=user1_id)
+		user2 = Users.objects.get(id=user2_id)
+		friend = Friends.objects.create(user1_id=user1, user2_id=user2)
+		friend.save()
+
+		return redirect('UserViewProfile', user1.username)
+
+
+
+# ------------------------------------------
 
 def signup(request):
     if request.method == "POST":
@@ -119,46 +201,6 @@ def resetcode(request):
 def setnewpassword(request):
     return render(request, 'pages/set_new_password.html')
 
-#friends displayed in he side bar right
-def get_user_friends(request, user_id):
-    if request.method == "GET":
-        friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
-        serializer = FriendsSerializer(friends, many=True)
-    return JsonResponse(serializer.data, safe=False)
-
-#when the user click in the search
-def search_users(request):
-    if request.method == "POST":
-        searched = request.POST.get('searched')
-        userss = Users.objects.filter(username__icontains=searched)
-        return render (request, 'pages/search_players.html', {'searched':searched, 'userss':userss})
-
-#when the user type in the search
-def suggest_users(request):
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            term = request.GET.get('term', '')
-            users = Users.objects.filter(username__icontains=term).values('username')
-            return JsonResponse(list(users), safe=False)
-    else:
-        return JsonResponse({'error': 'Invalid request'}, status=400)
-
-
-@login_required
-def add_friend(request, user1_id, user2_id):
-	if request.method == "POST":
-		if user1_id == user2_id:
-			return Response({"error": "Users cannot be friends with themselves."}, status=status.HTTP_400_BAD_REQUEST)		
-
-		if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
-			return Response({"error": "Friendship already exists."}, status=status.HTTP_400_BAD_REQUEST)
-
-		user1 = Users.objects.get(id=user1_id)
-		user2 = Users.objects.get(id=user2_id)
-		friend = Friends.objects.create(user1_id=user1, user2_id=user2)
-		friend.save()
-
-		return redirect('UserViewProfile', user1.username)
-
 
 @login_required
 def home(request):
@@ -172,10 +214,6 @@ def home(request):
     }
     return render(request, 'pages/home-view.html', context)
 
-@login_required
-def signout(request):
-    logout(request)
-    return redirect('home')
 
 @login_required
 def tournaments(request):
@@ -201,7 +239,6 @@ def profile(request):
     }
     return render(request,'pages/profile.html', context)
 
-
 @login_required
 def UserViewProfile(request, username):
 
@@ -216,3 +253,8 @@ def UserViewProfile(request, username):
         'user': user
     }
     return render(request, 'pages/view_profile.html', context)
+
+@login_required
+def signout(request):
+    logout(request)
+    return redirect('home')

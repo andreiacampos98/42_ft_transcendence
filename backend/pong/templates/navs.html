@@ -21,7 +21,7 @@
     {% if user.is_authenticated %}
         {% block top-bar %}
         <div class="top-bar">
-            <form method=POST action="{% url 'search-players' %}">
+            <form method=GET action="{% url 'search-users' value='search_term' %}">
                 {% csrf_token %}
                 <div class="search-container">
                     <input type="text" placeholder="Search for players..." name="searched" id="search" onkeyup="getSuggestions()">

@@ -3,7 +3,7 @@ function getSuggestions() {
     var suggestionsBox = document.getElementById('suggestions');
 
     if (input.length > 2) { // Requisição após 2 caracteres
-        fetch(`/suggest_users/?term=${input}`, {
+        fetch(`/users/suggest/?term=${input}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
