@@ -2,9 +2,9 @@
 
 ## Users
 
-| Route | HTTP Method | Description | Parameters |
-| --- | :--: | --- | --- |
-| `/users/create` | `POST` | Create user | |
+| Route | HTTP Method | Description | Parameters | View | URL - Name |
+| --- | :--: | --- | --- | --- | --- |
+| `/users/create` | `POST` | Create user | | user_create | 'users/create' -  user-create
 | `/users/{id}` | `GET` | Retrieve user | `id` - the user's id |
 | `/users/{id}/update`| `PUT` | Update user | `id` - the user's id |
 | `/users/login`| `POST` | Login user | |
@@ -46,11 +46,11 @@
 
 ## Friends
 
-| Route | HTTP Method | Description | Parameters |
-| --- | :--: | --- | --- |
+| Route | HTTP Method | Description | Parameters | View | URL - Name |
+| --- | :--: | --- | --- |--- | --- |
 | `/friends/{uid1}/{uid2}` | `POST` | Add a new friend request. Sends a notification to the other user. | `uid1` - the first user, `uid2` - the second user |
 | `/friends/{uid1}/{uid2}` | `DELETE` | Delete a friend / Deny a friend request | `uid1` - the first user, `uid2` - the second user |
-| `/friends/{id}` | `GET` | Retrieve all user's friends | `id` - the  user's id to get the friends from |
+| `/friends/{id}` | `GET` | Retrieve all user's friends | `id` - the  user's id to get the friends from | get_user_friends | 'friends/<int:user_id>' - friends-detail |
 | `/friends/accept/{uid1}/{uid2}` | `POST` | Accept a friend request. Sends a notification to the other user. | `uid1` - the first user, `uid2` - the second user |
 
 

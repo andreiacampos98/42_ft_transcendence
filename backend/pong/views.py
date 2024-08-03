@@ -1,15 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+
+
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 #from django.contrib.auth.models import User
 
 from icecream import ic
 from .models import Users
 
-from .serializers import UsersSerializer
+from .serializers import UsersSerializer, FriendsSerializer
 
 # Since we want to create an API endpoint for reading, creating, and updating 
 # Company objects, we can use Django Rest Framework mixins for such actions.
@@ -25,7 +28,7 @@ from rest_framework.viewsets import GenericViewSet
 from django.db.models import Q
 from django.http import JsonResponse
 from .models import Users, Friends
-from .serializers import UsersSerializer, FriendsSerializer
+from .serializers import UsersSerializer
 
 
 
@@ -38,12 +41,21 @@ class UserDetailView(generics.RetrieveAPIView):
     queryset = Users.objects.all()
     serializer_class = UsersSerializer
 
-class UserCreateView(CreateModelMixin, generics.GenericAPIView):
-    queryset = Users.objects.all()
-    serializer_class = UsersSerializer
+# class UserCreateView(CreateModelMixin, generics.GenericAPIView):
+#     queryset = Users.objects.all()
+#     serializer_class = UsersSerializer
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
+
+def user_create(request):
+    if request.method == 'POST':
+        serializer_class = UsersSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UserUpdateView(UpdateModelMixin, generics.GenericAPIView):
     queryset = Users.objects.all()
@@ -54,11 +66,6 @@ class UserUpdateView(UpdateModelMixin, generics.GenericAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
-
-class FriendsListView(generics.ListAPIView):
-    serializer_class = FriendsSerializer
-    queryset = Friends.objects.all()
-
 
 def signup(request):
     if request.method == "POST":
@@ -78,7 +85,7 @@ def signup(request):
             messages.error(request, "Username must be alphanumeric.")
             return redirect('signup')
 
-        myuser = Users.objects.create_user(username=username, password1=password1)
+        myuser = Users.objects.create_user(username=username, password=password1)
         myuser.save()
 
         messages.success(request, "Your account has been successfully created.")
@@ -112,6 +119,13 @@ def resetcode(request):
 def setnewpassword(request):
     return render(request, 'pages/set_new_password.html')
 
+#friends displayed in he side bar right
+def get_user_friends(request, user_id):
+    if request.method == "GET":
+        friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+        serializer = FriendsSerializer(friends, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
 #when the user click in the search
 def search_users(request):
     if request.method == "POST":
@@ -128,10 +142,6 @@ def suggest_users(request):
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
-def get_user_friends(request, user_id):
-    if request.method == "GET":
-        friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
-        return JsonResponse(list(friends), safe=False)
 
 @login_required
 def add_friend(request, user1_id, user2_id):
