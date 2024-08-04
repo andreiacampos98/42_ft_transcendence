@@ -61,3 +61,4 @@
 | --- | :--: | --- | --- | --- | --- |
 | `/notifications/<int:user_id>` | `GET` | List all notifications for a given user | `id` - the user's id | get_user_notifications | 'notifications/<int:user_id>' - notifications |
 | `/notifications/<int:user_id>/<int:notif_id>`| `DELETE` | Delete user notification | `id` - the user's id | get_user_notifications | 'notifications/<int:user_id>' - notifications |
+| `/notifications/update/<int:notif_id>`| `PATCH` | Update the status of the notification | `notif_id` - the notifications's id | update_notification | 'notifications/update/<int:notif_id>' - update-notification |

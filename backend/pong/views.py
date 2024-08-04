@@ -222,6 +222,18 @@ def delete_user_notification(request, user_id, notif_id):
         return JsonResponse(response_data, status=204)
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
+@csrf_exempt
+def update_notification(request, notif_id):
+    if request.method == "PATCH":
+        notifications = Notifications.objects.get(id = notif_id)
+        notifications.status = "Read"
+        notifications.save()
+        response_data = {
+            "message": "Status of notification updated."
+        }
+        return JsonResponse(response_data, status=204)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
 # ----------------------------- Pages ---------------------------------------
 
 def signup(request):
