@@ -47,7 +47,8 @@ urlpatterns =[
 
     
     path('friends/<int:user_id>', views.get_user_friends, name='friends-detail'),
-    path('friends/<int:user1_id>/<int:user2_id>', views.add_friend, name='friend-add'),
+    path('friends/<int:user1_id>/<int:user2_id>', views.add_remove_friend, name='friend-add-remove'),
+    path('friends/accept/<int:user1_id>/<int:user2_id>', views.accept_friend, name='accept-friend'),
 #     path('api/friends/<int:user_id>/', FriendDetailView.as_view(), name='friend-detail'),
 
 ] 

@@ -49,10 +49,10 @@
 
 | Route | HTTP Method | Description | Parameters | View | URL - Name |
 | --- | :--: | --- | --- |--- | --- |
-| `/friends/{uid1}/{uid2}` | `POST` | Add a new friend request. Sends a notification to the other user. | `uid1` - the first user, `uid2` - the second user | add_friend | 'friends/<int:user1_id>/<int:user2_id>' - friend-add
-| `/friends/{uid1}/{uid2}` | `DELETE` | Delete a friend / Deny a friend request | `uid1` - the first user, `uid2` - the second user |
+| `/friends/{uid1}/{uid2}` | `POST` | Add a new friend request. Sends a notification to the other user. | `uid1` - the first user, `uid2` - the second user | add_remove_friend | 'friends/<int:user1_id>/<int:user2_id>' - friend-add-remove
+| `/friends/{uid1}/{uid2}` | `DELETE` | Delete a friend / Deny a friend request | `uid1` - the first user, `uid2` - the second user | add_remove_friend | 'friends/<int:user1_id>/<int:user2_id>' - friend-add-remove
 | `/friends/{id}` | `GET` | Retrieve all user's friends | `id` - the  user's id to get the friends from | get_user_friends | 'friends/<int:user_id>' - friends-detail | get_user_friends | 'friends/<int:user_id>' - friends-detail
-| `/friends/accept/{uid1}/{uid2}` | `POST` | Accept a friend request. Sends a notification to the other user. | `uid1` - the first user, `uid2` - the second user |
+| `/friends/accept/{uid1}/{uid2}` | `POST` | Accept a friend request. Sends a notification to the other user. | `uid1` - the first user, `uid2` - the second user | accept_friend | 'friends/accept/<int:user1_id>/<int:user2_id>' - accept-friend |
 
 
 ## Notifications

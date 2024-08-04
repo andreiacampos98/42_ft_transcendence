@@ -131,7 +131,7 @@ def get_user_friends(request, user_id):
 
 
 @csrf_exempt
-def add_friend(request, user1_id, user2_id):
+def add_remove_friend(request, user1_id, user2_id):
     if request.method == "POST":
         # Check if user is trying to add themselves as a friend
         if user1_id == user2_id:
@@ -176,6 +176,26 @@ def add_friend(request, user1_id, user2_id):
     # Handle methods other than POST
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
+@csrf_exempt
+def accept_friend(request, user1_id, user2_id):
+    if request.method == "PATCH":
+        friendship = Friends.objects.filter(
+            (Q(user1_id=user1_id, user2_id=user2_id) | Q(user1_id=user2_id, user2_id=user1_id))
+        ).first()
+        
+        if not friendship:
+            return JsonResponse({"error": "Friendship does not exist."}, status=404)
+        
+        if friendship.accepted:
+            return JsonResponse({"error": "Friendship request has already been accepted."}, status=400)
+        
+        friendship.accepted = True
+        friendship.save()
+        response_data = {
+            "message": "User accept the request."
+        }
+        return JsonResponse(response_data, status=200)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 
 # ------------------------------------------
 
