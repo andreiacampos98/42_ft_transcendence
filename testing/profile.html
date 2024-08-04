@@ -1,0 +1,279 @@
+
+<!-- 
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles-tournament %}
+    <link rel="stylesheet" href="{% static 'css/tournament.css' %}">
+    {% block styles-friend-block %}
+    {% endblock %}
+
+{% endblock %}
+
+{% block tournament %}
+    <div class="main-content">
+        <div class="main">
+            <div class="top">
+                <div class="leaderboard">
+                    <div class="topic">
+                        <img class="icon" src="../assets/icons/laurel.png" alt="laurel">
+                        <span class="icon-title3">Leaderboard</span>
+                    </div>
+                    <div class="results">
+                        <div class="profile-winner">
+                            <img  class="profile-pic2 first" src="../assets/icons/avatar.png" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="first2" >#1 Name</h4>
+                                <span class="victories">x tournaments won</span>
+                            </div>
+                        </div>
+                        <div class="profile-winner">
+                            <img  class="profile-pic2 second" src="../assets/icons/avatar.png" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="second2" >#2 Name</h4>
+                                <span class="victories">x tournaments won</span>
+                            </div>
+                        </div>
+                        <div class="profile-winner">
+                            <img  class="profile-pic2 third" src="../assets/icons/avatar.png" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="third2" >#3 Name</h4>
+                                <span class="victories">x tournaments won</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="topic">
+                        <img class="icon" src="../assets/icons/chart.png" alt="chart">
+                        <span class="icon-title3">Your Stats</span>
+                    </div>
+                    <div class="stats2">
+                        <div class="profile-square">
+                            <img  class="profile-pic2" src="../assets/icons/avatar.png" alt="Profile">
+                        </div>
+                        <div class="podium">
+                            <div class="tournament-info">
+                                <span class="numbers" id="nbr2">30</span>
+                                <span class="numbers" id="nbr1">30</span>
+                                <span class="numbers" id="nbr3">30</span>
+                                <img  class="podium-img" src="../assets/icons/podium.png" alt="Podium">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bot">
+                <div class="avail-tournaments">
+                    <div class="topic">
+                        <img class="icon" src="../assets/icons/tournament.png" alt="tournament">
+                        <span class="icon-title3">Available Tournaments</span>
+                    </div>
+                    <div class="tournament-button">
+                        <button class="tournament2">
+                            <img class="icon" src="../assets/icons/tournament-button.png" alt="Button">
+                        </button>
+                    </div>
+                </div>
+                <div class="tournament-avail">
+                    <div class="table-head">
+                        <h4 class="table-title">Name</h4>
+                        <h4 class="table-title">Host</h4>
+                        <h4 class="table-title">Players registered</h4>
+                        <h4 class="table-title">Action</h4>
+                    </div>
+                    <div class="table-content">
+                        <h4 class="table-info">Tournament Name</h4>
+                        <div class="host">
+                            <img class="icon" src="../assets/icons/crown.png" alt="crown">
+                            <h4 class="able-info">Host</h4>
+                        </div>
+                        <div class="host">
+                            <img class="icon" src="../assets/icons/user.png" alt="user">
+                            <h4 class="able-info">x/16</h4>
+                        </div>
+                        <h4 class="table-info">Register</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="../css/profile.css">
+    <link rel="stylesheet" href="../css/match-block.css">
+    <link rel="stylesheet" href="../css/friend-bar.css">
+    <link rel="stylesheet" href="../css/friend-block.css">
+    <link rel="stylesheet" href="../css/top-bar.css">
+    <link rel="stylesheet" href="../css/side-menu.css">
+
+	<script defer src="../js/friends.js"></script>
+	<script defer src="../js/match-block.js"></script>
+	<script defer src="../js/friend-block.js"></script>
+    <script defer src="../js/navs.js"></script>
+    
+</head>
+<body>
+    <div class="main-content">
+        <div class="main">
+            <div class="side-profile">
+                <img class="profile-big" src="../assets/icons/user.png" alt="User">
+                <h3 class="description"> Blah blah blah</h3>
+                <h5 class="description"> Blah blah blah</h5>
+                <div class="text-block">
+                    <span> dasdasds fgdfgfdgfdg dfg fdg fdg d</span>
+                    <span> dasdasds fgdfgfdgfdg dfg fdg fdg d</span>
+                </div>
+                <button class="edit">
+                    <span class="edit-b" id="edit">Edit Profile</span>
+                </button>
+                <button class="change">
+                    <span class="change-b" id="change">Change Password</span>
+                </button>
+            </div>
+            <div class="stats-history">
+                <div class="stats">
+                    <div class="topic">
+                        <img class="icon" src="../assets/icons/chart.png" alt="chart">
+                        <span class="icon-title3">Your Stats</span>
+                    </div>
+                    <div class="stats2">
+                        <div class="percentages">
+                            <div class="stats-head">
+                                <div class="stat">
+                                    <h4 class="stats-title">WIN Rate</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">WINS</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">LOSSES</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">GOALS SCORED</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">GOALS SUFFERED</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="graphs">
+                            <div class="graph1">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="../assets/icons/graph.png" alt="graph">
+                            </div>
+                            <div class="graph2">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="../assets/icons/graph.png" alt="graph">
+                            </div>
+                            <div class="graph3">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="../assets/icons/graph.png" alt="graph">
+                            </div>
+                            <div class="graph4">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="../assets/icons/graph.png" alt="graph">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="topic">
+                        <img class="icon" src="../assets/icons/history.png" alt="chart">
+                        <span class="icon-title3">Match History</span>
+                    </div>
+                    <div class="stats2">
+                        <div id="match-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="top-bar">
+        <div class="search-container">
+            <input type="text" placeholder="Search for friends...">
+            <button type="button" id="searchButton">
+                <img id="search-icon" src="../assets/icons/binoculars.png">
+            </button>
+        </div>
+        <div class="top-right">
+            <img class="bell-icon" src="../assets/icons/Doorbell.png">
+            <img  class="profile-pic" src="../assets/icons/avatar.png" alt="Profile">
+        </div>
+    </div>
+    <div class="left-div" id="left-div">
+        <button class="select-item expandable-section" onclick="toggleLeftDiv()">
+            <img class="icon2" src="../assets/icons/logo2.png" alt="Ping Pong">
+            <span class="icon-title2 bold">Pong Game</span>
+        </button>
+        <div class="selects">
+            <button class="select-item">
+                <img class="icon" src="../assets/icons/pingpong.png" alt="Ping Pong">
+                <span class="icon-title">Singles</span>
+            </button>
+            <button class="select-item">
+                <img class="icon" src="../assets/icons/tournament.png" alt="Tournament">
+                <span class="icon-title">Tournament</span>
+            </button>
+            <button class="select-item" onclick="window.location.href='profile.html'">
+                <img class="icon" src="../assets/icons/user.png" alt="User">
+                <span class="icon-title">User</span>
+            </button>
+            <button class="select-item logout-icon">
+                <img class="icon" src="../assets/icons/logout.png" alt="logout">
+                <span class="icon-title">Logout</span>
+            </button>
+        </div>
+    </div>
+	<button class="toggle-button" id="toggle-button" onclick="toggleSidebar()">
+		<img src="../assets/icons/puxador.png">
+	</button>
+	<div class="sidebar" id="sidebar">
+        <div class="friend-block" id="friend1" data-status="online">
+            <img  class="profile-pic" src="../assets/icons/avatar.png" alt="Profile">
+            <div class="friend-info">
+                <h4>User Name</h4>
+                <span class="status">Status</span>
+            </div>
+        </div>
+        <div class="friend-block" id="friend2" data-status="online">
+            <img  class="profile-pic" src="../assets/icons/avatar.png" alt="Profile">
+            <div class="friend-info">
+                <h4>User Name</h4>
+                <span class="status">Status</span>
+            </div>
+        </div>
+        <div class="friend-block" id="friend3" data-status="online">
+            <img  class="profile-pic" src="../assets/icons/avatar.png" alt="Profile">
+            <div class="friend-info">
+                <h4>User Name</h4>
+                <span class="status">Status</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -7,12 +7,15 @@
     <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
     <link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
     <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
+    <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
 
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/navs.js' %}"></script>
     <script src="{% static 'js/suggest_users.js' %}"></script>
     <script defer src="{% static 'js/friends.js' %}"></script>
     <script defer src="{% static 'js/friend-block.js' %}"></script>
+    <script defer src="{% static 'js/description.js' %}"></script>
+    <script defer src="{% static 'js/notifications.js' %}"></script>
     
     <main id="MainPage" hx-boost="true">
         {% block main_content %}
@@ -31,8 +34,23 @@
                 </div>
             </form>
             <div class="top-right">
-                <img class="bell-icon" src="{% static 'assets/icons/Doorbell.png' %}">
-                <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
+                <button type="button" onclick="getNotifications()" data-user-id="{{ user.id }}">
+                    <img class="bell-icon" src="{% static 'assets/icons/Doorbell.png' %}">
+                </button>
+                
+                <!-- Popup Modal -->
+                <div id="notificationModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <h2>Notifications</h2>
+                        <ul id="notificationList"></ul>
+                    </div>
+                </div>
+            
+                <div id="notifications" style="position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #ccc; background-color: #fff; z-index: 1000;"></div>
+                <a href="{% url 'profile' %}">
+                    <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
+                </a>
             </div>
         </div>
         {% endblock %}
@@ -74,8 +92,9 @@
                     <a hx-get="{% url 'login' %}"
                        hx-trigger="click"
                        hx-target="#main"
-                       hx-swap="outerHTML">
-                        <button class="select-item logout-icon">
+                       hx-swap="outerHTML"
+                       class="logout-icon">
+                        <button class="select-item">
                             <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
                             <span class="icon-title">Logout</span>
                         </button>

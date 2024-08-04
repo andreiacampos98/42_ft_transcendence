@@ -34,7 +34,7 @@ urlpatterns =[
     #path('reset_code/', views.resetcode, name='reset_code'),
     #path('set_new_password/', views.setnewpassword, name='set_new_password'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
-    path('profile/<str:username>/', views.UserViewProfile, name='user_profile'),
+    path('profile/<str:username>', views.UserViewProfile, name='user_profile'),
     #re_path('^', include(router.urls)),
 
 
