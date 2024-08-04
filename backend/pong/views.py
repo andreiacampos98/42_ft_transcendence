@@ -21,7 +21,7 @@ from rest_framework import status
 from django.db.models import Q
 from django.http import JsonResponse
 from .models import Users, Friends, Notifications
-from .serializers import UsersSerializer, FriendsSerializer, NotificationsSerializer, GamesSerializer
+from .serializers import *
 
 
 #---------------------------------------Users--------------------------
@@ -236,6 +236,24 @@ def game_create(request):
 		return JsonResponse({'error': 'Invalid JSON'}, status=400)
 	except KeyError as e:
 		return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+
+# --------------------------------------- Tournaments ---------------------------------------
+
+@csrf_exempt
+def tournament_create(request):
+	try:
+		data = json.loads(request.body.decode('utf-8'))
+		serializer = TournamentsSerializer(data=data)
+		if serializer.is_valid():
+			serializer.save()
+			return JsonResponse(serializer.data, status=201)
+		return JsonResponse(serializer.errors, status=400)
+	except json.JSONDecodeError:
+		return JsonResponse({'error': 'Invalid JSON'}, status=400)
+	except KeyError as e:
+		return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+
+
 
 
 # --------------------------------------- Pages ---------------------------------------

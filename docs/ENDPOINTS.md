@@ -15,10 +15,10 @@
 
 ## Games
 
-| Route | HTTP Method | Description | Parameters |
-| --- | :--: | --- | --- |
-| `/games/create` | `POST` | Post a new game (started or ended ?)| |
-| `/games/{id}/stats` | `GET` | Retrieve statistics for a given game  | `id` - the game's id |
+| Route | HTTP Method | Description | Parameters | Name |
+| --- | :--: | --- | --- | --- |
+| `/games/create` | `POST` | Post a new game (started or ended ?)|  | `game-create` |
+| `/games/{id}/stats` | `GET` | Retrieve statistics for a given game | `id` - the game's id | `???` |
 
 ## Tournaments
 

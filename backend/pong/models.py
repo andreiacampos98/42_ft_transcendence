@@ -116,7 +116,6 @@ class Tournaments(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    
     def save(self, *args, **kwargs):
         if self.status not in ['Open', 'Ongoing', 'Finished']:
             raise ValidationError('Status must be one of "[\'Open\', \'Ongoing\'], \'Finished\']"')

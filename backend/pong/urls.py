@@ -52,7 +52,11 @@ urlpatterns =[
     path('notifications/<int:user_id>', views.get_user_notifications, name='notifications'),
     path('notifications/<int:user_id>/<int:notif_id>', views.delete_user_notification, name='delete-notification'),
 
+	# Games
     path('games/create', views.game_create, name='game-create'),
+
+	# Tournaments
+    path('tournaments/create', views.tournament_create, name='tournament-create'),
 
 
 ] 
