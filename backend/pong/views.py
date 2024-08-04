@@ -20,8 +20,8 @@ from rest_framework import status
 
 from django.db.models import Q
 from django.http import JsonResponse
-from .models import Users, Friends
-from .serializers import UsersSerializer, FriendsSerializer
+from .models import Users, Friends, Notifications
+from .serializers import UsersSerializer, FriendsSerializer, NotificationsSerializer
 
 
 #---------------------------------------Users--------------------------
@@ -182,7 +182,7 @@ def accept_friend(request, user1_id, user2_id):
         friendship = Friends.objects.filter(
             (Q(user1_id=user1_id, user2_id=user2_id) | Q(user1_id=user2_id, user2_id=user1_id))
         ).first()
-        
+
         if not friendship:
             return JsonResponse({"error": "Friendship does not exist."}, status=404)
         
@@ -195,6 +195,26 @@ def accept_friend(request, user1_id, user2_id):
             "message": "User accept the request."
         }
         return JsonResponse(response_data, status=200)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+#--------------------------- Notifications ----------------------------------
+
+def get_user_notifications(request, user_id):
+    if request.method == "GET":
+        notifications = Notifications.objects.filter(user_id = user_id)
+        serializer = NotificationsSerializer(notifications, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+@csrf_exempt
+def delete_user_notification(request, user_id, notif_id):
+    if request.method == "DELETE":
+        notifications = Notifications.objects.filter(Q(user_id = user_id) & Q( id = notif_id))
+        notifications.delete()
+        response_data = {
+            "message": "Notification deleted."
+        }
+        return JsonResponse(response_data, status=204)
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 # ------------------------------------------

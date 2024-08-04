@@ -57,7 +57,7 @@
 
 ## Notifications
 
-| Route | HTTP Method | Description | Parameters |
-| --- | :--: | --- | --- |
-| `/notifications/user/{id}` | `GET` | List all notifications for a given user | `id` - the user's id |
-| `/notifications/user/{id}`| `DELETE` | Delete user notification | `id` - the user's id |
+| Route | HTTP Method | Description | Parameters | View | URL - Name |
+| --- | :--: | --- | --- | --- | --- |
+| `/notifications/<int:user_id>` | `GET` | List all notifications for a given user | `id` - the user's id | get_user_notifications | 'notifications/<int:user_id>' - notifications |
+| `/notifications/<int:user_id>/<int:notif_id>`| `DELETE` | Delete user notification | `id` - the user's id | get_user_notifications | 'notifications/<int:user_id>' - notifications |

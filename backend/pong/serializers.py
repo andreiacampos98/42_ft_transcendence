@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
-from .models import Users, Friends
+from .models import Users, Friends, Notifications
 
 # Serializers define the API representation.
 # Django Rest Framework uses serializers to handle converting data between 
@@ -48,3 +48,8 @@ class FriendsSerializer(serializers.ModelSerializer):
         model = Friends
         fields = ['user1_id', 'user2_id', 'accepted', 'created_at']
 
+class NotificationsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Notifications
+        fields = ['id', 'type', 'status', 'description', 'user_id', 'other_user_id', 'created_at']
