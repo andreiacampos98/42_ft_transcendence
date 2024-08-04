@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <div class="main-content">
         {% if searched %}
-            <h3>You searched for {{ searched }} </h3>
+            <h3>You searched for "{{ searched }}" </h3>
             <br/>
             {% for users in userss %}
                 <a hx-get="{% url 'user_profile' users.username %}"

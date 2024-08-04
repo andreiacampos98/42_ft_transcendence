@@ -8,10 +8,10 @@
 | `/users/create` | `POST` | Create user | | user_create | 'users/create' -  user-create |
 | `/users/{id}/update`| `PUT`  `PATCH` | Update user | `id` - the user's id | user_update | 'users/<int:pk>/update' - user-update |
 | `/users/{id}/password` | `PUT` | Update user's password | `id` - the user's id| user_password | 'users/<int:pk>/password' - user-update-password |
-| `/users/{prefix}` | `GET` | List/Search users that match a given prefix | `prefix` - a prefix to be matched with all available usernames | search_users | 'users/<str:value>' - search-users
-| `/users/suggest` | `GET` | List users that match a given prefix while the user is typing |  | search_users |  users/suggest - suggest-users
-| `/users/login`| `POST` | Login user | |
-| `/users/auth` | `POST` | Login user with 42 | |
+| `users/search/<str:value>` | `GET` | List users that match a given prefix | `value` - a prefix to be matched with all available usernames | search_users | 'users/search/<str:value>' - search-users-with-value
+| `users/search` | `GET` | List users that match a given prefix while the user is typing |  | search_users |  'users/search' - search-users
+| ``| `POST` | Login user | | loginview | ' ' - login
+| `users/auth` | `POST` | Login user with 42 | |
 
 ## Games
 
@@ -49,9 +49,9 @@
 
 | Route | HTTP Method | Description | Parameters | View | URL - Name |
 | --- | :--: | --- | --- |--- | --- |
-| `/friends/{uid1}/{uid2}` | `POST` | Add a new friend request. Sends a notification to the other user. | `uid1` - the first user, `uid2` - the second user |
+| `/friends/{uid1}/{uid2}` | `POST` | Add a new friend request. Sends a notification to the other user. | `uid1` - the first user, `uid2` - the second user | add_friend | 'friends/<int:user1_id>/<int:user2_id>' - friend-add
 | `/friends/{uid1}/{uid2}` | `DELETE` | Delete a friend / Deny a friend request | `uid1` - the first user, `uid2` - the second user |
-| `/friends/{id}` | `GET` | Retrieve all user's friends | `id` - the  user's id to get the friends from | get_user_friends | 'friends/<int:user_id>' - friends-detail |
+| `/friends/{id}` | `GET` | Retrieve all user's friends | `id` - the  user's id to get the friends from | get_user_friends | 'friends/<int:user_id>' - friends-detail | get_user_friends | 'friends/<int:user_id>' - friends-detail
 | `/friends/accept/{uid1}/{uid2}` | `POST` | Accept a friend request. Sends a notification to the other user. | `uid1` - the first user, `uid2` - the second user |
 
 

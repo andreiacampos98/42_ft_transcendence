@@ -46,5 +46,5 @@ class FriendsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Friends
-        fields = ['user1_id', 'user2_id', 'created_at']
+        fields = ['user1_id', 'user2_id', 'accepted', 'created_at']
 

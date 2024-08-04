@@ -3,35 +3,28 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from rest_framework.parsers import JSONParser, MultiPartParser
+
 from django.contrib.auth.hashers import make_password 
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-#from django.contrib.auth.models import User
+
+
 import json
 from icecream import ic
 from .models import Users
 
-from .serializers import UsersSerializer, FriendsSerializer
 
 # Since we want to create an API endpoint for reading, creating, and updating 
 # Company objects, we can use Django Rest Framework mixins for such actions.
-from rest_framework import generics, status
-from rest_framework.mixins import (
-    CreateModelMixin,   #POST
-    RetrieveModelMixin, #GET 
-    UpdateModelMixin,   #PUT
-    DestroyModelMixin,  #DELETE
-    ListModelMixin,     # add a list method to list several
-)
-from rest_framework.viewsets import GenericViewSet
+from rest_framework import status
+
 from django.db.models import Q
 from django.http import JsonResponse
 from .models import Users, Friends
-from .serializers import UsersSerializer
+from .serializers import UsersSerializer, FriendsSerializer
 
+
+#---------------------------------------Users--------------------------
 
 def user_detail(request, pk):
     if request.method == "GET":
@@ -40,7 +33,6 @@ def user_detail(request, pk):
         return JsonResponse(serializer.data, safe=False)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-
 
 @csrf_exempt
 @require_POST
@@ -98,53 +90,91 @@ def user_password(request, pk):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-# #when the user click in the search
+
+def no_cache(view_func):
+    def wrapper(*args, **kwargs):
+        response = view_func(*args, **kwargs)
+        response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+        return response
+    return wrapper
+
 @csrf_exempt
-def search_users(request, value):
+@no_cache
+def search_users(request, value=''):
     if request.method == "GET":
-        userss = Users.objects.filter(username__icontains=value)
-        serializer = UsersSerializer(userss, many=True)  # Set many=True for querysets
-        return JsonResponse(serializer.data, safe=False)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            term = request.GET.get('term', '')
+            if len(term) > 2:  # Only search if term is longer than 2 characters
+                users = Users.objects.filter(username__icontains=term).values('username')
+                return JsonResponse(list(users), safe=False)
+            else:
+                return JsonResponse([], safe=False)  # Return an empty list for short terms
+        else:
+            userss = Users.objects.filter(username__icontains=value)
+            return render(request, 'pages/search_users.html', {'searched': value, 'userss': userss})
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-
-#when the user type in the search
-def suggest_users(request):
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            term = request.GET.get('term', '')
-            users = Users.objects.filter(username__icontains=term).values('username')
-            return JsonResponse(list(users), safe=False)
-    else:
-        return JsonResponse({'error': 'Invalid request'}, status=400)
-
 
 #---------------------------Friends----------------------------------
 
 #friends displayed in he side bar right
 def get_user_friends(request, user_id):
     if request.method == "GET":
-        friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+        friends = Friends.objects.filter(
+            (Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(accepted=True)
+        )
         serializer = FriendsSerializer(friends, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 
 
-@login_required
+@csrf_exempt
 def add_friend(request, user1_id, user2_id):
-	if request.method == "POST":
-		if user1_id == user2_id:
-			return Response({"error": "Users cannot be friends with themselves."}, status=status.HTTP_400_BAD_REQUEST)		
+    if request.method == "POST":
+        # Check if user is trying to add themselves as a friend
+        if user1_id == user2_id:
+            return JsonResponse({"error": "Users cannot be friends with themselves."}, status=400)
 
-		if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
-			return Response({"error": "Friendship already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        # Check if the friendship already exists
+        if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or \
+           Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
+            return JsonResponse({"error": "Friendship already exists."}, status=400)
 
-		user1 = Users.objects.get(id=user1_id)
-		user2 = Users.objects.get(id=user2_id)
-		friend = Friends.objects.create(user1_id=user1, user2_id=user2)
-		friend.save()
+        # Get the user objects
+        user1 = get_object_or_404(Users, id=user1_id)
+        user2 = get_object_or_404(Users, id=user2_id)
 
-		return redirect('UserViewProfile', user1.username)
+        # Create the friendship request
+        friend = Friends.objects.create(user1_id=user1, user2_id=user2, accepted=False)
 
+        response_data = {
+            "message": "Friendship request sent successfully.",
+            "user1": user1.username,
+            "user2": user2.username,
+            "accepted": friend.accepted
+        }
+        return JsonResponse(response_data, status=201)
+
+    elif request.method == "DELETE":
+        # Check if the friendship exists
+        friendship = Friends.objects.filter(
+            (Q(user1_id=user1_id, user2_id=user2_id) | Q(user1_id=user2_id, user2_id=user1_id))
+        ).first()
+
+        if not friendship:
+            return JsonResponse({"error": "Friendship does not exist."}, status=404)
+
+        # Delete the friendship
+        friendship.delete()
+
+        response_data = {
+            "message": "Friendship deleted successfully."
+        }
+        return JsonResponse(response_data, status=204)
+    # Handle methods other than POST
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
 # ------------------------------------------

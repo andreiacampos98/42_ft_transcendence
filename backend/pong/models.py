@@ -68,6 +68,7 @@ class Friends(models.Model):
     class Meta:
         unique_together = ["user1_id", "user2_id"]
 
+
 class UserStats(models.Model):
     id = models.AutoField(primary_key=True)
     nb_games_played = models.IntegerField()
