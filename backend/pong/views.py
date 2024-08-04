@@ -148,7 +148,8 @@ def add_remove_friend(request, user1_id, user2_id):
 
         # Create the friendship request
         friend = Friends.objects.create(user1_id=user1, user2_id=user2, accepted=False)
-
+        notification = Notifications.objects.create(type="Friend Request", status="Pending", description=" has request to be your friend.", user_id = user2, other_user_id = user1)
+        notification.save()
         response_data = {
             "message": "Friendship request sent successfully.",
             "user1": user1.username,
@@ -191,6 +192,10 @@ def accept_friend(request, user1_id, user2_id):
         
         friendship.accepted = True
         friendship.save()
+        user1 = get_object_or_404(Users, id=user1_id)
+        user2 = get_object_or_404(Users, id=user2_id)
+        notification = Notifications.objects.create(type="Accepted Friend Request", status="Pending", description=" has accepted your friend request!", user_id = user2, other_user_id = user1)
+        notification.save()
         response_data = {
             "message": "User accept the request."
         }
@@ -217,7 +222,7 @@ def delete_user_notification(request, user_id, notif_id):
         return JsonResponse(response_data, status=204)
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
-# ------------------------------------------
+# ----------------------------- Pages ---------------------------------------
 
 def signup(request):
     if request.method == "POST":

@@ -49,6 +49,8 @@ class FriendsSerializer(serializers.ModelSerializer):
         fields = ['user1_id', 'user2_id', 'accepted', 'created_at']
 
 class NotificationsSerializer(serializers.ModelSerializer):
+    user_id = UsersSerializer(read_only=True)
+    other_user_id = UsersSerializer(read_only=True)
 
     class Meta:
         model = Notifications
