@@ -3,9 +3,6 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from rest_framework.routers import DefaultRouter
 from . import views
-from .views import ( 
-    UserViewProfile
-)
 
 # Routers provide an easy way of automatically determining the URL conf.
 #router = DefaultRouter()
@@ -16,7 +13,6 @@ urlpatterns =[
     path('', views.loginview, name="login"),
     path('home/', views.home, name="home"),
     path('tournaments/', views.tournaments, name="tournaments"),
-    path('profile/', views.profile, name="profile"),
     path('signup/', views.signup, name='signup'),
     path('password-reset/', 
             auth_views.PasswordResetView.as_view(template_name='pages/password_reset.html'), 
@@ -34,7 +30,7 @@ urlpatterns =[
     #path('reset_code/', views.resetcode, name='reset_code'),
     #path('set_new_password/', views.setnewpassword, name='set_new_password'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
-    path('profile/<str:username>', views.UserViewProfile, name='user_profile'),
+    path('profile/<str:username>', views.profile, name='user_profile'),
     #re_path('^', include(router.urls)),
 
 

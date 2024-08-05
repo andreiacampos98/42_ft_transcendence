@@ -91,29 +91,19 @@ def user_password(request, pk):
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 
-def no_cache(view_func):
-    def wrapper(*args, **kwargs):
-        response = view_func(*args, **kwargs)
-        response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-        response['Pragma'] = 'no-cache'
-        response['Expires'] = '0'
-        return response
-    return wrapper
-
 @csrf_exempt
-@no_cache
-def search_users(request, value=''):
+def search_users(request):
     if request.method == "GET":
+        term = request.GET.get('searched', '')
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            term = request.GET.get('term', '')
             if len(term) > 2:  # Only search if term is longer than 2 characters
-                users = Users.objects.filter(username__icontains=term).values('username')
+                users = Users.objects.filter(username__icontains=term).values('username', 'picture', 'status')
                 return JsonResponse(list(users), safe=False)
             else:
                 return JsonResponse([], safe=False)  # Return an empty list for short terms
         else:
-            userss = Users.objects.filter(username__icontains=value)
-            return render(request, 'pages/search_users.html', {'searched': value, 'userss': userss})
+            userss = Users.objects.filter(username__icontains=term)
+            return render(request, 'pages/search_users.html', {'searched': term, 'userss': userss})
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
@@ -315,31 +305,22 @@ def tournaments(request):
     return render(request,"pages/tournaments.html", context)
 
 @login_required
-def profile(request):
-    user_id = request.user.id  # Obtém o ID do usuário atual
-
-    # Obtém a lista de amigos
-    friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
-    context = {
-        'friends': friends,
-        'user_id': user_id
-    }
-    return render(request,'pages/profile.html', context)
-
-@login_required
-def UserViewProfile(request, username):
+def profile(request, username):
 
     user_id = request.user.id  # Obtém o ID do usuário atual
-
+    user_profile = get_object_or_404(Users, username=username)
+    is_own_profile = user_profile == request.user
     # Obtém a lista de amigos
     friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
     user = get_object_or_404(Users, username=username)
     context = {
         'friends': friends,
         'user_id': user_id,
-        'user': user
+        'user': user,
+        'is_own_profile': is_own_profile,
     }
     return render(request, 'pages/view_profile.html', context)
+
 
 @login_required
 def signout(request):

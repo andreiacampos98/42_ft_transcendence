@@ -45,7 +45,12 @@ function toggleSidebar(user_id) {
             friendBlock.dataset.status = 'online';
             
             const link = document.createElement('a');
-            //! MISSING PROFILE LINK
+            link.href = `/profile/${friend.username}`;
+            link.setAttribute('hx-get', `/profile/${friend.username}`);
+            link.setAttribute('hx-target', '#MainPage'); // Assume que você tem uma div com id "main-content"
+            link.setAttribute('hx-swap', 'outerHTML');
+            link.setAttribute('hx-trigger', 'click');
+            link.style.display = 'block'; 
 
             const profilePic = document.createElement('img');
             profilePic.classList.add('profile-pic');
@@ -64,10 +69,11 @@ function toggleSidebar(user_id) {
 
             friendInfo.appendChild(username);
             friendInfo.appendChild(status);
-            link.appendChild(friendBlock);
             friendBlock.appendChild(profilePic);
             friendBlock.appendChild(friendInfo);
-            sidebar.appendChild(friendBlock);
+            link.appendChild(friendBlock);
+            sidebar.appendChild(link);
+
         });
     });
 }

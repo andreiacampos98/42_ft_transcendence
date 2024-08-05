@@ -24,7 +24,10 @@
     {% if user.is_authenticated %}
         {% block top-bar %}
         <div class="top-bar">
-            <form method="GET" action="{% url 'search-users' %}">
+            <form method="GET" action="{% url 'search-users' %}" hx-get="{% url 'search-users' %}"
+                hx-trigger="click"
+                hx-target="#MainPage"
+                hx-swap="outerHTML">
                 <div class="search-container">
                     <input type="text" placeholder="Search for players..." name="searched" id="search" onkeyup="getSuggestions()">
                     <button type="submit" id="searchButton">
@@ -48,7 +51,10 @@
                 </div>
             
                 <div id="notifications" style="position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #ccc; background-color: #fff; z-index: 1000;"></div>
-                <a href="{% url 'profile' %}">
+                <a hx-get="{% url 'user_profile' user.username %}"
+                    hx-trigger="click"
+                    hx-target="#MainPage"
+                    hx-swap="outerHTML">
                     <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
                 </a>
             </div>
@@ -80,7 +86,7 @@
                             <span class="icon-title">Tournament</span>
                         </button>
                     </a>
-                    <a hx-get="{% url 'profile' %}"
+                    <a hx-get="{% url 'user_profile' user.username %}"
                        hx-trigger="click"
                        hx-target="#MainPage"
                        hx-swap="outerHTML">
