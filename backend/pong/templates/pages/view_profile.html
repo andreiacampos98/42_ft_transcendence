@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="{% static 'css/match-block.css' %}">
         <script defer src="{% static 'js/match-block.js' %}"></script>
         <script defer src="{% static 'js/description.js' %}"></script>
+        <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
         <div class="main">
             <div class="side-profile">
                 <img class="profile-big" src="{{ user.picture.url }}" alt="User">
@@ -19,10 +20,19 @@
                     <button class="change">
                         <span class="change-b" id="change">Change Password</span>
                     </button>
+                {% elif is_friend %}
+                    {% if friendship_status %}
+                        <form id="remove-friend-form" onsubmit="return friends_remove('{{ user_id }}', '{{ user.id }}')">
+                            {% csrf_token %}
+                            <button class="friend-status">Remove Friend</button>
+                        </form>
+                    {% else %}
+                        <button class="friend-status">Request Sent</button>
+                    {% endif %}
                 {% else %}
-                    <form action="/friends/{{ user_id }}/{{ user.id }}" method="POST">
+                    <form id="add-friend-form" onsubmit="return friends_add('{{ user_id }}', '{{ user.id }}')">
                         {% csrf_token %}
-                        <button >Add Friend</button>
+                        <button type="submit">Add Friend</button>
                     </form>
                 {% endif %}
                 

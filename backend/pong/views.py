@@ -312,14 +312,28 @@ def profile(request, username):
     is_own_profile = user_profile == request.user
     # Obtém a lista de amigos
     friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+    friendship = Friends.objects.filter(
+        (Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
+    ).first()
+
+    if friendship:
+        is_friend = True
+        friendship_status = friendship.accepted
+    else:
+        is_friend = False
+        friendship_status = None
+
     user = get_object_or_404(Users, username=username)
     context = {
         'friends': friends,
         'user_id': user_id,
         'user': user,
         'is_own_profile': is_own_profile,
+        'is_friend': is_friend,
+        'friendship_status': friendship_status
     }
     return render(request, 'pages/view_profile.html', context)
+
 
 
 @login_required
