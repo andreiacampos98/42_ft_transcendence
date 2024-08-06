@@ -51,17 +51,13 @@ def user_create(request):
 
 @csrf_exempt
 def user_update(request, pk):
-    if request.method in ['PUT', 'PATCH']:
-        user = get_object_or_404(Users, pk=pk)
+    user = get_object_or_404(Users, pk=pk)
 
-        if request.content_type == 'application/json':
-            data = json.loads(request.body.decode('utf-8'))
-        else:
-                # Merge request.POST and request.FILES for form-data handling
-            data = request.POST.copy()
-            data.update(request.FILES)
+    if request.method == 'POST':
+        data = request.POST.copy()
+        data.update(request.FILES)
 
-        serializer = UsersSerializer(user, data=data, partial=(request.method == 'PATCH'))
+        serializer = UsersSerializer(user, data=data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -306,7 +302,6 @@ def tournaments(request):
 
 @login_required
 def profile(request, username):
-
     user_id = request.user.id  # Obtém o ID do usuário atual
     user_profile = get_object_or_404(Users, username=username)
     is_own_profile = user_profile == request.user
@@ -315,6 +310,7 @@ def profile(request, username):
     friendship = Friends.objects.filter(
         (Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
     ).first()
+
 
     if friendship:
         is_friend = True

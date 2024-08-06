@@ -45,7 +45,11 @@
 }
 
 textarea {
-    width: inherit;
+    width: 100%;
+}
+
+#edit-profile-form{
+    width: 100%;
 }
 
 .description{
