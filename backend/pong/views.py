@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from rest_framework.parsers import JSONParser 
 
 from django.contrib.auth.hashers import make_password 
 from django.contrib.auth.forms import AuthenticationForm
@@ -24,7 +25,7 @@ from .models import Users, Friends, Notifications
 from .serializers import *
 
 
-#---------------------------------------Users--------------------------
+#! --------------------------------------- Users ---------------------------------------
 
 def user_detail(request, pk):
 	if request.method == "GET":
@@ -117,7 +118,7 @@ def search_users(request, value=''):
 	else:
 		return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-#---------------------------Friends----------------------------------
+#! --------------------------------------- Friends ---------------------------------------
 
 #friends displayed in he side bar right
 def get_user_friends(request, user_id):
@@ -127,8 +128,6 @@ def get_user_friends(request, user_id):
 		)
 		serializer = FriendsSerializer(friends, many=True)
 	return JsonResponse(serializer.data, safe=False)
-
-
 
 @csrf_exempt
 def add_remove_friend(request, user1_id, user2_id):
@@ -222,7 +221,8 @@ def delete_user_notification(request, user_id, notif_id):
 		return JsonResponse(response_data, status=204)
 	return JsonResponse({"error": "Method not allowed"}, status=405)
 
-# --------------------------------------- Games ---------------------------------------
+#! --------------------------------------- Games ---------------------------------------
+
 @csrf_exempt
 def game_create(request):
 	try:
@@ -237,7 +237,7 @@ def game_create(request):
 	except KeyError as e:
 		return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
 
-# --------------------------------------- Tournaments ---------------------------------------
+#! --------------------------------------- Tournaments ---------------------------------------
 
 @csrf_exempt
 def tournament_create(request):
@@ -253,10 +253,28 @@ def tournament_create(request):
 	except KeyError as e:
 		return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
 
+@csrf_exempt
+def tournament_update(request, tournament_id):
+	if request.method == 'PATCH':	
+		if request.content_type == 'application/json':
+			data = json.loads(request.body.decode('utf-8'))
+		else:
+			return JsonResponse({'error': 'Only JSON allowed'}, status=406)
+
+		request_data = JSONParser().parse(request)
+		tournament = get_object_or_404(Tournaments, pk=tournament_id)
+		tournament.status = request_data['status']
+
+		serializer = TournamentsSerializer(tournament, data=request_data, partial=True)
+		if serializer.is_valid():
+			serializer.save()
+			return JsonResponse(serializer.data)
+		return JsonResponse(serializer.errors, status=400)
+	else:
+		return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 
-
-# --------------------------------------- Pages ---------------------------------------
+#! --------------------------------------- Pages ---------------------------------------
 
 def signup(request):
 	if request.method == "POST":

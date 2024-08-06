@@ -25,7 +25,7 @@
 | Route | HTTP Method | Description | Parameters |
 | --- | :--: | --- | --- |
 | `/tournaments/create`| `POST` | Create tournament | |
-| `/tournaments/{id}` | `PUT` | Update tournament | `id` - the tournament's id |
+| `/tournaments/{id}` | `PUT` | Update tournament (status only) | `id` - the tournament's id |
 | `/tournaments/{id}` | `DELETE` | Delete tournament | `id` - the tournament's id |
 | `/tournaments/leave/{id}/{uid}` | `DELETE` | Leave a tournament | `id` - the tournament's id, `uid` - the user who's leaving the tournament |
 
