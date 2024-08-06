@@ -22,7 +22,7 @@
                     </button>
                 {% elif is_friend %}
                     {% if friendship_status %}
-                        <form id="remove-friend-form" onsubmit="return friends_remove('{{ user_id }}', '{{ user.id }}')">
+                        <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user}}')">
                             {% csrf_token %}
                             <button class="friend-status">Remove Friend</button>
                         </form>
@@ -30,7 +30,7 @@
                         <button class="friend-status">Request Sent</button>
                     {% endif %}
                 {% else %}
-                    <form id="add-friend-form" onsubmit="return friends_add('{{ user_id }}', '{{ user.id }}')">
+                    <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user }}')">
                         {% csrf_token %}
                         <button type="submit">Add Friend</button>
                     </form>
@@ -43,7 +43,9 @@
                         {% endfor %}
                     </ul>
                 </div>
-
+                <form id="description-form">
+                    <textarea id="description" name="description" rows="4" cols="50"></textarea>
+                </form>
 
                 <div class="text-block">
                     <span> {{ user.description }}</span>

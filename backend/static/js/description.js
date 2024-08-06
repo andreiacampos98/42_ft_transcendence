@@ -11,7 +11,7 @@ $(document).ready(function() {
 
     $('#description').keypress(function(event) {
         // Check if the key pressed is Enter (key code 13)
-        console.log('Key pressed: ' + event.key);
+        console.log('Key pressed: ' + event.which);
         if (event.which == 13) {
             event.preventDefault();
             var description = $('#description').val();
