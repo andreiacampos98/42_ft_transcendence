@@ -99,7 +99,7 @@ def search_users(request):
                 return JsonResponse([], safe=False)  # Return an empty list for short terms
         else:
             userss = Users.objects.filter(username__icontains=term)
-            return render(request, 'pages/search_users.html', {'searched': term, 'userss': userss})
+            return render(request, 'pages/search_users.html', {'searched': term, 'users': userss, 'numbers': userss.count()})
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
