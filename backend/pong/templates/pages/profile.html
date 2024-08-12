@@ -1,0 +1,110 @@
+{% extends 'navs.html' %}
+{% load static %}
+
+
+{% block main_content %}
+    <div class="main-content">
+        <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+        <link rel="stylesheet" href="{% static 'css/match-block.css' %}">
+        <script defer src="{% static 'js/match-block.js' %}"></script>
+        <div class="main">
+            <div class="side-profile">
+                <img class="profile-big" src="{{ user.picture.url }}" alt="User">
+                <h3 class="description"> {{ user.username }} </h3>
+                <h3 class="description"> {{ user.status }} </h3>
+                
+                <div class="text-block">
+                    <ul id="descriptions-list">
+                        {% for description in descriptions %}
+                        <li id="description-{{ description.id }}">{{ description.content }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <button class="edit" id="edit-profile-button">Edit Profile</button>
+                <button class="change">
+                    <span class="change-b" id="change">Change Password</span>
+                </button>
+                <form id="description-form">
+                    <textarea id="description" name="description" rows="4" cols="50"></textarea>
+                </form>
+                <h5 class="text-block"> Email {{ user.email }}</h5>
+                <h5 class="text-block"> Joined {{ user.created_at }}</h5>
+            </div>
+            <div class="stats-history">
+                <div class="stats">
+                    <div class="topic">
+                        <img class="icon" src="{% static 'assets/icons/chart.png' %}" alt="chart">
+                        <span class="icon-title3">Your Stats</span>
+                    </div>
+                    <div class="stats2">
+                        <div class="percentages">
+                            <div class="stats-head">
+                                <div class="stat">
+                                    <h4 class="stats-title">WIN Rate</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">WINS</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">LOSSES</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">GOALS SCORED</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                                <div class="stat">
+                                    <h4 class="stats-title">GOALS SUFFERED</h4>
+                                    <h6 class="winr"> 100%</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="graphs">
+                            <div class="graph1">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                            </div>
+                            <div class="graph2">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                            </div>
+                            <div class="graph3">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                            </div>
+                            <div class="graph4">
+                                <div class="numbers-stat">
+                                    <h6>21312</h6>
+                                    <h6>21312</h6>
+                                </div>
+                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="topic">
+                        <img class="icon" src="{% static 'assets/icons/history.png' %}" alt="chart">
+                        <span class="icon-title3">Match History</span>
+                    </div>
+                    <div class="stats2">
+                        <div id="match-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

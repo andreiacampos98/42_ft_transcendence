@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
-from .models import Users
+from .models import Users, Friends
 
 # Serializers define the API representation.
 # Django Rest Framework uses serializers to handle converting data between 
@@ -9,6 +9,8 @@ from .models import Users
 #  our objects easier. 
 # The most common one we use is a ModelSerializer, 
 # which conveniently can be used to serialize data for Company objects:
+
+
 class UsersSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -30,3 +32,12 @@ class UsersSerializer(serializers.ModelSerializer):
             instance.password = make_password(validated_data['password'])
         instance.save()
         return instance
+
+class FriendsSerializer(serializers.ModelSerializer):
+    user1_id = UsersSerializer(read_only=True)
+    user2_id = UsersSerializer(read_only=True)
+
+    class Meta:
+        model = Friends
+        fields = ['user1_id', 'user2_id', 'created_at']
+

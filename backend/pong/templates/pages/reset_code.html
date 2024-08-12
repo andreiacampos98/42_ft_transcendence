@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <div class="login-container">
+        <div class="login-container2">
+            <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
+            <h2 class="title" >Password reset</h2>
+            <h6 class="title" >We sent the instructions to {{ email }}</h6>
+            
+            <form id="loginForm" method="POST" hx-post="{% url 'set_new_password' %}" hx-target="#main" hx-swap="innerHTML">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="code">Code</label>
+                    <input type="text" id="code" name="code" placeholder="Enter the code" required> 
+                </div>              
+                <button type="submit">Continue</button>
+            </form>
+            <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">            
+            Didn't receive the email? <a class="sign-up" href="{% url 'login' %}" hx-get="{% url 'login' %}" hx-target="#main" hx-swap="innerHTML"> Click to resend</a>
+            <br>
+            <h6>© 42 Porto 2024</h6>
+        </div>
+    </div>
+
+{% endblock %}
+    
