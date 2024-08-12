@@ -1,16 +1,20 @@
 .main-content {
-    background-color: #162728;
+    background-color: #1D2731;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
 	margin-left: 3vw;
-    
+    display: flex;
+    position: fixed;
+    justify-content: space-between;
+	align-items: center;
+    text-align: center;
 }
 
 .main {
-    width: 90%;
-	margin-left: 3vw;
+    width: 60%;
+	margin-left: 10vw;
     height: 80%;
     display: flex;
     position: fixed;
@@ -37,18 +41,22 @@
     position: relative;
 }
 
+.group {
+    color: white;
+    font-size: large;
+}
 .player {
-    background-color: #1A3141;
+    background-color: #13232e;
     border: 2px solid #1A3141;
     color: #8E8E8E;
-    border-radius: 5px;
-    padding: 10px;
+    border-radius: 10px;
     margin: 5px;
     display: flex;
     align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 150px;
+    width: 250px;
+    height: 50px;;
 }
 
 .player:hover {
@@ -66,6 +74,14 @@
     font-weight: bold;
 }
 
+.score2 {
+    background-color: #1A3141;
+    padding: 10px;
+    height: inherit;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+}
 .score {
     font-size: 14px;
     color: #666;

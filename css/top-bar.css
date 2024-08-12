@@ -7,7 +7,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    background-color: #1B3E40;
+    background-color: #1A3141;
     border-bottom: 1px solid #295C5F;
     transition: filter 0.3s ease, transform 0.3s ease;
 
@@ -26,9 +26,9 @@
 .search-container input {
     width: 100%; /* Adjust width to leave space for icon */
     padding: 10px;
-    border: 1px solid #162728;
+    border: 1px solid #1D2731;
     border-radius: 5px;
-    background-color: #162728;
+    background-color: #1D2731;
     outline: none; /* Remove default focus outline */
     color: #FFFFFF;
 }

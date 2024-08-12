@@ -1,6 +1,6 @@
 
 .main-content {
-	background-color: #162728;
+	background-color: #1D2731;
     top: 0;
     left: 0;
     width: 100vw;
@@ -23,7 +23,7 @@
     align-items: center;
     width: 250px; /* Adjust width as needed */
     padding: 20px;
-    background-color: #1B3E40; /* Light gray background for side profile */
+    background-color: #1A3141; /* Light gray background for side profile */
     border-radius: 10px;
     color: #FFFFFF;
 }
@@ -105,7 +105,7 @@
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
-    background-color: #1B3E40; /* White background for stats sections */
+    background-color: #1A3141; /* White background for stats sections */
     border-radius: 10px;
 }
 
@@ -133,7 +133,7 @@
     width: 15vw;
     height: 100px;
     margin-left: 10px;
-    background-color: #1B3E40; /* Light gray background for graphs */
+    background-color: #1A3141; /* Light gray background for graphs */
     display: flex;
     align-items: center;
     justify-content: center;

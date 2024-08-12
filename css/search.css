@@ -1,0 +1,41 @@
+.main-content {
+	background-color: #1D2731;
+    top: 70px;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+	margin-left: 3vw;
+    display: flex;
+    position: fixed;
+	align-items: center;
+    color: white;
+}
+
+.main {
+    margin-left: 100px;
+    width: 90vw;
+
+}
+
+.search {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; 
+
+}
+.square {
+    width: 150px;           /* Width of each square */
+    height: 180px;          /* Height of each square */
+    margin: 5px;           /* Space between squares */
+    display: flex;      
+    flex-direction: column; /* Align content center */
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sub-results {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+    align-items: flex-start;
+}
