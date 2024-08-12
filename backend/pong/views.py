@@ -34,6 +34,7 @@ def user_detail(request, pk):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+
 @csrf_exempt
 @require_POST
 def user_create(request):
@@ -49,12 +50,17 @@ def user_create(request):
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
 
+
 @csrf_exempt
 def user_update(request, pk):
     user = get_object_or_404(Users, pk=pk)
 
     if request.method == 'POST':
         data = request.POST.copy()
+
+        if 'picture' not in request.FILES:
+            data['picture'] = user.picture
+        
         data.update(request.FILES)
 
         serializer = UsersSerializer(user, data=data, partial=True)
@@ -89,19 +95,22 @@ def user_password(request, pk):
 
 @csrf_exempt
 def search_users(request):
-    if request.method == "GET":
-        term = request.GET.get('searched', '')
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            if len(term) > 2:  # Only search if term is longer than 2 characters
-                users = Users.objects.filter(username__icontains=term).values('username', 'picture', 'status')
-                return JsonResponse(list(users), safe=False)
-            else:
-                return JsonResponse([], safe=False)  # Return an empty list for short terms
-        else:
-            userss = Users.objects.filter(username__icontains=term)
-            return render(request, 'pages/search_users.html', {'searched': term, 'users': userss, 'numbers': userss.count()})
-    else:
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    term = request.GET.get('term', '')
+    userss = Users.objects.filter(username__icontains=term)
+    return render(request, 'pages/search_results.html', {'searched': term, 'userss': userss, 'numbers': userss.count()})
+
+
+# @csrf_exempt
+# def search_users(request):
+#     if request.method == "GET":
+#         term = request.GET.get('term', '')
+#         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+#             if len(term) > 2:  # Only search if term is longer than 2 characters
+#                 users = Users.objects.filter(username__icontains=term).values('username')
+#                 return JsonResponse(list(users), safe=False)
+#             else:
+#                 return JsonResponse([], safe=False)  # Return an empty list for short terms
+#     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 #---------------------------Friends----------------------------------
 

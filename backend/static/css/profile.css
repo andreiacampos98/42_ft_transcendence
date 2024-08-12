@@ -1,29 +1,14 @@
-
-.main-content {
-	background-color: #162728;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-	margin-left: 70px;
-    display: flex;
-    position: fixed;
-    justify-content: center;
-	align-items: center;
-    text-align: center;
-}
-
 .main {
-    width: 90vw;
     display: flex;
 }
+
 .side-profile {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 250px; /* Adjust width as needed */
     padding: 20px;
-    background-color: #1B3E40; /* Light gray background for side profile */
+    background-color: #1A3141; /* Light gray background for side profile */
     border-radius: 10px;
     color: #FFFFFF;
 }
@@ -123,7 +108,7 @@ textarea {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
-    background-color: #1B3E40; /* White background for stats sections */
+    background-color: #1A3141; /* White background for stats sections */
     border-radius: 10px;
 }
 
@@ -151,7 +136,7 @@ textarea {
     width: 15vw;
     height: 100px;
     margin-left: 10px;
-    background-color: #1B3E40; /* Light gray background for graphs */
+    background-color: #1A3141; /* Light gray background for graphs */
     display: flex;
     align-items: center;
     justify-content: center;

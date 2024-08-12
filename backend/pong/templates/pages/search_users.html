@@ -2,26 +2,25 @@
 {% load static %}
 
 {% block main_content %}
-    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
     <div class="main-content">
         <div class="main">
             {% if searched %}
                 <h3 class="search-results">Search Results</h3>
                 <div class="sub-results">
-                    <h5 class="nbr-results">Your search for "{{ searched }} has retrieved {{ numbers}} results.</h5>
+                    <h6 class="nbr-results">Your search for "{{ searched }}" has retrieved {{ numbers}} results.</h5>
                 </div>
                 <div class="search">
                     {% for users in userss %}
-
-                    <div class="square">
-                        <a hx-get="{% url 'user_profile' users.username %}"
-                           hx-trigger="click"
-                           hx-target="#MainPage"
-                           hx-swap="outerHTML">
-                        <img src="{{ users.picture.url }}" alt="User Icon">
-                        <span class="name">{{ users.username }}</span>
-                        </a>
-                    </div>
+                        <div class="square">
+                            <a hx-get="{% url 'user_profile' users.username %}"
+                            hx-trigger="click"
+                            hx-target="#MainPage"
+                            hx-swap="outerHTML">
+                            <img src="{{ users.picture.url }}" alt="User Icon">
+                            <h3 class="name">{{ users.username }}</h3>
+                            </a>
+                        </div>
                     {% endfor %}
 
                 </div>
@@ -29,5 +28,7 @@
         </div>
     </div>
 {% endblock %}
+
+
 
 

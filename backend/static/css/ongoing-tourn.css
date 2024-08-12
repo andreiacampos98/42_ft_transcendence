@@ -1,0 +1,87 @@
+.round {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 20%;
+    position: relative;
+}
+
+.matchup {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.group {
+    color: white;
+    font-size: large;
+}
+.player {
+    background-color: #13232e;
+    border: 2px solid #1A3141;
+    color: #8E8E8E;
+    border-radius: 10px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 250px;
+    height: 50px;;
+}
+
+.player:hover {
+    border-color: #007bff;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.name {
+    flex-grow: 1;
+    font-weight: bold;
+}
+
+.score2 {
+    background-color: #1A3141;
+    padding: 10px;
+    height: inherit;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+}
+.score {
+    font-size: 14px;
+    color: #666;
+}
+
+.line {
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: #ccc;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: -1;
+    transition: background-color 0.3s ease;
+}
+
+.round-1 .matchup .line {
+    top: 25%;
+}
+
+.round-2 .matchup .line {
+    top: 25%;
+}
+
+.round-3 .matchup .line {
+    top: 50%;
+    height: 50%;
+}

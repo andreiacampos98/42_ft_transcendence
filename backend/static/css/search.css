@@ -1,0 +1,22 @@
+.search {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; 
+
+}
+.square {
+    width: 150px;           /* Width of each square */
+    height: 180px;          /* Height of each square */
+    margin: 5px;           /* Space between squares */
+    display: flex;      
+    flex-direction: column; /* Align content center */
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sub-results {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+    align-items: flex-start;
+}

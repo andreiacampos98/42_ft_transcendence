@@ -24,10 +24,7 @@
     {% if user.is_authenticated %}
         {% block top-bar %}
         <div class="top-bar">
-            <form method="GET" action="{% url 'search-users' %}" hx-get="{% url 'search-users' %}"
-                hx-trigger="click"
-                hx-target="#MainPage"
-                hx-swap="outerHTML">
+            <form method="GET" action="{% url 'search-users' %}" id="search-form">
                 <div class="search-container">
                     <input type="text" placeholder="Search for players..." name="searched" id="search" onkeyup="getSuggestions()">
                     <button type="submit" id="searchButton">

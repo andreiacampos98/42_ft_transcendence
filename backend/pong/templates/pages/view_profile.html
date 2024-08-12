@@ -3,91 +3,89 @@
 
 
 {% block main_content %}
-    <div class="main-content">
-        <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-        <link rel="stylesheet" href="{% static 'css/match-block.css' %}">
-        <script defer src="{% static 'js/match-block.js' %}"></script>
-        <script defer src="{% static 'js/description.js' %}"></script>
-        <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
-        <div class="main">
-            <div class="side-profile">
-                <div id="change-info1">
-                    <img class="profile-big" src="{{ user.picture.url }}" alt="User">
-                    <h3 class="description"> {{ user.username }} </h3>
-                </div>
-                <h3 class="description"> {{ user.status }} </h3>
-
-                {% if is_own_profile %}
-                    <button class="edit" id="edit-profile-button" onclick="onEditButtonClick()">Edit Profile</button>
-                    <button class="save" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
-                    <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
-                    <button class="change" id="change-password">
-                        <span class="change-b" id="change">Change Password</span>
-                    </button>
-                {% elif is_friend %}
-                    {% if friendship_status %}
-                        <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user}}')">
-                            {% csrf_token %}
-                            <button class="friend-status">Remove Friend</button>
-                        </form>
-                    {% else %}
-                        <button class="friend-status">Request Sent</button>
-                    {% endif %}
-                {% else %}
-                    <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user }}')">
-                        {% csrf_token %}
-                        <button type="submit">Add Friend</button>
-                    </form>
-                {% endif %}
-                
-                <form id="edit-profile-form" method="post" enctype="multipart/form-data" style="display:none;">
-                    {% csrf_token %}
-                    <label for="profile-picture-input">Profile Picture</label>
-                    <img id="profile-picture-preview" src="{{ user.picture.url }}" alt="Profile Picture Preview" style="display:none;">
-                    <input type="file" id="profile-picture-input" name="picture">
-                    
-                    <label for="username-input">Username</label>
-                    <input type="text" id="username-input" name="username" value="{{ user.username }}" required>
-                    
-                    <label for="description-input">Description</label>
-                    <textarea id="description-input" name="description" rows="4" cols="50">{{ user.description }}</textarea>
-                    
-                    <label for="email-input">Email</label>
-                    <input type="email" id="email-input" name="email" value="{{ user.email }}" required>
-                    
-                </form>
-                <div id="change-info2">
-                    <div class="text-block">
-                        <span> {{ user.description }}</span>
-                    </div>
-    
-                    <h5 class="text-block"> Email {{ user.email }}</h5>
-                </div>
-                <h5 class="text-block"> Joined {{ user.created_at }}</h5>
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<link rel="stylesheet" href="{% static 'css/match-block.css' %}">
+<script defer src="{% static 'js/match-block.js' %}"></script>
+<script defer src="{% static 'js/description.js' %}"></script>
+<script defer src="{% static 'js/friends_add_remove.js' %}"></script>
+<div class="main-content">
+    <div class="main">
+        <div class="side-profile">
+            <div id="change-info1">
+                <img class="profile-big" src="{{ user.picture.url }}" alt="User">
+                <h3 class="description"> {{ user.username }} </h3>
             </div>
-            <div class="stats-history">
-                <div class="stats">
-                    <div class="topic">
-                        <img class="icon" src="{% static 'assets/icons/chart.png' %}" alt="chart">
-                        <span class="icon-title3">Your Stats</span>
-                    </div>
-                    <div class="stats2">
-                        <div class="percentages">
-                            <div class="stats-head">
-                                <div class="stat">
-                                    <h4 class="stats-title">WIN Rate</h4>
-                                    <h6 class="winr"> 100%</h6>
-                                </div>
-                                <div class="stat">
-                                    <h4 class="stats-title">WINS</h4>
-                                    <h6 class="winr"> 100%</h6>
-                                </div>
-                                <div class="stat">
-                                    <h4 class="stats-title">LOSSES</h4>
-                                    <h6 class="winr"> 100%</h6>
-                                </div>
-                                <div class="stat">
-                                    <h4 class="stats-title">GOALS SCORED</h4>
+            <h3 class="description"> {{ user.status }} </h3>
+            {% if is_own_profile %}
+                <button class="edit" id="edit-profile-button" onclick="onEditButtonClick()">Edit Profile</button>
+                <button class="save" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+                <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
+                <button class="change" id="change-password">
+                    <span class="change-b" id="change">Change Password</span>
+                </button>
+            {% elif is_friend %}
+                {% if friendship_status %}
+                    <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user}}')">
+                        {% csrf_token %}
+                        <button class="friend-status">Remove Friend</button>
+                    </form>
+                {% else %}
+                    <button class="friend-status">Request Sent</button>
+                {% endif %}
+            {% else %}
+                <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user }}')">
+                    {% csrf_token %}
+                    <button type="submit">Add Friend</button>
+                </form>
+            {% endif %}
+            
+            <form id="edit-profile-form" method="post" enctype="multipart/form-data" style="display:none;">
+                {% csrf_token %}
+                <label for="profile-picture-input">Profile Picture</label>
+                <img id="profile-picture-preview" src="{{ user.picture.url }}" alt="Profile Picture Preview" style="display:none; width: 150px; height: 150px; object-fit: cover;">
+                <input type="file" id="profile-picture-input" name="picture">
+                
+                <label for="username-input">Username</label>
+                <input type="text" id="username-input" name="username" value="{{ user.username }}" required>
+                
+                <label for="description-input">Description</label>
+                <textarea id="description-input" name="description" rows="4" cols="50">{{ user.description }}</textarea>
+                
+                <label for="email-input">Email</label>
+                <input type="email" id="email-input" name="email" value="{{ user.email }}" required>
+                
+            </form>
+            <div id="change-info2">
+                <div class="text-block">
+                    <span> {{ user.description }}</span>
+                </div>
+                    <h5 class="text-block"> Email {{ user.email }}</h5>
+            </div>
+            <h5 class="text-block"> Joined {{ user.created_at }}</h5>
+        </div>
+        <div class="stats-history">
+            <div class="stats">
+                <div class="topic">
+                    <img class="icon" src="{% static 'assets/icons/chart.png' %}" alt="chart">
+                    <span class="icon-title3">Your Stats</span>
+                </div>
+                <div class="stats2">
+                    <div class="percentages">
+                        <div class="stats-head">
+                            <div class="stat">
+                                <h4 class="stats-title">WIN Rate</h4>
+                                <h6 class="winr"> 100%</h6>
+                            </div>
+                            <div class="stat">
+                                <h4 class="stats-title">WINS</h4>
+                                <h6 class="winr"> 100%</h6>
+                            </div>
+                            <div class="stat">
+                                <h4 class="stats-title">LOSSES</h4>
+                                <h6 class="winr"> 100%</h6>
+                            </div>
+                            <div class="stat">
+                                <h4 class="stats-title">GOALS SCORED</h4>
                                     <h6 class="winr"> 100%</h6>
                                 </div>
                                 <div class="stat">
@@ -140,4 +138,5 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
