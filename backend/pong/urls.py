@@ -39,6 +39,7 @@ urlpatterns =[
     path('users/<int:pk>/update', views.user_update, name='user-update'),
     path('users/<int:pk>/password', views.user_password, name='user-update-password'),
     path('users/search', views.search_users, name='search-users'),
+    path('users/search_suggestions', views.search_suggestions, name='search-suggestions'),
 #     path('users/search/<str:value>', views.search_users, name='search-users-with-value'),
 
     path('friends/<int:user_id>', views.get_user_friends, name='friends-detail'),

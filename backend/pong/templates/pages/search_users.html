@@ -13,13 +13,10 @@
                 <div class="search">
                     {% for users in userss %}
                         <div class="square">
-                            <a hx-get="{% url 'user_profile' users.username %}"
-                            hx-trigger="click"
-                            hx-target="#MainPage"
-                            hx-swap="outerHTML">
+
                             <img src="{{ users.picture.url }}" alt="User Icon">
                             <h3 class="name">{{ users.username }}</h3>
-                            </a>
+
                         </div>
                     {% endfor %}
 

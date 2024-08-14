@@ -94,10 +94,24 @@ def user_password(request, pk):
 
 
 @csrf_exempt
-def search_users(request):
+def search_suggestions(request):
     term = request.GET.get('term', '')
+    if term:
+        users = Users.objects.filter(username__icontains=term)[:5]  # Limit to top 5 suggestions
+        suggestions = [{'username': user.username} for user in users]
+        return JsonResponse(suggestions, safe=False)
+    return JsonResponse([], safe=False)
+
+@csrf_exempt
+def search_users(request):
+    term = request.GET.get('searched', '')
     userss = Users.objects.filter(username__icontains=term)
-    return render(request, 'pages/search_results.html', {'searched': term, 'userss': userss, 'numbers': userss.count()})
+    return render(request, 'pages/search_users.html', {
+        'searched': term,
+        'userss': userss,
+        'numbers': userss.count(),
+    })
+
 
 
 # @csrf_exempt
