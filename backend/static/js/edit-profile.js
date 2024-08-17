@@ -50,7 +50,7 @@ function onSaveButtonClick(event, userId) {
         if (data.error) {
             alert(data.error);
         } else {
-            window.location.href = `/profile/${data.username}`; // Atualiza a página para refletir as alterações
+            window.location.href = `/users/${data.username}`; // Atualiza a página para refletir as alterações
         }
     })
     .catch(error => console.error('Error:', error));

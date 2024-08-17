@@ -74,24 +74,38 @@ def user_update(request, pk):
 
 @csrf_exempt
 def user_password(request, pk):
-    if request.method =='POST':
+    if request.method == 'POST':
         user = get_object_or_404(Users, pk=pk)
+        old_password = request.POST.get('old_password')
         new_password1 = request.POST.get('password1')
         new_password2 = request.POST.get('password2')
 
-        if not new_password1:
-            return JsonResponse({'error': 'Password is required'}, status=400)
+        # Verifica se a senha antiga está correta
+        if not user.check_password(old_password):
+            return JsonResponse({'error': 'Old password is incorrect.'}, status=400)
 
+        # Verifica se a nova senha é fornecida
+        if not new_password1:
+            return JsonResponse({'error': 'New password is required.'}, status=400)
+
+        # Verifica se a nova senha é a mesma que a antiga
+        if user.check_password(new_password1):
+            return JsonResponse({'error': 'New password cannot be the same as the old password.'}, status=400)
+        
+        # Verifica se as novas senhas são iguais
         if new_password1 != new_password2:
             return JsonResponse({'error': 'Passwords did not match.'}, status=400)
-        
-        user.password = make_password(new_password1)
+
+        # Atualiza a senha do usuário
+        user.set_password(new_password1)
         user.save()
-        update_session_auth_hash(request, user)  # Mantém o usuário logado após a alteração de senha
+
+        # Atualiza a sessão do usuário para manter ele logado
+        update_session_auth_hash(request, user)
+
         return JsonResponse({'message': 'Password updated successfully', 'username': user.username}, status=200)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-
 
 @csrf_exempt
 def search_suggestions(request):

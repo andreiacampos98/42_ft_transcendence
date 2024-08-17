@@ -28,13 +28,16 @@
                     <div class="modal-content">
                         <span class="close">&times;</span>
                         <h3>Change Password</h3>
-                        <form id="change-password-form" method="POST" enctype="multipart/form-data" >
-                            {% csrf_token %}       
+                        <form id="change-password-form" method="POST">
+                            {% csrf_token %}
+                            <label for="old_password-input">Old Password</label>
+                            <input type="password" id="old_password-input" name="old_password" required>
+                            
                             <label for="newpassword1-input">New Password</label>
-                            <input type="text" id="password1-input" name="password1" value="{{ user.password1 }}" required>
+                            <input type="password" id="password1-input" name="password1" required>
                             
                             <label for="newpassword2-input">Confirm new password</label>
-                            <input type="text" id="password2-input" name="password2" value="{{ user.password2 }}" required>                         
+                            <input type="password" id="password2-input" name="password2" required>
                         </form>
                         <button class="cancel" id="cancel-edit-button" onclick="onCancelButtonClick()">Go back</button>
                         <button class="change" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">

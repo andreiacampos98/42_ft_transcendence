@@ -47,7 +47,7 @@
                 </div>
             
                 <div id="notifications" style="position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #ccc; background-color: #fff; z-index: 1000;"></div>
-                <a href="{% url 'user_profile' user.username %}">
+                <a href="{% url 'user-profile' user.username %}">
                     <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
                 </a>
             </div>
@@ -73,7 +73,7 @@
                             <span class="icon-title">Tournament</span>
                         </button>
                     </a>
-                    <a href="{% url 'user_profile' user.username %}">
+                    <a href="{% url 'user-profile' user.username %}">
                         <button class="select-item">
                             <img class="icon" src="{% static 'assets/icons/user.png' %}" alt="User">
                             <span class="icon-title">User</span>
