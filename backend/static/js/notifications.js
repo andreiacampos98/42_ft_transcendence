@@ -1,5 +1,5 @@
 function getNotifications() {
-    const userId = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
+    const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
 
     fetch(`/notifications/${userId}`, {
         headers: {
@@ -20,7 +20,7 @@ function getNotifications() {
             profilePic.alt = `${notification.other_user_id.username}'s profile picture`;
 
             const textContent = document.createElement('span');
-            textContent.innerHTML = `<a href="/profile/${notification.other_user_id.id}">${notification.other_user_id.username}</a>: ${notification.description}`;
+            textContent.innerHTML = `<a href="/users/${notification.other_user_id.id}">${notification.other_user_id.username}</a>: ${notification.description}`;
             
             const timestamp = document.createElement('span');
             timestamp.classList.add('timestamp');

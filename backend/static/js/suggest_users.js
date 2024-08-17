@@ -6,8 +6,6 @@ function getSuggestions() {
         fetch(`/users/search_suggestions?term=${encodeURIComponent(input)}&_=${new Date().getTime()}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache',
             }
         })
         .then(response => response.json())
@@ -21,7 +19,7 @@ function getSuggestions() {
                     div.style.padding = '8px';
                     div.style.cursor = 'pointer';
                     div.onclick = function() {
-                        window.location.href = `/profile/${user.username}/`;
+                        window.location.href = `/users/${user.username}/`;
                     };
                     suggestionsBox.appendChild(div);
                 });

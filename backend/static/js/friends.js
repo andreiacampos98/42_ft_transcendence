@@ -45,8 +45,8 @@ function toggleSidebar(user_id) {
             friendBlock.dataset.status = 'online';
             
             const link = document.createElement('a');
-            link.href = `/profile/${friend.username}`;
-            link.setAttribute('hx-get', `/profile/${friend.username}`);
+            link.href = `/users/${friend.username}`;
+            link.setAttribute('hx-get', `/users/${friend.username}`);
             link.setAttribute('hx-target', '#MainPage'); // Assume que você tem uma div com id "main-content"
             link.setAttribute('hx-swap', 'outerHTML');
             link.setAttribute('hx-trigger', 'click');

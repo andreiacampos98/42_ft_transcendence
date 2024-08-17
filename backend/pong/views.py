@@ -34,6 +34,35 @@ def user_detail(request, pk):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+@login_required
+def profile(request, username):
+    user_id = request.user.id  # Obtém o ID do usuário atual
+    user_profile = get_object_or_404(Users, username=username)
+    is_own_profile = user_profile == request.user
+    # Obtém a lista de amigos
+    friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+    friendship = Friends.objects.filter(
+        (Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
+    ).first()
+
+
+    if friendship:
+        is_friend = True
+        friendship_status = friendship.accepted
+    else:
+        is_friend = False
+        friendship_status = None
+
+    user = get_object_or_404(Users, username=username)
+    context = {
+        'friends': friends,
+        'user_id': user_id,
+        'user': user,
+        'is_own_profile': is_own_profile,
+        'is_friend': is_friend,
+        'friendship_status': friendship_status
+    }
+    return render(request, 'pages/view_profile.html', context)
 
 @csrf_exempt
 @require_POST
@@ -107,6 +136,7 @@ def user_password(request, pk):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+
 @csrf_exempt
 def search_suggestions(request):
     term = request.GET.get('term', '')
@@ -115,6 +145,7 @@ def search_suggestions(request):
         suggestions = [{'username': user.username} for user in users]
         return JsonResponse(suggestions, safe=False)
     return JsonResponse([], safe=False)
+
 
 @csrf_exempt
 def search_users(request):
@@ -182,7 +213,7 @@ def add_remove_friend(request, user1_id, user2_id):
         response_data = {
             "message": "Friendship deleted successfully."
         }
-        return JsonResponse(response_data, status=204)
+        return JsonResponse(response_data, status=200)
     # Handle methods other than POST
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
@@ -271,6 +302,7 @@ def signup(request):
 
     return render(request, 'pages/sign-up.html')
 
+@csrf_exempt
 def loginview(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -322,36 +354,6 @@ def tournaments(request):
         'user_id': user_id
     }
     return render(request,"pages/tournaments.html", context)
-
-@login_required
-def profile(request, username):
-    user_id = request.user.id  # Obtém o ID do usuário atual
-    user_profile = get_object_or_404(Users, username=username)
-    is_own_profile = user_profile == request.user
-    # Obtém a lista de amigos
-    friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
-    friendship = Friends.objects.filter(
-        (Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
-    ).first()
-
-
-    if friendship:
-        is_friend = True
-        friendship_status = friendship.accepted
-    else:
-        is_friend = False
-        friendship_status = None
-
-    user = get_object_or_404(Users, username=username)
-    context = {
-        'friends': friends,
-        'user_id': user_id,
-        'user': user,
-        'is_own_profile': is_own_profile,
-        'is_friend': is_friend,
-        'friendship_status': friendship_status
-    }
-    return render(request, 'pages/view_profile.html', context)
 
 
 
