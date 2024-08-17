@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 import json
 from icecream import ic
 from .models import Users
-
+import pprint  
 
 # Since we want to create an API endpoint for reading, creating, and updating 
 # Company objects, we can use Django Rest Framework mixins for such actions.
@@ -45,12 +45,13 @@ def profile(request, username):
         (Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
     ).first()
 
+    notification = Notifications.objects.filter(Q(type="Friend Request") & Q(other_user_id=user_id, user_id=user_profile.id))
     me = False
 
     if friendship:
         is_friend = True
         friendship_status = friendship.accepted
-        if friendship.user1_id == user_id:
+        if friendship.user1_id.id == user_id:
             me = True
     else:
         is_friend = False
@@ -64,7 +65,8 @@ def profile(request, username):
         'is_own_profile': is_own_profile,
         'is_friend': is_friend,
         'friendship_status': friendship_status,
-        'me': me
+        'me': me,
+        'notification': notification
     }
     return render(request, 'pages/view_profile.html', context)
 
