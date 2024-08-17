@@ -45,10 +45,13 @@ def profile(request, username):
         (Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
     ).first()
 
+    me = False
 
     if friendship:
         is_friend = True
         friendship_status = friendship.accepted
+        if friendship.user1_id == user_id:
+            me = True
     else:
         is_friend = False
         friendship_status = None
@@ -57,10 +60,11 @@ def profile(request, username):
     context = {
         'friends': friends,
         'user_id': user_id,
-        'user': user,
+        'user_view': user,
         'is_own_profile': is_own_profile,
         'is_friend': is_friend,
-        'friendship_status': friendship_status
+        'friendship_status': friendship_status,
+        'me': me
     }
     return render(request, 'pages/view_profile.html', context)
 

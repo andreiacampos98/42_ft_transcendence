@@ -20,7 +20,7 @@ function getNotifications() {
             profilePic.alt = `${notification.other_user_id.username}'s profile picture`;
 
             const textContent = document.createElement('span');
-            textContent.innerHTML = `<a href="/users/${notification.other_user_id.id}">${notification.other_user_id.username}</a>: ${notification.description}`;
+            textContent.innerHTML = `<a href="/users/${notification.other_user_id.username}">${notification.other_user_id.username}</a>: ${notification.description}`;
             
             const timestamp = document.createElement('span');
             timestamp.classList.add('timestamp');
@@ -30,7 +30,7 @@ function getNotifications() {
             listItem.appendChild(textContent);
             listItem.appendChild(timestamp);
 
-            if (notification.status === 'Pending') {
+            if (notification.status === 'Pending' && notification.type === 'Friend Request') {
                 const acceptButton = document.createElement('button');
                 acceptButton.textContent = 'Accept';
                 acceptButton.onclick = () => handleNotificationAction(notification.id, 'accept', userId, notification.other_user_id.id);

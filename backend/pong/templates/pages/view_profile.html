@@ -9,14 +9,15 @@
 <script defer src="{% static 'js/edit-profile.js' %}"></script>
 <script defer src="{% static 'js/change-password.js' %}"></script>
 <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
+<script defer src="{% static 'js/notifications.js' %}"></script>
 <div class="main-content">
     <div class="main">
         <div class="side-profile">
             <div id="change-info1">
-                <img class="profile-big" src="{{ user.picture.url }}" alt="User">
-                <h3 class="description"> {{ user.username }} </h3>
+                <img class="profile-big" src="{{ user_view.picture.url }}" alt="User">
+                <h3 class="description"> {{ user_view.username }} </h3>
             </div>
-            <h3 class="description"> {{ user.status }} </h3>
+            <h3 class="description"> {{ user_view.status }} </h3>
             {% if is_own_profile %}
                 <button class="edit" id="edit-profile-button" onclick="onEditButtonClick()">Edit Profile</button>
                 <button class="save" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
@@ -47,15 +48,20 @@
                 </div>
             {% elif is_friend %}
                 {% if friendship_status %}
-                    <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user.id}}')">
+                    <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id}}')">
                         {% csrf_token %}
                         <button class="friend-status">Remove Friend</button>
                     </form>
                 {% else %}
-                    <button class="friend-status">Request Sent</button>
+                    {% if me %}
+                        <button class="friend-status">Request Sent</button>
+                    {% else %}
+                        <button class="friend-status" onclick="handleNotificationAction('{{ notification.id }}', 'decline', '{{ user_id }}', '{{ user_view.id }}')">Decline</button>
+                        <button class="friend-status" onclick="handleNotificationAction('{{ notification.id }}', 'accept', '{{ user_id }}', '{{ user_view.id }}')">Accept</button>                    
+                    {% endif %}
                 {% endif %}
             {% else %}
-                <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user.id }}')">
+                <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
                     {% csrf_token %}
                     <button type="submit">Add Friend</button>
                 </form>
@@ -64,26 +70,26 @@
             <form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
                 {% csrf_token %}
                 <label for="profile-picture-input">Profile Picture</label>
-                <img id="profile-picture-preview" src="{{ user.picture.url }}" alt="Profile Picture Preview" style="display:none; width: 150px; height: 150px; object-fit: cover;">
+                <img id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="Profile Picture Preview" style="display:none; width: 150px; height: 150px; object-fit: cover;">
                 <input type="file" id="profile-picture-input" name="picture">
                 
                 <label for="username-input">Username</label>
-                <input type="text" id="username-input" name="username" value="{{ user.username }}" required>
+                <input type="text" id="username-input" name="username" value="{{ user_view.username }}" required>
                 
                 <label for="description-input">Description</label>
-                <textarea id="description-input" name="description" rows="4" cols="50">{{ user.description }}</textarea>
+                <textarea id="description-input" name="description" rows="4" cols="50">{{ user_view.description }}</textarea>
                 
                 <label for="email-input">Email</label>
-                <input type="email" id="email-input" name="email" value="{{ user.email }}" required>
+                <input type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
                 
             </form>
             <div id="change-info2">
                 <div class="text-block">
-                    <span> {{ user.description }}</span>
+                    <span> {{ user_view.description }}</span>
                 </div>
-                    <h5 class="text-block"> Email {{ user.email }}</h5>
+                    <h5 class="text-block"> Email {{ user_view.email }}</h5>
             </div>
-            <h5 class="text-block"> Joined {{ user.created_at }}</h5>
+            <h5 class="text-block"> Joined {{ user_view.created_at }}</h5>
         </div>
         <div class="stats-history">
             <div class="stats">
