@@ -19,7 +19,7 @@ function toggleSidebar(user_id) {
     if (!sidebar.classList.contains('show'))
         return ;
 
-    fetch(`friends/${user_id}`, {
+    fetch(`/friends/${user_id}`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }

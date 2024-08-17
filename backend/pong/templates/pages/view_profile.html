@@ -21,12 +21,30 @@
                 <button class="edit" id="edit-profile-button" onclick="onEditButtonClick()">Edit Profile</button>
                 <button class="save" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
                 <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
-                <button class="change" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
+                <button class="change" id="open-change-password-modal">
                     <span class="change-b" id="change">Change Password</span>
                 </button>
+                <div id="modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3>Change Password</h3>
+                        <form id="change-password-form" method="POST" enctype="multipart/form-data" >
+                            {% csrf_token %}       
+                            <label for="newpassword1-input">New Password</label>
+                            <input type="text" id="password1-input" name="password1" value="{{ user.password1 }}" required>
+                            
+                            <label for="newpassword2-input">Confirm new password</label>
+                            <input type="text" id="password2-input" name="password2" value="{{ user.password2 }}" required>                         
+                        </form>
+                        <button class="cancel" id="cancel-edit-button" onclick="onCancelButtonClick()">Go back</button>
+                        <button class="change" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
+                            <span class="change-b" id="change">Confirm</span>
+                        </button>
+                    </div>
+                </div>
             {% elif is_friend %}
                 {% if friendship_status %}
-                    <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user}}')">
+                    <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user.id}}')">
                         {% csrf_token %}
                         <button class="friend-status">Remove Friend</button>
                     </form>
@@ -34,13 +52,13 @@
                     <button class="friend-status">Request Sent</button>
                 {% endif %}
             {% else %}
-                <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user }}')">
+                <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user.id }}')">
                     {% csrf_token %}
                     <button type="submit">Add Friend</button>
                 </form>
             {% endif %}
             
-            <form id="edit-profile-form" method="post" enctype="multipart/form-data" style="display:none;">
+            <form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
                 {% csrf_token %}
                 <label for="profile-picture-input">Profile Picture</label>
                 <img id="profile-picture-preview" src="{{ user.picture.url }}" alt="Profile Picture Preview" style="display:none; width: 150px; height: 150px; object-fit: cover;">

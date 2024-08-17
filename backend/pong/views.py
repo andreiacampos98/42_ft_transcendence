@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -87,8 +87,8 @@ def user_password(request, pk):
         
         user.password = make_password(new_password1)
         user.save()
-
-        return JsonResponse({'message': 'Password updated successfully'}, status=200)
+        update_session_auth_hash(request, user)  # Mantém o usuário logado após a alteração de senha
+        return JsonResponse({'message': 'Password updated successfully', 'username': user.username}, status=200)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
@@ -111,20 +111,6 @@ def search_users(request):
         'userss': userss,
         'numbers': userss.count(),
     })
-
-
-
-# @csrf_exempt
-# def search_users(request):
-#     if request.method == "GET":
-#         term = request.GET.get('term', '')
-#         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-#             if len(term) > 2:  # Only search if term is longer than 2 characters
-#                 users = Users.objects.filter(username__icontains=term).values('username')
-#                 return JsonResponse(list(users), safe=False)
-#             else:
-#                 return JsonResponse([], safe=False)  # Return an empty list for short terms
-#     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 #---------------------------Friends----------------------------------
 

@@ -19,6 +19,7 @@ function friends_add(event, userId1, userId2) {
             alert(data.error);
         } else {
             alert(data.message);
+            window.location.reload();
             // Optionally, you might want to update the UI here
         }
     })
@@ -43,6 +44,7 @@ function friends_remove(event, userId1, userId2) {
             alert(data.error);
         } else {
             alert(data.message);
+            window.location.reload();
             // Optionally, you might want to update the UI here
             // For example, you might remove the friend from the UI or refresh the friend list
         }
