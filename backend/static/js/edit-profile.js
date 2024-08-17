@@ -38,7 +38,7 @@ function onSaveButtonClick(event, userId) {
     event.preventDefault(); 
     const formData = new FormData(document.getElementById("edit-profile-form"));
 
-    fetch(`users/${userId}/update`, {
+    fetch(`/users/${userId}/update`, {
         method: "POST",
         body: formData,
         headers: {
@@ -50,7 +50,7 @@ function onSaveButtonClick(event, userId) {
         if (data.error) {
             alert(data.error);
         } else {
-            location.reload(); // Atualiza a página para refletir as alterações
+            window.location.href = `/profile/${data.username}`; // Atualiza a página para refletir as alterações
         }
     })
     .catch(error => console.error('Error:', error));

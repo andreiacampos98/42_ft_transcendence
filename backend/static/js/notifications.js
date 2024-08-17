@@ -1,5 +1,5 @@
 function getNotifications() {
-    const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
+    const userId = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
 
     fetch(`/notifications/${userId}`, {
         headers: {

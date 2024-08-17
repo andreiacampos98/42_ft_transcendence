@@ -6,7 +6,8 @@
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 <link rel="stylesheet" href="{% static 'css/match-block.css' %}">
 <script defer src="{% static 'js/match-block.js' %}"></script>
-<script defer src="{% static 'js/description.js' %}"></script>
+<script defer src="{% static 'js/edit-profile.js' %}"></script>
+<script defer src="{% static 'js/change-password.js' %}"></script>
 <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
 <div class="main-content">
     <div class="main">
@@ -20,7 +21,7 @@
                 <button class="edit" id="edit-profile-button" onclick="onEditButtonClick()">Edit Profile</button>
                 <button class="save" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
                 <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
-                <button class="change" id="change-password">
+                <button class="change" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
                     <span class="change-b" id="change">Change Password</span>
                 </button>
             {% elif is_friend %}
