@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const togglereconfirmImage = document.getElementById('togglereconfirmImage');
 
     loginForm.addEventListener('submit', (event) => {
-        event.preventDefault();
+
 
         const username = loginForm.username.value.trim();
         const password = loginForm.password.value.trim();

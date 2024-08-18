@@ -12,7 +12,8 @@
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: #1D2731;
+    color: #aaa;
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
@@ -24,6 +25,10 @@
     float: right;
     font-size: 28px;
     font-weight: bold;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /*height: 10px;*/
 }
 
 .close:hover,

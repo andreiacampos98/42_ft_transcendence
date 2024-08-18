@@ -29,11 +29,11 @@
                     <button type="submit" id="searchButton">
                         <img id="search-icon" src="{% static 'assets/icons/binoculars.png' %}">
                     </button>
-                    <div id="suggestions" style="position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #ccc; background-color: #fff; z-index: 1000;"></div>    
+                    <div id="suggestions" ></div>    
                 </div>
             </form>
             <div class="top-right">
-                <button onclick="getNotifications()" data-user-id="{{ user.id }}">
+                <button style="background: none; border: none;" onclick="getNotifications()" data-user-id="{{ user.id }}">
                     <img class="bell-icon" src="{% static 'assets/icons/Doorbell.png' %}">
                 </button>
                 
@@ -46,7 +46,7 @@
                     </div>
                 </div>
             
-                <div id="notifications" style="position: absolute; top: 100%; left: 0; width: 100%; border: 1px solid #ccc; background-color: #fff; z-index: 1000;"></div>
+                <div id="notifications" ></div>
                 <a href="{% url 'user-profile' user.username %}">
                     <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
                 </a>
