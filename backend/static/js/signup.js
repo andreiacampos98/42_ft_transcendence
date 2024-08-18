@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const togglePasswordButton = document.getElementById('togglePassword');
     const togglereconfirmButton = document.getElementById('togglereconfirm');
     const togglePasswordImage = document.getElementById('togglePasswordImage');
+    const togglereconfirmImage = document.getElementById('togglereconfirmImage');
 
     loginForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -38,13 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
     togglePasswordButton.addEventListener('click', () => {
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
-        togglePasswordImage.src = type === 'password' ? '../assets/icons/eyeopen.png' : '../assets/icons/eyeclosed(1).png';
+        togglePasswordImage.src = type === 'password' ? "/static/assets/icons/eyeopen.png" : "/static/assets/icons/eyeclosed(1).png";
         togglePasswordImage.alt = type === 'password' ? 'Show Password' : 'Hide Password';
     });
     togglereconfirmButton.addEventListener('click', () => {
         const type = reconfirmInput.getAttribute('type') === 'password' ? 'text' : 'password';
         reconfirmInput.setAttribute('type', type);
-        togglereconfirmImage.src = type === 'reconfirm' ? '../assets/icons/eyeopen.png' : '../assets/icons/eyeclosed(1).png';
-        togglereconfirmImage.alt = type === 'reconfirm' ? 'Show Password' : 'Hide Password';
+        togglereconfirmImage.src = type === 'password' ? "/static/assets/icons/eyeopen.png" : "/static/assets/icons/eyeclosed(1).png";
+        togglereconfirmImage.alt = type === 'password' ? 'Show Password' : 'Hide Password';
     });
 });
