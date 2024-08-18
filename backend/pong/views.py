@@ -284,12 +284,17 @@ def update_notification(request, notif_id):
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 # ----------------------------- Pages ---------------------------------------
-
+@csrf_exempt
 def signup(request):
-    if request.method == "POST":
+    ic("Signup view called")
+    if request.method == 'POST':
         username = request.POST.get('username')
         password1 = request.POST.get('password')
         password2 = request.POST.get('reconfirm')
+
+        ic(username)
+        ic(password1)
+        ic(password2)
 
         if Users.objects.filter(username=username).exists():
             messages.error(request, "Username already exists! Please try another username.")
