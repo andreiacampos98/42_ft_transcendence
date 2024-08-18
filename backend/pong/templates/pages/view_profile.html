@@ -40,7 +40,7 @@
                             <label for="newpassword2-input">Confirm new password</label>
                             <input type="password" id="password2-input" name="password2" required>
                         </form>
-                        <button class="cancel" id="cancel-edit-button" onclick="onCancelButtonClick()">Go back</button>
+                        <button class="cancel" id="cancel-change-password-button">Go back</button>
                         <button class="change" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
                             <span class="change-b" id="change">Confirm</span>
                         </button>
@@ -48,22 +48,27 @@
                 </div>
             {% elif is_friend %}
                 {% if friendship_status %}
-                    <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id}}')">
+                    <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
                         {% csrf_token %}
-                        <button class="friend-status">Remove Friend</button>
+                        <button class="friend-status" id="remove-friend-button">Remove Friend</button>
                     </form>
                 {% else %}
                     {% if me %}
                         <button class="friend-status">Request Sent</button>
+                    {% elif notification.status == 'Pending' %}
+                        <button class="friend-status" id="decline-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'decline', '{{ user_id }}', '{{ user_view.id }}', event)">Decline</button>
+                        <button class="friend-status" id="accept-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'accept', '{{ user_id }}', '{{ user_view.id }}', event)">Accept</button>                    
                     {% else %}
-                        <button class="friend-status" onclick="handleNotificationAction('{{ notification.id }}', 'decline', '{{ user_id }}', '{{ user_view.id }}')">Decline</button>
-                        <button class="friend-status" onclick="handleNotificationAction('{{ notification.id }}', 'accept', '{{ user_id }}', '{{ user_view.id }}')">Accept</button>                    
+                        <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
+                            {% csrf_token %}
+                            <button id="add-friend-button" type="submit">Add Friend</button>
+                        </form>
                     {% endif %}
                 {% endif %}
             {% else %}
                 <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
                     {% csrf_token %}
-                    <button type="submit">Add Friend</button>
+                    <button id="add-friend-button" type="submit">Add Friend</button>
                 </form>
             {% endif %}
             
@@ -88,8 +93,8 @@
                     <span> {{ user_view.description }}</span>
                 </div>
                     <h5 class="text-block"> Email {{ user_view.email }}</h5>
+                    <h5 class="text-block"> Joined {{ user_view.created_at }}</h5>
             </div>
-            <h5 class="text-block"> Joined {{ user_view.created_at }}</h5>
         </div>
         <div class="stats-history">
             <div class="stats">

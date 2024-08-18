@@ -5,7 +5,7 @@ function onEditButtonClick() {
     document.getElementById("edit-profile-form").style.display = "block";
     document.getElementById("change-info1").style.display = "none";
     document.getElementById("change-info2").style.display = "none";
-    document.getElementById("change-password").style.display = "none";
+    document.getElementById("open-change-password-modal").style.display = "none";
 
     document.getElementById('profile-picture-preview').style.display = 'block';
     document.getElementById('profile-picture-input').addEventListener('change', function(event) {
@@ -31,7 +31,7 @@ function onCancelButtonClick() {
     document.getElementById("edit-profile-form").style.display = "none";
     document.getElementById("change-info1").style.display = "block";
     document.getElementById("change-info2").style.display = "block";
-    document.getElementById("change-password").style.display = "block";
+    document.getElementById("open-change-password-modal").style.display = "block";
 }
 
 function onSaveButtonClick(event, userId) {

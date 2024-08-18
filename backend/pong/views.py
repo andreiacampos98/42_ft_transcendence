@@ -45,7 +45,9 @@ def profile(request, username):
         (Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
     ).first()
 
-    notification = Notifications.objects.filter(Q(type="Friend Request") & Q(other_user_id=user_id, user_id=user_profile.id))
+    notification = Notifications.objects.filter(Q(type="Friend Request") & Q(user_id=user_id, other_user_id=user_profile.id)).first()
+    if notification:
+        ic(notification.id)
     me = False
 
     if friendship:
@@ -68,6 +70,7 @@ def profile(request, username):
         'me': me,
         'notification': notification
     }
+    ic(context)
     return render(request, 'pages/view_profile.html', context)
 
 @csrf_exempt

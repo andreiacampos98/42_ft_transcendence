@@ -54,7 +54,12 @@ function getNotifications() {
     });
 }
 
-async function handleNotificationAction(notificationId, status, userId, otherUserId) {
+async function handleNotificationAction(notificationId, status, userId, otherUserId, event) {
+    if (event) {
+        event.preventDefault(); // Previne o comportamento padrão do botão/formulário
+        event.stopPropagation(); // Previne que o evento dispare outros listeners
+    }
+
     try {
         console.log(`Handling notification action: ${status} for notification ${notificationId}`);
 
@@ -114,6 +119,7 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
 
 
 
+
 function closeModal() {
     const modal = document.getElementById('notificationModal');
     modal.style.display = 'none';
@@ -124,5 +130,86 @@ window.onclick = function(event) {
     const modal = document.getElementById('notificationModal');
     if (event.target == modal) {
         modal.style.display = 'none';
+    }
+}
+
+
+async function handleNotificationProfile(notificationId, status, userId, otherUserId, event) {
+    if (event) {
+        event.preventDefault(); // Previne o comportamento padrão do botão/formulário
+        event.stopPropagation(); // Previne que o evento dispare outros listeners
+    }
+
+    try {
+        console.log(`Handling notification action: ${status} for notification ${notificationId}`);
+
+        if (status === 'accept') {
+            console.log(`Sending friend accept request for user ${userId} and user ${otherUserId}`);
+
+            const friendAcceptResponse = await fetch(`/friends/accept/${userId}/${otherUserId}`, {
+                method: 'PATCH',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (!friendAcceptResponse.ok) {
+                throw new Error(`Error accepting friend request: ${friendAcceptResponse.statusText}`);
+            }
+
+            console.log('Friend accept request successful');
+
+            const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
+                method: 'PATCH',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (!notificationUpdateResponse.ok) {
+                throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
+            }
+
+            const declineButton = document.getElementById("decline-friend-button");
+            const acceptButton = document.getElementById("accept-friend-button");
+            const removeFriendButton = document.getElementById("remove-friend-button");
+
+            if (declineButton) declineButton.style.display = "none";
+            if (acceptButton) acceptButton.style.display = "none";
+            if (removeFriendButton) removeFriendButton.style.display = "block";
+
+            console.log('Notification update request successful');
+            window.location.reload();
+        } else if (status === 'decline') {
+            console.log(`Sending decline notification request for notification ${notificationId}`);
+
+            const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
+                method: 'PATCH',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: 'Declined' })
+            });
+
+            if (!notificationUpdateResponse.ok) {
+                throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
+            }
+
+            const declineButton = document.getElementById("decline-friend-button");
+            const acceptButton = document.getElementById("accept-friend-button");
+            const addFriendButton = document.getElementById("add-friend-button");
+
+            if (declineButton) declineButton.style.display = "none";
+            if (acceptButton) acceptButton.style.display = "none";
+            if (addFriendButton) addFriendButton.style.display = "block";
+
+            console.log('Notification decline request successful');
+        }
+
+        window.location.reload();
+
+    } catch (error) {
+        console.error('Error handling notification action:', error);
     }
 }
