@@ -8,6 +8,7 @@ from rest_framework.parsers import JSONParser
 from django.contrib.auth.hashers import make_password 
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 
 
 import json
@@ -337,12 +338,18 @@ def tournament_create_game(request, tournament_id):
 	try:
 		data = json.loads(request.body.decode('utf-8'))
 		data['tournament_id'] = tournament_id
-		
-		serializer = TournamentsGamesSerializer(data=data)
-		if serializer.is_valid():
-			serializer.save()
-			return JsonResponse(serializer.data, status=201)
-		return JsonResponse(serializer.errors, status=400)
+
+		games_serializer = GamesSerializer(data={'start_date':datetime.now().isoformat()})
+		if games_serializer.is_valid():
+			games_serializer.save()
+		data['game_id'] = games_serializer.data['id']
+
+		tour_game_serializer = TournamentsGamesSerializer(data=data)
+		if tour_game_serializer.is_valid():
+			tour_game_serializer.save()
+			return JsonResponse(tour_game_serializer.data, status=201)
+		return JsonResponse(tour_game_serializer.errors, status=400)
+
 	except json.JSONDecodeError:
 		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
@@ -353,20 +360,27 @@ def tournament_list_games(request, tournament_id):
 	if request.method != "GET":
 		return JsonResponse({"error": "Method not allowed"}, status=405)
 
-	games = TournamentsGames.objects.filter(tournament_id=tournament_id)
-	serializer = TournamentsGamesSerializer(games, many=True)
-	return JsonResponse(serializer.data, safe=False)
+	tgames = TournamentsGames.objects.filter(tournament_id=tournament_id)
+	serializer = TournamentsGamesSerializer(tgames, many=True)
+	tgames_list = serializer.data
 
-@csrf_exempt
-def tournament_list_games(request, tournament_id, user_id):
-	if request.method != "GET":
-		return JsonResponse({"error": "Method not allowed"}, status=405)
+	for tgame in tgames_list:
+		game = Games.objects.get(pk=tgame['game_id'])
+		serializer = GamesSerializer(game)
+		tgame['game'] = serializer.data
 
-#! 	SELECT *
-#! FROM pong_tournamentsgames, pong_games
-#! 	WHERE pong_games.id=pong_tournamentsgames.id AND (user1_id_id=1 OR user2_id_id=1)
+	return JsonResponse(tgames_list, safe=False)
 
-	return JsonResponse(serializer.data, safe=False)
+# @csrf_exempt
+# def tournament_list_user_games(request, tournament_id, user_id):
+# 	if request.method != "GET":
+# 		return JsonResponse({"error": "Method not allowed"}, status=405)
+
+# #! 	SELECT *
+# #! FROM pong_tournamentsgames, pong_games
+# #! 	WHERE pong_games.id=pong_tournamentsgames.id AND (user1_id_id=1 OR user2_id_id=1)
+
+# 	return JsonResponse(serializer.data, safe=False)
 
 
 #! --------------------------------------- Pages ---------------------------------------

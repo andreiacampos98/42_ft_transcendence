@@ -98,9 +98,9 @@ class Notifications(models.Model):
 class Games(models.Model):
     id = models.AutoField(primary_key=True)
     start_date = models.DateTimeField()
-    duration = models.IntegerField()
-    nb_goals_user1 = models.IntegerField()
-    nb_goals_user2 = models.IntegerField()
+    duration = models.IntegerField(default=0)
+    nb_goals_user1 = models.IntegerField(default=0)
+    nb_goals_user2 = models.IntegerField(default=0)
     winner_id = models.ForeignKey(Users, related_name="game_winner", null=True, on_delete=models.SET_NULL)
     user1_id = models.ForeignKey(Users, related_name="game_user1", null=True, on_delete=models.SET_NULL)
     user2_id = models.ForeignKey(Users, related_name="game_user2", null=True, on_delete=models.SET_NULL)
