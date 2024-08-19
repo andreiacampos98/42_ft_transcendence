@@ -62,8 +62,13 @@ urlpatterns =[
     path('tournaments/<int:tournament_id>/cancel', views.tournament_cancel, name='tournament-cancel'),
 
 	#! Tournaments Users
-    path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournament-list-users'),
     path('tournaments/<int:tournament_id>/users/<int:user_id>/join', views.tournament_join, name='tournament-join'),
     path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournament-leave'),
+    path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournament-list-users'),
+
+	#! Tournaments Games
+    path('tournaments/<int:tournament_id>/games/create', views.tournament_create_game, name='tournament-create-game'),
+    # path('tournaments/<int:tournament_id>/games/', views.tournament_list_games, name='tournament-list-games'),
+    # path('tournaments/<int:tournament_id>/games/user/<int:user_id>', views.tournament_list_user_games, name='tournament-list-user-games'),
 
 ] 

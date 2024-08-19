@@ -287,14 +287,24 @@ def tournament_cancel(request, tournament_id):
 #! --------------------------------------- Tournaments Users ---------------------------------------
 
 @csrf_exempt
-def tournament_list_users(request, tournament_id):
-	if request.method != "GET":
-		return JsonResponse({"error": "Method not allowed"}, status=405)
+def tournament_join(request, tournament_id, user_id):
+	if request.method != 'POST':	
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 
-	tournament_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
-	serializer = TournamentsUsersSerializer(tournament_users, many=True)
-	return JsonResponse(serializer.data, safe=False)
+	try:
+		data = json.loads(request.body.decode('utf-8'))
+		data['tournament_id'] = tournament_id
+		data['user_id'] = user_id
 		
+		serializer = TournamentsUsersSerializer(data=data)
+		if serializer.is_valid():
+			serializer.save()
+			return JsonResponse(serializer.data, status=201)
+		return JsonResponse(serializer.errors, status=400)
+	except json.JSONDecodeError:
+		return JsonResponse({'message': 'Invalid JSON'}, status=400)
+	except KeyError as e:
+		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
 
 @csrf_exempt
 def tournament_leave(request, tournament_id, user_id):
@@ -309,16 +319,26 @@ def tournament_leave(request, tournament_id, user_id):
 	return JsonResponse(response_data, status=204)
 
 @csrf_exempt
-def tournament_join(request, tournament_id, user_id):
+def tournament_list_users(request, tournament_id):
+	if request.method != "GET":
+		return JsonResponse({"error": "Method not allowed"}, status=405)
+
+	tournament_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
+	serializer = TournamentsUsersSerializer(tournament_users, many=True)
+	return JsonResponse(serializer.data, safe=False)
+
+#! --------------------------------------- Tournaments Games ---------------------------------------
+
+@csrf_exempt
+def tournament_create_game(request, tournament_id):
 	if request.method != 'POST':	
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 
 	try:
-		data: json = json.loads(request.body.decode('utf-8'))
+		data = json.loads(request.body.decode('utf-8'))
 		data['tournament_id'] = tournament_id
-		data['user_id'] = user_id
 		
-		serializer = TournamentsUsersSerializer(data=data)
+		serializer = TournamentsGamesSerializer(data=data)
 		if serializer.is_valid():
 			serializer.save()
 			return JsonResponse(serializer.data, status=201)
@@ -327,6 +347,7 @@ def tournament_join(request, tournament_id, user_id):
 		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
+
 
 #! --------------------------------------- Pages ---------------------------------------
 
