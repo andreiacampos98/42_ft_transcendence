@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
-from .models import Users, Friends, Notifications, Games, Tournaments
+from .models import *
 
 # Serializers define the API representation.
 # Django Rest Framework uses serializers to handle converting data between 
@@ -64,6 +64,11 @@ class GamesSerializer(serializers.ModelSerializer):
 class TournamentsSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Tournaments
+		fields = '__all__'
+
+class TournamentsUsersSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = TournamentsUsers
 		fields = '__all__'
 
 

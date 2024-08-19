@@ -57,13 +57,13 @@ urlpatterns =[
     #path('games/<int:game_id>/stats', views.game_stats, name='game-stats'),
 
 	#! Tournaments
-    path('tournaments/create', views.tournament_create, name='tournaments-create'),
-    path('tournaments/<int:tournament_id>', views.tournament_update, name='tournaments-update'),
-    path('tournaments/<int:tournament_id>/cancel', views.tournament_cancel, name='tournaments-cancel'),
+    path('tournaments/create', views.tournament_create, name='tournament-create'),
+    path('tournaments/<int:tournament_id>', views.tournament_update, name='tournament-update'),
+    path('tournaments/<int:tournament_id>/cancel', views.tournament_cancel, name='tournament-cancel'),
 
 	#! Tournaments Users
-    # path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournaments-list-users'),
-    # path('tournaments/<int:tournament_id>/users/<int:user_id>/join', views.tournament_join, name='tournaments-join'),
-    # path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournaments-leave'),
+    # path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournament-list-users'),
+    path('tournaments/<int:tournament_id>/users/<int:user_id>/join', views.tournament_join, name='tournament-join'),
+    # path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournament-leave'),
 
 ] 
