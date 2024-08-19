@@ -357,6 +357,17 @@ def tournament_list_games(request, tournament_id):
 	serializer = TournamentsGamesSerializer(games, many=True)
 	return JsonResponse(serializer.data, safe=False)
 
+@csrf_exempt
+def tournament_list_games(request, tournament_id, user_id):
+	if request.method != "GET":
+		return JsonResponse({"error": "Method not allowed"}, status=405)
+
+#! 	SELECT *
+#! FROM pong_tournamentsgames, pong_games
+#! 	WHERE pong_games.id=pong_tournamentsgames.id AND (user1_id_id=1 OR user2_id_id=1)
+
+	return JsonResponse(serializer.data, safe=False)
+
 
 #! --------------------------------------- Pages ---------------------------------------
 
