@@ -140,6 +140,8 @@ button[type="submit"] {
     font-size: 16px;
     border-radius: 4px;
     cursor: pointer;
+    color: white;
+
 }
 
 #sign-button {
@@ -150,10 +152,10 @@ button[type="submit"] {
 
 button[type="submit2"] {
     width: 100%;
-    padding: 10px;
+    height: 50px;
     border: none;
     background-color: #8080801e;
-    color: 333333;
+    color: #333333;
     font-size: 16px;
     border-radius: 4px;
     cursor: pointer;
@@ -177,11 +179,18 @@ button[type="submit"]:hover {
     font-weight: bold;
     font-size: smaller;
     padding-bottom: 6px;
+    
 }
 
 #input-error {
     border: 1px solid #640D6B;
     box-shadow: 0 1px 2px #000000;
+    width: 100%;
+    padding: 8px;
+	background-color: #8080801e;
+    box-sizing: border-box;
+    border-radius: 4px;
+    padding-right: 40px;
 }
 
 #input-error2 {

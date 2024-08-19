@@ -17,14 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = loginForm.password.value.trim();
         const reconfirm = loginForm.reconfirm.value.trim();
 
-        if (password === reconfirm) {
-            alert('Login successful!');
-            passwordInput.removeAttribute('id', 'input-error');
-            passwordInput2.removeAttribute('id', 'input-error2');
-            reconfirmInput.removeAttribute('id', 'input-error');
-            reconfirmInput2.removeAttribute('id', 'input-error2');
-            // Redirect to another page or perform other actions
-        } else {
+        if (password != reconfirm) {
             errorMessage.textContent = 'Sorry but your passwords don\'t match. Please, try again.';
             errorMessage.style.display = 'block';
             passwordInput.setAttribute('id', 'input-error');

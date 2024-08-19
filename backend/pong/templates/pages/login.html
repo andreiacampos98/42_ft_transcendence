@@ -24,14 +24,15 @@
                 <p id="errorMessage" class="error-message"></p>
                 <button type="submit"> Sign in </button>
             </form>
+            <div class="bottom">
             <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
-            
             <button type="submit2"><img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42</button>
             <div id="firsttime">
                 Your first time? <a class="sign-up" href="{% url 'signup' %}" href="{% url 'signup' %}" >Sign Up now</a>
             </div>
             <br>
             <h6>© 42 Porto 2024</h6>
+            </div>
         </div>
     </div>
     {% comment %} <script defer src="{% static 'js/script.js' %}"></script> {% endcomment %}
