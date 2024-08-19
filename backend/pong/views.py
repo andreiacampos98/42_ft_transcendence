@@ -201,7 +201,7 @@ def accept_friend(request, user1_id, user2_id):
 		return JsonResponse(response_data, status=200)
 	return JsonResponse({"error": "Method not allowed"}, status=405)
 
-#--------------------------- Notifications ----------------------------------
+#! --------------------------- Notifications ----------------------------------
 
 def get_user_notifications(request, user_id):
 	if request.method == "GET":
@@ -241,6 +241,9 @@ def game_create(request):
 
 @csrf_exempt
 def tournament_create(request):
+	if request.method != 'POST':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method})
+
 	try:
 		data = json.loads(request.body.decode('utf-8'))
 		serializer = TournamentsSerializer(data=data)
@@ -249,29 +252,39 @@ def tournament_create(request):
 			return JsonResponse(serializer.data, status=201)
 		return JsonResponse(serializer.errors, status=400)
 	except json.JSONDecodeError:
-		return JsonResponse({'error': 'Invalid JSON'}, status=400)
+		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
-		return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
 
 @csrf_exempt
 def tournament_update(request, tournament_id):
-	if request.method == 'PATCH':	
-		if request.content_type == 'application/json':
-			data = json.loads(request.body.decode('utf-8'))
-		else:
-			return JsonResponse({'error': 'Only JSON allowed'}, status=406)
+	if request.method != 'PATCH':	
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
+	if request.content_type != 'application/json':
+		return JsonResponse({'message': 'Only JSON allowed'}, status=406)
 
-		request_data = JSONParser().parse(request)
-		tournament = get_object_or_404(Tournaments, pk=tournament_id)
-		tournament.status = request_data['status']
+	request_data = JSONParser().parse(request)
+	tournament = get_object_or_404(Tournaments, pk=tournament_id)
+	tournament.status = request_data['status']
 
-		serializer = TournamentsSerializer(tournament, data=request_data, partial=True)
-		if serializer.is_valid():
-			serializer.save()
-			return JsonResponse(serializer.data)
-		return JsonResponse(serializer.errors, status=400)
-	else:
-		return JsonResponse({'error': 'Method not allowed'}, status=405)
+	serializer = TournamentsSerializer(tournament, data=request_data, partial=True)
+	if serializer.is_valid():
+		serializer.save()
+		return JsonResponse(serializer.data)
+	return JsonResponse(serializer.errors, status=400)
+		
+
+@csrf_exempt
+def tournament_cancel(request, tournament_id):
+	if request.method != 'DELETE':	
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
+
+	tournament = get_object_or_404(Tournaments, pk=tournament_id)
+	tournament.delete()
+	response_data = {
+		"message": f"'{tournament.name}' was deleted."
+	}
+	return JsonResponse(response_data, status=204)
 
 
 #! --------------------------------------- Pages ---------------------------------------

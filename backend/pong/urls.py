@@ -54,10 +54,12 @@ urlpatterns =[
 
 	# Games
     path('games/create', views.game_create, name='game-create'),
+    #path('games/<int:game_id>/stats', views.game_stats, name='game-stats'),
 
 	# Tournaments
     path('tournaments/create', views.tournament_create, name='tournament-create'),
     path('tournaments/<int:tournament_id>', views.tournament_update, name='tournament-update'),
+    path('tournaments/<int:tournament_id>/cancel', views.tournament_cancel, name='tournament-cancel'),
 
 
 ] 
