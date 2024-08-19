@@ -287,6 +287,16 @@ def tournament_cancel(request, tournament_id):
 #! --------------------------------------- Tournaments Users ---------------------------------------
 
 @csrf_exempt
+def tournament_list_users(request, tournament_id):
+	if request.method != "GET":
+		return JsonResponse({"error": "Method not allowed"}, status=405)
+
+	tournament_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
+	serializer = TournamentsUsersSerializer(tournament_users, many=True)
+	return JsonResponse(serializer.data, safe=False)
+		
+
+@csrf_exempt
 def tournament_leave(request, tournament_id, user_id):
 	if request.method != 'DELETE':	
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
