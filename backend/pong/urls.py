@@ -52,14 +52,18 @@ urlpatterns =[
     path('notifications/<int:user_id>', views.get_user_notifications, name='notifications'),
     path('notifications/<int:user_id>/<int:notif_id>', views.delete_user_notification, name='delete-notification'),
 
-	# Games
+	#! Games
     path('games/create', views.game_create, name='game-create'),
     #path('games/<int:game_id>/stats', views.game_stats, name='game-stats'),
 
-	# Tournaments
-    path('tournaments/create', views.tournament_create, name='tournament-create'),
-    path('tournaments/<int:tournament_id>', views.tournament_update, name='tournament-update'),
-    path('tournaments/<int:tournament_id>/cancel', views.tournament_cancel, name='tournament-cancel'),
+	#! Tournaments
+    path('tournaments/create', views.tournament_create, name='tournaments-create'),
+    path('tournaments/<int:tournament_id>', views.tournament_update, name='tournaments-update'),
+    path('tournaments/<int:tournament_id>/cancel', views.tournament_cancel, name='tournaments-cancel'),
 
+	#! Tournaments Users
+    # path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournaments-list-users'),
+    # path('tournaments/<int:tournament_id>/users/<int:user_id>/join', views.tournament_join, name='tournaments-join'),
+    # path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournaments-leave'),
 
 ] 

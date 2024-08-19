@@ -133,3 +133,13 @@ class TournamentsGames(models.Model):
             raise ValidationError('Status must be one of "[\'Last 16\', \'Quarter-final\'], \'Semi-final\'], \'Final\']"')
 
         super().save(*args, **kwargs)
+
+class TournamentsUsers(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+    tournament_id = models.ForeignKey(Tournaments, on_delete=models.CASCADE)
+    alias = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["user_id", "tournament_id"]

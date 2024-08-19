@@ -27,7 +27,6 @@
 | `/tournaments/create`| `POST` | Create tournament | |
 | `/tournaments/{id}` | `PATCH` | Update tournament (status only) | `id` - the tournament's id |
 | `/tournaments/{id}/cancel` | `DELETE` | Cancel and delete tournament | `id` - the tournament's id |
-| `/tournaments/{id}/{uid}/leave` | `DELETE` | Leave a tournament | `id` - the tournament's id, `uid` - the user who's leaving the tournament |
 
 ## Tournaments Games
 
@@ -41,8 +40,9 @@
 
 | Route | HTTP Method | Description | Parameters |
 | --- | :--: | --- | --- |
-| `/tournaments/{id}/user` | `GET` | List all tournament users (alias) for a given tournament | `id` - the tournament's id |
-| `/tournaments/{tid}/user/{uid}`| `POST` | Create new tournament user (alias) | `tid` - the tournament's id, `uid` - the user's id |
+| `/tournaments/{id}/users` | `GET` | List all tournament users (alias) for a given tournament | `id` - the tournament's id |
+| `/tournaments/{tid}/users/{uid}/join`| `POST` | Join a tournament | `tid` - the tournament's id, `uid` - the user's id |
+| `/tournaments/{tid}/users/{uid}/leave` | `DELETE` | Leave a tournament | `id` - the tournament's id, `uid` - the user who's leaving the tournament |
 
 
 ## Friends

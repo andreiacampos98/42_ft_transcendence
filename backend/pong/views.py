@@ -12,7 +12,6 @@ from django.contrib.auth.decorators import login_required
 
 import json
 from icecream import ic
-from .models import Users
 
 
 # Since we want to create an API endpoint for reading, creating, and updating 
@@ -21,7 +20,7 @@ from rest_framework import status
 
 from django.db.models import Q
 from django.http import JsonResponse
-from .models import Users, Friends, Notifications
+from .models import Users, Friends, Notifications, TournamentsUsers
 from .serializers import *
 
 
@@ -273,7 +272,6 @@ def tournament_update(request, tournament_id):
 		return JsonResponse(serializer.data)
 	return JsonResponse(serializer.errors, status=400)
 		
-
 @csrf_exempt
 def tournament_cancel(request, tournament_id):
 	if request.method != 'DELETE':	
@@ -285,6 +283,21 @@ def tournament_cancel(request, tournament_id):
 		"message": f"'{tournament.name}' was deleted."
 	}
 	return JsonResponse(response_data, status=204)
+
+#! --------------------------------------- Tournaments Users ---------------------------------------
+
+# @csrf_exempt
+# def tournament_leave(request, tournament_id, user_id):
+# 	if request.method != 'DELETE':	
+# 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
+
+# 	user = TournamentsUsers.objects.filter(user_id=user_id, tournament_id=tournament_id)
+# 	ic(user)
+# 	user.delete()
+# 	response_data = {
+# 		"message": f"User {user.name} left the tournament."
+# 	}
+# 	return JsonResponse(response_data, status=204)
 
 
 #! --------------------------------------- Pages ---------------------------------------
