@@ -64,6 +64,6 @@ urlpatterns =[
 	#! Tournaments Users
     # path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournament-list-users'),
     path('tournaments/<int:tournament_id>/users/<int:user_id>/join', views.tournament_join, name='tournament-join'),
-    # path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournament-leave'),
+    path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournament-leave'),
 
 ] 

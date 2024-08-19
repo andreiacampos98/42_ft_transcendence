@@ -286,18 +286,17 @@ def tournament_cancel(request, tournament_id):
 
 #! --------------------------------------- Tournaments Users ---------------------------------------
 
-# @csrf_exempt
-# def tournament_leave(request, tournament_id, user_id):
-# 	if request.method != 'DELETE':	
-# 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
-
-# 	user = TournamentsUsers.objects.filter(user_id=user_id, tournament_id=tournament_id)
-# 	ic(user)
-# 	user.delete()
-# 	response_data = {
-# 		"message": f"User {user.name} left the tournament."
-# 	}
-# 	return JsonResponse(response_data, status=204)
+@csrf_exempt
+def tournament_leave(request, tournament_id, user_id):
+	if request.method != 'DELETE':	
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
+	
+	user = get_object_or_404(TournamentsUsers, tournament_id=tournament_id, user_id=user_id)
+	user.delete()
+	response_data = {
+		"message": f"User {user.alias} left the tournament."
+	}
+	return JsonResponse(response_data, status=204)
 
 @csrf_exempt
 def tournament_join(request, tournament_id, user_id):
