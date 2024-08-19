@@ -323,8 +323,8 @@ def tournament_list_users(request, tournament_id):
 	if request.method != "GET":
 		return JsonResponse({"error": "Method not allowed"}, status=405)
 
-	tournament_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
-	serializer = TournamentsUsersSerializer(tournament_users, many=True)
+	users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
+	serializer = TournamentsUsersSerializer(users, many=True)
 	return JsonResponse(serializer.data, safe=False)
 
 #! --------------------------------------- Tournaments Games ---------------------------------------
@@ -347,6 +347,15 @@ def tournament_create_game(request, tournament_id):
 		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
+
+@csrf_exempt
+def tournament_list_games(request, tournament_id):
+	if request.method != "GET":
+		return JsonResponse({"error": "Method not allowed"}, status=405)
+
+	games = TournamentsGames.objects.filter(tournament_id=tournament_id)
+	serializer = TournamentsGamesSerializer(games, many=True)
+	return JsonResponse(serializer.data, safe=False)
 
 
 #! --------------------------------------- Pages ---------------------------------------
