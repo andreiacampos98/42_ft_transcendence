@@ -1,3 +1,6 @@
+body {
+    background-color: #1A3141;
+}
 .left-div {
     height: 100vh;
     background-color: #1A3141;
@@ -27,7 +30,7 @@
     flex-direction: column;
     flex-grow: 1;
     justify-content: center;
-    padding-top: 30px;
+    padding-top: 20vh;
     width: 100%;
     margin-left: 20px;
 }
@@ -52,6 +55,10 @@
     color: #FFFFFF;
 }
 
+.side-menu_a {
+    text-decoration: none;
+
+}
 .icon-title2 {
     display: none;
     margin-left: 10px;
@@ -94,19 +101,30 @@
 
 .main-content {
 	background-color: #1D2731;
+    border-top: 1px solid #336181;
+    border-left: 1px solid #336181;
+    border-top-left-radius: 10px;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-	margin-left: 3vw;
     margin-top: 70px;
     display: flex;
     position: fixed;
     justify-content: center;
 	align-items: center;
     text-align: center;
+    transition: filter 0.3s ease;
 }
 
+.non_compressed {
+	margin-left: 70px;
+
+}
+
+.compressed {
+    margin-left: 200px;
+}
 .main {
     width: 90vw;
 }

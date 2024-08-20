@@ -8,7 +8,6 @@
     top: 0;
     left: 0;
     background-color: #1A3141;
-    border-bottom: 1px solid #295C5F;
     transition: filter 0.3s ease, transform 0.3s ease;
 
 }

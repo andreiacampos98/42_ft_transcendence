@@ -61,30 +61,30 @@
                     <span class="icon-title2 bold">Pong Game</span>
                 </button>
                 <div class="selects">
-                    <a href="{% url 'home' %}">
-                        <button class="select-item">
+                    <button class="select-item">
+                        <a class="side-menu_a" href="{% url 'home' %}">
                             <img class="icon" src="{% static 'assets/icons/pingpong.png' %}" alt="Ping Pong">
                             <span class="icon-title">Singles</span>
-                        </button>
-                    </a>
-                    <a href="{% url 'tournaments' %}">
-                        <button class="select-item">
+                        </a>
+                    </button>
+                    <button class="select-item">
+                        <a class="side-menu_a" href="{% url 'tournaments' %}">
                             <img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="Tournament">
-                            <span class="icon-title">Tournament</span>
-                        </button>
-                    </a>
-                    <a href="{% url 'user-profile' user.username %}">
-                        <button class="select-item">
+                            <span class="icon-title">Tournaments</span>
+                        </a>
+                    </button>
+                    <button class="select-item">
+                        <a class="side-menu_a" href="{% url 'user-profile' user.username %}">
                             <img class="icon" src="{% static 'assets/icons/user.png' %}" alt="User">
                             <span class="icon-title">User</span>
-                        </button>
-                    </a>
-                    <a href="{% url 'login' %}">
-                        <button class="select-item">
+                        </a>
+                    </button>
+                    <button class="select-item logout-icon">
+                        <a class="side-menu_a" href="{% url 'login' %}">
                             <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
                             <span class="icon-title">Logout</span>
-                        </button>
-                    </a>
+                        </a>
+                    </button>
                 </div>
             </div>
         {% endblock %}

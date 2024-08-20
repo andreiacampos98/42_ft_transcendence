@@ -5,6 +5,8 @@ function addClassToTopLevelDivs(className) {
         if (div.id !== 'sidebar') {
             div.classList.toggle(className);
         }
+    const main_cont = document.getElementById('main-content');
+    main_cont.classList.toggle(className)
     });
 }
 

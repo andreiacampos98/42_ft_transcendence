@@ -10,7 +10,7 @@
 <script defer src="{% static 'js/change-password.js' %}"></script>
 <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
 <script defer src="{% static 'js/notifications.js' %}"></script>
-<div class="main-content">
+<div class="main-content non_compressed"  id="main-content">
     <div class="main">
         <div class="side-profile">
             <div id="change-info1">
@@ -119,54 +119,53 @@
                             </div>
                             <div class="stat">
                                 <h4 class="stats-title">GOALS SCORED</h4>
-                                    <h6 class="winr"> 100%</h6>
-                                </div>
-                                <div class="stat">
-                                    <h4 class="stats-title">GOALS SUFFERED</h4>
-                                    <h6 class="winr"> 100%</h6>
-                                </div>
+                                <h6 class="winr"> 100%</h6>
+                            </div>
+                            <div class="stat">
+                                <h4 class="stats-title">GOALS SUFFERED</h4>
+                                <h6 class="winr"> 100%</h6>
                             </div>
                         </div>
-                        <div class="graphs">
-                            <div class="graph1">
-                                <div class="numbers-stat">
-                                    <h6>21312</h6>
-                                    <h6>21312</h6>
-                                </div>
-                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                    </div>
+                    <div class="graphs">
+                        <div class="graph1">
+                            <div class="numbers-stat">
+                                <h6>21312</h6>
+                                <h6>21312</h6>
                             </div>
-                            <div class="graph2">
-                                <div class="numbers-stat">
-                                    <h6>21312</h6>
-                                    <h6>21312</h6>
-                                </div>
-                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                        </div>
+                        <div class="graph2">
+                            <div class="numbers-stat">
+                                <h6>21312</h6>
+                                <h6>21312</h6>
                             </div>
-                            <div class="graph3">
-                                <div class="numbers-stat">
-                                    <h6>21312</h6>
-                                    <h6>21312</h6>
-                                </div>
-                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                        </div>
+                        <div class="graph3">
+                            <div class="numbers-stat">
+                                <h6>21312</h6>
+                                <h6>21312</h6>
                             </div>
-                            <div class="graph4">
-                                <div class="numbers-stat">
-                                    <h6>21312</h6>
-                                    <h6>21312</h6>
-                                </div>
-                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                        </div>
+                        <div class="graph4">
+                            <div class="numbers-stat">
+                                <h6>21312</h6>
+                                <h6>21312</h6>
                             </div>
+                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
                         </div>
                     </div>
                 </div>
-                <div class="stats">
-                    <div class="topic">
-                        <img class="icon" src="{% static 'assets/icons/history.png' %}" alt="chart">
-                        <span class="icon-title3">Match History</span>
-                    </div>
-                    <div class="stats2">
-                        <div id="match-container"></div>
-                    </div>
+            </div>
+            <div class="stats">
+                <div class="topic">
+                    <img class="icon" src="{% static 'assets/icons/history.png' %}" alt="chart">
+                    <span class="icon-title3">Match History</span>
+                </div>
+                <div class="stats2">
+                    <div id="match-container"></div>
                 </div>
             </div>
         </div>

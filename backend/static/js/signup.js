@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
             passwordInput2.setAttribute('id', 'input-error2');
             reconfirmInput.setAttribute('id', 'input-error');
             reconfirmInput2.setAttribute('id', 'input-error2');
-            
-
         }
     });
 

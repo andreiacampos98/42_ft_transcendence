@@ -20,7 +20,7 @@
     background-color: #1A3141;
     transform: translateX(100%);
     transition: transform 0.3s ease;
-    border: 1px solid #295C5F;
+    border: 1px solid #336181;
 }
 
 .sidebar.show {
