@@ -22,6 +22,9 @@ prune:
 down:
 	docker compose down
 
+ps:
+	docker compose ps
+
 re: down all
 
 .SILENT:

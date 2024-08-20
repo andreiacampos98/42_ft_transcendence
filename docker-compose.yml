@@ -10,7 +10,7 @@ services:
         ports:
             - "8002:8002"
         networks:
-            - Inception
+            - Transcendence
         depends_on:
             - postgres
 
@@ -25,7 +25,7 @@ services:
         ports:
             - "5432:5432"
         networks:
-            - Inception
+            - Transcendence
         environment:
             POSTGRES_USER: "anaraujo"            
             POSTGRES_PASSWORD: "1234"
@@ -42,14 +42,13 @@ services:
             PGADMIN_DEFAULT_PASSWORD: "1234"
             PGADMIN_LISTEN_PORT: "8080"
         networks:
-            - Inception
+            - Transcendence
         ports:
             - "8080:8080"
         depends_on:
             - postgres
 
 networks:
-    Inception:
-        name: inception
+    Transcendence:
         driver: bridge
 
