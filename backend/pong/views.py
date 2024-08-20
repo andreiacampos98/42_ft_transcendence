@@ -91,18 +91,7 @@ def user_password(request, pk):
 	else:
 		return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-
-def no_cache(view_func):
-	def wrapper(*args, **kwargs):
-		response = view_func(*args, **kwargs)
-		response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-		response['Pragma'] = 'no-cache'
-		response['Expires'] = '0'
-		return response
-	return wrapper
-
 @csrf_exempt
-@no_cache
 def search_users(request, value=''):
 	if request.method == "GET":
 		if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -339,15 +328,26 @@ def tournament_create_game(request, tournament_id):
 		data = json.loads(request.body.decode('utf-8'))
 		data['tournament_id'] = tournament_id
 
-		games_serializer = GamesSerializer(data={'start_date':datetime.now().isoformat()})
+		game_data = {
+			'start_date':datetime.now().isoformat(),
+			'user1_id': data['user1_id'],
+			'user2_id': data['user2_id']
+		}
+
+		games_serializer = GamesSerializer(data=game_data)
 		if games_serializer.is_valid():
 			games_serializer.save()
+
 		data['game_id'] = games_serializer.data['id']
+		del data['user1_id']
+		del	data['user2_id']
 
 		tour_game_serializer = TournamentsGamesSerializer(data=data)
 		if tour_game_serializer.is_valid():
 			tour_game_serializer.save()
-			return JsonResponse(tour_game_serializer.data, status=201)
+			data = tour_game_serializer.data
+			data['game'] = games_serializer.data
+			return JsonResponse(data, status=201)
 		return JsonResponse(tour_game_serializer.errors, status=400)
 
 	except json.JSONDecodeError:
@@ -371,17 +371,30 @@ def tournament_list_games(request, tournament_id):
 
 	return JsonResponse(tgames_list, safe=False)
 
-# @csrf_exempt
-# def tournament_list_user_games(request, tournament_id, user_id):
-# 	if request.method != "GET":
-# 		return JsonResponse({"error": "Method not allowed"}, status=405)
+#! 	SELECT *
+#! FROM pong_tournamentsgames, pong_games
+#! 	WHERE pong_games.id=pong_tournamentsgames.id AND (user1_id_id=1 OR user2_id_id=1)
 
-# #! 	SELECT *
-# #! FROM pong_tournamentsgames, pong_games
-# #! 	WHERE pong_games.id=pong_tournamentsgames.id AND (user1_id_id=1 OR user2_id_id=1)
+@csrf_exempt
+def tournament_list_user_games(request, user_id):
+	if request.method != "GET":
+		return JsonResponse({"error": "Method not allowed"}, status=405)
 
-# 	return JsonResponse(serializer.data, safe=False)
+	# Get all TournamentsGames instances and respective Games instances
+	temp = TournamentsGames.objects.all()
+	temp_games = list(map(lambda x: x.game_id, temp))
+	games = GamesSerializer(temp_games, many=True).data
 
+	# For each TournamentsGames attach the Games instance for easier filtering
+	all_tour_games = TournamentsGamesSerializer(temp, many=True).data
+	for game, tgame in zip(games, all_tour_games):
+		tgame['game'] = game
+
+	# SELECT the TournamentsGames instances WHERE game.user1_id or game.user2_id is user_id
+	user_tour_games = list(filter(lambda g: g['game']['user1_id'] == user_id or \
+		g['game']['user2_id'] == user_id, all_tour_games))
+
+	return JsonResponse(user_tour_games, status=200, safe=False)
 
 #! --------------------------------------- Pages ---------------------------------------
 

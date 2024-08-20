@@ -138,7 +138,7 @@ class TournamentsUsers(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
     tournament_id = models.ForeignKey(Tournaments, on_delete=models.CASCADE)
-    alias = models.CharField(max_length=64, unique=True)
+    alias = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
