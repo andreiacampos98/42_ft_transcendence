@@ -33,8 +33,12 @@
     display: none;
 }
 
-textarea {
+textarea, #username-input, #email-input {
     width: 100%;
+    border-radius: 5px;
+    background-color: #101d27;
+    border: none;
+    color: white;
 }
 
 .description{
@@ -65,7 +69,7 @@ textarea {
     align-items: center;
 }
 
-.edit-change {
+.edit-change, .save-cancel {
     display: flex;
     align-items: center;
     width: 360px;
@@ -76,7 +80,7 @@ textarea {
     width: 100%;
 }*/
 
-.side-profile button {
+.side-profile button, #cancel-change-password-button, #change-password {
     margin-top: 10px;
     padding: 10px 20px;
     color: #fff;
@@ -87,11 +91,11 @@ textarea {
     width: 170px;
 }
 
-.edit {
+.edit, #save-profile-button {
     background-color: #1A3141;
 }
 
-#open-change-password-modal {
+#open-change-password-modal, #cancel-edit-button {
     background-color: #1D2731;
 
 }
@@ -230,8 +234,8 @@ textarea {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 10000; /* Sit on top */
-    left: 100px;
-    top: 100px;
+    left: 0;
+    top: 0;
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
@@ -243,6 +247,7 @@ textarea {
     position: relative;
     background-color: #1D2731;
     margin: auto;
+    margin-top: 37vh;
     padding: 0;
     border: 1px solid #336181;
     border-radius: 5px;

@@ -7,7 +7,6 @@ function onEditButtonClick() {
     document.getElementById("change-info2").style.display = "none";
     document.getElementById("open-change-password-modal").style.display = "none";
 
-    document.getElementById('profile-picture-preview').style.display = 'block';
     document.getElementById('profile-picture-input').addEventListener('change', function(event) {
         const file = event.target.files[0];
         if (file) {

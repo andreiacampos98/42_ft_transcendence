@@ -12,9 +12,33 @@
 <script defer src="{% static 'js/notifications.js' %}"></script>
 <div class="main-content non_compressed"  id="main-content">
     <div class="main">
+        <div id="modal" class="m">
+            <div class="m-content">
+                <span class="close">&times;</span>
+                <h3 style="padding-top: 20px;">Change Password</h3>
+                <div class="form-div">
+                    <form id="change-password-form" method="POST">
+                        {% csrf_token %}
+                        <label for="old_password-input">Old Password</label>
+                        <input class="pass-input" type="password" id="old_password-input" name="old_password" required>
+
+                        <label for="newpassword1-input">New Password</label>
+                        <input class="pass-input" type="password" id="password1-input" name="password1" required>
+
+                        <label for="newpassword2-input">Confirm new password</label>
+                        <input class="pass-input" type="password" id="password2-input" name="password2" required>
+                    </form>
+                </div>
+
+                <button style="margin-bottom: 10px;" class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
+                    <span class="change-b" id="change">Confirm</span>
+                </button>
+                <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Cancel</button>
+            </div>
+        </div>
         <div class="side-profile">
             <div id="change-info1">
-                <img class="profile-big" src="{{ user_view.picture.url }}" alt="User">
+                <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="User">
                 <h3 class="description"> {{ user_view.username }} </h3>
             </div>
             <h3 class="description"> {{ user_view.status }} </h3>
@@ -30,34 +54,6 @@
                             Change Password
                         </span>
                     </button>
-                </div>
-                <div class="save-cancel">
-                    <button class="save" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
-                    <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
-                </div>
-                <div id="modal" class="m">
-                    <div class="m-content">
-                        <span class="close">&times;</span>
-                        <h3 style="padding-top: 20px;">Change Password</h3>
-                        <div class="form-div">
-                            <form id="change-password-form" method="POST">
-                                {% csrf_token %}
-                                <label for="old_password-input">Old Password</label>
-                                <input class="pass-input" type="password" id="old_password-input" name="old_password" required>
-
-                                <label for="newpassword1-input">New Password</label>
-                                <input class="pass-input" type="password" id="password1-input" name="password1" required>
-
-                                <label for="newpassword2-input">Confirm new password</label>
-                                <input class="pass-input" type="password" id="password2-input" name="password2" required>
-                            </form>
-                        </div>
-
-                        <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Cancel</button>
-                        <button style="margin-bottom: 10px;" class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
-                            <span class="change-b" id="change">Confirm</span>
-                        </button>
-                    </div>
                 </div>
             {% elif is_friend %}
                 {% if friendship_status %}
@@ -87,8 +83,6 @@
             
             <form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
                 {% csrf_token %}
-                <label for="profile-picture-input">Profile Picture</label>
-                <img id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="Profile Picture Preview" style="display:none; width: 150px; height: 150px; object-fit: cover;">
                 <input type="file" id="profile-picture-input" name="picture">
                 
                 <label for="username-input">Username</label>
@@ -99,7 +93,6 @@
                 
                 <label for="email-input">Email</label>
                 <input type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
-                
             </form>
             <div id="change-info2">
                 <div class="text-block">
@@ -119,6 +112,10 @@
                     </h5>
                     <h5 class="text-block">{{ joined_date }}</h5>
                 </div>
+            </div>
+            <div class="save-cancel">
+                <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+                <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
             </div>
         </div>
         <div class="stats-history">
