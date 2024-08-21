@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             if (data.success) {
                 // Se a inscrição for bem-sucedida
-                alert(data.message);  // Ou você pode redirecionar ou mostrar a mensagem no DOM
                 window.location.href = '/home/';  // Redireciona para a página de login
             } else {
                 // Se ocorrer um erro
