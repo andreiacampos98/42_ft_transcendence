@@ -8,7 +8,7 @@
         <div class="login-container2">
             <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
             <h3 class="title" id="nice" >Welcome to our platform</h3>
-            <form id="signupForm" method="POST" action="{% url 'signup' %}">
+            <form id="signupForm" method="POST" action="{% url 'user-create' %}">
                 {% csrf_token %}
                 <div class="input-group">
                     <label for="username">Username</label>

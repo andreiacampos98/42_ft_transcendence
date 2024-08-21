@@ -74,20 +74,43 @@ def profile(request, username):
     ic(context)
     return render(request, 'pages/view_profile.html', context)
 
+
 @csrf_exempt
-@require_POST
 def user_create(request):
-    try:
-        data = json.loads(request.body.decode('utf-8'))
-        serializer = UsersSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
-    except KeyError as e:
-        return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)  # Parseia o JSON do corpo da requisição
+            username = data.get('username')
+            password1 = data.get('password')
+            password2 = data.get('reconfirm')
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "message": "Invalid JSON."}, status=400)
+
+        if not username or not password1 or not password2:
+            return JsonResponse({"success": False, "message": "All fields are required."}, status=400)
+
+        if Users.objects.filter(username=username).exists():
+            return JsonResponse({"success": False, "message": "Username already exists! Please try another username."}, status=400)
+
+        if password1 != password2:
+            return JsonResponse({"success": False, "message": "Passwords didn't match."}, status=400)
+
+        if not username.isalnum():
+            return JsonResponse({"success": False, "message": "Username must be alphanumeric."}, status=400)
+
+        myuser = Users.objects.create_user(username=username, password=password1)
+        myuser.save()
+
+        user = authenticate(username=username, password=password1)
+
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"success": True, "message": "Your account has been successfully created and you are now logged in."}, status=201)
+        else:
+            return JsonResponse({"success": False, "message": "There was a problem logging you in. Please try logging in manually."}, status=400)
+        
+
+    return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
 
 
 @csrf_exempt
@@ -285,36 +308,7 @@ def update_notification(request, notif_id):
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 # ----------------------------- Pages ---------------------------------------
-@csrf_exempt
 def signup(request):
-    ic("Signup view called")
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password1 = request.POST.get('password')
-        password2 = request.POST.get('reconfirm')
-
-        ic(username)
-        ic(password1)
-        ic(password2)
-
-        if Users.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists! Please try another username.")
-            return redirect('signup')
-
-        if password1 != password2:
-            messages.error(request, "Passwords didn't match.")
-            return redirect('signup')
-
-        if not username.isalnum():
-            messages.error(request, "Username must be alphanumeric.")
-            return redirect('signup')
-
-        myuser = Users.objects.create_user(username=username, password=password1)
-        myuser.save()
-
-        messages.success(request, "Your account has been successfully created.")
-        return redirect('login')
-
     return render(request, 'pages/sign-up.html')
 
 @csrf_exempt
