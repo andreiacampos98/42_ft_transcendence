@@ -6,9 +6,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 250px; /* Adjust width as needed */
+    width: 350px; /* Adjust width as needed */
     padding: 20px;
-    background-color: #1A3141; /* Light gray background for side profile */
     border-radius: 10px;
     color: #FFFFFF;
 }
@@ -19,6 +18,11 @@
     border-radius: 50%;
 }
 
+#change-info2 {
+    width: inherit;
+    font-size: small;
+    color:#c3c3c3bb;
+}
 .side-profile .description {
     text-align: center;
     margin: 10px 0;
@@ -33,42 +37,92 @@ textarea {
     width: 100%;
 }
 
-#edit-profile-form{
-    width: 100%;
-}
-
 .description{
     width: inherit;
+}
+
+.user-description {
+    display: inline;
+    vertical-align: middle;
+    margin: 10px;
 }
 
 .text-block{
     display: flex;
     text-align: justify;
+    font-size: small;
 }
-.side-profile .text-block span {
+.side-profile {
     display: block;
     margin: 5px 0;
     padding-right: 5px;
     padding-left: 5px;
 }
 
+.email-joined {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.edit-change {
+    display: flex;
+    align-items: center;
+    width: 360px;
+    justify-content: space-around;
+}
+
+/*#edit-profile-form{
+    width: 100%;
+}*/
+
 .side-profile button {
     margin-top: 10px;
     padding: 10px 20px;
     color: #fff;
+    font-size: small;
     cursor: pointer;
     border-radius: 5px;
-    border: 1px solid #3A00E5;
-    width: 100%;
+    border: 1px solid #1A3141;
+    width: 170px;
 }
 
 .edit {
-    background-color: #3A00E5;
+    background-color: #1A3141;
 }
 
-#change {
-    color: #3A00E5;
+#open-change-password-modal {
+    background-color: #1D2731;
 
+}
+
+.form-div {
+    display: flex;
+    justify-content: center;
+}
+
+#change-password {
+    background-color: #1A3141;
+
+}
+
+#cancel-change-password-button {
+    background-color: #1D2731;
+}
+
+#change-password-form {
+    display: flex;
+    flex-direction: column;
+    color: #c3c3c3bb;
+    width: 100%;
+    
+}
+
+.pass-input {
+    background-color: #101d27;
+    width: 80%;
+    border-radius: 5px;
+    border: 1px solid #c3c3c3bb;
 }
 
 .stats-history {
@@ -108,8 +162,6 @@ textarea {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
-    background-color: #1A3141; /* White background for stats sections */
-    border-radius: 10px;
 }
 
 .stats-head {
@@ -120,10 +172,8 @@ textarea {
 
 .stat {
     display: flex;
-    justify-content: space-between;
     flex-direction: column;
     text-align: center;
-    height: inherit;
     padding: 10px;
 }
 
@@ -136,11 +186,25 @@ textarea {
     width: 15vw;
     height: 100px;
     margin-left: 10px;
-    background-color: #1A3141; /* Light gray background for graphs */
+    background-color: #101d27; /* Light gray background for graphs */
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
+}
+
+.stats-title {
+    color: #c3c3c3bb;
+}
+
+.graph-title {
+    font-size: smaller;
+    color: #c3c3c3bb;
+}
+
+.winr, .graph-value {
+    font-weight: bold;
+    color: #F8D082;
 }
 
 .numbers-stat{
@@ -161,7 +225,7 @@ textarea {
 .m {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 10000; /* Sit on top */
     left: 100px;
     top: 100px;
     width: 100%; /* Full width */
@@ -173,11 +237,12 @@ textarea {
   /* m Content */
   .m-content {
     position: relative;
-    background-color: #fefefe;
+    background-color: #1D2731;
     margin: auto;
     padding: 0;
-    border: 1px solid #888;
-    width: 80%;
+    border: 1px solid #336181;
+    border-radius: 5px;
+    width: 20%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     animation-name: animatetop;
     animation-duration: 0.4s
@@ -189,10 +254,14 @@ textarea {
   }
   /* The Close Button */
   .close {
-    color: white;
+    color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /*height: 10px;*/
   }
   .close:hover,
   .close:focus {

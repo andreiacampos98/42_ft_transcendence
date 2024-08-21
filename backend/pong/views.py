@@ -13,7 +13,7 @@ import json
 from icecream import ic
 from .models import Users
 import pprint  
-
+from datetime import datetime
 # Since we want to create an API endpoint for reading, creating, and updating 
 # Company objects, we can use Django Rest Framework mixins for such actions.
 from rest_framework import status
@@ -64,6 +64,7 @@ def profile(request, username):
         'friends': friends,
         'user_id': user_id,
         'user_view': user,
+        'joined_date':user.created_at.strftime('%d/%m/%Y'),
         'is_own_profile': is_own_profile,
         'is_friend': is_friend,
         'friendship_status': friendship_status,

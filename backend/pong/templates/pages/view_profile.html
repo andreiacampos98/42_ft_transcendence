@@ -19,29 +19,42 @@
             </div>
             <h3 class="description"> {{ user_view.status }} </h3>
             {% if is_own_profile %}
-                <button class="edit" id="edit-profile-button" onclick="onEditButtonClick()">Edit Profile</button>
-                <button class="save" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
-                <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
-                <button class="change" id="open-change-password-modal">
-                    <span class="change-b" id="change">Change Password</span>
-                </button>
+                <div class="edit-change">
+                    <button class="edit" id="edit-profile-button" onclick="onEditButtonClick()">
+                        <img src="{% static 'assets/icons/edit.png' %}">
+                        Edit Profile
+                    </button>
+                    <button class="change" id="open-change-password-modal">
+                        <span class="change-b" id="change">
+                            <img src="{% static 'assets/icons/password.png' %}">
+                            Change Password
+                        </span>
+                    </button>
+                </div>
+                <div class="save-cancel">
+                    <button class="save" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+                    <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
+                </div>
                 <div id="modal" class="m">
                     <div class="m-content">
                         <span class="close">&times;</span>
                         <h3>Change Password</h3>
-                        <form id="change-password-form" method="POST">
-                            {% csrf_token %}
-                            <label for="old_password-input">Old Password</label>
-                            <input type="password" id="old_password-input" name="old_password" required>
-                            
-                            <label for="newpassword1-input">New Password</label>
-                            <input type="password" id="password1-input" name="password1" required>
-                            
-                            <label for="newpassword2-input">Confirm new password</label>
-                            <input type="password" id="password2-input" name="password2" required>
-                        </form>
-                        <button class="cancel" id="cancel-change-password-button">Go back</button>
-                        <button class="change" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
+                        <div class="form-div">
+                            <form id="change-password-form" method="POST">
+                                {% csrf_token %}
+                                <label for="old_password-input">Old Password</label>
+                                <input class="pass-input" type="password" id="old_password-input" name="old_password" required>
+
+                                <label for="newpassword1-input">New Password</label>
+                                <input class="pass-input" type="password" id="password1-input" name="password1" required>
+
+                                <label for="newpassword2-input">Confirm new password</label>
+                                <input class="pass-input" type="password" id="password2-input" name="password2" required>
+                            </form>
+                        </div>
+
+                        <button class="cancel modal-button" id="cancel-change-password-button">Cancel</button>
+                        <button class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
                             <span class="change-b" id="change">Confirm</span>
                         </button>
                     </div>
@@ -90,10 +103,22 @@
             </form>
             <div id="change-info2">
                 <div class="text-block">
-                    <span> {{ user_view.description }}</span>
+                    <span class="user-description"> {{ user_view.description }}</span>
                 </div>
-                    <h5 class="text-block"> Email {{ user_view.email }}</h5>
-                    <h5 class="text-block"> Joined {{ user_view.created_at }}</h5>
+                <div class="email-joined">
+                    <h5 class="text-block"> 
+                        <img src="{% static 'assets/icons/at.png' %}">
+                        Email
+                    </h5>
+                    <h5 class="text-block">{{ user_view.email }}</h5>
+                </div>
+                <div class="email-joined">
+                    <h5 class="text-block"> 
+                        <img src="{% static 'assets/icons/joined.png' %}">
+                        Joined
+                    </h5>
+                    <h5 class="text-block">{{ joined_date }}</h5>
+                </div>
             </div>
         </div>
         <div class="stats-history">
@@ -106,23 +131,23 @@
                     <div class="percentages">
                         <div class="stats-head">
                             <div class="stat">
-                                <h4 class="stats-title">WIN Rate</h4>
+                                <h4 class="stats-title">Wins</h4>
                                 <h6 class="winr"> 100%</h6>
                             </div>
                             <div class="stat">
-                                <h4 class="stats-title">WINS</h4>
+                                <h4 class="stats-title">Losses</h4>
                                 <h6 class="winr"> 100%</h6>
                             </div>
                             <div class="stat">
-                                <h4 class="stats-title">LOSSES</h4>
+                                <h4 class="stats-title">Win Rate</h4>
                                 <h6 class="winr"> 100%</h6>
                             </div>
                             <div class="stat">
-                                <h4 class="stats-title">GOALS SCORED</h4>
+                                <h4 class="stats-title">Goals Scored</h4>
                                 <h6 class="winr"> 100%</h6>
                             </div>
                             <div class="stat">
-                                <h4 class="stats-title">GOALS SUFFERED</h4>
+                                <h4 class="stats-title">Goals Suffered</h4>
                                 <h6 class="winr"> 100%</h6>
                             </div>
                         </div>
@@ -130,29 +155,29 @@
                     <div class="graphs">
                         <div class="graph1">
                             <div class="numbers-stat">
-                                <h6>21312</h6>
-                                <h6>21312</h6>
+                                <h6 class="graph-title">Win Rate</h6>
+                                <h6 class="graph-value">21312</h6>
                             </div>
                             <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
                         </div>
                         <div class="graph2">
                             <div class="numbers-stat">
-                                <h6>21312</h6>
-                                <h6>21312</h6>
+                                <h6 class="graph-title">Raly Length</h6>
+                                <h6 class="graph-value">21312</h6>
                             </div>
                             <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
                         </div>
                         <div class="graph3">
                             <div class="numbers-stat">
-                                <h6>21312</h6>
-                                <h6>21312</h6>
+                                <h6 class="graph-title">Games/day</h6>
+                                <h6 class="graph-value">21312</h6>
                             </div>
                             <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
                         </div>
                         <div class="graph4">
                             <div class="numbers-stat">
-                                <h6>21312</h6>
-                                <h6>21312</h6>
+                                <h6 class="graph-title">21312</h6>
+                                <h6 class="graph-value">21312</h6>
                             </div>
                             <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
                         </div>
@@ -162,7 +187,7 @@
             <div class="stats">
                 <div class="topic">
                     <img class="icon" src="{% static 'assets/icons/history.png' %}" alt="chart">
-                    <span class="icon-title3">Match History</span>
+                    <span class="icon-title3">Recent Matches</span>
                 </div>
                 <div class="stats2">
                     <div id="match-container"></div>
