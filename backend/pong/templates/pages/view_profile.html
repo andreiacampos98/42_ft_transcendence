@@ -38,7 +38,7 @@
                 <div id="modal" class="m">
                     <div class="m-content">
                         <span class="close">&times;</span>
-                        <h3>Change Password</h3>
+                        <h3 style="padding-top: 20px;">Change Password</h3>
                         <div class="form-div">
                             <form id="change-password-form" method="POST">
                                 {% csrf_token %}
@@ -53,8 +53,8 @@
                             </form>
                         </div>
 
-                        <button class="cancel modal-button" id="cancel-change-password-button">Cancel</button>
-                        <button class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
+                        <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Cancel</button>
+                        <button style="margin-bottom: 10px;" class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
                             <span class="change-b" id="change">Confirm</span>
                         </button>
                     </div>

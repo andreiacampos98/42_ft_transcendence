@@ -115,12 +115,16 @@ textarea {
     flex-direction: column;
     color: #c3c3c3bb;
     width: 100%;
+    padding: 10px;
     
+}
+#change-password-form label {
+    align-self: baseline;
 }
 
 .pass-input {
     background-color: #101d27;
-    width: 80%;
+    width: 99%;
     border-radius: 5px;
     border: 1px solid #c3c3c3bb;
 }
