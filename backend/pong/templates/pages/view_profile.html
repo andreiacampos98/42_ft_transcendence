@@ -55,6 +55,10 @@
                         </span>
                     </button>
                 </div>
+                <div class="save-cancel">
+                    <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+                    <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
+                </div>
             {% elif is_friend %}
                 {% if friendship_status %}
                     <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
@@ -84,26 +88,55 @@
             <form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
                 {% csrf_token %}
                 <input type="file" id="profile-picture-input" name="picture">
-                
-                <label for="username-input">Username</label>
-                <input type="text" id="username-input" name="username" value="{{ user_view.username }}" required>
-                
+                <div class="email-joined-edit">
+                    <label for="username-input">
+                        <h5 class="text-block"> 
+                            <img style="width: 15px; height: 15px;" src="{% static 'assets/icons/user.png' %}">
+                            Username
+                        </h5>
+                    </label>
+                    <input style="text-align: right; " type="text" id="username-input" name="username" value="{{ user_view.username }}" required>
+                </div>
                 <label for="description-input">Description</label>
-                <textarea id="description-input" name="description" rows="4" cols="50">{{ user_view.description }}</textarea>
+                {% if user_view.description is None or user_view.description == "" %}
+                    <textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50"></textarea>
+                {% else %}
+                    <textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50">{{ user_view.description }}</textarea>
+                {% endif %}
                 
-                <label for="email-input">Email</label>
-                <input type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
+                    <div class="email-joined-edit">
+                    <label for="email-input">
+                        <h5 class="text-block"> 
+                            <img src="{% static 'assets/icons/at.png' %}">
+                            Email
+                        </h5>
+                    </label>
+                    {% if user_view.email is None or user_view.email == "" %}
+                        <input style="text-align: right; " type="email" id="email-input" name="email" value="" required>
+                    {% else %}
+                        <input style="text-align: right; " type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
+                    {% endif %}
+                </div>
             </form>
             <div id="change-info2">
                 <div class="text-block">
-                    <span class="user-description"> {{ user_view.description }}</span>
+                    {% if user_view.description is None or user_view.description == "" %}
+                        <span class="user-description"></span>
+                    {% else %}
+                        <span class="user-description">{{ user_view.description }}</span>
+                    {% endif %}
+
                 </div>
                 <div class="email-joined">
                     <h5 class="text-block"> 
                         <img src="{% static 'assets/icons/at.png' %}">
                         Email
                     </h5>
-                    <h5 class="text-block">{{ user_view.email }}</h5>
+                    {% if user_view.email is None or user_view.email == "" %}
+                        <h5 class="text-block"></h5>
+                    {% else %}
+                        <h5 class="text-block">{{ user_view.email }}</h5>
+                    {% endif %}
                 </div>
                 <div class="email-joined">
                     <h5 class="text-block"> 
@@ -113,10 +146,7 @@
                     <h5 class="text-block">{{ joined_date }}</h5>
                 </div>
             </div>
-            <div class="save-cancel">
-                <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
-                <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
-            </div>
+            
         </div>
         <div class="stats-history">
             <div class="stats">

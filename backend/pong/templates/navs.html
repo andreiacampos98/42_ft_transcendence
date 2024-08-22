@@ -63,20 +63,39 @@
                 <div class="selects">
                     <button class="select-item">
                         <a class="side-menu_a" href="{% url 'home' %}">
-                            <img class="icon" src="{% static 'assets/icons/pingpong.png' %}" alt="Ping Pong">
-                            <span class="icon-title">Singles</span>
+                            {% if page == "home" %}
+                                <img class="icon" id="highlight-icon1" src="{% static 'assets/icons/pong-highlight.png' %}" alt="Ping Pong">
+                                <span class="icon-title" id="highlight-span1">Singles</span>
+                            {% else %}
+                                <img class="icon" src="{% static 'assets/icons/pingpong.png' %}" alt="Ping Pong">
+                                <span class="icon-title">Singles</span>
+                            {% endif %}
+
                         </a>
                     </button>
                     <button class="select-item">
                         <a class="side-menu_a" href="{% url 'tournaments' %}">
-                            <img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="Tournament">
-                            <span class="icon-title">Tournaments</span>
+                            {% if page == "tournament" %}
+                                <img class="icon" id="highlight-icon2" src="{% static 'assets/icons/tournament-highlight.png' %}" alt="Ping Pong">
+                                <span class="icon-title" id="highlight-span2">Tournaments</span>
+                            
+                            {% else %}
+                                <img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="Tournament">
+                                <span class="icon-title">Tournaments</span>
+                            {% endif %}
+
                         </a>
                     </button>
                     <button class="select-item">
                         <a class="side-menu_a" href="{% url 'user-profile' user.username %}">
+                            {% if page == "profile" %}
+                                <img class="icon" id="highlight-icon3" src="{% static 'assets/icons/profile-highlight.png' %}" alt="Ping Pong">
+                                <span class="icon-title" id="highlight-span3">User</span>
+                            
+                            {% else %}
                             <img class="icon" src="{% static 'assets/icons/user.png' %}" alt="User">
                             <span class="icon-title">User</span>
+                            {% endif %}
                         </a>
                     </button>
                     <button class="select-item logout-icon">

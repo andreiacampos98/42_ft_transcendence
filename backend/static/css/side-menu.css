@@ -18,7 +18,7 @@ body {
 }
 
 .left-div.expanded {
-    width: 200px; /* Expanded width */
+    width: 210px; /* Expanded width */
 }
 
 .left-div .expandable-pic {
@@ -65,6 +65,19 @@ body {
     color: #FFFFFF;
 }
 
+#highlight-icon1, #highlight-icon2, #highlight-icon3 {
+    position: relative;
+    left: -5px;
+    width: 40px; /* Adjust icon size as needed */
+    height: 40px;
+}
+
+#highlight-span1, #highlight-span2, #highlight-span3 {
+    position: relative;
+    left: -15px;
+    color: #F8D082;
+}
+
 .left-div .icon {
     width: 30px; /* Adjust icon size as needed */
     height: 30px;
@@ -90,7 +103,7 @@ body {
 
 .left-div .logout-icon {
     margin-top: auto; /* Push the logout icon to the bottom */
-    margin-bottom: 90px;
+    margin-bottom: 2vh;
     
 }
 
@@ -123,7 +136,7 @@ body {
 }
 
 .compressed {
-    margin-left: 200px;
+    margin-left: 210px;
 }
 .main {
     width: 90vw;

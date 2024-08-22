@@ -69,7 +69,8 @@ def profile(request, username):
         'is_friend': is_friend,
         'friendship_status': friendship_status,
         'me': me,
-        'notification': notification
+        'notification': notification,
+        'page': "profile" if is_own_profile else "else"
     }
     ic(context)
     return render(request, 'pages/view_profile.html', context)
@@ -347,7 +348,8 @@ def home(request):
     friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
     context = {
         'friends': friends,
-        'user_id': user_id
+        'user_id': user_id,
+        'page': 'home'
     }
     return render(request, 'pages/home-view.html', context)
 
@@ -360,7 +362,9 @@ def tournaments(request):
     friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
     context = {
         'friends': friends,
-        'user_id': user_id
+        'user_id': user_id,
+        'page': 'tournament'
+        
     }
     return render(request,"pages/tournaments.html", context)
 

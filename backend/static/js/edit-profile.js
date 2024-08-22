@@ -3,7 +3,6 @@ function onEditButtonClick() {
     document.getElementById("save-profile-button").style.display = "inline-block";
     document.getElementById("cancel-edit-button").style.display = "inline-block";
     document.getElementById("edit-profile-form").style.display = "block";
-    document.getElementById("change-info1").style.display = "none";
     document.getElementById("change-info2").style.display = "none";
     document.getElementById("open-change-password-modal").style.display = "none";
 
