@@ -29,11 +29,11 @@
 .stat {
     display: flex;
     flex-direction: column;
-    background-color: #f2f2f20a;
+    background-color: #101d27;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 10px;
     align-items: center;
-    height: 87px;
+    height: 127px;
     width: 127px;
     margin-right: 1vw;
     justify-content: space-around;
@@ -52,7 +52,7 @@
 .rank {
     font-size: larger;
     font-weight: bolder;
-    color: #E65C19;
+    color: #F8D082;
 }
 
 .profile-square {
@@ -74,7 +74,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f2f2f20a;
+    background-color: #101d27;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 10px;
     height: 127px;
@@ -123,7 +123,7 @@
 }
 
 .numbers {
-    color: #f2f2f20a;
+    color: #101d27;
 }
 
 #nbr2 {
@@ -159,25 +159,54 @@
     cursor: pointer;
 }
 
+.button-tourn {
+    width: 200px;
+}
 .tournament-avail {
     display: flex;
     flex-direction: column;
-    background-color: #f2f2f20a;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .table-head {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
+    align-items: center;
     color: #8C8C8C;
+    padding: 15px;
 }
 
 .table-content {
     display: flex;
     justify-content: space-between;
-    color: #f2f2f20a;
+    align-items: center;
+    background-color: #101d27;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 15px;
+    margin-bottom: 10px;
+    height: 60px;
+}
+.table-title {
+    width: 5vw;
+    font-weight:bold;
+    text-align: left;
+}
+.table-info {
+    color: #F2F2F2;
+    width: 5vw;
+    font-weight:bold;
+    text-align: left;
+}
+.status-ongoing {
+    color: #6CFFED;
+}
+
+.status-open {
+    color: #B6FF6C;
+}
+
+.status-closed {
+    color: #FF4F28;
 }
 
 .host {
