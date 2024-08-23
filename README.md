@@ -24,3 +24,6 @@ https://www.django-rest-framework.org/#example
 
 
 - https://www.youtube.com/watch?v=1UvTNMH7zDo
+
+- [WebSockets and Django](https://dev.to/foxy4096/websocket-in-django-55p1)
+- [Django Channels](https://medium.com/atomic-loops/django-channels-is-all-you-need-94628dd6815c)
