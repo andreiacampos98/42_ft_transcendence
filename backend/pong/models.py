@@ -140,6 +140,8 @@ class TournamentsUsers(models.Model):
     tournament_id = models.ForeignKey(Tournaments, on_delete=models.CASCADE)
     alias = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
+    placement = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ["user_id", "tournament_id"]

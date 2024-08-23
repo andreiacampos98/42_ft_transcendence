@@ -123,12 +123,12 @@ def add_remove_friend(request, user1_id, user2_id):
 	if request.method == "POST":
 		# Check if user is trying to add themselves as a friend
 		if user1_id == user2_id:
-			return JsonResponse({"error": "Users cannot be friends with themselves."}, status=400)
+			return JsonResponse({'message': "Users cannot be friends with themselves."}, status=400)
 
 		# Check if the friendship already exists
 		if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or \
 		Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
-			return JsonResponse({"error": "Friendship already exists."}, status=400)
+			return JsonResponse({'message': "Friendship already exists."}, status=400)
 
 		# Get the user objects
 		user1 = get_object_or_404(Users, id=user1_id)
@@ -153,7 +153,7 @@ def add_remove_friend(request, user1_id, user2_id):
 		).first()
 
 		if not friendship:
-			return JsonResponse({"error": "Friendship does not exist."}, status=404)
+			return JsonResponse({'message': "Friendship does not exist."}, status=404)
 
 		# Delete the friendship
 		friendship.delete()
@@ -163,7 +163,7 @@ def add_remove_friend(request, user1_id, user2_id):
 		}
 		return JsonResponse(response_data, status=204)
 	# Handle methods other than POST
-	return JsonResponse({"error": "Method not allowed"}, status=405)
+	return JsonResponse({'message': "Method not allowed"}, status=405)
 
 @csrf_exempt
 def accept_friend(request, user1_id, user2_id):
@@ -173,10 +173,10 @@ def accept_friend(request, user1_id, user2_id):
 		).first()
 
 		if not friendship:
-			return JsonResponse({"error": "Friendship does not exist."}, status=404)
+			return JsonResponse({'message': "Friendship does not exist."}, status=404)
 		
 		if friendship.accepted:
-			return JsonResponse({"error": "Friendship request has already been accepted."}, status=400)
+			return JsonResponse({'message': "Friendship request has already been accepted."}, status=400)
 		
 		friendship.accepted = True
 		friendship.save()
@@ -188,7 +188,7 @@ def accept_friend(request, user1_id, user2_id):
 			"message": "User accept the request."
 		}
 		return JsonResponse(response_data, status=200)
-	return JsonResponse({"error": "Method not allowed"}, status=405)
+	return JsonResponse({'message': "Method not allowed"}, status=405)
 
 #! --------------------------- Notifications ----------------------------------
 
@@ -197,7 +197,7 @@ def get_user_notifications(request, user_id):
 		notifications = Notifications.objects.filter(user_id = user_id)
 		serializer = NotificationsSerializer(notifications, many=True)
 		return JsonResponse(serializer.data, safe=False)
-	return JsonResponse({"error": "Method not allowed"}, status=405)
+	return JsonResponse({'message': "Method not allowed"}, status=405)
 
 @csrf_exempt
 def delete_user_notification(request, user_id, notif_id):
@@ -208,7 +208,7 @@ def delete_user_notification(request, user_id, notif_id):
 			"message": "Notification deleted."
 		}
 		return JsonResponse(response_data, status=204)
-	return JsonResponse({"error": "Method not allowed"}, status=405)
+	return JsonResponse({'message': "Method not allowed"}, status=405)
 
 #! --------------------------------------- Games ---------------------------------------
 
@@ -311,11 +311,20 @@ def tournament_leave(request, tournament_id, user_id):
 @csrf_exempt
 def tournament_list_users(request, tournament_id):
 	if request.method != "GET":
-		return JsonResponse({"error": "Method not allowed"}, status=405)
+		return JsonResponse({'message': "Method not allowed"}, status=405)
 
-	users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
+	tour_users = []
+	users = TournamentsUsers.objects.filter(tournament_id=tournament_id)		
 	serializer = TournamentsUsersSerializer(users, many=True)
-	return JsonResponse(serializer.data, safe=False)
+
+	tour_users = serializer.data
+	for tour_user in tour_users:
+		user = Users.objects.get(pk=tour_user['user_id'])
+
+		serializer = UsersSerializer(user)
+		tour_user['user'] = serializer.data
+		
+	return JsonResponse(tour_users, safe=False)
 
 #! --------------------------------------- Tournaments Games ---------------------------------------
 
@@ -358,7 +367,7 @@ def tournament_create_game(request, tournament_id):
 @csrf_exempt
 def tournament_list_games(request, tournament_id):
 	if request.method != "GET":
-		return JsonResponse({"error": "Method not allowed"}, status=405)
+		return JsonResponse({'message': "Method not allowed", 'method': request.method}, status=405)
 
 	tgames = TournamentsGames.objects.filter(tournament_id=tournament_id)
 	serializer = TournamentsGamesSerializer(tgames, many=True)
@@ -371,14 +380,10 @@ def tournament_list_games(request, tournament_id):
 
 	return JsonResponse(tgames_list, safe=False)
 
-#! 	SELECT *
-#! FROM pong_tournamentsgames, pong_games
-#! 	WHERE pong_games.id=pong_tournamentsgames.id AND (user1_id_id=1 OR user2_id_id=1)
-
 @csrf_exempt
 def tournament_list_user_games(request, user_id):
 	if request.method != "GET":
-		return JsonResponse({"error": "Method not allowed"}, status=405)
+		return JsonResponse({'message': "Method not allowed", 'method': request.method}, status=405)
 
 	# Get all TournamentsGames instances and respective Games instances
 	temp = TournamentsGames.objects.all()
@@ -395,6 +400,56 @@ def tournament_list_user_games(request, user_id):
 		g['game']['user2_id'] == user_id, all_tour_games))
 
 	return JsonResponse(user_tour_games, status=200, safe=False)
+
+@csrf_exempt
+def tournament_update_game(request, tournament_id, game_id):
+	if request.method != 'POST':
+		return JsonResponse({'message': "Method not allowed", 'method': request.method}, status=405)
+	if request.content_type != 'application/json':
+		return JsonResponse({'message': 'Only JSON allowed'}, status=406)
+
+	data = {}
+
+	try:
+		data = json.loads(request.body.decode('utf-8'))
+	except json.JSONDecodeError:
+		return JsonResponse({'message': 'Invalid JSON'}, status=400)
+	except KeyError as e:
+		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
+
+	tour_game = TournamentsGames.objects.get(tournament_id=tournament_id, game_id=game_id)
+	tour_game.game_id.duration = data['duration']
+	tour_game.game_id.nb_goals_user1 = data['nb_goals_user1']
+	tour_game.game_id.nb_goals_user2 = data['nb_goals_user2']
+
+	player1 = TournamentsUsers.objects.get(
+		user_id=tour_game.game_id.user1_id.id,
+		tournament_id=tournament_id
+	)
+
+	player2 = TournamentsUsers.objects.get(
+		user_id=tour_game.game_id.user2_id.id,
+		tournament_id=tournament_id
+	)
+
+	if data['nb_goals_user1'] > data['nb_goals_user2']:
+		tour_game.game_id.winner_id = player1.user_id
+		player1.score += 500
+		player2.score += data['nb_goals_user2'] * 100
+	else:
+		tour_game.game_id.winner_id = player2.user_id
+		player2.score += 500
+		player1.score += data['nb_goals_user1'] * 100
+
+	player1.save()
+	player2.save()
+	tour_game.game_id.save()
+
+	data = TournamentsGamesSerializer(tour_game).data
+	data['game'] = GamesSerializer(tour_game.game_id).data
+
+	return JsonResponse(data, status=200)
+
 
 #! --------------------------------------- Pages ---------------------------------------
 

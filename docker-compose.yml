@@ -50,5 +50,6 @@ services:
 
 networks:
     Transcendence:
+        name: Transcendence
         driver: bridge
 
