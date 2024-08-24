@@ -598,14 +598,18 @@ def tournaments(request):
 
     # Obtém a lista de amigos
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	tournaments = Tournaments.objects.all()
 	context = {
         'friends': friends,
         'user_id': user_id,
+		'tournaments': tournaments,
         'page': 'tournament'
         
     }
 	return render(request,"pages/tournaments.html", context)
 
+def ongoingtournaments(request):
+	return render(request,"pages/ongoing-tourn.html")
 
 
 @login_required

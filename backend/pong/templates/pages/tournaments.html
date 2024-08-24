@@ -81,42 +81,19 @@
                     <div class="table-title">Players registered</div>
                     <div class="table-title">Action</div>
                 </div>
-                <div class="table-content">
-                    <div id="name" class="table-info">Fieeestaaaaa</div>
-                    <div id="status" class="table-info status-tourn">OPEN</div>
-                    <div id="host" class="table-info">Chico</div>
-                    <div id="player-nbr" class="table-info">0/8</div>
-                    <div id="status" class="table-info">
-                        <a href="">
-                            Register
-                        </a>
+                {% for tournament in tournaments %}
+                    <div class="table-content">
+                        <div id="name" class="table-info">{{ tournament.name }}</div>
+                        <div id="status" class="table-info status-tourn">{{ tournament.status }}</div>
+                        <div id="host" class="table-info">{{ tournament.host_id }}</div>
+                        <div id="player-nbr" class="table-info">{{ tournament.capacity }}</div>
+                        <div id="status" class="table-info"></div>
+                            <a href="{% url 'ongoingtournaments' %}">
+                                Register
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div class="table-content">
-                    <div id="name" class="table-info">Blah Blah</div>
-                    <div id="status" class="table-info status-tourn">ONGOING</div>
-                    <div id="host" class="table-info">Nuno</div>
-                    <div id="player-nbr" class="table-info">4/4</div>
-                    <div id="status" class="table-info"></div>
-                </div>
-                <div class="table-content">
-                    <div id="name" class="table-info">AA</div>
-                    <div id="status" class="table-info status-tourn">CLOSED</div>
-                    <div id="host" class="table-info">Andreia</div>
-                    <div id="player-nbr" class="table-info">1/4</div>
-                    <div id="status" class="table-info">
-                        <a href="">
-                            Register
-                        </a>
-                    </div>
-                </div>
-                <div class="table-content">
-                    <div id="name" class="table-info">Madeira ou Açores</div>
-                    <div id="status" class="table-info status-tourn">OPEN</div>
-                    <div id="host" class="table-info">Andre</div>
-                    <div id="player-nbr" class="table-info">16/16</div>
-                    <div id="status" class="table-info"></div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
