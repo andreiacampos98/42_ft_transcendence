@@ -1,32 +1,34 @@
 import json
+from icecream import ic
 
+from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
 
-class PresenceConsumer(WebsocketConsumer):
-
-    connections = []
-
+class TournamentConsumer(WebsocketConsumer):
     def connect(self):
-        self.accept()
+        self.room_group_name = f'{self.scope["url_route"]["kwargs"]["tournament_id"]}'
         self.user = self.scope["user"]
         self.connections.append(self)
-        self.update_indicator(msg="Connected")
+
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name, self.channel_name
+        )
+
+        self.accept()
 
     def disconnect(self, code):
-        self.update_indicator(msg="Disconnected")
         self.connections.remove(self)
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name, self.channel_name
+        )
         return super().disconnect(code)
+    
+    def receive(self, text_data):
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name, {"type": "tournament.join", "message": text_data}
+        )
 
-    def update_indicator(self, msg):
-        for connection in self.connections:
-            connection.send(
-                text_data=json.dumps(
-                    {
-                        "msg": f"{self.user} {msg}",
-                        "online": f"{len(self.connections)}",
-                        "users": [f"{user.scope['user']}" for user in self.connections],                        
-                    }
-                )
-            )
+    def tournament_join(self, event):
+        self.send(text_data=event["message"])
 

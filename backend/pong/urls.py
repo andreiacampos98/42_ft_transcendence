@@ -3,6 +3,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from rest_framework.routers import DefaultRouter
 from . import views
+from . import consumers
 
 # Routers provide an easy way of automatically determining the URL conf.
 #router = DefaultRouter()
@@ -66,3 +67,7 @@ urlpatterns =[
     path('tournaments/<int:tournament_id>/games/<int:game_id>', views.tournament_update_game, name='tournament-update-game'),
 
 ] 
+
+websocket_urlpatterns = [
+    path('ws/tournaments/<int:tournament_id>', consumers.TournamentConsumer.as_asgi()),
+]
