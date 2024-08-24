@@ -4,7 +4,8 @@
    
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/tournament.css' %}">
-<div class="main-content">
+<script defer src="{% static 'js/tournament.js' %}"></script>
+<div class="main-content non_compressed"  id="main-content">
     <div class="main">
         <div class="top">
             <div class="leaderboard">
@@ -68,24 +69,53 @@
                 </div>
                 <div class="tournament-button">
                     <button class="tournament2">
-                        <img class="icon" src="{% static 'assets/icons/tournament-button.png' %}" alt="Button">
+                        <img class="button-tourn" src="{% static 'assets/icons/tournament-button.png' %}" alt="Button">
                     </button>
                 </div>
             </div>
             <div class="tournament-avail">
                 <div class="table-head">
-                    <h4 class="table-title">Name</h4>
-                    <h4 class="table-title">Status</h4>
-                    <h4 class="table-title">Host</h4>
-                    <h4 class="table-title">Players registered</h4>
-                    <h4 class="table-title">Action</h4>
+                    <div class="table-title">Name</div>
+                    <div class="table-title">Status</div>
+                    <div class="table-title">Host</div>
+                    <div class="table-title">Players registered</div>
+                    <div class="table-title">Action</div>
                 </div>
                 <div class="table-content">
-                    <h4 class="table-info">Tournament Name</h4>
-                    <h4 class="table-info">Status</h4>
-                    <h4 class="table-info">Host</h4>
-                    <h4 class="table-info">x/16</h4>
-                    <h4 class="table-info">Register</h4>
+                    <div id="name" class="table-info">Fieeestaaaaa</div>
+                    <div id="status" class="table-info status-tourn">OPEN</div>
+                    <div id="host" class="table-info">Chico</div>
+                    <div id="player-nbr" class="table-info">0/8</div>
+                    <div id="status" class="table-info">
+                        <a href="">
+                            Register
+                        </a>
+                    </div>
+                </div>
+                <div class="table-content">
+                    <div id="name" class="table-info">Blah Blah</div>
+                    <div id="status" class="table-info status-tourn">ONGOING</div>
+                    <div id="host" class="table-info">Nuno</div>
+                    <div id="player-nbr" class="table-info">4/4</div>
+                    <div id="status" class="table-info"></div>
+                </div>
+                <div class="table-content">
+                    <div id="name" class="table-info">AA</div>
+                    <div id="status" class="table-info status-tourn">CLOSED</div>
+                    <div id="host" class="table-info">Andreia</div>
+                    <div id="player-nbr" class="table-info">1/4</div>
+                    <div id="status" class="table-info">
+                        <a href="">
+                            Register
+                        </a>
+                    </div>
+                </div>
+                <div class="table-content">
+                    <div id="name" class="table-info">Madeira ou Açores</div>
+                    <div id="status" class="table-info status-tourn">OPEN</div>
+                    <div id="host" class="table-info">Andre</div>
+                    <div id="player-nbr" class="table-info">16/16</div>
+                    <div id="status" class="table-info"></div>
                 </div>
             </div>
         </div>

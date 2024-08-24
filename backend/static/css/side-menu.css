@@ -1,6 +1,9 @@
+body {
+    background-color: #1A3141;
+}
 .left-div {
     height: 100vh;
-    background-color: #1B3E40;
+    background-color: #1A3141;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,7 +18,7 @@
 }
 
 .left-div.expanded {
-    width: 200px; /* Expanded width */
+    width: 210px; /* Expanded width */
 }
 
 .left-div .expandable-pic {
@@ -27,7 +30,7 @@
     flex-direction: column;
     flex-grow: 1;
     justify-content: center;
-    padding-top: 30px;
+    padding-top: 20vh;
     width: 100%;
     margin-left: 20px;
 }
@@ -37,7 +40,7 @@
     align-items: center;
     margin-top: 35px;
     border: none;
-    background-color: #1B3E40;
+    background-color: #1A3141;
     cursor: pointer;
     width: 100%;
 }
@@ -52,10 +55,27 @@
     color: #FFFFFF;
 }
 
+.side-menu_a {
+    text-decoration: none;
+
+}
 .icon-title2 {
     display: none;
     margin-left: 10px;
     color: #FFFFFF;
+}
+
+#highlight-icon1, #highlight-icon2, #highlight-icon3 {
+    position: relative;
+    left: -5px;
+    width: 40px; /* Adjust icon size as needed */
+    height: 40px;
+}
+
+#highlight-span1, #highlight-span2, #highlight-span3 {
+    position: relative;
+    left: -15px;
+    color: #F8D082;
 }
 
 .left-div .icon {
@@ -83,7 +103,7 @@
 
 .left-div .logout-icon {
     margin-top: auto; /* Push the logout icon to the bottom */
-    margin-bottom: 90px;
+    margin-bottom: 2vh;
     
 }
 
@@ -91,3 +111,65 @@
     width: 100px;
     cursor: pointer;
 }
+
+.main-content {
+	background-color: #1D2731;
+    border-top: 1px solid #336181;
+    border-left: 1px solid #336181;
+    border-top-left-radius: 10px;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    margin-top: 70px;
+    display: flex;
+    position: fixed;
+    justify-content: center;
+	align-items: center;
+    text-align: center;
+    transition: filter 0.3s ease;
+}
+
+.non_compressed {
+	margin-left: 70px;
+
+}
+
+.compressed {
+    margin-left: 210px;
+}
+.main {
+    width: 90vw;
+}
+
+.icon {
+    height: 32px;
+}
+
+h3 {
+    margin: 0;
+    color: #E65C19;
+    padding: 0; /* Ensure no padding */
+}
+
+p {
+    color: #FFFFFF;
+    font-size: x-small;
+    font-weight: bold;
+    text-align: center;
+    padding-left: 20px;
+    padding-right: 20px;
+	width: 25vw;
+}
+
+h2 {
+    margin-bottom: 0px;
+	font-weight: bold;
+    color: #FFFFFF;
+}
+
+/*h6 {
+    padding-top: 60px;
+	font-weight: bold;
+    color: #FFFFFF;
+}*/

@@ -3,98 +3,224 @@
 
 
 {% block main_content %}
-    <div class="main-content">
-        <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-        <link rel="stylesheet" href="{% static 'css/match-block.css' %}">
-        <script defer src="{% static 'js/match-block.js' %}"></script>
-        <div class="main">
-            <div class="side-profile">
-                <img class="profile-big" src="{{ user.picture.url }}" alt="User">
-                <h3 class="description"> {{ user.username }} </h3>
-				<form action="/friends/{{ user_id }}/{{ user.id }}" method="POST">
-					{% csrf_token %}
-					<button >Add Friend</button>
-				</form>
-                <h3 class="description"> {{ user.status }} </h3>
-                <div class="text-block">
-                    <span> {{ user.description }}</span>
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<link rel="stylesheet" href="{% static 'css/match-block.css' %}">
+<script defer src="{% static 'js/match-block.js' %}"></script>
+<script defer src="{% static 'js/edit-profile.js' %}"></script>
+<script defer src="{% static 'js/change-password.js' %}"></script>
+<script defer src="{% static 'js/friends_add_remove.js' %}"></script>
+<script defer src="{% static 'js/notifications.js' %}"></script>
+<div class="main-content non_compressed"  id="main-content">
+    <div class="main">
+        <div id="modal" class="m">
+            <div class="m-content">
+                <span class="close">&times;</span>
+                <h3 style="padding-top: 20px;">Change Password</h3>
+                <div class="form-div">
+                    <form id="change-password-form" method="POST">
+                        {% csrf_token %}
+                        <label for="old_password-input">Old Password</label>
+                        <input class="pass-input" type="password" id="old_password-input" name="old_password" required>
+
+                        <label for="newpassword1-input">New Password</label>
+                        <input class="pass-input" type="password" id="password1-input" name="password1" required>
+
+                        <label for="newpassword2-input">Confirm new password</label>
+                        <input class="pass-input" type="password" id="password2-input" name="password2" required>
+                    </form>
                 </div>
-                <h5 class="text-block"> Email {{ user.email }}</h5>
-                <h5 class="text-block"> Joined {{ user.created_at }}</h5>
+
+                <button style="margin-bottom: 10px;" class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
+                    <span class="change-b" id="change">Confirm</span>
+                </button>
+                <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Cancel</button>
             </div>
-            <div class="stats-history">
-                <div class="stats">
-                    <div class="topic">
-                        <img class="icon" src="{% static 'assets/icons/chart.png' %}" alt="chart">
-                        <span class="icon-title3">Your Stats</span>
-                    </div>
-                    <div class="stats2">
-                        <div class="percentages">
-                            <div class="stats-head">
-                                <div class="stat">
-                                    <h4 class="stats-title">WIN Rate</h4>
-                                    <h6 class="winr"> 100%</h6>
-                                </div>
-                                <div class="stat">
-                                    <h4 class="stats-title">WINS</h4>
-                                    <h6 class="winr"> 100%</h6>
-                                </div>
-                                <div class="stat">
-                                    <h4 class="stats-title">LOSSES</h4>
-                                    <h6 class="winr"> 100%</h6>
-                                </div>
-                                <div class="stat">
-                                    <h4 class="stats-title">GOALS SCORED</h4>
-                                    <h6 class="winr"> 100%</h6>
-                                </div>
-                                <div class="stat">
-                                    <h4 class="stats-title">GOALS SUFFERED</h4>
-                                    <h6 class="winr"> 100%</h6>
-                                </div>
+        </div>
+        <div class="side-profile">
+            <div id="change-info1">
+                <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="User">
+                <h3 class="description"> {{ user_view.username }} </h3>
+            </div>
+            <h3 class="description"> {{ user_view.status }} </h3>
+            {% if is_own_profile %}
+                <div class="edit-change">
+                    <button class="edit" id="edit-profile-button" onclick="onEditButtonClick()">
+                        <img src="{% static 'assets/icons/edit.png' %}">
+                        Edit Profile
+                    </button>
+                    <button class="change" id="open-change-password-modal">
+                        <span class="change-b" id="change">
+                            <img src="{% static 'assets/icons/password.png' %}">
+                            Change Password
+                        </span>
+                    </button>
+                </div>
+                <div class="save-cancel">
+                    <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+                    <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
+                </div>
+            {% elif is_friend %}
+                {% if friendship_status %}
+                    <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
+                        {% csrf_token %}
+                        <button class="friend-status" id="remove-friend-button">Remove Friend</button>
+                    </form>
+                {% else %}
+                    {% if me %}
+                        <button class="friend-status">Request Sent</button>
+                    {% elif notification.status == 'Pending' %}
+                        <button class="friend-status" id="decline-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'decline', '{{ user_id }}', '{{ user_view.id }}', event)">Decline</button>
+                        <button class="friend-status" id="accept-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'accept', '{{ user_id }}', '{{ user_view.id }}', event)">Accept</button>                    
+                    {% else %}
+                        <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
+                            {% csrf_token %}
+                            <button id="add-friend-button" type="submit">Add Friend</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
+                    {% csrf_token %}
+                    <button id="add-friend-button" type="submit">Add Friend</button>
+                </form>
+            {% endif %}
+            
+            <form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
+                {% csrf_token %}
+                <input type="file" id="profile-picture-input" name="picture">
+                <div class="email-joined-edit">
+                    <label for="username-input">
+                        <h5 class="text-block"> 
+                            <img style="width: 15px; height: 15px;" src="{% static 'assets/icons/user.png' %}">
+                            Username
+                        </h5>
+                    </label>
+                    <input style="text-align: right; " type="text" id="username-input" name="username" value="{{ user_view.username }}" required>
+                </div>
+                <label for="description-input">Description</label>
+                {% if user_view.description is None or user_view.description == "" %}
+                    <textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50"></textarea>
+                {% else %}
+                    <textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50">{{ user_view.description }}</textarea>
+                {% endif %}
+                
+                    <div class="email-joined-edit">
+                    <label for="email-input">
+                        <h5 class="text-block"> 
+                            <img src="{% static 'assets/icons/at.png' %}">
+                            Email
+                        </h5>
+                    </label>
+                    {% if user_view.email is None or user_view.email == "" %}
+                        <input style="text-align: right; " type="email" id="email-input" name="email" value="" required>
+                    {% else %}
+                        <input style="text-align: right; " type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
+                    {% endif %}
+                </div>
+            </form>
+            <div id="change-info2">
+                <div class="text-block">
+                    {% if user_view.description is None or user_view.description == "" %}
+                        <span class="user-description"></span>
+                    {% else %}
+                        <span class="user-description">{{ user_view.description }}</span>
+                    {% endif %}
+
+                </div>
+                <div class="email-joined">
+                    <h5 class="text-block"> 
+                        <img src="{% static 'assets/icons/at.png' %}">
+                        Email
+                    </h5>
+                    {% if user_view.email is None or user_view.email == "" %}
+                        <h5 class="text-block"></h5>
+                    {% else %}
+                        <h5 class="text-block">{{ user_view.email }}</h5>
+                    {% endif %}
+                </div>
+                <div class="email-joined">
+                    <h5 class="text-block"> 
+                        <img src="{% static 'assets/icons/joined.png' %}">
+                        Joined
+                    </h5>
+                    <h5 class="text-block">{{ joined_date }}</h5>
+                </div>
+            </div>
+            
+        </div>
+        <div class="stats-history">
+            <div class="stats">
+                <div class="topic">
+                    <img class="icon" src="{% static 'assets/icons/chart.png' %}" alt="chart">
+                    <span class="icon-title3">Your Stats</span>
+                </div>
+                <div class="stats2">
+                    <div class="percentages">
+                        <div class="stats-head">
+                            <div class="stat">
+                                <h4 class="stats-title">Wins</h4>
+                                <h6 class="winr"> 100%</h6>
+                            </div>
+                            <div class="stat">
+                                <h4 class="stats-title">Losses</h4>
+                                <h6 class="winr"> 100%</h6>
+                            </div>
+                            <div class="stat">
+                                <h4 class="stats-title">Win Rate</h4>
+                                <h6 class="winr"> 100%</h6>
+                            </div>
+                            <div class="stat">
+                                <h4 class="stats-title">Goals Scored</h4>
+                                <h6 class="winr"> 100%</h6>
+                            </div>
+                            <div class="stat">
+                                <h4 class="stats-title">Goals Suffered</h4>
+                                <h6 class="winr"> 100%</h6>
                             </div>
                         </div>
-                        <div class="graphs">
-                            <div class="graph1">
-                                <div class="numbers-stat">
-                                    <h6>21312</h6>
-                                    <h6>21312</h6>
-                                </div>
-                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                    </div>
+                    <div class="graphs">
+                        <div class="graph1">
+                            <div class="numbers-stat">
+                                <h6 class="graph-title">Win Rate</h6>
+                                <h6 class="graph-value">21312</h6>
                             </div>
-                            <div class="graph2">
-                                <div class="numbers-stat">
-                                    <h6>21312</h6>
-                                    <h6>21312</h6>
-                                </div>
-                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                        </div>
+                        <div class="graph2">
+                            <div class="numbers-stat">
+                                <h6 class="graph-title">Raly Length</h6>
+                                <h6 class="graph-value">21312</h6>
                             </div>
-                            <div class="graph3">
-                                <div class="numbers-stat">
-                                    <h6>21312</h6>
-                                    <h6>21312</h6>
-                                </div>
-                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                        </div>
+                        <div class="graph3">
+                            <div class="numbers-stat">
+                                <h6 class="graph-title">Games/day</h6>
+                                <h6 class="graph-value">21312</h6>
                             </div>
-                            <div class="graph4">
-                                <div class="numbers-stat">
-                                    <h6>21312</h6>
-                                    <h6>21312</h6>
-                                </div>
-                                <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
+                        </div>
+                        <div class="graph4">
+                            <div class="numbers-stat">
+                                <h6 class="graph-title">21312</h6>
+                                <h6 class="graph-value">21312</h6>
                             </div>
+                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
                         </div>
                     </div>
                 </div>
-                <div class="stats">
-                    <div class="topic">
-                        <img class="icon" src="{% static 'assets/icons/history.png' %}" alt="chart">
-                        <span class="icon-title3">Match History</span>
-                    </div>
-                    <div class="stats2">
-                        <div id="match-container"></div>
-                    </div>
+            </div>
+            <div class="stats">
+                <div class="topic">
+                    <img class="icon" src="{% static 'assets/icons/history.png' %}" alt="chart">
+                    <span class="icon-title3">Recent Matches</span>
+                </div>
+                <div class="stats2">
+                    <div id="match-container"></div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

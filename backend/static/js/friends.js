@@ -5,6 +5,8 @@ function addClassToTopLevelDivs(className) {
         if (div.id !== 'sidebar') {
             div.classList.toggle(className);
         }
+    const main_cont = document.getElementById('main-content');
+    main_cont.classList.toggle(className)
     });
 }
 
@@ -19,7 +21,7 @@ function toggleSidebar(user_id) {
     if (!sidebar.classList.contains('show'))
         return ;
 
-    fetch(`friends/${user_id}`, {
+    fetch(`/friends/${user_id}`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }
@@ -45,7 +47,12 @@ function toggleSidebar(user_id) {
             friendBlock.dataset.status = 'online';
             
             const link = document.createElement('a');
-            //! MISSING PROFILE LINK
+            link.href = `/users/${friend.username}`;
+            link.setAttribute('hx-get', `/users/${friend.username}`);
+            link.setAttribute('hx-target', '#MainPage'); // Assume que você tem uma div com id "main-content"
+            link.setAttribute('hx-swap', 'outerHTML');
+            link.setAttribute('hx-trigger', 'click');
+            link.style.display = 'block'; 
 
             const profilePic = document.createElement('img');
             profilePic.classList.add('profile-pic');
@@ -64,10 +71,11 @@ function toggleSidebar(user_id) {
 
             friendInfo.appendChild(username);
             friendInfo.appendChild(status);
-            link.appendChild(friendBlock);
             friendBlock.appendChild(profilePic);
             friendBlock.appendChild(friendInfo);
-            sidebar.appendChild(friendBlock);
+            link.appendChild(friendBlock);
+            sidebar.appendChild(link);
+
         });
     });
 }

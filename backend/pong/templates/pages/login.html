@@ -6,8 +6,8 @@
     <div class="login-container">
         <div class="login-container2">
             <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
-            <h2 class="title" >Nice to see you back :)</h2>
-            <form id="loginForm" method="POST" hx-post="{% url 'login' %}" hx-target="#main" hx-swap="innerHTML">
+            <h3 class="title" id="nice" >Nice to see you back :)</h3>
+            <form id="loginForm" method="POST" href="{% url 'login' %}">
                 {% csrf_token %}
                 <div class="input-group">
                     <label for="username">Username</label>
@@ -20,18 +20,19 @@
                         <img id="togglePasswordImage" src="{% static 'assets/icons/eyeopen.png' %}">
                     </button>
                 </div>
-                <a href="{% url 'password_reset' %}" hx-get="{% url 'password_reset' %}" hx-target="#main" hx-swap="innerHTML">Forgot Password?</a>
+                <a id="forgot" href="{% url 'password_reset' %}" href="{% url 'password_reset' %}" >Forgot Password?</a>
                 <p id="errorMessage" class="error-message"></p>
-                <button type="submit">
-                    <a href="{% url 'home' %}"> Sign in </a>
-                </button>
+                <button type="submit"> Sign in </button>
             </form>
+            <div class="bottom">
             <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
-            
             <button type="submit2"><img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42</button>
-            Your first time? <a class="sign-up" href="{% url 'signup' %}" hx-get="{% url 'signup' %}" hx-target="#main" hx-swap="innerHTML">Sign Up now</a>
+            <div id="firsttime">
+                Your first time? <a class="sign-up" href="{% url 'signup' %}" href="{% url 'signup' %}" >Sign Up now</a>
+            </div>
             <br>
             <h6>© 42 Porto 2024</h6>
+            </div>
         </div>
     </div>
     {% comment %} <script defer src="{% static 'js/script.js' %}"></script> {% endcomment %}

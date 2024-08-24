@@ -1,29 +1,13 @@
-
-.main-content {
-	background-color: #162728;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-	margin-left: 70px;
-    display: flex;
-    position: fixed;
-    justify-content: center;
-	align-items: center;
-    text-align: center;
-}
-
 .main {
-    width: 90vw;
     display: flex;
 }
+
 .side-profile {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 250px; /* Adjust width as needed */
+    width: 350px; /* Adjust width as needed */
     padding: 20px;
-    background-color: #1B3E40; /* Light gray background for side profile */
     border-radius: 10px;
     color: #FFFFFF;
 }
@@ -34,35 +18,128 @@
     border-radius: 50%;
 }
 
+#change-info2 {
+    width: inherit;
+    font-size: small;
+    color:#c3c3c3bb;
+}
 .side-profile .description {
     text-align: center;
     margin: 10px 0;
 }
-.text-block{
-    display: flex;
-}
-.side-profile .text-block span {
-    display: block;
-    margin: 5px 0;
+
+#description-form{
+    width: inherit;
+    display: none;
 }
 
-.side-profile button {
+textarea, #username-input, #email-input {
+    width: 100%;
+    border-radius: 5px;
+    background-color: #101d27;
+    border: none;
+    color: white;
+}
+
+.description{
+    width: inherit;
+}
+
+.user-description {
+    display: inline;
+    vertical-align: middle;
+    margin: 10px;
+}
+
+.text-block{
+    display: flex;
+    text-align: justify;
+    font-size: small;
+    margin: 0;
+    margin-right: 30px;
+}
+.side-profile {
+    display: block;
+    margin: 5px 0;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.email-joined-edit {
+    display: flex;
+    align-items: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.email-joined {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.edit-change, .save-cancel {
+    display: flex;
+    align-items: center;
+    width: 360px;
+    justify-content: space-around;
+}
+
+/*#edit-profile-form{
+    width: 100%;
+}*/
+
+.side-profile button, #cancel-change-password-button, #change-password {
     margin-top: 10px;
     padding: 10px 20px;
     color: #fff;
+    font-size: small;
     cursor: pointer;
     border-radius: 5px;
-    border: 1px solid #3A00E5;
+    border: 1px solid #1A3141;
+    width: 170px;
+}
+
+.edit, #save-profile-button {
+    background-color: #1A3141;
+}
+
+#open-change-password-modal, #cancel-edit-button {
+    background-color: #1D2731;
+
+}
+
+.form-div {
+    display: flex;
+    justify-content: center;
+}
+
+#change-password {
+    background-color: #1A3141;
+
+}
+
+#cancel-change-password-button {
+    background-color: #1D2731;
+}
+
+#change-password-form {
+    display: flex;
+    flex-direction: column;
+    color: #c3c3c3bb;
     width: 100%;
+    padding: 10px;
+    
+}
+#change-password-form label {
+    align-self: baseline;
 }
 
-.edit {
-    background-color: #3A00E5;
-}
-
-#change {
-    color: #3A00E5;
-
+.pass-input {
+    background-color: #101d27;
+    width: 99%;
+    border-radius: 5px;
+    border: 1px solid #c3c3c3bb;
 }
 
 .stats-history {
@@ -102,8 +179,6 @@
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
-    background-color: #1B3E40; /* White background for stats sections */
-    border-radius: 10px;
 }
 
 .stats-head {
@@ -114,10 +189,8 @@
 
 .stat {
     display: flex;
-    justify-content: space-between;
     flex-direction: column;
     text-align: center;
-    height: inherit;
     padding: 10px;
 }
 
@@ -130,11 +203,25 @@
     width: 15vw;
     height: 100px;
     margin-left: 10px;
-    background-color: #1B3E40; /* Light gray background for graphs */
+    background-color: #101d27; /* Light gray background for graphs */
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
+}
+
+.stats-title {
+    color: #c3c3c3bb;
+}
+
+.graph-title {
+    font-size: smaller;
+    color: #c3c3c3bb;
+}
+
+.winr, .graph-value {
+    font-weight: bold;
+    color: #F8D082;
 }
 
 .numbers-stat{
@@ -150,3 +237,53 @@
     max-width: 50%;
     max-height: 50%;
 }
+
+/* The Modal (background) */
+.m {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 10000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  /* m Content */
+  .m-content {
+    position: relative;
+    background-color: #1D2731;
+    margin: auto;
+    margin-top: 37vh;
+    padding: 0;
+    border: 1px solid #336181;
+    border-radius: 5px;
+    width: 20%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    animation-name: animatetop;
+    animation-duration: 0.4s
+  }
+  /* Add Animation */
+  @keyframes animatetop {
+    from {top: -300px; opacity: 0} 
+    to {top: 0; opacity: 1}
+  }
+  /* The Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /*height: 10px;*/
+  }
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }

@@ -26,9 +26,23 @@ SECRET_KEY = 'django-insecure-b4amhal1@gob1$prnqgr*chry7pneej76qsy^p+5$m!w&#$qyy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+LOGIN_URL = 'login'
+
 ALLOWED_HOSTS = ['*']
 APPEND_SLASH = False
 
+# Use the default session backend
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Banco de dados para armazenar sessões
+
+# Ensure sessions are saved and managed properly
+SESSION_SAVE_EVERY_REQUEST = True  # Salva a sessão em cada request, opcional
+
+# Secure session settings
+SESSION_COOKIE_SECURE = False  # Deve ser True em produção, requer HTTPS
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Define se a sessão expira ao fechar o navegador
+
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -55,6 +69,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
 
 ROOT_URLCONF = 'backend.urls'
 
