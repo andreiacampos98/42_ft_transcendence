@@ -8,3 +8,4 @@ drf-yasg
 icecream
 djangorestframework
 django-bootstrap4
+channels_redis
