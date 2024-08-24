@@ -26,6 +26,7 @@
 | Route | HTTP Method | Description | Parameters |
 | --- | :--: | --- | --- |
 | `/tournaments/create`| `POST` | Create tournament | |
+| `/tournaments`| `GET` | List of tournament | |
 | `/tournaments/{id}` | `PATCH` | Update tournament (status only) | `id` - the tournament's id |
 | `/tournaments/{id}/cancel` | `DELETE` | Cancel and delete tournament | `id` - the tournament's id |
 

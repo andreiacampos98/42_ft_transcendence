@@ -331,6 +331,14 @@ def tournament_create(request):
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
 
+def tournament_list(request):
+	if request.method != "GET":
+		return JsonResponse({'message': "Method not allowed"}, status=405)
+	elif request.method == "GET":
+		tournaments = Tournaments.objects.all()
+		serializer = TournamentsSerializer(tournaments, many=True)
+	return JsonResponse(serializer.data, safe=False, status=400)
+
 @csrf_exempt
 def tournament_update(request, tournament_id):
 	if request.method != 'PATCH':	
