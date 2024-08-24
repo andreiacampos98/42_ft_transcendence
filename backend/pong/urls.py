@@ -14,7 +14,7 @@ urlpatterns =[
     path('', views.loginview, name="login"),
     path('home/', views.home, name="home"),
     path('tournaments/', views.tournaments, name="tournaments"),
-    path('tournaments/ongoing', views.ongoingtournaments, name="ongoingtournaments"),
+    path('tournaments/ongoing/<int:tournament_id>', views.ongoingtournaments, name="ongoingtournaments"),
     path('signup/', views.signup, name='signup'),
     path('password-reset/', 
             auth_views.PasswordResetView.as_view(template_name='pages/password_reset.html'), 

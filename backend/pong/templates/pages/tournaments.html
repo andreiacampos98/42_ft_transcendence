@@ -88,7 +88,7 @@
                         <div id="host" class="table-info">{{ tournament.host_id }}</div>
                         <div id="player-nbr" class="table-info">{{ tournament.capacity }}</div>
                         <div id="status" class="table-info"></div>
-                            <a href="{% url 'ongoingtournaments' %}">
+                            <a href="{% url 'ongoingtournaments' tournament.id %}">
                                 Register
                             </a>
                         </div>

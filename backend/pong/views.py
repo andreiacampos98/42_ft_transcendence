@@ -424,7 +424,8 @@ def tournament_join(request, tournament_id, user_id):
 			}
 
 			tour_games_data.append(tour_game)
-
+		tournament.status="Ongoing"
+		tournament.save()
 		serializer = TournamentsGamesSerializer(data=tour_games_data, many=True)
 		if not serializer.is_valid():
 			return JsonResponse(serializer.errors, status=400, safe=False)
@@ -650,8 +651,11 @@ def tournaments(request):
     }
 	return render(request,"pages/tournaments.html", context)
 
-def ongoingtournaments(request):
-	return render(request,"pages/ongoing-tourn.html")
+def ongoingtournaments(request, tournament_id):
+	context = {
+		"tournament_id": tournament_id
+	}
+	return render(request,"pages/ongoing-tourn.html", context)
 
 
 @login_required
