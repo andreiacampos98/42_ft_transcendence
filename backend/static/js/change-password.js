@@ -28,7 +28,7 @@ window.onclick = function(event) {
 
 function getChangePassword()
 {
-    const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
+    const userId = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
 
     const formData = new FormData(document.getElementById("change-password-form"));
 

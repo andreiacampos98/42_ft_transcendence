@@ -5,6 +5,7 @@
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/tournament.css' %}">
 <script defer src="{% static 'js/tournament.js' %}"></script>
+<script defer src="{% static 'js/websocket_tournament.js' %}"></script>
 <div class="main-content non_compressed"  id="main-content">
     <div class="main">
         <div class="top">
@@ -88,12 +89,34 @@
                         <div id="host" class="table-info">{{ tournament.host_id }}</div>
                         <div id="player-nbr" class="table-info">{{ tournament.capacity }}</div>
                         <div id="status" class="table-info"></div>
-                            <a href="{% url 'ongoingtournaments' tournament.id %}">
+                        <button class="open-register-tournament-modal" data-tournament-id="{{ tournament.id }}">
+                            <span class="change-b" id="change">
                                 Register
-                            </a>
-                        </div>
+                            </span>
+                        </button>
                     </div>
                 {% endfor %}
+            </div>
+            <div id="modal" class="m">
+                <div class="m-content">
+                    <span class="close">&times;</span>
+                    <h3 style="padding-top: 20px;">Tournament Registration</h3>
+                    <p>You're about to register in a tournament. PLease specify a nickname to use within the tournament</p>
+                    <div class="form-div">
+                        <form id="tournament-register-form" method="POST">
+                            {% csrf_token %}
+                            <label for="nickname-input">Tournament Nickname</label>
+                            <input class="pass-input" type="text" id="nickname-input" name="nickname" required>
+                            <p>No thanks, I'll use my username instead.</p>
+                        </form>
+                    </div>
+    
+                    <button style="margin-bottom: 10px;" class="change modal-button" id="registration" onclick="registerTournament()" data-tournament-id="{{ tournament.id }}" data-user-id="{{ user_id }}">
+                        <span class="change-b" id="change">Confirm</span>
+                    </button>
+                    
+                    <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-registration-button">Go back</button>
+                </div>
             </div>
         </div>
     </div>
