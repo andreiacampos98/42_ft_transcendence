@@ -1,6 +1,6 @@
 import json
-from .models import TournamentsUsers
-from .serializers import TournamentsUsersSerializer
+from .models import TournamentsUsers, Users
+from .serializers import TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
 
 from asgiref.sync import async_to_sync
@@ -26,15 +26,19 @@ class TournamentConsumer(WebsocketConsumer):
     
     def receive(self, text_data):
         data = json.loads(text_data)
-        ic(data)
         tournament_id = data['tournament_id']
         all_tour_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
         serializer = TournamentsUsersSerializer(all_tour_users, many=True)
 
-        ic(serializer.data)
+        tour_users_data = serializer.data
+
+        for tour_user in tour_users_data:
+            user = Users.objects.get(pk=tour_user['user_id']) 
+            user_data = UsersSerializer(user).data
+            tour_user['user'] = user_data
 
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name, {"type": "tournament.join", "message": json.dumps(serializer.data)}
+            self.room_group_name, {"type": "tournament.join", "message": json.dumps(tour_users_data)}
         )
 
     def tournament_join(self, event):

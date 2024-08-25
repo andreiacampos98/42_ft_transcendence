@@ -29,9 +29,7 @@ async function registerTournament() {
     
     // Prepare form data and send via fetch API
     var formData = {
-        "alias": document.getElementById("nickname-input").value,
-        "tournament_id": tournamentId,
-        "user_id": userId
+        "alias": document.getElementById("nickname-input").value
     };
     console.log(formData)
     

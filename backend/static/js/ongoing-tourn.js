@@ -84,6 +84,7 @@ socket.onmessage = (event) => {
 
     players.forEach((player, i) => {
         playerSlots[i].querySelector("span.name").textContent = player.alias
+        playerSlots[i].querySelector("img").src = player.user.picture
         // place image on the slot as well
     })
     
