@@ -62,6 +62,36 @@
                 </div>
             </div>
         </div>
+        <div id="modal2" class="m2">
+            <div class="m-content">
+                <span class="close">&times;</span>
+                <h3 style="padding-top: 20px;">Create Tournament</h3>
+                <div class="form-div">
+                    <form id="create-tournament-form" method="POST">
+                        {% csrf_token %}
+                        <div class="new-tournament-modal" id="name-modal">
+                            <label for="new-tournament-name">Tournament Name</label>
+                            <input class="tournament-modal" type="text" id="new-tournament-name" name="tournament-name" required placeholder="Ex: Pong World Cup">
+                        </div>
+                        <div class="new-tournament-modal" id="nbr-modal">
+                            <label for="numPlayers">No. of Players</label>
+                            <select id="numPlayers" name="numPlayers" required>
+                                <option value="4">4 Players</option>
+                                <option value="8">8 Players</option>
+                                <option value="16">16 Players</option>
+                            </select>
+                        </div>
+
+                    </form>
+                </div>
+
+                <button style="margin-bottom: 10px;" class="change modal-button" id="create-tournament" onclick="getCreateTournament()" data-user-id="{{ user_id }}">
+                    <span class="change-b" id="change">Create</span>
+                </button>
+                <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-create-tournament">Cancel</button>
+            </div>
+        </div>
+
         <div class="bot">
             <div class="avail-tournaments">
                 <div class="topic">
@@ -69,7 +99,7 @@
                     <span class="icon-title3">Available Tournaments</span>
                 </div>
                 <div class="tournament-button">
-                    <button class="tournament2">
+                    <button class="tournament2" id="tournament-creater" onclick="onCreateButtonClick()">
                         <img class="button-tourn" src="{% static 'assets/icons/tournament-button.png' %}" alt="Button">
                     </button>
                 </div>

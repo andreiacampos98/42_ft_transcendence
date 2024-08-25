@@ -15,6 +15,7 @@ setStatus('friend2', 'offline');  // Can be 'online', 'offline', or 'playing'
 setStatus('friend3', 'playing');  // Can be 'online', 'offline', or 'playing'
 
 */
+
 document.addEventListener('DOMContentLoaded', () => {
     const statusElements = document.querySelectorAll('.status-tourn');
 
@@ -36,3 +37,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Get the modal
+var modal = document.getElementById("modal2");
+// Get the button that opens the modal
+var btn = document.getElementById("tournament-creater");
+// Get the  element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+var goback = document.getElementById("cancel-create-tournament");
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+// When the user clicks on  (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+goback.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+function getCreateTournament()
+{
+    const userId = document.querySelector('button[onclick="getCreateTournament()"]').getAttribute('data-user-id');
+
+    const formData = new FormData(document.getElementById("create-tournament-form"));
+
+    fetch(`/users/${userId}/password`, {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            alert(data.message); // Exibe uma mensagem de sucesso
+            window.location.href = `/users/${data.username}`; // Atualiza a página para refletir as alterações
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
