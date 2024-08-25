@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     togglePasswordButton.addEventListener('click', () => {
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
-        togglePasswordImage.src = type === 'password' ? 'assets/icons/eyeopen.png' : './assets/icons/eyeclosed(1).png';
+        togglePasswordImage.src = type === 'password' ? "/static/assets/icons/eyeopen.png" : "/static/assets/icons/eyeclosed(1).png";
         togglePasswordImage.alt = type === 'password' ? 'Show Password' : 'Hide Password';
     });
 });

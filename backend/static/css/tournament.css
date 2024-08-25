@@ -214,9 +214,13 @@
     align-items: center;
 }
 
-#open-register-tournament-modal, #cancel-registration-button {
+.open-register-tournament-modal {
+    border: none;
+    background-color: #101d27;
+    color: #F2F2F2;
+}
+#cancel-registration-button {
     background-color: #1D2731;
-
 }
 
 .form-div {
@@ -253,39 +257,40 @@
 }
 /* m Content */
 .m-content {
-  position: relative;
-  background-color: #1D2731;
-  margin: auto;
-  margin-top: 37vh;
-  padding: 0;
-  border: 1px solid #336181;
-  border-radius: 5px;
-  width: 20%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-  animation-name: animatetop;
-  animation-duration: 0.4s
+    min-width: 200px;
+    position: relative;
+    background-color: #1D2731;
+    margin: auto;
+    margin-top: 37vh;
+    padding: 0;
+    border: 1px solid #336181;
+    border-radius: 5px;
+    width: 20%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    animation-name: animatetop;
+    animation-duration: 0.4s
 }
 /* Add Animation */
 @keyframes animatetop {
-  from {top: -300px; opacity: 0} 
-  to {top: 0; opacity: 1}
+    from {top: -300px; opacity: 0} 
+    to {top: 0; opacity: 1}
 }
 /* The Close Button */
 .close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  position: absolute;
-  top: 0;
-  left: 0;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #aaa;
   /*height: 10px;*/
 }
 .close:hover,
 .close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
+    text-decoration: none;
+    cursor: pointer;
+    color: #000;
 }
 
 .side-profile button, #cancel-create-tournament, #create-tournament {

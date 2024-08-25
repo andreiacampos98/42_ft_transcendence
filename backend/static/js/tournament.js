@@ -72,7 +72,7 @@ function getCreateTournament()
 
     var formData = {
         "name": document.getElementById("new-tournament-name").value,
-        "capacity": document.getElementById("numPlayers").value,
+        "capacity":  document.getElementById("numPlayers").value,
         "host_id": userId,
         "status": 'Open'
     };
