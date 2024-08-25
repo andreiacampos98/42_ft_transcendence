@@ -8,6 +8,8 @@ from rest_framework.parsers import JSONParser
 from django.contrib.auth.hashers import make_password 
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from datetime import datetime
 
 
@@ -123,10 +125,18 @@ def user_update(request, pk):
     if request.method == 'POST':
         data = request.POST.copy()
 
+        email = data.get('email', None)
+        if email:
+            try:
+                validate_email(email)
+            except ValidationError:
+                return JsonResponse({'error': 'Invalid email format.'}, status=400)
+
         if 'picture' not in request.FILES:
             data['picture'] = user.picture
         
         data.update(request.FILES)
+    
 
         serializer = UsersSerializer(user, data=data, partial=True)
 
@@ -295,6 +305,18 @@ def delete_user_notification(request, user_id, notif_id):
 		}
 		return JsonResponse(response_data, status=204)
 	return JsonResponse({'message': "Method not allowed"}, status=405)
+
+@csrf_exempt
+def update_notification(request, notif_id):
+    if request.method == "PATCH":
+        notifications = Notifications.objects.get(id = notif_id)
+        notifications.status = "Read"
+        notifications.save()
+        response_data = {
+            "message": "Status of notification updated."
+        }
+        return JsonResponse(response_data, status=204)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 
 #! --------------------------------------- Games ---------------------------------------
 
