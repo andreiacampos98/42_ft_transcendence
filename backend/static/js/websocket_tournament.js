@@ -50,8 +50,9 @@ async function registerTournament() {
         console.log(data.data)
         if (response.ok) {
             alert("Registered successfully!");
-            await sendWebSocketMessage(tournamentId, data.data);
             window.location.href = `/tournaments/ongoing/${tournamentId}`;
+            connectWebSocket(tournamentId);
+            sendWebSocketMessage(data.data);
         } else {
             alert("Registration failed: " + (data.message || 'Unknown error'));
         }
@@ -61,32 +62,36 @@ async function registerTournament() {
     }
 }
 
-
-function sendWebSocketMessage(tournamentId, message) {
-    return new Promise((resolve, reject) => {
-        const socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournamentId}`);
-
-
-        socket.onopen = (event) => {
-            socket.send(JSON.stringify({ message }));
-            console.log('Socket opening', event);
-        };
-
-        socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log('WebSocket message received:', data.message);
-            console.log(JSON.parse(event.data));
-            resolve(data);
-        };
-
-        socket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-            reject(error);
-        };
-
-        socket.onclose = (event) => {
-            console.log('Socket closed', event);
-        };
-    });
+function sendWebSocketMessage(message) {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify(message));
+        console.log('Message sent:', message);
+    } else {
+        console.error('WebSocket is not open. Message not sent.');
+    }
 }
+
+function connectWebSocket(tournamentId) {
+    socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournamentId}`);
+
+    socket.onopen = (event) => {
+        console.log('Socket opening', event);
+    };
+
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log('WebSocket message received:', data.data);
+        return false;
+    };
+
+    socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+
+    socket.onclose = (event) => {
+        console.log('Socket closed', event);
+    };
+}
+
+
 
