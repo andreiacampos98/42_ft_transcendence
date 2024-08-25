@@ -381,9 +381,9 @@ def tournament_join(request, tournament_id, user_id):
 		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
-
-	data['tournament_id'] = tournament_id
-	data['user_id'] = user_id
+	ic(data)
+	# data['tournament_id'] = tournament_id
+	# data['user_id'] = user_id
 		
 	serializer = TournamentsUsersSerializer(data=data)
 	if not serializer.is_valid():
@@ -431,7 +431,8 @@ def tournament_join(request, tournament_id, user_id):
 			return JsonResponse(serializer.errors, status=400, safe=False)
 		serializer.save()
 		
-	return JsonResponse(serializer.data, status=201, safe=False)
+	return JsonResponse({'success': True, 'data': serializer.data}, status=201, safe=False)
+
 
 @csrf_exempt
 def tournament_leave(request, tournament_id, user_id):

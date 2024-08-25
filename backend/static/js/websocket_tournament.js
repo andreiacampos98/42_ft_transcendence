@@ -23,62 +23,70 @@ document.querySelector('.close').addEventListener('click', function() {
 // fazer fetch(tournaments/<int:tournament_id>/users/<int:user_id>/join)
 //com a resposta do fetch anterior vou enviar para socket atraves do send ou fetch(ws/tournaments/${tournament_id})
 
-function registerTournament() {
+async function registerTournament() {
     var tournamentId = document.getElementById("registration").getAttribute("data-tournament-id");
     var userId = document.getElementById("registration").getAttribute("data-user-id");
     
     // Prepare form data and send via fetch API
     var formData = {
-        "nickname": document.getElementById("nickname-input").value,
+        "alias": document.getElementById("nickname-input").value,
         "tournament_id": tournamentId,
         "user_id": userId
     };
+    console.log(formData)
     
-    fetch(`/tournaments/${tournamentId}/users/${userId}/join`, {
-        method: 'POST',
-        body: JSON.stringify(formData),
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
+    try {
+        const response = await fetch(`/tournaments/${tournamentId}/users/${userId}/join`, {
+            method: 'POST',
+            body: JSON.stringify(formData),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        const data = await response.json();
+        console.log(data)
+        console.log("aqui")
+        console.log(data.data)
         if (response.ok) {
             alert("Registered successfully!");
-            document.getElementById('modal').style.display = "none";
+            await sendWebSocketMessage(tournamentId, data.data);
+            window.location.href = `/tournaments/ongoing/${tournamentId}`;
         } else {
-            alert("Registration failed: " + data.message);
+            alert("Registration failed: " + (data.message || 'Unknown error'));
         }
-    })
-    .catch(error => console.error('Error:', error));
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred: ' + error.message);
+    }
 }
 
 
+function sendWebSocketMessage(tournamentId, message) {
+    return new Promise((resolve, reject) => {
+        const socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournamentId}`);
 
 
+        socket.onopen = (event) => {
+            socket.send(JSON.stringify({ message }));
+            console.log('Socket opening', event);
+        };
 
-// const tournament_id = document.querySelector("#tour-id").innerHTML
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log('WebSocket message received:', data.message);
+            console.log(JSON.parse(event.data));
+            resolve(data);
+        };
 
-async function handleWebSocketTournament(tournament_id) 
-{
-    const socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournament_id}`);
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            reject(error);
+        };
 
-
-    socket.onopen = (event) => {
-        console.log('Socket opening', event);
-    };
-
-    socket.onmessage = (event) => {
-        console.log(JSON.parse(event.data));
-        return false;
-    };
-
-    socket.onclose = (event) => {
-        console.log('Socket closed', event);
-    };
+        socket.onclose = (event) => {
+            console.log('Socket closed', event);
+        };
+    });
 }
-// socket.send(JSON.stringify({
-//     'name': 'Nuno',
-//     'alias': 'Nuno67713'
-// }));
+

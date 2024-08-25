@@ -88,12 +88,13 @@
                         <div id="status" class="table-info status-tourn">{{ tournament.status }}</div>
                         <div id="host" class="table-info">{{ tournament.host_id }}</div>
                         <div id="player-nbr" class="table-info">{{ tournament.capacity }}</div>
-                        <div id="status" class="table-info"></div>
-                        <button class="open-register-tournament-modal" data-tournament-id="{{ tournament.id }}">
-                            <span class="change-b" id="change">
-                                Register
-                            </span>
-                        </button>
+                        <div class="table-info">
+                            <button class="open-register-tournament-modal" data-tournament-id="{{ tournament.id }}">
+                                <span class="change-b" id="change">
+                                    Register
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
