@@ -50,9 +50,11 @@ async function registerTournament() {
         console.log(data.data)
         if (response.ok) {
             alert("Registered successfully!");
+            localStorage.setItem('alias', formData.alias);
+            localStorage.setItem('tournament_id', tournamentId);
             window.location.href = `/tournaments/ongoing/${tournamentId}`;
-            connectWebSocket(tournamentId);
-            sendWebSocketMessage(data.data);
+            // connectWebSocket(tournamentId, data.data);
+        
         } else {
             alert("Registration failed: " + (data.message || 'Unknown error'));
         }
@@ -62,14 +64,6 @@ async function registerTournament() {
     }
 }
 
-function sendWebSocketMessage(message) {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify(message));
-        console.log('Message sent:', message);
-    } else {
-        console.error('WebSocket is not open. Message not sent.');
-    }
-}
 
 function connectWebSocket(tournamentId) {
     socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournamentId}`);
@@ -80,7 +74,15 @@ function connectWebSocket(tournamentId) {
 
     socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log('WebSocket message received:', data.data);
+        console.log('WebSocket message received:', data);
+
+        const nextEmptyPlayerSlot = document.querySelector(".player:not(.filled)");
+        console.log(document.querySelector(".player"));
+        console.log(nextEmptyPlayerSlot);
+        
+        nextEmptyPlayerSlot.querySelector("span.name") = data.alias;
+        // place image on the slot as well
+        nextEmptyPlayerSlot.classList.toggle("filled");
         return false;
     };
 

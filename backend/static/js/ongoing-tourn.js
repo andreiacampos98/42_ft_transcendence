@@ -64,3 +64,36 @@ function updateRound3Player(elementId, player) {
     element.style.borderColor = '#28a745';
     element.style.backgroundColor = '#d4edda';
 }
+
+tournamentId = location.pathname.split('/')[3]
+socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournamentId}`);
+
+socket.onopen = (event) => {
+    console.log('Socket opening', event);
+    socket.send(JSON.stringify({
+        'alias': localStorage.getItem('alias'),
+        'tournament_id': localStorage.getItem('tournament_id'),
+    }));
+};
+
+socket.onmessage = (event) => {
+    const players = JSON.parse(event.data);
+    const playerSlots = document.querySelectorAll(".player");
+
+    console.log('WebSocket message received:', players);
+
+    players.forEach((player, i) => {
+        playerSlots[i].querySelector("span.name").textContent = player.alias
+        // place image on the slot as well
+    })
+    
+    return false;
+};
+
+socket.onerror = (error) => {
+    console.error('WebSocket error:', error);
+};
+
+socket.onclose = (event) => {
+    console.log('Socket closed', event);
+};
