@@ -70,22 +70,30 @@ function getCreateTournament()
 {
     const userId = document.querySelector('button[onclick="getCreateTournament()"]').getAttribute('data-user-id');
 
-    const formData = new FormData(document.getElementById("create-tournament-form"));
+    var formData = {
+        "name": document.getElementById("new-tournament-name").value,
+        "capacity": document.getElementById("numPlayers").value,
+        "host_id": userId,
+        "status": 'Open'
+    };
+    console.log(formData)
 
-    fetch(`/users/${userId}/password`, {
+    fetch(`/tournaments/create`, {
         method: "POST",
-        body: formData,
+        body: JSON.stringify(formData),
         headers: {
-            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         }
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
+        if (data.success) {
+            alert("Tournament created successfully!");
+            const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
+            window.location.href = `/tournaments/ongoing/${tournamentId}`;
         } else {
-            alert(data.message); // Exibe uma mensagem de sucesso
-            window.location.href = `/users/${data.username}`; // Atualiza a página para refletir as alterações
+            alert("Error: " + (data.message || 'Unknown error'));
         }
     })
     .catch(error => console.error('Error:', error));

@@ -314,6 +314,7 @@ def game_create(request):
 
 #! --------------------------------------- Tournaments ---------------------------------------
 
+#Quando e criado um torneio temos de definir o nickname do host???
 @csrf_exempt
 def tournament_create(request):
 	if request.method != 'POST':
@@ -324,7 +325,7 @@ def tournament_create(request):
 		serializer = TournamentsSerializer(data=data)
 		if serializer.is_valid():
 			serializer.save()
-			return JsonResponse(serializer.data, status=201)
+			return JsonResponse({'success': True, 'data': serializer.data}, status=201)
 		return JsonResponse(serializer.errors, status=400)
 	except json.JSONDecodeError:
 		return JsonResponse({'message': 'Invalid JSON'}, status=400)
