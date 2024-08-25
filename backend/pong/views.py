@@ -665,11 +665,17 @@ def tournaments(request):
 
     # Obtém a lista de amigos
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
-	tournaments = Tournaments.objects.all()
+	tournaments = Tournaments.objects.exclude(status='Finished')
+
+	num_tour_players = []
+	for tournament in tournaments:
+		num_tour_users = TournamentsUsers.objects.filter(tournament_id=tournament.id).count()
+		num_tour_players.append(num_tour_users)
+		
 	context = {
         'friends': friends,
         'user_id': user_id,
-		'tournaments': tournaments,
+		'tournaments': zip(tournaments, num_tour_players),
         'page': 'tournament'
         
     }
