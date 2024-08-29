@@ -27,6 +27,22 @@ from django.http import JsonResponse
 from .models import Users, Friends, Notifications, TournamentsUsers
 from .serializers import *
 
+phase_shifts = dict(zip(
+	['Last 16', 'Quarter-final', 'Semi-final'], 
+	['Quarter-final', 'Semi-final', 'Final']
+))
+
+first_tour_phase = dict(zip(
+	[16, 8, 4], 
+	['Last 16', 'Quarter-final', 'Semi-final']
+))
+
+total_phase_matches = dict(zip(
+	['Last 16', 'Quarter-final', 'Semi-final', 'Final'], 
+	[8, 4, 2, 1]
+))
+
+
 
 #! --------------------------------------- Users ---------------------------------------
 
@@ -50,8 +66,6 @@ def profile(request, username):
     ).first()
 
     notification = Notifications.objects.filter(Q(type="Friend Request") & Q(user_id=user_id, other_user_id=user_profile.id)).first()
-    if notification:
-        ic(notification.id)
     me = False
 
     if friendship:
@@ -336,7 +350,6 @@ def game_create(request):
 
 #! --------------------------------------- Tournaments ---------------------------------------
 
-#Quando e criado um torneio temos de definir o nickname do host???
 @csrf_exempt
 def tournament_create(request):
 	if request.method != 'POST':
@@ -344,15 +357,29 @@ def tournament_create(request):
 
 	try:
 		data = json.loads(request.body.decode('utf-8'))
-		serializer = TournamentsSerializer(data=data)
-		if serializer.is_valid():
-			serializer.save()
-			return JsonResponse({'success': True, 'data': serializer.data}, status=201)
-		return JsonResponse(serializer.errors, status=400)
 	except json.JSONDecodeError:
 		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
+	
+	tour_serializer = TournamentsSerializer(data=data)
+	if not tour_serializer.is_valid():
+		return JsonResponse(tour_serializer.errors, status=400)
+
+	tournament = tour_serializer.save()
+	user_data = {
+		'alias': data['alias'],
+		'user_id': data['host_id'],
+		'tournament_id': tournament.id
+	}
+
+	tour_user_serializer = TournamentsUsersSerializer(data=user_data)
+	if not tour_user_serializer.is_valid():
+		return JsonResponse(tour_user_serializer.errors, status=400)
+	tour_user_serializer.save()
+	
+	return JsonResponse({'success': True, 'data': tour_serializer.data}, status=201)
+
 
 def tournament_list(request):
 	if request.method != "GET":
@@ -361,6 +388,7 @@ def tournament_list(request):
 		tournaments = Tournaments.objects.all()
 		serializer = TournamentsSerializer(tournaments, many=True)
 	return JsonResponse(serializer.data, safe=False, status=400)
+
 
 @csrf_exempt
 def tournament_update(request, tournament_id):
@@ -379,6 +407,7 @@ def tournament_update(request, tournament_id):
 		return JsonResponse(serializer.data)
 	return JsonResponse(serializer.errors, status=400)
 		
+
 @csrf_exempt
 def tournament_cancel(request, tournament_id):
 	if request.method != 'DELETE':	
@@ -417,8 +446,6 @@ def tournament_join(request, tournament_id, user_id):
 	all_tour_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
 	tournament = Tournaments.objects.get(pk=tournament_id)
 
-	initial_phase = dict(zip([16, 8, 4], ['Last 16', 'Quarter-final', 'Semi-final']))
-
 	if all_tour_users.count() == tournament.capacity:
 		games_data = []
 
@@ -441,7 +468,7 @@ def tournament_join(request, tournament_id, user_id):
 		tour_games_data = []
 		for game in games:
 			tour_game = {
-				'phase': initial_phase[tournament.capacity],
+				'phase': first_tour_phase[tournament.capacity],
 				'game_id': game.id,
 				'tournament_id': tournament_id
 			}
@@ -490,62 +517,6 @@ def tournament_list_users(request, tournament_id):
 #! --------------------------------------- Tournaments Games ---------------------------------------
 
 @csrf_exempt
-def tournament_advance_phase(request, tournament_id):
-	if request.method != 'POST':	
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
-	# ['Last 16', 'Quarter-final', 'Semi-final', 'Final']
-	try:
-		data = json.loads(request.body.decode('utf-8'))
-	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON'}, status=400)
-	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
-	
-	phase_shifts = dict(zip(['Last 16', 'Quarter-final', 'Semi-final'], ['Quarter-final', 'Semi-final', 'Final']))
-	previous_phase = data['phase']
-	next_phase = phase_shifts[previous_phase]
-
-	prev_phase_games = TournamentsGames.objects.filter(tournament_id=tournament_id, phase=previous_phase)
-
-	temp = []
-	for i in range(0, len(prev_phase_games), 2):
-		game1, game2 = prev_phase_games[i].game_id, prev_phase_games[i + 1].game_id
-		winner1, winner2 = game1.winner_id, game2.winner_id
-
-		game_data = {
-			'start_date':datetime.now().isoformat(),
-			'user1_id': winner1.id,
-			'user2_id': winner2.id
-		}
-		temp.append(game_data)
-
-	serializer = GamesSerializer(data=temp, many=True)
-	if not serializer.is_valid():
-		return JsonResponse(serializer.errors, status=400, safe=False)
-	new_games = serializer.save()
-	new_games_data = serializer.data
-
-	temp = []
-	for new_game in new_games:
-		tour_game = {
-			'phase': next_phase,
-			'game_id': new_game.id,
-			'tournament_id': tournament_id
-		}
-		temp.append(tour_game)
-
-	serializer = TournamentsGamesSerializer(data=temp, many=True)
-	if not serializer.is_valid():
-		return JsonResponse(serializer.errors, status=400, safe=False)
-	serializer.save()
-	
-	new_phase_games_data = serializer.data
-	for tour_game, game in zip(new_phase_games_data, new_games_data):
-		tour_game['game'] = game
-	
-	return JsonResponse(new_phase_games_data, status=200, safe=False)
-
-@csrf_exempt
 def tournament_list_games(request, tournament_id):
 	if request.method != "GET":
 		return JsonResponse({'message': "Method not allowed", 'method': request.method}, status=405)
@@ -584,6 +555,7 @@ def tournament_list_user_games(request, user_id):
 
 @csrf_exempt
 def tournament_update_game(request, tournament_id, game_id):
+	return calculate_placements(tournament_id)
 	if request.method != 'POST':
 		return JsonResponse({'message': "Method not allowed", 'method': request.method}, status=405)
 	if request.content_type != 'application/json':
@@ -607,25 +579,38 @@ def tournament_update_game(request, tournament_id, game_id):
 		user_id=tour_game.game_id.user1_id.id,
 		tournament_id=tournament_id
 	)
-
 	player2 = TournamentsUsers.objects.get(
 		user_id=tour_game.game_id.user2_id.id,
 		tournament_id=tournament_id
 	)
 
+	player1.score += data['nb_goals_user1'] * 100
+	player1.save()
+	player2.score += data['nb_goals_user2'] * 100
+	player2.save()
+
 	if data['nb_goals_user1'] > data['nb_goals_user2']:
 		tour_game.game_id.winner_id = player1.user_id
-		player1.score += 500
-		player2.score += data['nb_goals_user2'] * 100
 	else:
 		tour_game.game_id.winner_id = player2.user_id
-		player2.score += 500
-		player1.score += data['nb_goals_user1'] * 100
-
-	player1.save()
-	player2.save()
 	tour_game.game_id.save()
 
+	curr_phase = tour_game.phase
+	curr_phase_matches = TournamentsGames.objects.filter(
+		phase=curr_phase,
+		tournament_id=tournament_id,
+	)
+
+	finished_matches = 0
+	for match in curr_phase_matches:
+		if match.game_id.winner_id is not None:
+			finished_matches += 1
+
+	if finished_matches == total_phase_matches[curr_phase] and curr_phase != 'Final':
+		return advance_tournament_phase(curr_phase, tournament_id)
+	elif finished_matches == total_phase_matches[curr_phase] and curr_phase == 'Final':
+		return calculate_placements(tournament_id)
+	
 	data = TournamentsGamesSerializer(tour_game).data
 	data['game'] = GamesSerializer(tour_game.game_id).data
 
@@ -712,3 +697,61 @@ def ongoingtournaments(request, tournament_id):
 def signout(request):
 	logout(request)
 	return redirect('home')
+
+#! --------------------------------------- Auxiliary ---------------------------------------
+
+def advance_tournament_phase(previous_phase, tournament_id):
+	next_phase = phase_shifts[previous_phase]
+	prev_phase_games = TournamentsGames.objects.filter(tournament_id=tournament_id, phase=previous_phase)
+
+	temp = []
+	for i in range(0, len(prev_phase_games), 2):
+		game1, game2 = prev_phase_games[i].game_id, prev_phase_games[i + 1].game_id
+		winner1, winner2 = game1.winner_id, game2.winner_id
+
+		game_data = {
+			'start_date':datetime.now().isoformat(),
+			'user1_id': winner1.id,
+			'user2_id': winner2.id
+		}
+		temp.append(game_data)
+
+	serializer = GamesSerializer(data=temp, many=True)
+	if not serializer.is_valid():
+		return JsonResponse(serializer.errors, status=400, safe=False)
+	new_games = serializer.save()
+	new_games_data = serializer.data
+
+	temp = []
+	for new_game in new_games:
+		tour_game = {
+			'phase': next_phase,
+			'game_id': new_game.id,
+			'tournament_id': tournament_id
+		}
+		temp.append(tour_game)
+
+	serializer = TournamentsGamesSerializer(data=temp, many=True)
+	if not serializer.is_valid():
+		return JsonResponse(serializer.errors, status=400, safe=False)
+	serializer.save()
+	
+	new_phase_games_data = serializer.data
+	for tour_game, game in zip(new_phase_games_data, new_games_data):
+		tour_game['game'] = game
+	
+	return JsonResponse(new_phase_games_data, status=200, safe=False)
+
+def calculate_placements(tournament_id):
+	tour_users = TournamentsUsers.objects \
+		.filter(tournament_id=tournament_id) \
+		.order_by('-score')
+
+	for i, user in enumerate(tour_users):
+		user.placement = i + 1
+		user.save()
+
+	serializer = TournamentsUsersSerializer(tour_users, many=True)
+	return JsonResponse(serializer.data, status=200, safe=False)
+
+	
