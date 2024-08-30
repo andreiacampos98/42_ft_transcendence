@@ -25,8 +25,7 @@ class TournamentConsumer(WebsocketConsumer):
         return super().disconnect(code)
     
     def receive(self, text_data):
-        data = json.loads(text_data)
-        tournament_id = data['tournament_id']
+        tournament_id = self.room_group_name
         all_tour_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
         serializer = TournamentsUsersSerializer(all_tour_users, many=True)
 
@@ -38,9 +37,9 @@ class TournamentConsumer(WebsocketConsumer):
             tour_user['user'] = user_data
 
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name, {"type": "tournament.join", "message": json.dumps(tour_users_data)}
+            self.room_group_name, {"type": "send.users", "message": json.dumps(tour_users_data)}
         )
 
-    def tournament_join(self, event):
+    def send_users(self, event):
         self.send(text_data=event["message"])
 
