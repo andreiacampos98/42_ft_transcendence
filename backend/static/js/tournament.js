@@ -89,7 +89,7 @@ function getCreateTournament()
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
+        if (data.data != {}) {
             alert("Tournament created successfully!");
             const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
             localStorage.setItem('alias', formData.alias);

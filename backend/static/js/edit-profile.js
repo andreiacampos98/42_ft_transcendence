@@ -45,8 +45,8 @@ function onSaveButtonClick(event, userId) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
+        if (data.data == {}) {
+            alert(data.message);
         } else {
             window.location.href = `/users/${data.username}`; // Atualiza a página para refletir as alterações
         }

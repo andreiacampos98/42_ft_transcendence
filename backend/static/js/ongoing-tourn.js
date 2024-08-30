@@ -98,3 +98,27 @@ socket.onerror = (error) => {
 socket.onclose = (event) => {
     console.log('Socket closed', event);
 };
+
+
+async function leaveTournament() {
+    var tournamentId = document.getElementById("leave-tournament").getAttribute("data-tournament-id");
+    var userId = document.getElementById("leave-tournament").getAttribute("data-user-id");
+
+    try {
+        const response =  await fetch(`/tournaments/${tournamentId}/users/${userId}/leave`, {
+            method: 'DELETE',
+        });
+        console.log(response);
+        
+        if (response.ok) {
+            console.log('Moving');
+            window.location.href = `/tournaments/`;
+            console.log(window.location.href);
+        } else {
+            
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred: ' + error.message);
+    }
+}
