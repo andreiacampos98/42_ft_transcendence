@@ -5,7 +5,7 @@
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/tournament.css' %}">
 <script defer src="{% static 'js/tournament.js' %}"></script>
-<script defer src="{% static 'js/websocket_tournament.js' %}"></script>
+<script defer src="{% static 'js/join_tournament.js' %}"></script>
 <div class="main-content non_compressed"  id="main-content">
     <div class="main">
         <div class="top">
@@ -81,6 +81,11 @@
                                 <option value="16">16 Players</option>
                             </select>
                         </div>
+                        <div>
+                            <label for="nickname-input">Tournament Nickname</label>
+                            <input class="pass-input" type="text" id="nickname-input-create" name="nickname" required>
+                            <p>No thanks, I'll use my username instead.</p>
+                        </div>
 
                     </form>
                 </div>
@@ -112,18 +117,20 @@
                     <div class="table-title">Players registered</div>
                     <div class="table-title">Action</div>
                 </div>
-                {% for tournament in tournaments %}
+                {% for tournament, num_players in tournaments %}
                     <div class="table-content">
                         <div id="name" class="table-info">{{ tournament.name }}</div>
                         <div id="status" class="table-info status-tourn">{{ tournament.status }}</div>
                         <div id="host" class="table-info">{{ tournament.host_id }}</div>
-                        <div id="player-nbr" class="table-info">{{ tournament.capacity }}</div>
+                        <div id="player-nbr" class="table-info">{{ num_players }}/{{ tournament.capacity }}</div>
                         <div class="table-info">
+                            {% if num_players < tournament.capacity %}
                             <button class="open-register-tournament-modal" data-tournament-id="{{ tournament.id }}">
                                 <span class="change-b" id="change">
                                     Register
                                 </span>
                             </button>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}
@@ -137,7 +144,7 @@
                         <form id="tournament-register-form" method="POST">
                             {% csrf_token %}
                             <label for="nickname-input">Tournament Nickname</label>
-                            <input class="pass-input" type="text" id="nickname-input" name="nickname" required>
+                            <input class="pass-input" type="text" id="nickname-input-join" name="nickname" required>
                             <p>No thanks, I'll use my username instead.</p>
                         </form>
                     </div>

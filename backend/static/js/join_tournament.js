@@ -29,7 +29,7 @@ async function registerTournament() {
     
     // Prepare form data and send via fetch API
     var formData = {
-        "alias": document.getElementById("nickname-input").value
+        "alias": document.getElementById("nickname-input-join").value
     };
     console.log(formData)
     
@@ -51,8 +51,6 @@ async function registerTournament() {
             localStorage.setItem('alias', formData.alias);
             localStorage.setItem('tournament_id', tournamentId);
             window.location.href = `/tournaments/ongoing/${tournamentId}`;
-            // connectWebSocket(tournamentId, data.data);
-        
         } else {
             alert("Registration failed: " + (data.message || 'Unknown error'));
         }
@@ -61,37 +59,5 @@ async function registerTournament() {
         alert('An error occurred: ' + error.message);
     }
 }
-
-
-function connectWebSocket(tournamentId) {
-    socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournamentId}`);
-
-    socket.onopen = (event) => {
-        console.log('Socket opening', event);
-    };
-
-    socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log('WebSocket message received:', data);
-
-        const nextEmptyPlayerSlot = document.querySelector(".player:not(.filled)");
-        console.log(document.querySelector(".player"));
-        console.log(nextEmptyPlayerSlot);
-        
-        nextEmptyPlayerSlot.querySelector("span.name") = data.alias;
-        // place image on the slot as well
-        nextEmptyPlayerSlot.classList.toggle("filled");
-        return false;
-    };
-
-    socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-    };
-
-    socket.onclose = (event) => {
-        console.log('Socket closed', event);
-    };
-}
-
 
 

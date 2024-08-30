@@ -34,7 +34,6 @@ urlpatterns =[
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('users/<int:pk>', views.user_detail, name='user-detail'),
     path('users/create', views.user_create, name='user-create'),
-    path('users/<str:username>', views.profile, name='user-profile'),
     path('users/<int:pk>/update', views.user_update, name='user-update'),
     path('users/<int:pk>/password', views.user_password, name='user-update-password'),
     path('users/search', views.search_users, name='search-users'),
@@ -44,28 +43,29 @@ urlpatterns =[
     path('friends/accept/<int:user1_id>/<int:user2_id>', views.accept_friend, name='accept-friend'),
     path('notifications/<int:user_id>', views.get_user_notifications, name='notifications'),
     path('notifications/<int:user_id>/<int:notif_id>', views.delete_user_notification, name='delete-notification'),
-
+    path('notifications/update/<int:notif_id>', views.update_notification, name='update-notification'),
+    
 	#! Games
     path('games/create', views.game_create, name='game-create'),
     #path('games/<int:game_id>/stats', views.game_stats, name='game-stats'),
 
 	#! Tournaments
     path('tournaments/create', views.tournament_create, name='tournament-create'),
-    path('tournaments', views.tournament_list, name='tournament-list'),
-    path('tournaments/<int:tournament_id>', views.tournament_update, name='tournament-update'),
-    path('tournaments/<int:tournament_id>/cancel', views.tournament_cancel, name='tournament-cancel'),
-
-	#! Tournaments Users
     path('tournaments/<int:tournament_id>/users/<int:user_id>/join', views.tournament_join, name='tournament-join'),
     path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournament-leave'),
+    path('tournaments/<int:tournament_id>', views.tournament_update, name='tournament-update'),
     path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournament-list-users'),
 
-	#! Tournaments Games
-    path('tournaments/<int:tournament_id>/games/create', views.tournament_create_game, name='tournament-create-game'),
+	
+    # path('tournaments/<int:tournament_id>/advance', views.tournament_advance_phase, name='tournament-advance-phase'),
     path('tournaments/<int:tournament_id>/games', views.tournament_list_games, name='tournament-list-games'),
     path('tournaments/games/user/<int:user_id>', views.tournament_list_user_games, name='tournament-list-user-games'),
     path('tournaments/<int:tournament_id>/games/<int:game_id>', views.tournament_update_game, name='tournament-update-game'),
 
+    path('users/<str:username>', views.profile, name='user-profile'),
+    
+    #! DEBUG
+    path('tournaments', views.tournament_list, name='tournament-list'),
 ] 
 
 websocket_urlpatterns = [

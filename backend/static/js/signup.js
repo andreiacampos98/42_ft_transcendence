@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(response => response.json())  // Analisar a resposta JSON
         .then(data => {
-            if (data.success) {
+            if (data.data == {}) {
                 // Se a inscrição for bem-sucedida
                 window.location.href = '/home/';  // Redireciona para a página de login
             } else {

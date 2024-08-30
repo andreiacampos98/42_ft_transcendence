@@ -3,9 +3,13 @@
 
 {% block main_content %}
     <link rel="stylesheet" href="{% static 'css/ongoing-tourn.css' %}">
+    <script defer src="{% static 'js/ongoing-tourn.js' %}"></script>
     <div class="main-content non_compressed"  id="main-content">
         <span id="tour-id">{{ tournament_id }}</span>
         <div class="main">
+            <button style="margin-bottom: 10px;" class="change modal-button" id="leave-tournament" onclick="leaveTournament()" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
+                <span class="change-b">Leave</span>
+            </button>
             <div class="round round-1">
                 <div class="matchup">
                     <h1 class="group">Group A</h1>

@@ -1,4 +1,45 @@
-// script.js
+// ==================================================================
+
+tournamentId = location.pathname.split('/')[3]
+socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournamentId}`);
+
+socket.onopen = (event) => {
+    console.log('Socket opening', event);
+    socket.send(JSON.stringify({
+        'alias': localStorage.getItem('alias'),
+        'tournament_id': localStorage.getItem('tournament_id'),
+    }));
+};
+
+socket.onmessage = (event) => {
+    const players = JSON.parse(event.data);
+    const playerSlots = document.querySelectorAll(".player");
+
+    console.log('WebSocket message received:', players);
+
+    playerSlots.forEach(slot => {
+        slot.querySelector("span.name").textContent = "Waiting for player...";
+        slot.querySelector("img").src = "../../media/default.jpg";
+    });
+
+    players.forEach((player, i) => {
+        playerSlots[i].querySelector("span.name").textContent = player.alias
+        playerSlots[i].querySelector("img").src = player.user.picture
+        // place image on the slot as well
+    });
+    
+    return false;
+};
+
+socket.onerror = (error) => {
+    console.error('WebSocket error:', error);
+};
+
+socket.onclose = (event) => {
+    console.log('Socket closed', event);
+};
+
+// ==================================================================
 
 const players = [
     { id: 1, name: 'Player 1', score: 0, icon: 'icon1.png' },
@@ -63,4 +104,23 @@ function updateRound3Player(elementId, player) {
     // Highlight the final winner
     element.style.borderColor = '#28a745';
     element.style.backgroundColor = '#d4edda';
+}
+
+async function leaveTournament() {
+    var tournamentId = document.getElementById("leave-tournament").getAttribute("data-tournament-id");
+    var userId = document.getElementById("leave-tournament").getAttribute("data-user-id");
+
+    try {
+        const response =  await fetch(`/tournaments/${tournamentId}/users/${userId}/leave`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            socket.send(JSON.stringify({}));
+            window.location.href = `/tournaments/`;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred: ' + error.message);
+    }
 }

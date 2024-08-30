@@ -15,8 +15,8 @@ function friends_add(event, userId1, userId2) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
+        if (data.data == {}) {
+            alert(data.message);
         } else {
             alert(data.message);
             window.location.reload();
@@ -40,8 +40,8 @@ function friends_remove(event, userId1, userId2) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
+        if (data.data == {}) {
+            alert(data.message);
         } else {
             alert(data.message);
             window.location.reload();

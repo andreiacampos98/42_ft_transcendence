@@ -18,7 +18,7 @@
 
 | Route | HTTP Method | Description | Parameters | Name |
 | --- | :--: | --- | --- | --- |
-| `/games/create` | `POST` | Post a new game (started or ended ?)|  | `game-create` |
+| `/games/create` | `POST` | Post a new game |  | `game-create` |
 | `/games/{id}/stats` | `GET` | Retrieve statistics for a given game | `id` - the game's id | `???` |
 
 ## Tournaments
@@ -26,25 +26,15 @@
 | Route | HTTP Method | Description | Parameters |
 | --- | :--: | --- | --- |
 | `/tournaments/create`| `POST` | Create tournament | |
-| `/tournaments`| `GET` | List of tournament | |
-| `/tournaments/{id}` | `PATCH` | Update tournament (status only) | `id` - the tournament's id |
-| `/tournaments/{id}/cancel` | `DELETE` | Cancel and delete tournament | `id` - the tournament's id |
-
-## Tournaments Games
-
-| Route | HTTP Method | Description | Parameters |
-| --- | :--: | --- | --- |
-| `/tournaments/{id}/games/create` | `POST` | Create a game for a given tournament | `id` - the tournament's id |
-| `/tournaments/{id}/games`| `GET` | List all games for a given tournament | `id` - the tournament's id  |
-| `/tournaments/games/user/{id}` | `GET` | List all tournament games for a given user | `id` - the user's id |
-
-## Tournaments Users
-
-| Route | HTTP Method | Description | Parameters |
-| --- | :--: | --- | --- |
-| `/tournaments/{id}/users` | `GET` | List all tournament users (alias) for a given tournament | `id` - the tournament's id |
 | `/tournaments/{tid}/users/{uid}/join`| `POST` | Join a tournament | `tid` - the tournament's id, `uid` - the user's id |
 | `/tournaments/{tid}/users/{uid}/leave` | `DELETE` | Leave a tournament | `id` - the tournament's id, `uid` - the user who's leaving the tournament |
+| `/tournaments/{id}` | `PATCH` | Update tournament (status only) | `id` - the tournament's id |
+| `/tournaments/{id}/users` | `GET` | List all tournament users (alias) for a given tournament | `id` - the tournament's id |
+
+| `/tournaments/{id}/games`| `GET` | List all games for a given tournament | `id` - the tournament's id  |
+| `/tournaments/games/user/{id}` | `GET` | List all tournament games for a given user | `id` - the user's id |
+| `tournaments/<int:tournament_id>/games/<int:game_id>`|  `POST` | Update game if finished, create the games for the next phase and placement | `<int:tournament_id>` - the tournament's id `<int:game_id>` |
+| `/tournaments`| `GET` | List of tournament | |
 
 
 ## Friends
