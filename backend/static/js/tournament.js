@@ -74,6 +74,7 @@ function getCreateTournament()
         "name": document.getElementById("new-tournament-name").value,
         "capacity": document.getElementById("numPlayers").value,
         "host_id": userId,
+        "alias": document.getElementById("nickname-input-create").value,
         "status": 'Open'
     };
     console.log(formData)
@@ -91,6 +92,8 @@ function getCreateTournament()
         if (data.success) {
             alert("Tournament created successfully!");
             const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
+            localStorage.setItem('alias', formData.alias);
+            localStorage.setItem('tournament_id', tournamentId);
             window.location.href = `/tournaments/ongoing/${tournamentId}`;
         } else {
             alert("Error: " + (data.message || 'Unknown error'));

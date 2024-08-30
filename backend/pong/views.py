@@ -555,7 +555,6 @@ def tournament_list_user_games(request, user_id):
 
 @csrf_exempt
 def tournament_update_game(request, tournament_id, game_id):
-	return calculate_placements(tournament_id)
 	if request.method != 'POST':
 		return JsonResponse({'message': "Method not allowed", 'method': request.method}, status=405)
 	if request.content_type != 'application/json':
