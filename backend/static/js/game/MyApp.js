@@ -1,9 +1,9 @@
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { MyContents } from './MyContents.js';
-import { MyGuiInterface } from './MyGuiInterface.js';
-import Stats from 'three/addons/libs/stats.module.js'
+
+var canvas = document.querySelector('#canvas-container');
+canvas.onkeydown = (ev) => {console.log(ev)};
 
 /**
  * This class contains the application object
@@ -25,7 +25,6 @@ export class MyApp  {
         // other attributes
         this.renderer = null
         this.controls = null
-        this.gui = null
         this.axis = null
         this.contents == null
 
@@ -45,13 +44,11 @@ export class MyApp  {
 
         // Create a renderer with Antialiasing
         this.renderer = new THREE.WebGLRenderer({antialias:true});
-        this.renderer.setPixelRatio( window.devicePixelRatio );
+        this.renderer.setPixelRatio( this.canvas.clientWidth / this.canvas.clientHeight );
         this.renderer.setClearColor("#000000");
+        this.renderer.setSize( this.canvas.clientWidth, this.canvas.clientHeight );
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // search for other alternatives
-
-        // Configure renderer size
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
 
         // Append Renderer to DOM
         this.canvas.appendChild( this.renderer.domElement );
@@ -71,48 +68,6 @@ export class MyApp  {
         perspective1.position.set(10,10,10)
         this.cameras['Perspective'] = perspective1;
 
-        // defines the frustum size for the orthographic cameras
-        const left = -this.frustumSize / 2 * aspect
-        const right = this.frustumSize / 2 * aspect 
-        const top = this.frustumSize / 2 
-        const bottom = -this.frustumSize / 2
-        const near = -this.frustumSize / 2
-        const far =  this.frustumSize
-
-        // create a left view orthographic camera
-        const orthoLeft = new THREE.OrthographicCamera( left, right, top, bottom, near, far);
-        orthoLeft.up = new THREE.Vector3(0,1,0);
-        orthoLeft.position.set(-this.frustumSize / 4,0,0) 
-        orthoLeft.lookAt( new THREE.Vector3(0,0,0) );
-        this.cameras['Left'] = orthoLeft;
-
-        // create a top view orthographic camera
-        const orthoTop = new THREE.OrthographicCamera( left, right, top, bottom, near, far);
-        orthoTop.up = new THREE.Vector3(0,0,1);
-        orthoTop.position.set(0, this.frustumSize / 4, 0) 
-        orthoTop.lookAt( new THREE.Vector3(0,0,0) );
-        this.cameras['Top'] = orthoTop;
-
-        // create a front view orthographic camera
-        const orthoFront = new THREE.OrthographicCamera( left, right, top, bottom, near, far);
-        orthoFront.up = new THREE.Vector3(0,1,0);
-        orthoFront.position.set(0,0, this.frustumSize / 4) 
-        orthoFront.lookAt( new THREE.Vector3(0,0,0) );
-        this.cameras['Front'] = orthoFront;
-        
-		//! create a right view orthographic camera
-        const orthoRight = new THREE.OrthographicCamera(left, right, top, bottom, near, far);
-        orthoRight.up = new THREE.Vector3(0,1,0);
-        orthoRight.position.set(this.frustumSize / 4,0,0);
-        orthoRight.lookAt( new THREE.Vector3(0,0,0) );
-        this.cameras['Right'] = orthoRight;
-		
-		//! create a back view orthographic camera
-		const orthoBack = new THREE.OrthographicCamera(left, right, top, bottom, near, far);
-        orthoBack.up = new THREE.Vector3(0,1,0);
-        orthoBack.position.set(0,0, -this.frustumSize / 4);
-        orthoBack.lookAt( new THREE.Vector3(0,0,0) );
-        this.cameras['Back'] = orthoBack;
     }
 
     /**
@@ -165,19 +120,9 @@ export class MyApp  {
             this.renderer.setSize( window.innerWidth, window.innerHeight );
         }
     }
-    /**
-     * 
-     * @param {MyContents} contents the contents object 
-     */
+   
     setContents(contents) {
         this.contents = contents;
-    }
-
-    /**
-     * @param {MyGuiInterface} contents the gui interface object
-     */
-    setGui(gui) {   
-        this.gui = gui
     }
 
     /**
@@ -186,18 +131,13 @@ export class MyApp  {
     render () {
         this.updateCameraIfRequired()
 
-        // update the animation if contents were provided
         if (this.activeCamera !== undefined && this.activeCamera !== null){
             this.contents.update()
         }
 
-        // required if controls.enableDamping or controls.autoRotate are set to true
         this.controls.update();
-
-        // render the scene
         this.renderer.render(this.scene, this.activeCamera);
 
-        // subsequent async calls to the render loop
         requestAnimationFrame( this.render.bind(this) );
 
         this.lastCameraName = this.activeCameraName

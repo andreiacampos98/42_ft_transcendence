@@ -8,17 +8,12 @@ export class MyContents
 	   constructs the object
 	   @param {MyApp} app The application object
 	*/
-	constructor(app)
-	{
+	constructor(app) {
 		this.app = app
 		this.axis = null
 	}
 
-	/**
-	 * initializes the contents
-	 */
-	init()
-	{
+	init() {
 		// create once 
 		if (this.axis === null) {
 			// create and attach the axis to the scene
@@ -28,16 +23,21 @@ export class MyContents
 		
 		this.build();
 		this.illuminate();
+
+		document.addEventListener('keydown', (e) => console.log(e), false);
 	}
 
 	/**
 	 * Adds all the lights to the scene
 	 * @returns {void}
 	 */
-	illuminate()
-	{
-		// add an ambient light
+	illuminate() {
 		this.ambientLight = new THREE.AmbientLight(0x555555);
+		this.pointLight = new THREE.PointLight(0xFFFFFF, 150);
+		this.pointLight.position.set(1, 1, 0);
+		
+		this.app.scene.add(this.pointLight);
+		this.app.scene.add(new THREE.PointLightHelper(this.pointLight));
 		this.app.scene.add(this.ambientLight);
 	}
 
@@ -45,23 +45,27 @@ export class MyContents
 	 * Builds the contents of the scene
 	 * @returns {void}
 	 */
-	build()
-	{
-		
+	build() {
+		this.pylon = new THREE.Mesh(
+			new THREE.BoxGeometry(1, 3, 1),
+			new THREE.MeshPhongMaterial()
+		);
+		this.app.scene.add(this.pylon);
 	}
-	
+
+	movePlayerPylon(key) {
+		// if (key == KeyboardEvent.)
+	}
 	/**
 	 * Attach objects to other so transformations affect them as a group
 	 * (Scenegraph concept)
 	 * @returns {void}
 	 */
-	connectSceneGraph()
-	{
+	connectSceneGraph() {
 		
 	}
 	
-	update()
-	{
+	update() {
 		
 	}
 }
