@@ -5,10 +5,10 @@ detach:
 	docker compose up --build -d
 
 django:
-	docker exec -it django sh -c 'source /.venv/bin/activate; sh'
+	docker exec -it django-container sh -c 'source /.venv/bin/activate; sh'
 
 migrations:
-	docker exec -it django sh -c \
+	docker exec -it django-container sh -c \
 		'source /.venv/bin/activate; \
 		python3 manage.py makemigrations; \
 		python3 manage.py migrate'

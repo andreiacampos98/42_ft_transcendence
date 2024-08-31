@@ -35,11 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(response => response.json())  // Analisar a resposta JSON
         .then(data => {
-            if (data.data == {}) {
+            if (JSON.stringify(data.data) === '{}') {
                 // Se a inscrição for bem-sucedida
+                console.log('Login in successful');
                 window.location.href = '/home/';  // Redireciona para a página de login
             } else {
                 // Se ocorrer um erro
+                console.log('Login in failed');
                 errorMessage.textContent = data.message;
                 errorMessage.style.display = 'block';
             }
