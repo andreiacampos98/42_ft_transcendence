@@ -101,3 +101,4 @@ function getCreateTournament()
     })
     .catch(error => console.error('Error:', error));
 }
+

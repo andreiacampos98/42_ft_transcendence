@@ -13,7 +13,12 @@
                 <div class="search">
                     {% for users in userss %}
                         <div class="square">
-                            <a href="{% url 'user-profile' users.username %}" data-url="{% url 'user-profile' user.username %}" onclick="loadPage(event)">
+                            <a href="{% url 'user-profile' users.username %}" 
+                                hx-get="{% url 'user-profile' user.username %}"
+                                hx-trigger="click"
+                                hx-target="#MainPage"
+                                hx-push-url="true"
+                                data-url="{% url 'user-profile' user.username %}" onclick="loadPage(event)">
                                 <img src="{{ users.picture.url }}" alt="User Icon">
                                 <h3 class="name">{{ users.username }}</h3>
                             </a>

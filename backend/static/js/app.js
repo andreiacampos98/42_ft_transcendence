@@ -92,61 +92,61 @@
 // };
 
 
-function loadPage(event) {
-    event.preventDefault(); // Previne o comportamento padrão do link
+// function loadPage(event) {
+//     event.preventDefault(); // Previne o comportamento padrão do link
 
-    // Captura a URL do atributo data-url do elemento clicado
-    const url = event.currentTarget.getAttribute('data-url');
+//     // Captura a URL do atributo data-url do elemento clicado
+//     const url = event.currentTarget.getAttribute('data-url');
 
-    // Atualiza a URL no navegador
-    window.history.pushState({ url: url }, '', url);
+//     // Atualiza a URL no navegador
+//     window.history.pushState({ url: url }, '', url);
 
-    // Carrega o conteúdo via AJAX
-    fetch(url)
-        .then(response => {
-            if (response.ok) {
-                return response.text();
-            } else {
-                throw new Error('Failed to load page');
-            }
-        })
-        .then(html => {
-            document.getElementById('MainPage').innerHTML = html;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('MainPage').innerHTML = '<h1>Error loading content</h1>';
-        });
-}
+//     // Carrega o conteúdo via AJAX
+//     fetch(url)
+//         .then(response => {
+//             if (response.ok) {
+//                 return response.text();
+//             } else {
+//                 throw new Error('Failed to load page');
+//             }
+//         })
+//         .then(html => {
+//             document.getElementById('MainPage').innerHTML = html;
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//             document.getElementById('MainPage').innerHTML = '<h1>Error loading content</h1>';
+//         });
+// }
 
-// Lida com o caso de usar o botão "voltar" do navegador
-window.onpopstate = function(event) {
-    if (event.state && event.state.url) {
-        fetch(event.state.url)
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('content').innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('content').innerHTML = '<h1>Error loading content</h1>';
-            });
-    }
-};
+// // Lida com o caso de usar o botão "voltar" do navegador
+// window.onpopstate = function(event) {
+//     if (event.state && event.state.url) {
+//         fetch(event.state.url)
+//             .then(response => response.text())
+//             .then(html => {
+//                 document.getElementById('content').innerHTML = html;
+//             })
+//             .catch(error => {
+//                 console.error('Error:', error);
+//                 document.getElementById('content').innerHTML = '<h1>Error loading content</h1>';
+//             });
+//     }
+// };
 
-// Carrega o conteúdo inicial com base na URL
-document.addEventListener('DOMContentLoaded', () => {
-    const path = window.location.pathname;
-    if (path !== '/') {
-        fetch(path)
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('content').innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('content').innerHTML = '<h1>Error loading content</h1>';
-            });
-    }
-});
+// // Carrega o conteúdo inicial com base na URL
+// document.addEventListener('DOMContentLoaded', () => {
+//     const path = window.location.pathname;
+//     if (path !== '/') {
+//         fetch(path)
+//             .then(response => response.text())
+//             .then(html => {
+//                 document.getElementById('content').innerHTML = html;
+//             })
+//             .catch(error => {
+//                 console.error('Error:', error);
+//                 document.getElementById('content').innerHTML = '<h1>Error loading content</h1>';
+//             });
+//     }
+// });
 

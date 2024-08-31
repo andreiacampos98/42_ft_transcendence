@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from rest_framework.parsers import JSONParser 
+from django.urls import reverse
 
 from django.contrib.auth.hashers import make_password 
 from django.contrib.auth.forms import AuthenticationForm
@@ -45,6 +46,45 @@ total_phase_matches = dict(zip(
 
 
 #! --------------------------------------- Users ---------------------------------------
+
+@login_required
+def profile(request, username):
+    user_id = request.user.id  # Obtém o ID do usuário atual
+    user_profile = get_object_or_404(Users, username=username)
+    is_own_profile = user_profile == request.user
+    # Obtém a lista de amigos
+    friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+    friendship = Friends.objects.filter(
+        (Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
+    ).first()
+
+    notification = Notifications.objects.filter(Q(type='Friend Request') & Q(user_id=user_id, other_user_id=user_profile.id)).first()
+    me = False
+
+    if friendship:
+        is_friend = True
+        friendship_status = friendship.accepted
+        if friendship.user1_id.id == user_id:
+            me = True
+    else:
+        is_friend = False
+        friendship_status = None
+
+    user = get_object_or_404(Users, username=username)
+    context = {
+        'friends': friends,
+        'user_id': user_id,
+        'user_view': user,
+        'joined_date':user.created_at.strftime('%d/%m/%Y'),
+        'is_own_profile': is_own_profile,
+        'is_friend': is_friend,
+        'friendship_status': friendship_status,
+        'me': me,
+        'notification': notification,
+        'page': 'profile' if is_own_profile else 'else'
+    }
+    ic(context)
+    return render(request, 'pages/view_profile.html', context)
 
 def user_detail(request, pk):
 	if request.method == 'GET':
@@ -115,7 +155,8 @@ def user_update(request, pk):
 
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, safe=False)
+            # return JsonResponse(serializer.data, safe=False)
+            return redirect('user-profile', user.username)
         return JsonResponse(serializer.errors, status=400)
     else:
         return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
@@ -151,7 +192,8 @@ def user_password(request, pk):
         # Atualiza a sessão do usuário para manter ele logado
         update_session_auth_hash(request, user)
 
-        return JsonResponse({'message': 'Password updated successfully', 'username': user.username, 'data': {}}, status=200)
+        # return JsonResponse({'message': 'Password updated successfully', 'username': user.username, 'data': {}}, status=200)
+        return JsonResponse({'message': 'Password updated successfully', 'redirect_url': reverse('user-profile', args=[user.username])}, status=200)
     else:
         return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
 
@@ -595,45 +637,6 @@ def loginview(request):
 
 	return render(request, 'pages/login.html')
 
-@login_required
-def profile(request, username):
-    user_id = request.user.id  # Obtém o ID do usuário atual
-    user_profile = get_object_or_404(Users, username=username)
-    is_own_profile = user_profile == request.user
-    # Obtém a lista de amigos
-    friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
-    friendship = Friends.objects.filter(
-        (Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
-    ).first()
-
-    notification = Notifications.objects.filter(Q(type='Friend Request') & Q(user_id=user_id, other_user_id=user_profile.id)).first()
-    me = False
-
-    if friendship:
-        is_friend = True
-        friendship_status = friendship.accepted
-        if friendship.user1_id.id == user_id:
-            me = True
-    else:
-        is_friend = False
-        friendship_status = None
-
-    user = get_object_or_404(Users, username=username)
-    context = {
-        'friends': friends,
-        'user_id': user_id,
-        'user_view': user,
-        'joined_date':user.created_at.strftime('%d/%m/%Y'),
-        'is_own_profile': is_own_profile,
-        'is_friend': is_friend,
-        'friendship_status': friendship_status,
-        'me': me,
-        'notification': notification,
-        'page': 'profile' if is_own_profile else 'else'
-    }
-    ic(context)
-    return render(request, 'pages/view_profile.html', context)
-
 def resetpassword(request):
 	return render(request, 'pages/password_reset.html')
 
@@ -680,6 +683,7 @@ def tournaments(request):
     }
 	return render(request,'pages/tournaments.html', context)
 
+@login_required
 def ongoingtournaments(request, tournament_id):
 	user_id = request.user.id
 	context = {
