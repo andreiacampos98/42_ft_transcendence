@@ -10,9 +10,10 @@ from . import consumers
 #router.register('users', UsersViewSet)
 
 
-urlpatterns =[
+urlpatterns = [
     path('', views.loginview, name="login"),
     path('home/', views.home, name="home"),
+	path('game/', views.game, name='game'),
     path('tournaments/', views.tournaments, name="tournaments"),
     path('tournaments/ongoing/<int:tournament_id>', views.ongoingtournaments, name="ongoingtournaments"),
     path('signup/', views.signup, name='signup'),
@@ -32,6 +33,8 @@ urlpatterns =[
     #path('reset_code/', views.resetcode, name='reset_code'),
     #path('set_new_password/', views.setnewpassword, name='set_new_password'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+
+
     path('users/<int:pk>', views.user_detail, name='user-detail'),
     path('users/create', views.user_create, name='user-create'),
     path('users/<int:pk>/update', views.user_update, name='user-update'),
@@ -64,7 +67,7 @@ urlpatterns =[
 
     path('users/<str:username>', views.profile, name='user-profile'),
     
-    #! DEBUG
+    #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
 ] 
 

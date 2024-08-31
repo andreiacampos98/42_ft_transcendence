@@ -634,6 +634,9 @@ def profile(request, username):
     ic(context)
     return render(request, 'pages/view_profile.html', context)
 
+def game(request):
+	return render(request, 'pages/game.html')
+
 def resetpassword(request):
 	return render(request, 'pages/password_reset.html')
 
