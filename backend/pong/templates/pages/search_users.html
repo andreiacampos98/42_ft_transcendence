@@ -13,8 +13,7 @@
                 <div class="search">
                     {% for users in userss %}
                         <div class="square">
-                            <a href="{% url 'user-profile' users.username %}" 
-                                hx-get="{% url 'user-profile' user.username %}"
+                            <a  hx-get="{% url 'user-profile' user.username %}"
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true"

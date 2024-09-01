@@ -6,7 +6,7 @@
     <div class="main-content non_compressed"  id="main-content">
         <div class="local options">
             <button class="main-button">
-                <a href="{% url 'gamelocal' %}" 
+                <a 
                 hx-get="{% url 'gamelocal' %}"
                 hx-trigger="click"
                 hx-target="#main"
@@ -17,7 +17,7 @@
         </div>
         <div class="online options">
             <button class="main-button">
-                <a href="{% url 'gameonline' %}" 
+                <a  
                 hx-get="{% url 'gameonline' %}"
                 hx-trigger="click"
                 hx-target="#main"

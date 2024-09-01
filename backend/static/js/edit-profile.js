@@ -51,7 +51,7 @@ function onSaveButtonClick(event, userId) {
     })
     .then(html => {
         // Atualiza a parte específica da página
-        document.getElementById('MainPage').innerHTML = html;
+        document.getElementById('main').innerHTML = html;
     })
     .catch(error => console.error('Error:', error));
 }

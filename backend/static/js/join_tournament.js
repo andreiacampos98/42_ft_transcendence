@@ -50,7 +50,6 @@ async function registerTournament() {
             alert("Registered successfully!");
             localStorage.setItem('alias', formData.alias);
             localStorage.setItem('tournament_id', tournamentId);
-            // window.location.href = `/tournaments/ongoing/${tournamentId}`;
             htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
                 target: '#main'  
             });

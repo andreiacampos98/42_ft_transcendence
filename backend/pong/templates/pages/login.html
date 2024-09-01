@@ -21,7 +21,7 @@
                         <img id="togglePasswordImage" src="{% static 'assets/icons/eyeopen.png' %}">
                     </button>
                 </div>
-                <a id="forgot" href="{% url 'password_reset' %}" 
+                <a id="forgot"  
                     hx-get="{% url 'password_reset' %}"
                     hx-trigger="click"
                     hx-target="#main"
@@ -33,7 +33,7 @@
             <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
             <button type="submit2"><img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42</button>
             <div id="firsttime">
-                Your first time? <a class="sign-up" href="{% url 'signup' %}" 
+                Your first time? <a class="sign-up"  
                             hx-get="{% url 'signup' %}"
                             hx-trigger="click"
                             hx-target="#main"

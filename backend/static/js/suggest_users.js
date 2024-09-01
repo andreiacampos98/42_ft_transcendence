@@ -14,14 +14,23 @@ function getSuggestions() {
             suggestionsBox.style.display = 'block'; // Ensure suggestions are visible
             if (data.length > 0) {
                 data.forEach(user => {
-                    var div = document.createElement('div');
-                    div.textContent = user.username;
-                    div.style.padding = '8px';
-                    div.style.cursor = 'pointer';
-                    div.onclick = function() {
-                        window.location.href = `/users/${user.username}`;
-                    };
-                    suggestionsBox.appendChild(div);
+                    const userBlock = document.createElement('div');
+                    userBlock.classList.add('user-block');
+                    userBlock.id = 'search-user';
+
+                    const link = document.createElement('a');
+                    link.setAttribute('hx-get', `/users/${user.username}`);
+                    link.setAttribute('hx-target', '#main'); 
+                    link.setAttribute('hx-push-url', 'true');
+                    link.setAttribute('hx-trigger', 'click');
+                    link.style.display = 'block'; 
+
+                    const username = document.createElement('h4');
+                    username.textContent = user.username;
+
+                    userBlock.appendChild(username);
+                    link.appendChild(userBlock);
+                    suggestionsBox.appendChild(link);
                 });
             } else {
                 suggestionsBox.style.display = 'none'; // Hide suggestions if none

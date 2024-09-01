@@ -50,8 +50,7 @@
                 </div>
             
                 <div id="notifications" ></div>
-                <a href="{% url 'user-profile' user.username %}"
-                    hx-get="{% url 'user-profile' user.username %}"
+                <a  hx-get="{% url 'user-profile' user.username %}"
                     hx-trigger="click"
                     hx-target="#main"
                     hx-push-url="true">
@@ -70,7 +69,7 @@
                 </button>
                 <div class="selects">
                     <button class="select-item">
-                        <a class="side-menu_a" href="{% url 'home' %}" 
+                        <a class="side-menu_a" 
                             hx-get="{% url 'home' %}"
                             hx-trigger="click"
                             hx-target="#main"
@@ -89,7 +88,7 @@
                         </a>
                     </button>
                     <button class="select-item">
-                        <a class="side-menu_a" href="{% url 'tournaments' %}" 
+                        <a class="side-menu_a"  
                             hx-get="{% url 'tournaments' %}"
                             hx-trigger="click"
                             hx-target="#main"
@@ -106,7 +105,7 @@
                         </a>
                     </button>
                     <button class="select-item">
-                        <a class="side-menu_a" href="{% url 'user-profile' user.username %}" 
+                        <a class="side-menu_a" 
                             hx-get="{% url 'user-profile' user.username %}"
                             hx-trigger="click"
                             hx-target="#main"
@@ -122,7 +121,7 @@
                         </a>
                     </button>
                     <button class="select-item logout-icon">
-                        <a class="side-menu_a" href="{% url 'login' %}" 
+                        <a class="side-menu_a" 
                             hx-get="{% url 'login' %}"
                             hx-trigger="click"
                             hx-target="#main"
