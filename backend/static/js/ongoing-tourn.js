@@ -117,7 +117,10 @@ async function leaveTournament() {
 
         if (response.ok) {
             socket.send(JSON.stringify({}));
-            window.location.href = `/tournaments/`;
+            // window.location.href = `/tournaments/`;
+            htmx.ajax('GET', `/tournaments/`, {
+                target: '#main'  
+            });
         }
     } catch (error) {
         console.error('Error:', error);

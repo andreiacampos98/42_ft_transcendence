@@ -34,12 +34,4 @@ function getSuggestions() {
     }
 }
 
-// Handle Enter key press for direct search
-document.getElementById('search').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        var query = encodeURIComponent(this.value);
-        if (query.length > 2) {
-            window.location.href = `/users/search?term=${query}`;
-        }
-    }
-});
+

@@ -94,6 +94,7 @@ def user_detail(request, pk):
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
+
 @csrf_exempt
 def user_create(request):
     if request.method == 'POST':
@@ -120,13 +121,9 @@ def user_create(request):
         myuser = Users.objects.create_user(username=username, password=password1)
         myuser.save()
 
-        # user = authenticate(username=username, password=password1)
+        
+        return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.'}, status=201)
 
-        if myuser is not None:
-            # login(request, user)
-            return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.', 'data': {}}, status=201)
-        else:
-            return JsonResponse({'message': 'There was a problem logging you in. Please try logging in manually.', 'data': {}}, status=400)
         
     return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
@@ -623,17 +620,22 @@ def signup(request):
 @csrf_exempt
 def loginview(request):
 	if request.method == 'POST':
-		username = request.POST.get('username')
-		password = request.POST.get('password')
+		try:
+			data = json.loads(request.body) 
+			username = data.get('username')
+			password = data.get('password')
+
+		except json.JSONDecodeError:
+			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
 
 		user = authenticate(username=username, password=password)
 
 		if user is not None:
 			login(request, user)
-			return redirect('home')
+			return JsonResponse({'message': 'You have successufly logged in.'}, status=201)
+
 		else:
-			messages.error(request, 'Bad Credentials')
-			return redirect('login')
+			return JsonResponse({'message': 'Bad Credentials.', 'data': {}}, status=400)
 
 	return render(request, 'pages/login.html')
 
@@ -660,6 +662,21 @@ def home(request):
     }
 	return render(request, 'pages/home-view.html', context)
 
+@login_required
+def gamelocal(request):
+	user_id = request.user.id
+	context = {
+        'user_id': user_id,
+    }
+	return render(request,'pages/gamelocal.html', context)
+
+@login_required
+def gameonline(request):
+	user_id = request.user.id
+	context = {
+        'user_id': user_id,
+    }
+	return render(request,'pages/gameonline.html', context)
 
 @login_required
 def tournaments(request):

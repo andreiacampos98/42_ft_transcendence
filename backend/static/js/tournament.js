@@ -94,7 +94,10 @@ function getCreateTournament()
             const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
             localStorage.setItem('alias', formData.alias);
             localStorage.setItem('tournament_id', tournamentId);
-            window.location.href = `/tournaments/ongoing/${tournamentId}`;
+            // window.location.href = `/tournaments/ongoing/${tournamentId}`;
+            htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
+                target: '#main'  
+            });
         } else {
             alert("Error: " + (data.message || 'Unknown error'));
         }

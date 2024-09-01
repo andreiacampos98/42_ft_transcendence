@@ -49,8 +49,8 @@ function toggleSidebar(user_id) {
             const link = document.createElement('a');
             link.href = `/users/${friend.username}`;
             link.setAttribute('hx-get', `/users/${friend.username}`);
-            link.setAttribute('hx-target', '#MainPage'); // Assume que você tem uma div com id "main-content"
-            link.setAttribute('hx-swap', 'outerHTML');
+            link.setAttribute('hx-target', '#main'); // Assume que você tem uma div com id "main-content"
+            link.setAttribute('hx-push-url', 'true');
             link.setAttribute('hx-trigger', 'click');
             link.style.display = 'block'; 
 
