@@ -19,7 +19,7 @@ function getSuggestions() {
                     div.style.padding = '8px';
                     div.style.cursor = 'pointer';
                     div.onclick = function() {
-                        window.location.href = `/users/${user.username}/`;
+                        window.location.href = `/users/${user.username}`;
                     };
                     suggestionsBox.appendChild(div);
                 });

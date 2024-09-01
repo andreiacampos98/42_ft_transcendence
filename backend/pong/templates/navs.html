@@ -7,10 +7,9 @@
     <link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
     <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
     <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'js/navs.js' %}"></script>
-    <script src="{% static 'js/suggest_users.js' %}"></script>
+    <script defer src="{% static 'js/navs.js' %}"></script>
+    <script defer src="{% static 'js/suggest_users.js' %}"></script>
     <script defer src="{% static 'js/friends.js' %}"></script>
     <script defer src="{% static 'js/friend-block.js' %}"></script>
     <script defer src="{% static 'js/edit-profile.js' %}"></script>
@@ -30,12 +29,11 @@
                 hx-push-url="true"
                 id="searchForm">
                 <div class="search-container">
-                    <input type="text" placeholder="Search for players..." name="searched" id="search" >
-                    <!-- onkeyup="getSuggestions()"> -->
+                    <input type="text" placeholder="Search for players..." name="searched" id="search" onkeyup="getSuggestions()">
                     <button type="submit" id="searchButton">
                         <img id="search-icon" src="{% static 'assets/icons/binoculars.png' %}">
                     </button>
-                    <!-- <div id="suggestions" ></div>     -->
+                    <div id="suggestions" ></div>    
                 </div>
             </form>
             <div class="top-right">
