@@ -4,7 +4,7 @@ import { MyApp } from './MyApp.js';
 /**
  * This class contains a 3D axis representation
  */
-class MyAxis extends THREE.Object3D {
+export class MyAxis extends THREE.Group {
 
     /**
      * 
@@ -15,9 +15,8 @@ class MyAxis extends THREE.Object3D {
      * @param {number} yyColor the hexadecimal representation of the xx axis color
      * @param {number} zzColor the hexadecimal representation of the zz axis color
      */
-    constructor(app, size, baseRadius, xxColor, yyColor, zzColor) {
+    constructor(size, baseRadius, xxColor, yyColor, zzColor) {
         super();
-        this.app = app;
         this.type = 'Group';
         this.size = size || 2;
         this.baseRadius = baseRadius || 0.05;
@@ -54,7 +53,3 @@ class MyAxis extends THREE.Object3D {
         this.add( axesHelper );
     }
 }
-
-MyAxis.prototype.isGroup = true;
-
-export { MyAxis };

@@ -1,6 +1,8 @@
 
 import * as THREE from 'three';
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { MyAxis } from './MyAxis.js';
 
 var canvas = document.querySelector('#canvas-container');
 canvas.onkeydown = (ev) => {console.log(ev)};
@@ -20,13 +22,10 @@ export class MyApp  {
         this.activeCameraName = null
         this.lastCameraName = null
         this.cameras = []
-        this.frustumSize = 20
 
         // other attributes
         this.renderer = null
         this.controls = null
-        this.axis = null
-        this.contents == null
 
 		this.canvas = document.querySelector('#canvas-container');
     }
@@ -35,14 +34,14 @@ export class MyApp  {
      */
     init() {
                 
-        // Create an empty scene
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
+		this.scene.add(new MyAxis(this))
 
-        this.initCameras();
-        this.setActiveCamera('Perspective')
+		this.gui = new GUI({ autoPlace: false });
+		this.gui.domElement.id = 'gui';
+		document.getElementById('main-content').appendChild(this.gui.domElement)
 
-        // Create a renderer with Antialiasing
         this.renderer = new THREE.WebGLRenderer({antialias:true});
         this.renderer.setPixelRatio( this.canvas.clientWidth / this.canvas.clientHeight );
         this.renderer.setClearColor("#000000");
@@ -50,10 +49,11 @@ export class MyApp  {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // search for other alternatives
 
-        // Append Renderer to DOM
-        this.canvas.appendChild( this.renderer.domElement );
+        this.initCameras();
+        this.setActiveCamera('Perspective')
 
-        // manage window resizes
+        this.canvas.appendChild( this.renderer.domElement );
+				
         window.addEventListener('resize', this.onResize.bind(this), false );
     }
 
@@ -63,7 +63,6 @@ export class MyApp  {
     initCameras() {
         const aspect = window.innerWidth / window.innerHeight;
 
-        // Create a basic perspective camera
         const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 )
         perspective1.position.set(10,10,10)
         this.cameras['Perspective'] = perspective1;
@@ -87,19 +86,14 @@ export class MyApp  {
      */
     updateCameraIfRequired() {
 
-        // camera changed?
         if (this.lastCameraName !== this.activeCameraName) {
             this.lastCameraName = this.activeCameraName;
             this.activeCamera = this.cameras[this.activeCameraName]
             document.getElementById("camera").innerHTML = this.activeCameraName
            
-            // call on resize to update the camera aspect ratio
-            // among other things
             this.onResize()
 
-            // are the controls yet?
             if (this.controls === null) {
-                // Orbit controls allow the camera to orbit around a target.
                 this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
                 this.controls.enableZoom = true;
                 this.controls.update();
@@ -119,10 +113,6 @@ export class MyApp  {
             this.activeCamera.updateProjectionMatrix();
             this.renderer.setSize( window.innerWidth, window.innerHeight );
         }
-    }
-   
-    setContents(contents) {
-        this.contents = contents;
     }
 
     /**
