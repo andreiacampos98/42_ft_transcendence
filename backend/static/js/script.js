@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const togglePasswordButton = document.getElementById('togglePassword');
     const togglePasswordImage = document.getElementById('togglePasswordImage');
 
+    
+
     loginForm.addEventListener('submit', (event) => {
         event.preventDefault();
 

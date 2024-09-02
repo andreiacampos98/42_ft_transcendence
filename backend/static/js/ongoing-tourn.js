@@ -1,8 +1,8 @@
 // ==================================================================
+const tournamentId = localStorage.getItem('tournament_id');
+console.log(tournamentId);
 
-tournamentId = location.pathname.split('/')[3]
 socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournamentId}`);
-
 socket.onopen = (event) => {
     console.log('Socket opening', event);
     socket.send(JSON.stringify({
@@ -38,6 +38,7 @@ socket.onerror = (error) => {
 socket.onclose = (event) => {
     console.log('Socket closed', event);
 };
+
 
 // ==================================================================
 

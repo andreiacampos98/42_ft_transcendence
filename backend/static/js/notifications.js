@@ -26,8 +26,13 @@ function getNotifications() {
             const textContent = document.createElement('h4');
             textContent.classList.add('description-notif');
 
-            textContent.innerHTML = `<a class="name-notif" href="/users/${notification.other_user_id.username}">${notification.other_user_id.username}</a> ${notification.description}`;
-            
+            textContent.innerHTML = `<a class="name-notif">${notification.other_user_id.username}</a> ${notification.description}`;
+            textContent.onclick = function() {
+                htmx.ajax('GET', `/users/${notification.other_user_id.username}`, {
+                    target: '#main'  
+                });
+            };
+
             const timestamp = document.createElement('span');
             timestamp.classList.add('timestamp');
             const date = new Date(notification.created_at);

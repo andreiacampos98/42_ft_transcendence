@@ -19,14 +19,20 @@ function getSuggestions() {
                     userBlock.id = 'search-user';
 
                     const link = document.createElement('a');
-                    link.setAttribute('hx-get', `/users/${user.username}`);
-                    link.setAttribute('hx-target', '#main'); 
-                    link.setAttribute('hx-push-url', 'true');
-                    link.setAttribute('hx-trigger', 'click');
+                    // link.setAttribute('hx-get', `/users/${user.username}`);
+                    // link.setAttribute('hx-target', '#main'); 
+                    // link.setAttribute('hx-push-url', 'true');
+                    // link.setAttribute('hx-trigger', 'click');
                     link.style.display = 'block'; 
 
                     const username = document.createElement('h4');
                     username.textContent = user.username;
+
+                    userBlock.onclick = function() {
+                        htmx.ajax('GET', `/users/${user.username}`, {
+                            target: '#main'  
+                        });
+                    };
 
                     userBlock.appendChild(username);
                     link.appendChild(userBlock);

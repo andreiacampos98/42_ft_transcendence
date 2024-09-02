@@ -43,7 +43,7 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
         } else {
             console.log('Login in successful');
             htmx.ajax('GET', `/home/`, {
-                    target: '#main'  
+                target: '#main'  
             });
         }
     })
