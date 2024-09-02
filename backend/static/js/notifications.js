@@ -28,6 +28,7 @@ function getNotifications() {
 
             textContent.innerHTML = `<a class="name-notif">${notification.other_user_id.username}</a> ${notification.description}`;
             textContent.onclick = function() {
+                history.pushState(null, '', `/users/${notification.other_user_id.username}`);
                 htmx.ajax('GET', `/users/${notification.other_user_id.username}`, {
                     target: '#main'  
                 });

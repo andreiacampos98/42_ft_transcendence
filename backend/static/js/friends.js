@@ -60,10 +60,6 @@ function toggleSidebar(user_id) {
             friendBlock.dataset.status = 'online';
             
             const link = document.createElement('a');
-            // link.setAttribute('hx-get', `/users/${friend.username}`);
-            // link.setAttribute('hx-target', '#main'); // Assume que você tem uma div com id "main-content"
-            // link.setAttribute('hx-push-url', 'true');
-            // link.setAttribute('hx-trigger', 'click');
             link.style.display = 'block'; 
 
             const profilePic = document.createElement('img');
@@ -82,8 +78,9 @@ function toggleSidebar(user_id) {
             status.textContent = friend.status;
 
             friendBlock.onclick = function() {
+                history.pushState(null, '', `/users/${friend.username}`);
                 htmx.ajax('GET', `/users/${friend.username}`, {
-                    target: '#main'  
+                    target: '#main'
                 });
             };
 
