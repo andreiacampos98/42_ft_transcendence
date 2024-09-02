@@ -2,10 +2,8 @@
 import * as THREE from 'three';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { MyAxis } from './MyAxis.js';
-
-var canvas = document.querySelector('#canvas-container');
-canvas.onkeydown = (ev) => {console.log(ev)};
+import { Axis } from './view/Axis.js';
+import { Arcade } from './view/Arcade.js';
 
 /**
  * This class contains the application object
@@ -36,7 +34,11 @@ export class MyApp  {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
-		this.scene.add(new MyAxis(this))
+		this.scene.add(new Axis(this));
+		this.scene.add(new Arcade({}));
+		this.light = new THREE.PointLight('#FFFFFF', 100);
+		this.light.position.set(0, 5, 5);
+		this.scene.add(this.light);
 
 		this.gui = new GUI({ autoPlace: false });
 		this.gui.domElement.id = 'gui';
@@ -64,7 +66,7 @@ export class MyApp  {
         const aspect = window.innerWidth / window.innerHeight;
 
         const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 )
-        perspective1.position.set(10,10,10)
+        perspective1.position.set(0, 0, 15);
         this.cameras['Perspective'] = perspective1;
 
     }
@@ -120,10 +122,6 @@ export class MyApp  {
     */
     render () {
         this.updateCameraIfRequired()
-
-        if (this.activeCamera !== undefined && this.activeCamera !== null){
-            this.contents.update()
-        }
 
         this.controls.update();
         this.renderer.render(this.scene, this.activeCamera);

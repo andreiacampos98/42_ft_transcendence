@@ -1,14 +1,10 @@
 import * as THREE from 'three';
-import { MyApp } from './MyApp.js';
-
 /**
  * This class contains a 3D axis representation
  */
-export class MyAxis extends THREE.Group {
+export class Axis extends THREE.Group {
 
     /**
-     * 
-     * @param {MyApp} app the application object
      * @param {number} size the size of each axis 
      * @param {number} baseRadius the base radius of each axis
      * @param {number} xxColor the hexadecimal representation of the xx axis color
@@ -17,7 +13,6 @@ export class MyAxis extends THREE.Group {
      */
     constructor(size, baseRadius, xxColor, yyColor, zzColor) {
         super();
-        this.type = 'Group';
         this.size = size || 2;
         this.baseRadius = baseRadius || 0.05;
         this.xxColor = xxColor || 0xff0000
