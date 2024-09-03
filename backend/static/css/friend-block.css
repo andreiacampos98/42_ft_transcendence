@@ -41,14 +41,14 @@
 }
 
 /* Status colors */
-.friend-block[data-status="online"] .status {
+.friend-block1[data-status="online"] {
     color: #05FF00;
 }
 
-.friend-block[data-status="offline"] .status {
+.friend-block1[data-status="offline"] {
     color: #929292;
 }
 
-.friend-block[data-status="playing"] .status {
+.friend-block1[data-status="playing"] {
     color: #E65C19;
 }

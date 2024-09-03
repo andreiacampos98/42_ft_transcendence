@@ -47,6 +47,7 @@ function toggleSidebar(user_id) {
             friendBlock.dataset.status = 'online';
             
             const link = document.createElement('a');
+            link.classList.add('a-links');
             link.href = `/users/${friend.username}`;
             link.setAttribute('hx-get', `/users/${friend.username}`);
             link.setAttribute('hx-target', '#MainPage'); // Assume que você tem uma div com id "main-content"
@@ -66,7 +67,8 @@ function toggleSidebar(user_id) {
             username.textContent = friend.username;
 
             const status = document.createElement('span');
-            status.classList.add('status');
+            status.classList.add('friend-block1');
+            status.setAttribute('data-status', friend.status.toLowerCase());
             status.textContent = friend.status;
 
             friendInfo.appendChild(username);

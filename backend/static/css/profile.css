@@ -104,7 +104,7 @@ textarea, #username-input, #email-input {
     background-color: #1A3141;
 }
 
-#open-change-password-modal, #cancel-edit-button {
+#open-change-password-modal, #cancel-edit-button, .friend-status {
     background-color: #1D2731;
 
 }
