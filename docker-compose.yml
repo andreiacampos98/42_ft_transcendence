@@ -13,7 +13,7 @@ services:
             - Transcendence
         depends_on:
             - postgres
-            # - redis
+            - redis
 
     postgres:
         container_name: postgres-container
@@ -49,17 +49,17 @@ services:
         depends_on:
             - postgres
 
-    # redis:
-    #     container_name: redis-container
-    #     image: redis
-    #     build:
-    #         context: ./redis
-    #         dockerfile: Dockerfile
-    #     restart: always
-    #     networks:
-    #         - Transcendence
-    #     ports:
-    #         - "6379:6379"
+    redis:
+        container_name: redis-container
+        image: redis
+        build:
+            context: ./redis
+            dockerfile: Dockerfile
+        restart: always
+        networks:
+            - Transcendence
+        ports:
+            - "6379:6379"
 
 networks:
     Transcendence:
