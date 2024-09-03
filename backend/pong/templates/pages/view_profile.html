@@ -217,7 +217,41 @@
                     <span class="icon-title3">Recent Matches</span>
                 </div>
                 <div class="stats2">
-                    <div id="match-container"></div>
+                    {% for game in games %}
+                        <div id="match-container">
+                            <div class="match-block pingpong victory">
+                                <div class="icon">
+                                    <img src="{% static 'assets/icons/pong.png' %}" alt="Pingpong Icon">
+                                </div>
+                                <div class="details" >
+                                    <span class="date">{{ game.created_at }}</span>
+                                    {% if user_view == game.winner_id %}
+                                        <span class="result" >Victory</span>
+                                    {% else %}
+                                        <span class="result">Defect</span>
+                                    {% endif %}
+                                    {% if user_view == game.user1_id %}
+                                        <span class="score">{{ game.nb_goals_user1 }} - {{ game.nb_goals_user2 }}</span>
+                                    {% else %}
+                                        <span class="score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="opponent">
+                                    <img src="{{ game.user1_id.picture.url }}" alt="Opponent Icon">
+                                </div>
+                                <div class="icon">
+                                    <img src="/static/assets/icons/tournament.png" alt="Tournament Icon">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!-- {% for tournament in tournaments%}
+                            <div class="details">
+                                <span class="date">{{ tournament.created_at }}</span>
+                                <span class="result"> Place</span>
+                                <span class="score"></span>
+                            </div>
+                        {% endfor %} -->
                 </div>
             </div>
         </div>

@@ -71,6 +71,12 @@ def profile(request, username):
 		friendship_status = None
 
 	user = get_object_or_404(Users, username=username)
+	games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id))).order_by('-created_at')
+
+	# games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(tournament='false')).order_by('-created_at')
+	# tournament_games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(tournament=True))
+	# tournament_ids = TournamentsGames.objects.filter(game_id__in=tournament_games).values_list('tournament_id', flat=True).distinct()
+	# tournaments = Tournaments.objects.filter(id__in=tournament_ids)
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -81,6 +87,8 @@ def profile(request, username):
 		'friendship_status': friendship_status,
 		'me': me,
 		'notification': notification,
+		'games': games,
+		# 'tournaments': tournaments,
 		'page': 'profile' if is_own_profile else 'else'
 	}
 	ic(context)
@@ -455,7 +463,8 @@ def tournament_join(request, tournament_id, user_id):
 			game = {
 				'start_date':datetime.now().isoformat(),
 				'user1_id': user1.user_id.id,
-				'user2_id': user2.user_id.id
+				'user2_id': user2.user_id.id,
+				'tournament': True
 			}
 			games_data.append(game)
 		
@@ -734,7 +743,8 @@ def advance_tournament_phase(previous_phase, tournament_id):
 		game_data = {
 			'start_date':datetime.now().isoformat(),
 			'user1_id': winner1.id,
-			'user2_id': winner2.id
+			'user2_id': winner2.id,
+			'tournament': True
 		}
 		temp.append(game_data)
 
