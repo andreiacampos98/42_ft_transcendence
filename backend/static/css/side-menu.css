@@ -65,14 +65,14 @@ body {
     color: #FFFFFF;
 }
 
-#highlight-icon1, #highlight-icon2, #highlight-icon3 {
+.highlight-icon1 {
     position: relative;
     left: -5px;
     width: 40px; /* Adjust icon size as needed */
     height: 40px;
 }
 
-#highlight-span1, #highlight-span2, #highlight-span3 {
+.highlight-span1 {
     position: relative;
     left: -15px;
     color: #F8D082;

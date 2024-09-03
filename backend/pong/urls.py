@@ -13,6 +13,8 @@ from . import consumers
 urlpatterns =[
     path('', views.loginview, name="login"),
     path('home/', views.home, name="home"),
+    path('gamelocal/', views.gamelocal, name="gamelocal"),
+    path('gameonline/', views.gameonline, name="gameonline"),
     path('tournaments/', views.tournaments, name="tournaments"),
     path('tournaments/ongoing/<int:tournament_id>', views.ongoingtournaments, name="ongoingtournaments"),
     path('signup/', views.signup, name='signup'),

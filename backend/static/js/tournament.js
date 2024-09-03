@@ -16,7 +16,21 @@ setStatus('friend3', 'playing');  // Can be 'online', 'offline', or 'playing'
 
 */
 
+
 document.addEventListener('DOMContentLoaded', () => {
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === 1 && !node["htmx-internal-data"]) {
+              htmx.process(node)
+            }
+          })
+        })
+      });
+    observer.observe(document, {childList: true, subtree: true});
+})
+
+htmx.onLoad(() => {
     const statusElements = document.querySelectorAll('.status-tourn');
 
     statusElements.forEach(statusElement => {
@@ -92,12 +106,17 @@ function getCreateTournament()
         if (data.data != {}) {
             alert("Tournament created successfully!");
             const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
+            console.log(data.data);
             localStorage.setItem('alias', formData.alias);
             localStorage.setItem('tournament_id', tournamentId);
-            window.location.href = `/tournaments/ongoing/${tournamentId}`;
+            history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
+            htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
+                target: '#main' , 
+            });
         } else {
             alert("Error: " + (data.message || 'Unknown error'));
         }
     })
     .catch(error => console.error('Error:', error));
 }
+

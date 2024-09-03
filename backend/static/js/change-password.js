@@ -41,11 +41,10 @@ function getChangePassword()
     })
     .then(response => response.json())
     .then(data => {
-        if (data.data == {}) {
+        if (JSON.stringify(data.data) === '{}') {
             alert(data.message);
         } else {
-            alert(data.message); // Exibe uma mensagem de sucesso
-            window.location.href = `/users/${data.username}`; // Atualiza a página para refletir as alterações
+            window.location.href = data.redirect_url
         }
     })
     .catch(error => console.error('Error:', error));

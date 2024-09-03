@@ -1,8 +1,8 @@
 // ==================================================================
+const tournamentId = localStorage.getItem('tournament_id');
+console.log(tournamentId);
 
-tournamentId = location.pathname.split('/')[3]
 socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournamentId}`);
-
 socket.onopen = (event) => {
     console.log('Socket opening', event);
     socket.send(JSON.stringify({
@@ -38,6 +38,7 @@ socket.onerror = (error) => {
 socket.onclose = (event) => {
     console.log('Socket closed', event);
 };
+
 
 // ==================================================================
 
@@ -117,7 +118,10 @@ async function leaveTournament() {
 
         if (response.ok) {
             socket.send(JSON.stringify({}));
-            window.location.href = `/tournaments/`;
+            history.pushState(null, '', `/tournaments/`);
+            htmx.ajax('GET', `/tournaments/`, {
+                target: '#main'  
+            });
         }
     } catch (error) {
         console.error('Error:', error);

@@ -5,12 +5,24 @@
     <link rel="stylesheet" href="{% static 'css/home_view.css' %}">
     <div class="main-content non_compressed"  id="main-content">
         <div class="local options">
-            <button class="main-button"></button>
+            <button class="main-button">
+                <a 
+                hx-get="{% url 'gamelocal' %}"
+                hx-trigger="click"
+                hx-target="#main"
+                hx-push-url="true">Local</a>
+            </button>
             <h3>LOCAL</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vestibulum sollicitudin diam sed aliquet. Nullam venenatis ultrices nulla at egestas. </p>
         </div>
         <div class="online options">
-            <button class="main-button"></button>
+            <button class="main-button">
+                <a  
+                hx-get="{% url 'gameonline' %}"
+                hx-trigger="click"
+                hx-target="#main"
+                hx-push-url="true">Online</a>
+            </button>
             <h3>ONLINE</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vestibulum sollicitudin diam sed aliquet. Nullam venenatis ultrices nulla at egestas. </p>
 

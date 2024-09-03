@@ -1,3 +1,16 @@
+// document.addEventListener('DOMContentLoaded', () => {
+//     const observer = new MutationObserver((mutations) => {
+//         mutations.forEach((mutation) => {
+//           mutation.addedNodes.forEach((node) => {
+//             if (node.nodeType === 1 && !node["htmx-internal-data"]) {
+//               htmx.process(node)
+//             }
+//           })
+//         })
+//       });
+//     observer.observe(document, {childList: true, subtree: true});
+// })
+
 function addClassToTopLevelDivs(className) {
     // Select all div elements that are direct children of the body
     const topLevelDivs = document.body.querySelectorAll(':scope > div');
@@ -38,7 +51,7 @@ function toggleSidebar(user_id) {
         const sidebar = document.getElementById('sidebar');
         sidebar.innerHTML = '';  // Clear existing content
 
-        friends.forEach(friend => {
+        friends.forEach((friend) => {
             console.log(friend);
 
             const friendBlock = document.createElement('div');
@@ -47,12 +60,6 @@ function toggleSidebar(user_id) {
             friendBlock.dataset.status = 'online';
             
             const link = document.createElement('a');
-            link.classList.add('a-links');
-            link.href = `/users/${friend.username}`;
-            link.setAttribute('hx-get', `/users/${friend.username}`);
-            link.setAttribute('hx-target', '#MainPage'); // Assume que você tem uma div com id "main-content"
-            link.setAttribute('hx-swap', 'outerHTML');
-            link.setAttribute('hx-trigger', 'click');
             link.style.display = 'block'; 
 
             const profilePic = document.createElement('img');
@@ -71,12 +78,20 @@ function toggleSidebar(user_id) {
             status.setAttribute('data-status', friend.status.toLowerCase());
             status.textContent = friend.status;
 
+            friendBlock.onclick = function() {
+                history.pushState(null, '', `/users/${friend.username}`);
+                htmx.ajax('GET', `/users/${friend.username}`, {
+                    target: '#main'
+                });
+            };
+
             friendInfo.appendChild(username);
             friendInfo.appendChild(status);
             friendBlock.appendChild(profilePic);
             friendBlock.appendChild(friendInfo);
             link.appendChild(friendBlock);
             sidebar.appendChild(link);
+
 
         });
     });
