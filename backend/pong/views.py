@@ -71,12 +71,16 @@ def profile(request, username):
 		friendship_status = None
 
 	user = get_object_or_404(Users, username=username)
-	games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id))).order_by('-created_at')
+	#games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id))).order_by('-created_at')
 
-	# games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(tournament='false')).order_by('-created_at')
-	# tournament_games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(tournament=True))
-	# tournament_ids = TournamentsGames.objects.filter(game_id__in=tournament_games).values_list('tournament_id', flat=True).distinct()
-	# tournaments = Tournaments.objects.filter(id__in=tournament_ids)
+	games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(tournament=False)).order_by('-created_at')
+	tournament_games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(tournament=True))
+	tournament_ids = TournamentsGames.objects.filter(game_id__in=tournament_games).values_list('tournament_id', flat=True).distinct()
+	tournaments = Tournaments.objects.filter(id__in=tournament_ids)
+
+	tournament_response = tournament_list_user(request, user_id)
+	user_tournaments = json.loads(tournament_response.content)
+
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -88,7 +92,8 @@ def profile(request, username):
 		'me': me,
 		'notification': notification,
 		'games': games,
-		# 'tournaments': tournaments,
+		'tournaments': tournaments,
+		'tours': user_tournaments,
 		'page': 'profile' if is_own_profile else 'else'
 	}
 	ic(context)
@@ -561,6 +566,24 @@ def tournament_list_user_games(request, user_id):
 		g['game']['user2_id'] == user_id, all_tour_games))
 
 	return JsonResponse(user_tour_games, status=200, safe=False)
+
+#auxiliar function
+@csrf_exempt
+def tournament_list_user(request, user_id):
+	if request.method != 'GET':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+
+	all_tour=TournamentsUsers.objects.filter(user_id=user_id)
+	serializer = TournamentsUsersSerializer(all_tour, many=True)
+	all_tourusers_list = serializer.data
+
+	for touruser in all_tourusers_list:
+		tournament = Tournaments.objects.get(pk=touruser['id'])
+		serializer = TournamentsSerializer(tournament)
+		touruser['tournament'] = serializer.data
+
+	return JsonResponse(all_tourusers_list, safe=False)
+
 
 @csrf_exempt
 def tournament_update_game(request, tournament_id, game_id):

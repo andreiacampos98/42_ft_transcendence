@@ -217,6 +217,9 @@
                     <span class="icon-title3">Recent Matches</span>
                 </div>
                 <div class="stats2">
+                    <div id="match-container">
+
+                    </div>
                     {% for game in games %}
                         <div id="match-container">
                             <div class="match-block pingpong victory">
@@ -245,13 +248,32 @@
                             </div>
                         </div>
                         {% endfor %}
-                        <!-- {% for tournament in tournaments%}
-                            <div class="details">
-                                <span class="date">{{ tournament.created_at }}</span>
-                                <span class="result"> Place</span>
-                                <span class="score"></span>
-                            </div>
-                        {% endfor %} -->
+                        {% for tour in tours %}
+                            {% if tour.tournament.status == 'Finished' %}
+                                <div class="match-block" class="tournament">
+                                    <div class="icon">
+                                        <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
+                                    </div>
+                                    <div class="details">
+                                        <span class="date">{{ tour.tournament.created_at }}</span>
+                                        <span class="result"> {{ tour.placement }}</span>
+                                        <span class="score">Finished</span>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="match-block" class="tournament">
+                                    <div class="icon">
+                                        <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
+                                    </div>
+                                    <div class="details">
+                                        <span class="date">{{ tour.tournament.created_at }}</span>
+                                        <span class="result"> {{ tour.placement }}</span>
+                                        <span class="score"></span>
+                                    </div>
+
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                 </div>
             </div>
         </div>

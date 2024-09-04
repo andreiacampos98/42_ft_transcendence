@@ -62,6 +62,7 @@ urlpatterns =[
     # path('tournaments/<int:tournament_id>/advance', views.tournament_advance_phase, name='tournament-advance-phase'),
     path('tournaments/<int:tournament_id>/games', views.tournament_list_games, name='tournament-list-games'),
     path('tournaments/games/user/<int:user_id>', views.tournament_list_user_games, name='tournament-list-user-games'),
+    path('tournaments/user/<int:user_id>', views.tournament_list_user, name='tournament-list-user'),
     path('tournaments/<int:tournament_id>/games/<int:game_id>', views.tournament_update_game, name='tournament-update-game'),
 
     path('users/<str:username>', views.profile, name='user-profile'),
