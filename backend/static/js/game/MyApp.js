@@ -40,8 +40,11 @@ export class MyApp  {
 		this.scene.add(this.arcade);
 
 		this.light = new THREE.PointLight('#FFFFFF', 100);
-		this.light.position.set(0, 5, 5);
+		this.light.position.set(0, 0, 5);
 		this.scene.add(this.light);
+
+		this.pointLightHelper = new THREE.PointLightHelper(this.light);
+		this.scene.add(this.pointLightHelper);	
 
 		this.gui = new GUI({ autoPlace: false });
 		this.gui.domElement.id = 'gui';
@@ -69,7 +72,7 @@ export class MyApp  {
         const aspect = window.innerWidth / window.innerHeight;
 
         const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 )
-        perspective1.position.set(0, 0, 15);
+        perspective1.position.set(0, 0, 35);
         this.cameras['Perspective'] = perspective1;
 
     }
