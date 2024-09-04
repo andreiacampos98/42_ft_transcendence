@@ -35,7 +35,10 @@ export class MyApp  {
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
 		this.scene.add(new Axis(this));
-		this.scene.add(new Arcade({}));
+
+		this.arcade = new Arcade({});
+		this.scene.add(this.arcade);
+
 		this.light = new THREE.PointLight('#FFFFFF', 100);
 		this.light.position.set(0, 5, 5);
 		this.scene.add(this.light);
@@ -124,6 +127,7 @@ export class MyApp  {
         this.updateCameraIfRequired()
 
         this.controls.update();
+		this.arcade.update();
         this.renderer.render(this.scene, this.activeCamera);
 
         requestAnimationFrame( this.render.bind(this) );

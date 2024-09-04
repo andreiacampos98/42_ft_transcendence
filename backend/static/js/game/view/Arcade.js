@@ -10,11 +10,13 @@ export class Arcade extends THREE.Group {
 		this.display = new GameDisplay({});
 		this.build();
 
-		document.addEventListener
 	}
 
 	build() {
 		this.add(this.display);
+	}
 
+	update() {
+		this.display.update();
 	}
 }
