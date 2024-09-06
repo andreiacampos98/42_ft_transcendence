@@ -2,6 +2,8 @@ const matches = [
     { type: 'tournament', place: 3 , date: "08/02/1997", score: "1 - 7"},
     { type: 'tournament', place: 4 , date: "08/02/1997", score: "1 - 7"},
     { type: 'pingpong', result: 'victory', opponentIcon: '/static/assets/icons/profile.png' , date: "08/02/1997", score: "1 - 7"},
+    { type: 'pingpong', result: 'defeat', opponentIcon: '/static/assets/icons/profile.png' , date: "08/02/1997", score: "1 - 7"},
+    { type: 'pingpong', result: 'defeat', opponentIcon: '/static/assets/icons/profile.png' , date: "08/02/1997", score: "1 - 7"},
     { type: 'pingpong', result: 'defeat', opponentIcon: '/static/assets/icons/profile.png' , date: "08/02/1997", score: "1 - 7"}
 ];
 

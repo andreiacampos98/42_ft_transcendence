@@ -257,7 +257,7 @@
 }
 /* m Content */
 .m-content {
-    min-width: 200px;
+    min-width: 380px;
     position: relative;
     background-color: #1D2731;
     margin: auto;
@@ -293,7 +293,7 @@
     color: #000;
 }
 
-.side-profile button, #cancel-create-tournament, #create-tournament {
+.side-profile button, #cancel-create-tournament, #create-tournament, #registration {
     margin-top: 10px;
     padding: 10px 20px;
     color: #fff;
@@ -334,17 +334,27 @@
 
 #create-tournament-form {
     display: flex;
+	flex-direction: column;
     color: #c3c3c3bb;
     width: 100%;
     padding: 10px;
     justify-content: space-between;
     
 }
-#create-tournament-form label {
+.create-tournament-form {
+    display: flex;
+    color: #c3c3c3bb;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    justify-content: space-between;
+    
+}
+.create-tournament-form label {
     align-self: baseline;
 }
 
-.tournament-modal, #numPlayers {
+.tournament-modal, #numPlayers, .pass-input, #nick-denial {
     background-color: #101d27;
     width: 99%;
     border-radius: 5px;
@@ -352,4 +362,36 @@
     color: #c3c3c3bb;
     font-size: smaller;
     height: 25px;
+}
+
+#nick-confirm {
+	display: flex;
+	padding-top: 5px;
+	align-items: flex-start;
+}
+
+.nickname1 {
+	text-align: left;
+}
+
+#nick-denial {
+	background: none;
+	text-align: left;
+	padding: 0;
+	font-weight: initial;
+	font-size: xx-small;
+	padding-left: 5px;
+}
+
+#checkmark {
+	border-radius: 5px;
+	width: 15px;
+	height: 15px;
+	border: none;
+	background-color: #F8D082;
+	color: #1D2731;
+	font-size: large;
+	display: flex; 
+    justify-content: center; 
+    align-items: center;
 }

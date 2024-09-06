@@ -49,6 +49,10 @@ textarea, #username-input, #email-input {
     display: inline;
     vertical-align: middle;
     margin: 10px;
+	overflow: scroll;
+	text-overflow: ellipsis;
+	max-height: 200px;
+	
 }
 
 .text-block{
@@ -56,7 +60,6 @@ textarea, #username-input, #email-input {
     text-align: justify;
     font-size: small;
     margin: 0;
-    margin-right: 30px;
 }
 .side-profile {
     display: block;
@@ -139,7 +142,8 @@ textarea, #username-input, #email-input {
     background-color: #101d27;
     width: 99%;
     border-radius: 5px;
-    border: 1px solid #c3c3c3bb;
+    border: none;
+	color: #c3c3c3bb;
 }
 
 .stats-history {
@@ -147,6 +151,7 @@ textarea, #username-input, #email-input {
     flex-direction: column;
     flex: 1;
     padding: 20px;
+	overflow-x: scroll;
 }
 
 .stats {
@@ -236,6 +241,12 @@ textarea, #username-input, #email-input {
 .graph-img {
     max-width: 50%;
     max-height: 50%;
+}
+
+#match-container {
+	overflow-y: scroll;
+	height: 260px;
+	width: inherit;
 }
 
 /* The Modal (background) */
