@@ -9,7 +9,6 @@ export class Arcade extends THREE.Group {
 		this.controller = new GameController({});
 		this.display = new GameDisplay({});
 		this.build();
-
 	}
 
 	build() {
@@ -17,6 +16,6 @@ export class Arcade extends THREE.Group {
 	}
 
 	update() {
-		this.display.update();
+		this.display.update(this.controller.pressedKeys);
 	}
 }

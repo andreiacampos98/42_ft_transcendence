@@ -24,6 +24,8 @@ export class MyApp  {
         // other attributes
         this.renderer = null
         this.controls = null
+		this.gui = null
+		this.arcade = null
 
 		this.canvas = document.querySelector('#canvas-container');
     }
@@ -49,6 +51,13 @@ export class MyApp  {
 		this.gui = new GUI({ autoPlace: false });
 		this.gui.domElement.id = 'gui';
 		document.getElementById('main-content').appendChild(this.gui.domElement)
+		
+		const lightFolder = this.gui.addFolder('Light')
+        lightFolder.add(this.light, 'intensity', 0, 100).name("Intensity")
+        lightFolder.add(this.light.position, 'x', -30, 30).name("X")
+        lightFolder.add(this.light.position, 'y', -30, 30).name("Y")
+        lightFolder.add(this.light.position, 'z', -30, 30).name("Z")
+        lightFolder.open();
 
         this.renderer = new THREE.WebGLRenderer({antialias:true});
         this.renderer.setPixelRatio( this.canvas.clientWidth / this.canvas.clientHeight );
@@ -74,7 +83,6 @@ export class MyApp  {
         const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 )
         perspective1.position.set(0, 0, 35);
         this.cameras['Perspective'] = perspective1;
-
     }
 
     /**
