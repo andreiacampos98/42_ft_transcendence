@@ -891,5 +891,8 @@ def calculate_placements(tournament_id):
 		user1.status = "Online"
 		user1.save()
 	
+	tournament = Tournaments.objects.get(pk=tournament_id)
+	tournament.status ='Finished'
+	tournament.save()
 	serializer = TournamentsUsersSerializer(tour_users, many=True)
 	return JsonResponse(serializer.data, status=200, safe=False)
