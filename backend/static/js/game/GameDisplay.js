@@ -66,8 +66,6 @@ export class GameDisplay extends THREE.Group {
 		);
 
 		this.add(this.ball);
-		const aabb = new THREE.Box3().setFromObject(this.ball);
-		this.ball.add(new THREE.Box3Helper(aabb));
 	}
 
 	update(pressedKeys) {
@@ -93,8 +91,7 @@ export class GameDisplay extends THREE.Group {
 		if (this.upperBoundary == null)
 			return ;
 		
-		//! TO DO:
-		//! - Change ball speed according to the speed of the paddle at the time
+		
 		
 		if (this.ball.position.y + this.paddleHeight / 2 >= this.upperBoundary.position.y)
 			this.ballVelocity.y = -Math.abs(this.ballVelocity.y);
