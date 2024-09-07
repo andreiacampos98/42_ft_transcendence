@@ -120,22 +120,16 @@
                             {% endif %}
                         </a>
                     </button>
-                    <!-- <button class="select-item logout-icon">
+                    <button class="select-item logout-icon">
                         <a class="side-menu_a" 
-                            hx-post="{% url 'signout' %}"
+                            hx-get="{% url 'signout' %}"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true">
                             <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
                             <span class="icon-title">Logout</span>
                         </a>
-                    </button> -->
-                    <form id="logout-form" hx-get="{% url 'signout' %}" hx-trigger="click" hx-target="#main" hx-push-url="true">
-                        <button type="submit" class="select-item logout-icon">
-                            <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
-                            <span class="icon-title">Logout</span>
-                        </button>
-                    </form>
+                    </button>
                 </div>
             </div>
         {% endblock %}
