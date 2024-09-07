@@ -133,6 +133,8 @@ def user_create(request):
 		user = authenticate(username=username, password=password1)
 
 		if user is not None:
+			myuser.status="Online"
+			myuser.save()
 			login(request, user)
 			return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.'}, status=201)
 
@@ -413,7 +415,6 @@ def game_update(request, game_id):
 
 @csrf_exempt
 def tournament_create(request):
-	user = request.user
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}})
 
@@ -439,6 +440,8 @@ def tournament_create(request):
 	if not tour_user_serializer.is_valid():
 		return JsonResponse(tour_user_serializer.errors, status=400)
 	tour_user_serializer.save()
+	ic(data['host_id'])
+	user= Users.objects.get(pk=data['host_id'])
 	user.status = "Playing"
 	user.save()
 	return JsonResponse({'data': tour_serializer.data}, status=201)
@@ -661,6 +664,17 @@ def tournament_update_game(request, tournament_id, game_id):
 	tour_game.game_id.nb_goals_user1 = data['nb_goals_user1']
 	tour_game.game_id.nb_goals_user2 = data['nb_goals_user2']
 
+
+	# try:
+	# 	player1 = TournamentsUsers.objects.get(user_id=tour_game.game_id.user1_id.id, tournament_id=tournament_id)
+	# except TournamentsUsers.DoesNotExist:
+	# 	return JsonResponse({'message': f'Player 1 not found in tournament {tournament_id}', 'data': {}}, status=404)
+
+	# try:
+	# 	player2 = TournamentsUsers.objects.get(user_id=tour_game.game_id.user2_id.id, tournament_id=tournament_id)
+	# except TournamentsUsers.DoesNotExist:
+	# 	return JsonResponse({'message': f'Player 2 not found in tournament {tournament_id}', 'data': {}}, status=404)
+
 	player1 = TournamentsUsers.objects.get(
 		user_id=tour_game.game_id.user1_id.id,
 		tournament_id=tournament_id
@@ -695,10 +709,6 @@ def tournament_update_game(request, tournament_id, game_id):
 	if finished_matches == total_phase_matches[curr_phase] and curr_phase != 'Final':
 		return advance_tournament_phase(curr_phase, tournament_id)
 	elif finished_matches == total_phase_matches[curr_phase] and curr_phase == 'Final':
-		player1.status = "Online"
-		player1.save()
-		player2.status = "Online"
-		player2.save()
 		return calculate_placements(tournament_id)
 	
 	data = TournamentsGamesSerializer(tour_game).data
@@ -877,5 +887,9 @@ def calculate_placements(tournament_id):
 		user.placement = i + 1
 		user.save()
 
+		user1 = user.user_id 
+		user1.status = "Online"
+		user1.save()
+	
 	serializer = TournamentsUsersSerializer(tour_users, many=True)
 	return JsonResponse(serializer.data, status=200, safe=False)
