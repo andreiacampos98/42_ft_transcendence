@@ -33,8 +33,8 @@
                         <div class="profile-winner"></div>
                             <img  class="profile-pic2 first" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
                             <div class="friend-info">
-                                <h4 class="first2" >??</h4>
-                                <span class="victories">? tournaments won</span>
+                                <h4 class="first2" >???</h4>
+                                <span class="victories">??? tournaments won</span>
                             </div>
                         </div>
                     {% endif %}
@@ -56,8 +56,8 @@
                         <div class="profile-winner">
                             <img  class="profile-pic2 second" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
                             <div class="friend-info">
-                                <h4 class="second2" >??</h4>
-                                <span class="victories">? tournaments won</span>
+                                <h4 class="second2" >???</h4>
+                                <span class="victories">??? tournaments won</span>
                             </div>
                         </div>
                     {% endif %}
@@ -79,8 +79,8 @@
                         <div class="profile-winner">
                             <img  class="profile-pic2 third" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
                             <div class="friend-info">
-                                <h4 class="third2" >??</h4>
-                                <span class="victories">? tournaments won</span>
+                                <h4 class="third2" >???</h4>
+                                <span class="victories">??? tournaments won</span>
                             </div>
                         </div>
                     {% endif %}
@@ -95,7 +95,7 @@
                     <div class="stat podium">
                         <img  class="stat-img" src="{% static 'assets/icons/leaderboard.png' %}" alt="Current Rank">
                         <span class="under-title">Current Rank</span>
-                        <span class="rank">1st</span>
+                        <span class="rank">{{ current_place }}</span>
                     </div>
                     <div class="stat played">
                         <img  class="stat-img" src="{% static 'assets/icons/pingpong-full.png' %}" alt="Nbr games">

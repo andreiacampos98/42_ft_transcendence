@@ -384,7 +384,14 @@ def leaderboard(request):
     return JsonResponse({'message': 'Method not allowed'}, status=405)
 
 
-
+def current_place(request, user_id):
+	top_users = UserStats.objects.all().order_by('-nb_tournaments_won')
+	position = 1 
+	for user_stats in top_users:
+		if user_stats.user_id.id == user_id:
+			return position
+		position += 1
+	return None
 
 #! --------------------------------------- Games ---------------------------------------
 
@@ -849,12 +856,15 @@ def tournaments(request):
 
 	leaders = leaderboard(request)
 	top_users = json.loads(leaders.content)
+	current=current_place(request, user_id)
+	ic(current_place)
 	context = {
 		'friends': friends,
 		'user_id': user_id,
 		'tournaments': zip(tournaments, num_tour_players),
 		'stats': stats,
 		'top_users': top_users,
+		'current_place': current,
 		'page': 'tournament',
 	}
 	return render(request,'pages/tournaments.html', context)
