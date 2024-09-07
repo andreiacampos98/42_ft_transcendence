@@ -71,10 +71,8 @@ def profile(request, username):
 		friendship_status = None
 
 	user = get_object_or_404(Users, username=username)
-	#games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id))).order_by('-created_at')
-
-	games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(tournament=False)).order_by('-created_at')
-	tournament_response = tournament_list_user(request, user_id)
+	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) & Q(tournament=False)).order_by('-created_at')
+	tournament_response = tournament_list_user(request, user_profile.id)
 	user_tournaments = json.loads(tournament_response.content)
 
 	context = {
@@ -349,6 +347,7 @@ def game_create(request):
 	try:
 		data = json.loads(request.body.decode('utf-8'))
 		serializer = GamesSerializer(data=data)
+		data['start_date'] = datetime.now().isoformat()
 		if serializer.is_valid():
 			serializer.save()
 			user1_id = data.get('user1_id')
@@ -892,6 +891,7 @@ def calculate_placements(tournament_id):
 		user1.save()
 	
 	tournament = Tournaments.objects.get(pk=tournament_id)
+	tournament.winner_id = tour_users.first().user_id
 	tournament.status ='Finished'
 	tournament.save()
 	serializer = TournamentsUsersSerializer(tour_users, many=True)

@@ -247,7 +247,13 @@
                                         {% endif %}
                                     </div>
                                     <div class="opponent">
-                                        <img src="{{ game.user1_id.picture.url }}" alt="Opponent Icon">
+                                        {% if user_view == game.user2_id %}
+                                            <img src="{{ game.user1_id.picture.url }}" alt="Opponent Icon">
+                                            <span class="score">{{ game.user1_id.username }}</span>
+                                        {% else %}
+                                            <img src="{{ game.user2_id.picture.url }}" alt="Opponent Icon">
+                                            <span class="score">{{ game.user2_id.username }}</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -263,7 +269,6 @@
                                     <div class="details">
                                         <span class="date">{{ tour.tournament.created_at }}</span>
                                         <span class="result"> {{ tour.placement }}</span>
-                                        <span class="score">Finished</span>
                                     </div>
                                 </div>
                             {% else %}
