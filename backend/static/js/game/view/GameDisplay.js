@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { OBB } from 'three/addons/math/OBB.js';
 
 export class GameDisplay extends THREE.Group {
 	constructor({}) {
@@ -8,7 +7,7 @@ export class GameDisplay extends THREE.Group {
 		this.arenaLength = 30;
 		this.paddleHeight = 2.5;
 		this.paddleVelocity = 2;
-		this.ballVelocity = {'x': -0.1, 'y': 0.3};
+		this.ballVelocity = {'x': -0.5, 'y': 0.5};
 
 		this.userPaddle = null;
 		this.enemyPaddle = null;
@@ -94,43 +93,14 @@ export class GameDisplay extends THREE.Group {
 		if (this.upperBoundary == null)
 			return ;
 		
-		// Move Bacl
-		var aabb = new THREE.Box3().setFromObject(this.upperBoundary);
-		const upperOBB = new OBB().fromBox3(aabb);
-
-		aabb = new THREE.Box3().setFromObject(this.lowerBoundary);
-		const lowerOBB = new OBB().fromBox3(aabb);
-
-		aabb = new THREE.Box3().setFromObject(this.ball);
-		const ballOBB = new OBB().fromBox3(aabb);
-
-		aabb = new THREE.Box3().setFromObject(this.userPaddle);
-		const userPaddleOBB = new OBB().fromBox3(aabb);
-
-		aabb = new THREE.Box3().setFromObject(this.enemyPaddle);
-		const enemyPaddleOBB = new OBB().fromBox3(aabb);
-
-		if (ballOBB.intersectsOBB(upperOBB) || ballOBB.intersectsOBB(lowerOBB)) {
-			this.ballVelocity.y = -this.ballVelocity.y;
-		}
-
-		if (ballOBB.intersectsOBB(userPaddleOBB)) {
-			if (this.ball.position.y < this.userPaddle.position.y - this.paddleHeight)
-				this.ballVelocity.y = -Math.abs(this.ballVelocity.y);
-			else if (this.ball.position.y > this.userPaddle.position.y + this.paddleHeight)
-				this.ballVelocity.y = Math.abs(this.ballVelocity.y);
-			else
-				this.ballVelocity.x = Math.abs(this.ballVelocity.x);
-		}
+		//! TO DO:
+		//! - Change ball speed according to the speed of the paddle at the time
 		
-		if (ballOBB.intersectsOBB(enemyPaddleOBB)){
-			if (this.ball.position.y < this.enemyPaddle.position.y - this.paddleHeight)
-				this.ballVelocity.y = -Math.abs(this.ballVelocity.y);
-			else if (this.ball.position.y > this.enemyPaddle.position.y + this.paddleHeight)
-				this.ballVelocity.y = Math.abs(this.ballVelocity.y);
-			else
-				this.ballVelocity.x = -Math.abs(this.ballVelocity.x);
-		}
-			
+		if (this.ball.position.y + this.paddleHeight / 2 >= this.upperBoundary.position.y)
+			this.ballVelocity.y = -Math.abs(this.ballVelocity.y);
+		if (this.ball.position.y - this.paddleHeight / 2 <= this.lowerBoundary.position.y)
+			this.ballVelocity.y = Math.abs(this.ballVelocity.y);
+		if (this.ball.position.x - this.paddleHeight / 2 <= -(this.arenaLength - 5 - 0.25) )
+			this.ballVelocity.x = Math.abs(this.ballVelocity.x);			
 	}
 }
