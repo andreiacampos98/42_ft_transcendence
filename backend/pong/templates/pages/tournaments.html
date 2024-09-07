@@ -15,27 +15,75 @@
                     <span class="icon-title3">Leaderboard</span>
                 </div>
                 <div class="results">
-                    <div class="profile-winner">
-                        <img  class="profile-pic2 first" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
-                        <div class="friend-info">
-                            <h4 class="first2" >#1 Name</h4>
-                            <span class="victories">x tournaments won</span>
+                    {% if top_users|length > 0 %}
+                        <div class="profile-winner">
+                            <a class="side-menu_a" 
+                                hx-get="{% url 'user-profile' top_users.0.user.username %}"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true">
+                                <img  class="profile-pic2 first" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                                <div class="friend-info">
+                                    <h4 class="first2" >{{ top_users.0.user.username }}</h4>
+                                    <span class="victories">{{ top_users.0.nb_tournaments_won }} tournaments won</span>
+                                </div>
+                            </a>
                         </div>
-                    </div>
-                    <div class="profile-winner">
-                        <img  class="profile-pic2 second" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
-                        <div class="friend-info">
-                            <h4 class="second2" >#2 Name</h4>
-                            <span class="victories">x tournaments won</span>
+                    {% else %}
+                        <div class="profile-winner"></div>
+                            <img  class="profile-pic2 first" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="first2" >??</h4>
+                                <span class="victories">? tournaments won</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="profile-winner">
-                        <img  class="profile-pic2 third" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
-                        <div class="friend-info">
-                            <h4 class="third2" >#3 Name</h4>
-                            <span class="victories">x tournaments won</span>
+                    {% endif %}
+                    {% if top_users|length > 1 %}
+                        <div class="profile-winner">
+                            <a class="side-menu_a" 
+                                hx-get="{% url 'user-profile' top_users.1.user.username %}"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true">
+                                <img  class="profile-pic2 second" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                                <div class="friend-info">
+                                    <h4 class="second2" >{{ top_users.1.user.username }}</h4>
+                                    <span class="victories">{{ top_users.1.nb_tournaments_won }} tournaments won</span>
+                                </div>
+                            </a>
                         </div>
-                    </div>
+                    {% else %}
+                        <div class="profile-winner">
+                            <img  class="profile-pic2 second" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="second2" >??</h4>
+                                <span class="victories">? tournaments won</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if top_users|length > 2 %}
+                        <div class="profile-winner">
+                            <a class="side-menu_a" 
+                                hx-get="{% url 'user-profile' top_users.2.user.username %}"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true">
+                                <img  class="profile-pic2 third" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                                <div class="friend-info">
+                                    <h4 class="third2" >{{ top_users.2.user.username }}</h4>
+                                    <span class="victories">{{ top_users.2.nb_tournaments_won }} tournaments won</span>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="profile-winner">
+                            <img  class="profile-pic2 third" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="third2" >??</h4>
+                                <span class="victories">? tournaments won</span>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="stats">
@@ -52,12 +100,12 @@
                     <div class="stat played">
                         <img  class="stat-img" src="{% static 'assets/icons/pingpong-full.png' %}" alt="Nbr games">
                         <span class="under-title">Played Tournaments</span>
-                        <span class="rank">190</span>
+                        <span class="rank">{{ stats.nb_tournaments_played }}</span>
                     </div>
                     <div class="stat tournament-won">
                         <img  class="stat-img" src="{% static 'assets/icons/trophy.png' %}" alt="Nbr tournament">
                         <span class="under-title">Won Tournaments</span>
-                        <span class="rank">11</span>
+                        <span class="rank">{{ stats.nb_tournaments_won }}</span>
                     </div>
                 </div>
             </div>

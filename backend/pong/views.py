@@ -74,7 +74,8 @@ def profile(request, username):
 	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) & Q(tournament=False)).order_by('-created_at')
 	tournament_response = tournament_list_user(request, user_profile.id)
 	user_tournaments = json.loads(tournament_response.content)
-
+	stats_response = user_stats(request, user_profile.id)
+	stats = json.loads(stats_response.content)
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -87,9 +88,10 @@ def profile(request, username):
 		'notification': notification,
 		'games': games,
 		'tours': user_tournaments,
+		'stats': stats,
 		'page': 'profile' if is_own_profile else 'else'
 	}
-	# ic(context)
+	ic(context)
 	return render(request, 'pages/view_profile.html', context)
 
 def user_detail(request, pk):
@@ -127,6 +129,10 @@ def user_create(request):
 
 		myuser = Users.objects.create_user(username=username, password=password1)
 		myuser.save()
+
+		UserStats.objects.create(
+            user_id=myuser
+        )
 
 		user = authenticate(username=username, password=password1)
 
@@ -339,6 +345,46 @@ def update_notification(request, notif_id):
 		}
 		return JsonResponse(response_data, status=204)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+
+#! --------------------------------------- Stats ---------------------------------------
+
+
+
+def user_stats(request, user_id):
+	if request.method == 'GET':
+		try:
+			stats = UserStats.objects.get(user_id=user_id)
+			serializer = UserStatsSerializer(stats)
+			data = serializer.data
+			data['losses']= stats.nb_games_played - stats.nb_games_won
+			data['win_rate'] = stats.nb_games_won/stats.nb_games_played
+			return JsonResponse(data, status=200)
+		except UserStats.DoesNotExist:
+			return JsonResponse({'message': 'UserStats not found.'}, status=404)
+	return JsonResponse({'message': 'Method not allowed'}, status=405)
+
+def leaderboard(request):
+    if request.method == 'GET':
+        top_users = UserStats.objects.all().order_by('-nb_tournaments_won')[:3]
+
+        enriched_top_users = []
+        for top_user in top_users:
+            user = Users.objects.get(pk=top_user.user_id.id)  # Acessa o campo 'id' do objeto user_id
+
+            user_stats_serializer = UserStatsSerializer(top_user)
+            user_serializer = UsersSerializer(user)
+
+            enriched_data = user_stats_serializer.data
+            enriched_data['user'] = user_serializer.data
+
+            enriched_top_users.append(enriched_data)
+
+        return JsonResponse(enriched_top_users, safe=False, status=200)
+
+    return JsonResponse({'message': 'Method not allowed'}, status=405)
+
+
+
 
 #! --------------------------------------- Games ---------------------------------------
 
@@ -798,12 +844,18 @@ def tournaments(request):
 		num_tour_users = TournamentsUsers.objects.filter(tournament_id=tournament.id).count()
 		num_tour_players.append(num_tour_users)
 		
+	stats_response = user_stats(request, user_id)
+	stats = json.loads(stats_response.content)
+
+	leaders = leaderboard(request)
+	top_users = json.loads(leaders.content)
 	context = {
 		'friends': friends,
 		'user_id': user_id,
 		'tournaments': zip(tournaments, num_tour_players),
-		'page': 'tournament'
-		
+		'stats': stats,
+		'top_users': top_users,
+		'page': 'tournament',
 	}
 	return render(request,'pages/tournaments.html', context)
 
