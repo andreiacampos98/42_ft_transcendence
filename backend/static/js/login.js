@@ -31,8 +31,9 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             errorMessage.style.display = 'block';
         } else {
             console.log('Login in successful');
+            history.pushState(null, '', `/home/`);
             htmx.ajax('GET', `/home/`, {
-                    target: '#main'  
+                    target: '#main',
             });
         }
     })

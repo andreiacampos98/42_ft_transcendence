@@ -298,3 +298,7 @@ textarea, #username-input, #email-input {
     text-decoration: none;
     cursor: pointer;
   }
+
+li.nav-item:hover {
+    cursor: pointer;
+}

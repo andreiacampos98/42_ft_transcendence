@@ -71,6 +71,12 @@ def profile(request, username):
 		friendship_status = None
 
 	user = get_object_or_404(Users, username=username)
+	#games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id))).order_by('-created_at')
+
+	games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(tournament=False)).order_by('-created_at')
+	tournament_response = tournament_list_user(request, user_id)
+	user_tournaments = json.loads(tournament_response.content)
+
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -81,9 +87,11 @@ def profile(request, username):
 		'friendship_status': friendship_status,
 		'me': me,
 		'notification': notification,
+		'games': games,
+		'tours': user_tournaments,
 		'page': 'profile' if is_own_profile else 'else'
 	}
-	ic(context)
+	# ic(context)
 	return render(request, 'pages/view_profile.html', context)
 
 def user_detail(request, pk):
@@ -125,6 +133,8 @@ def user_create(request):
 		user = authenticate(username=username, password=password1)
 
 		if user is not None:
+			myuser.status="Online"
+			myuser.save()
 			login(request, user)
 			return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.'}, status=201)
 
@@ -341,12 +351,65 @@ def game_create(request):
 		serializer = GamesSerializer(data=data)
 		if serializer.is_valid():
 			serializer.save()
+			user1_id = data.get('user1_id')
+			user2_id = data.get('user2_id')
+
+			if user1_id:
+				user1 = Users.objects.get(id=user1_id)
+				user1.status = "Playing"
+				user1.save()
+
+			if user2_id:
+				user2 = Users.objects.get(id=user2_id)
+				user2.status = "Playing"
+				user2.save()
+
 			return JsonResponse(serializer.data, status=201)
 		return JsonResponse(serializer.errors, status=400)
 	except json.JSONDecodeError:
 		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+	
+@csrf_exempt
+def game_update(request, game_id):
+	if request.method != 'POST':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	if request.content_type != 'application/json':
+		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
+
+	data = {}
+
+	try:
+		data = json.loads(request.body.decode('utf-8'))
+	except json.JSONDecodeError:
+		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+	except KeyError as e:
+		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+
+	game = Games.objects.get(pk=game_id)
+	game.duration = data['duration']
+	game.nb_goals_user1 = data['nb_goals_user1']
+	game.nb_goals_user2 = data['nb_goals_user2']
+
+	player1 = Users.objects.get(pk=game.user1_id.id)
+	player2 = Users.objects.get(pk=game.user2_id.id)
+
+
+	if data['nb_goals_user1'] > data['nb_goals_user2']:
+		game.winner_id = player1
+	else:
+		game.winner_id = player2
+	game.save()
+	player1.status = "Online"
+	player1.save()
+	player2.status = "Online"
+	player2.save()
+
+	
+	data = GamesSerializer(game).data
+	return JsonResponse(data, status=200)
+
 
 #! --------------------------------------- Tournaments ---------------------------------------
 
@@ -377,7 +440,10 @@ def tournament_create(request):
 	if not tour_user_serializer.is_valid():
 		return JsonResponse(tour_user_serializer.errors, status=400)
 	tour_user_serializer.save()
-	
+	ic(data['host_id'])
+	user= Users.objects.get(pk=data['host_id'])
+	user.status = "Playing"
+	user.save()
 	return JsonResponse({'data': tour_serializer.data}, status=201)
 
 
@@ -408,17 +474,17 @@ def tournament_update(request, tournament_id):
 	return JsonResponse(serializer.errors, status=400)
 		
 
-@csrf_exempt
-def tournament_cancel(request, tournament_id):
-	if request.method != 'DELETE':	
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+# @csrf_exempt
+# def tournament_cancel(request, tournament_id):
+# 	if request.method != 'DELETE':	
+# 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
 
-	tournament = get_object_or_404(Tournaments, pk=tournament_id)
-	tournament.delete()
-	response_data = {
-		'message': f"'{tournament.name}' was deleted."
-	}
-	return JsonResponse(response_data, status=204)
+# 	tournament = get_object_or_404(Tournaments, pk=tournament_id)
+# 	tournament.delete()
+# 	response_data = {
+# 		'message': f"'{tournament.name}' was deleted."
+# 	}
+# 	return JsonResponse(response_data, status=204)
 
 #! --------------------------------------- Tournaments Users ---------------------------------------
 
@@ -455,7 +521,8 @@ def tournament_join(request, tournament_id, user_id):
 			game = {
 				'start_date':datetime.now().isoformat(),
 				'user1_id': user1.user_id.id,
-				'user2_id': user2.user_id.id
+				'user2_id': user2.user_id.id,
+				'tournament': True
 			}
 			games_data.append(game)
 		
@@ -480,7 +547,9 @@ def tournament_join(request, tournament_id, user_id):
 		if not serializer.is_valid():
 			return JsonResponse(serializer.errors, status=400, safe=False)
 		serializer.save()
-		
+	user = Users.objects.get(pk=user_id)
+	user.status = "Playing"
+	user.save()
 	return JsonResponse({'data': serializer.data}, status=201, safe=False)
 
 
@@ -489,10 +558,13 @@ def tournament_leave(request, tournament_id, user_id):
 	if request.method != 'DELETE':	
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
 	
-	user = get_object_or_404(TournamentsUsers, tournament_id=tournament_id, user_id=user_id)
-	user.delete()
+	user_tour = get_object_or_404(TournamentsUsers, tournament_id=tournament_id, user_id=user_id)
+	user_tour.delete()
+	user = Users.objects.get(pk=user_id)
+	user.status = "Online"
+	user.save()
 	response_data = {
-		'message': f'User {user.alias} left the tournament.'
+		'message': f'User {user_tour.alias} left the tournament.'
 	}
 	return JsonResponse(response_data, status=204)
 
@@ -553,6 +625,24 @@ def tournament_list_user_games(request, user_id):
 
 	return JsonResponse(user_tour_games, status=200, safe=False)
 
+#auxiliar function
+@csrf_exempt
+def tournament_list_user(request, user_id):
+	if request.method != 'GET':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+
+	all_tour=TournamentsUsers.objects.filter(user_id=user_id)
+	serializer = TournamentsUsersSerializer(all_tour, many=True)
+	all_tourusers_list = serializer.data
+
+	for touruser in all_tourusers_list:
+		tournament = Tournaments.objects.get(pk=touruser['tournament_id'])
+		serializer = TournamentsSerializer(tournament)
+		touruser['tournament'] = serializer.data
+
+	return JsonResponse(all_tourusers_list, safe=False)
+
+
 @csrf_exempt
 def tournament_update_game(request, tournament_id, game_id):
 	if request.method != 'POST':
@@ -573,6 +663,17 @@ def tournament_update_game(request, tournament_id, game_id):
 	tour_game.game_id.duration = data['duration']
 	tour_game.game_id.nb_goals_user1 = data['nb_goals_user1']
 	tour_game.game_id.nb_goals_user2 = data['nb_goals_user2']
+
+
+	# try:
+	# 	player1 = TournamentsUsers.objects.get(user_id=tour_game.game_id.user1_id.id, tournament_id=tournament_id)
+	# except TournamentsUsers.DoesNotExist:
+	# 	return JsonResponse({'message': f'Player 1 not found in tournament {tournament_id}', 'data': {}}, status=404)
+
+	# try:
+	# 	player2 = TournamentsUsers.objects.get(user_id=tour_game.game_id.user2_id.id, tournament_id=tournament_id)
+	# except TournamentsUsers.DoesNotExist:
+	# 	return JsonResponse({'message': f'Player 2 not found in tournament {tournament_id}', 'data': {}}, status=404)
 
 	player1 = TournamentsUsers.objects.get(
 		user_id=tour_game.game_id.user1_id.id,
@@ -623,6 +724,7 @@ def signup(request):
 
 @csrf_exempt
 def loginview(request):
+	ic(request.method)
 	if request.method == 'POST':
 		try:
 			data = json.loads(request.body) 
@@ -635,6 +737,8 @@ def loginview(request):
 		user = authenticate(username=username, password=password)
 
 		if user is not None:
+			user.status = "Online"
+			user.save()
 			login(request, user)
 			return JsonResponse({'message': 'You have successufly logged in.'}, status=201)
 
@@ -655,7 +759,6 @@ def setnewpassword(request):
 
 @login_required
 def home(request):
-	ic(request.user)
 	user_id = request.user.id  # Obtém o ID do usuário atual
 
 	# Obtém a lista de amigos
@@ -714,11 +817,21 @@ def ongoingtournaments(request, tournament_id):
 	}
 	return render(request,'pages/ongoing-tourn.html', context)
 
-
 @login_required
+@csrf_exempt
 def signout(request):
+	print("A função signout foi chamada")
+	ic('aqui')
+	user = Users.objects.get(pk=request.user.id)
+	ic(user.username)  # Para depuração, imprime o nome de usuário
+	ic(user.status)    # Para depuração, imprime o status
+
+	user.status = "Offline"
+	user.save()
+
 	logout(request)
-	return redirect('home')
+
+	return redirect('login')
 
 #! --------------------------------------- Auxiliary ---------------------------------------
 
@@ -734,7 +847,8 @@ def advance_tournament_phase(previous_phase, tournament_id):
 		game_data = {
 			'start_date':datetime.now().isoformat(),
 			'user1_id': winner1.id,
-			'user2_id': winner2.id
+			'user2_id': winner2.id,
+			'tournament': True
 		}
 		temp.append(game_data)
 
@@ -773,5 +887,12 @@ def calculate_placements(tournament_id):
 		user.placement = i + 1
 		user.save()
 
+		user1 = user.user_id 
+		user1.status = "Online"
+		user1.save()
+	
+	tournament = Tournaments.objects.get(pk=tournament_id)
+	tournament.status ='Finished'
+	tournament.save()
 	serializer = TournamentsUsersSerializer(tour_users, many=True)
 	return JsonResponse(serializer.data, status=200, safe=False)

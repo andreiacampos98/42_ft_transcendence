@@ -5,11 +5,11 @@
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 <link rel="stylesheet" href="{% static 'css/match-block.css' %}">
-<script defer src="{% static 'js/match-block.js' %}"></script>
 <script defer src="{% static 'js/edit-profile.js' %}"></script>
 <script defer src="{% static 'js/change-password.js' %}"></script>
 <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
 <script defer src="{% static 'js/notifications.js' %}"></script>
+<script defer src="{% static 'js/tab-recent-matches.js' %}"></script>
 <div class="main-content non_compressed"  id="main-content">
     <div class="main">
         <div id="modal" class="m">
@@ -217,7 +217,70 @@
                     <span class="icon-title3">Recent Matches</span>
                 </div>
                 <div class="stats2">
-                    <div  id="match-container"></div>
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                          <a class="nav-link active" id="tab-games" aria-current="page" onclick="onGamesClick()">Games</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="tab-tournaments" onclick="onTournamentsClick()">Tournaments</a>
+                        </li>
+                    </ul>
+
+                    <div id="games" style="display:block;">
+                        {% for game in games %}
+                            <div id="match-container">
+                                <div class="match-block pingpong victory">
+                                    <div class="icon">
+                                        <img src="{% static 'assets/icons/pong.png' %}" alt="Pingpong Icon">
+                                    </div>
+                                    <div class="details" >
+                                        <span class="date">{{ game.created_at }}</span>
+                                        {% if user_view == game.winner_id %}
+                                            <span class="result" >Victory</span>
+                                        {% else %}
+                                            <span class="result">Defect</span>
+                                        {% endif %}
+                                        {% if user_view == game.user1_id %}
+                                            <span class="score">{{ game.nb_goals_user1 }} - {{ game.nb_goals_user2 }}</span>
+                                        {% else %}
+                                            <span class="score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="opponent">
+                                        <img src="{{ game.user1_id.picture.url }}" alt="Opponent Icon">
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div id="tournaments" style="display:none;" >
+                        {% for tour in tours %}
+                            {% if tour.tournament.status == 'Finished' %}
+                                <div class="match-block" class="tournament">
+                                    <div class="icon">
+                                        <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
+                                    </div>
+                                    <div class="details">
+                                        <span class="date">{{ tour.tournament.created_at }}</span>
+                                        <span class="result"> {{ tour.placement }}</span>
+                                        <span class="score">Finished</span>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="match-block" class="tournament">
+                                    <div class="icon">
+                                        <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
+                                    </div>
+                                    <div class="details">
+                                        <span class="date">{{ tour.tournament.created_at }}</span>
+                                        <span class="result"> {{ tour.placement }}</span>
+                                        <span class="score"></span>
+                                    </div>
+
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

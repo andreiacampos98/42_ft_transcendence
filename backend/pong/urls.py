@@ -34,6 +34,7 @@ urlpatterns =[
     #path('reset_code/', views.resetcode, name='reset_code'),
     #path('set_new_password/', views.setnewpassword, name='set_new_password'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+    path('signout/', views.signout, name="signout"),
     path('users/<int:pk>', views.user_detail, name='user-detail'),
     path('users/create', views.user_create, name='user-create'),
     path('users/<int:pk>/update', views.user_update, name='user-update'),
@@ -49,6 +50,7 @@ urlpatterns =[
     
 	#! Games
     path('games/create', views.game_create, name='game-create'),
+    path('games/update/<int:game_id>', views.game_update, name='game-update'),
     #path('games/<int:game_id>/stats', views.game_stats, name='game-stats'),
 
 	#! Tournaments
@@ -62,6 +64,7 @@ urlpatterns =[
     # path('tournaments/<int:tournament_id>/advance', views.tournament_advance_phase, name='tournament-advance-phase'),
     path('tournaments/<int:tournament_id>/games', views.tournament_list_games, name='tournament-list-games'),
     path('tournaments/games/user/<int:user_id>', views.tournament_list_user_games, name='tournament-list-user-games'),
+    path('tournaments/user/<int:user_id>', views.tournament_list_user, name='tournament-list-user'),
     path('tournaments/<int:tournament_id>/games/<int:game_id>', views.tournament_update_game, name='tournament-update-game'),
 
     path('users/<str:username>', views.profile, name='user-profile'),

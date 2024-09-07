@@ -13,11 +13,10 @@
                 <div class="search">
                     {% for users in userss %}
                         <div class="square">
-                            <a  class="square" hx-get="{% url 'user-profile' user.username %}"
+                            <a  class="square" hx-get="{% url 'user-profile' users.username %}"
                                 hx-trigger="click"
                                 hx-target="#main"
-                                hx-push-url="true"
-                                data-url="{% url 'user-profile' user.username %}" onclick="loadPage(event)">
+                                hx-push-url="true">
                                 <img class="circular-image" src="{{ users.picture.url }}" alt="User Icon">
                                 <h3 class="name">{{ users.username }}</h3>
                             </a>
