@@ -248,11 +248,21 @@
                                     </div>
                                     <div class="opponent">
                                         {% if user_view == game.user2_id %}
-                                            <img src="{{ game.user1_id.picture.url }}" alt="Opponent Icon">
-                                            <span class="score">{{ game.user1_id.username }}</span>
+                                            <a  hx-get="{% url 'user-profile' game.user1_id.username %}"
+                                                hx-trigger="click"
+                                                hx-target="#main"
+                                                hx-push-url="true">
+                                                <img src="{{ game.user1_id.picture.url }}" alt="Opponent Icon">
+                                                <span class="score">{{ game.user1_id.username }}</span>
+                                            </a>
                                         {% else %}
-                                            <img src="{{ game.user2_id.picture.url }}" alt="Opponent Icon">
-                                            <span class="score">{{ game.user2_id.username }}</span>
+                                            <a  hx-get="{% url 'user-profile' game.user2_id.username %}"
+                                            hx-trigger="click"
+                                            hx-target="#main"
+                                            hx-push-url="true">
+                                                <img src="{{ game.user2_id.picture.url }}" alt="Opponent Icon">
+                                                <span class="score">{{ game.user2_id.username }}</span>
+                                            </a>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -270,18 +280,6 @@
                                         <span class="date">{{ tour.tournament.created_at }}</span>
                                         <span class="result"> {{ tour.placement }}</span>
                                     </div>
-                                </div>
-                            {% else %}
-                                <div class="match-block" class="tournament">
-                                    <div class="icon">
-                                        <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
-                                    </div>
-                                    <div class="details">
-                                        <span class="date">{{ tour.tournament.created_at }}</span>
-                                        <span class="result"> {{ tour.placement }}</span>
-                                        <span class="score"></span>
-                                    </div>
-
                                 </div>
                             {% endif %}
                         {% endfor %}
