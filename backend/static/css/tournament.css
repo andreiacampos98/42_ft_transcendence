@@ -175,6 +175,11 @@
     padding: 15px;
 }
 
+.table{
+    overflow-y: scroll;
+    height: 200px;
+}
+
 .table-content {
     display: flex;
     justify-content: space-between;

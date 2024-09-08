@@ -49,7 +49,7 @@ textarea, #username-input, #email-input {
     display: inline;
     vertical-align: middle;
     margin: 10px;
-	overflow: scroll;
+	overflow-y: scroll;
 	text-overflow: ellipsis;
 	max-height: 200px;
 	
@@ -151,7 +151,6 @@ textarea, #username-input, #email-input {
     flex-direction: column;
     flex: 1;
     padding: 20px;
-	overflow-x: scroll;
 }
 
 .stats {
@@ -243,9 +242,17 @@ textarea, #username-input, #email-input {
     max-height: 50%;
 }
 
+#games{
+    height: 260px;
+    overflow-y: scroll;
+}
+
+#tournaments{
+    overflow-y: scroll;
+    height: 260px;
+}
+
 #match-container {
-	overflow-y: scroll;
-	height: 260px;
 	width: inherit;
 }
 
