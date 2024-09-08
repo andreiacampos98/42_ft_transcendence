@@ -357,7 +357,10 @@ def user_stats(request, user_id):
 			serializer = UserStatsSerializer(stats)
 			data = serializer.data
 			data['losses']= stats.nb_games_played - stats.nb_games_won
-			data['win_rate'] = (stats.nb_games_won/stats.nb_games_played) * 100
+			if stats.nb_games_played > 0:
+				data['win_rate'] = (stats.nb_games_won/stats.nb_games_played) * 100
+			else:
+				data['win_rate'] = 0
 			return JsonResponse(data, status=200)
 		except UserStats.DoesNotExist:
 			return JsonResponse({'message': 'UserStats not found.'}, status=404)
