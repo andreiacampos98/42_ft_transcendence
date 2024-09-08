@@ -656,6 +656,7 @@ def tournament_list_games(request, tournament_id):
 
 	return JsonResponse(tgames_list, safe=False)
 
+
 @csrf_exempt
 def tournament_list_user_games(request, user_id):
 	if request.method != 'GET':

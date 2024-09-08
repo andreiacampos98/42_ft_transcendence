@@ -10,6 +10,7 @@
 <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
 <script defer src="{% static 'js/notifications.js' %}"></script>
 <script defer src="{% static 'js/tab-recent-matches.js' %}"></script>
+<script defer src="{% static 'js/view-details-tournaments.js' %}"></script>
 <div class="main-content non_compressed"  id="main-content">
     <div class="main">
         <div id="modal" class="m">
@@ -128,13 +129,13 @@
 
                 </div>
                 <div class="email-joined">
-                    <h5 class="text-block"> 
-                        <img src="{% static 'assets/icons/at.png' %}">
-                        Email
-                    </h5>
                     {% if user_view.email is None or user_view.email == "" %}
-                        <h5 class="text-block"></h5>
+                    <h5 class="text-block"></h5>
                     {% else %}
+                        <h5 class="text-block"> 
+                            <img src="{% static 'assets/icons/at.png' %}">
+                            Email
+                        </h5>
                         <h5 class="text-block">{{ user_view.email }}</h5>
                     {% endif %}
                 </div>
@@ -269,7 +270,7 @@
                             </div>
                         {% endfor %}
                     </div>
-                    <div id="tournaments" style="display:none;" >
+                    <div id="tournaments">
                         {% for tour in tours %}
                             {% if tour.tournament.status == 'Finished' %}
                                 <div class="match-block" class="tournament">
@@ -279,11 +280,16 @@
                                     <div class="details">
                                         <span class="date">{{ tour.tournament.created_at }}</span>
                                         <span class="result"> {{ tour.placement }}</span>
+                                        <!-- <button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.tournament.id }}">
+                                            <img src="{% static 'assets/icons/tournament.png' %}" alt="Arrow-icon"> Ver Detalhes
+                                        </button>
+                                    </div>
+                                    <div id="details-{{ tour.tournament.id }}" class="tournament-details" style="display:none;"> !-->
                                     </div>
                                 </div>
                             {% endif %}
                         {% endfor %}
-                    </div>
+                    </div>                    
                 </div>
             </div>
         </div>
