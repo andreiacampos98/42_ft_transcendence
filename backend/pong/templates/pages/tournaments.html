@@ -22,7 +22,7 @@
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true">
-                                <img  class="profile-pic2 first" src="{{ top_users.0.user.picture.url }}" alt="Profile">
+                                <img  class="profile-pic2 first" src="{{ top_users.0.user.picture }}" alt="Profile">
                                 <div class="friend-info">
                                     <h4 class="first2" >#1 {{ top_users.0.user.username }}</h4>
                                     <span class="victories">{{ top_users.0.nb_tournaments_won }} tournaments won</span>
@@ -31,7 +31,7 @@
                         </div>
                     {% else %}
                         <div class="profile-winner"></div>
-                            <img  class="profile-pic2 first" src="{{ top_users.0.user.picture.url }}" alt="Profile">
+                            <img  class="profile-pic2 first" src="{{ top_users.0.user.picture }}" alt="Profile">
                             <div class="friend-info">
                                 <h4 class="first2" >#1 ???</h4>
                                 <span class="victories">??? tournaments won</span>
@@ -45,7 +45,7 @@
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true">
-                                <img  class="profile-pic2 second" src="{{ top_users.1.user.picture.url }}" alt="Profile">
+                                <img  class="profile-pic2 second" src="{{ top_users.1.user.picture }}" alt="Profile">
                                 <div class="friend-info">
                                     <h4 class="second2" >#2 {{ top_users.1.user.username }}</h4>
                                     <span class="victories">{{ top_users.1.nb_tournaments_won }} tournaments won</span>
@@ -54,7 +54,7 @@
                         </div>
                     {% else %}
                         <div class="profile-winner">
-                            <img  class="profile-pic2 second" src="{{ top_users.1.user.picture.url }}" alt="Profile">
+                            <img  class="profile-pic2 second" src="{{ top_users.1.user.picture }}" alt="Profile">
                             <div class="friend-info">
                                 <h4 class="second2" >#2 ???</h4>
                                 <span class="victories">??? tournaments won</span>
@@ -68,7 +68,7 @@
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true">
-                                <img  class="profile-pic2 third" src="{{ top_users.2.user.picture.url }}" alt="Profile">
+                                <img  class="profile-pic2 third" src="{{ top_users.2.user.picture }}" alt="Profile">
                                 <div class="friend-info">
                                     <h4 class="third2" >#3 {{ top_users.2.user.username }}</h4>
                                     <span class="victories">{{ top_users.2.nb_tournaments_won }} tournaments won</span>
@@ -77,7 +77,7 @@
                         </div>
                     {% else %}
                         <div class="profile-winner">
-                            <img  class="profile-pic2 third" src="{{ top_users.2.user.picture.url }}" alt="Profile">
+                            <img  class="profile-pic2 third" src="{{ top_users.2.user.picture }}" alt="Profile">
                             <div class="friend-info">
                                 <h4 class="third2" >#3 ???</h4>
                                 <span class="victories">??? tournaments won</span>
