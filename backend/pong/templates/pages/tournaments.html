@@ -31,7 +31,7 @@
                         </div>
                     {% else %}
                         <div class="profile-winner"></div>
-                            <img  class="profile-pic2 first" src="{{ top_users.0.user.picture }}" alt="Profile">
+                            <img  class="profile-pic2 first" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
                             <div class="friend-info">
                                 <h4 class="first2" >#1 ???</h4>
                                 <span class="victories">??? tournaments won</span>
@@ -54,7 +54,7 @@
                         </div>
                     {% else %}
                         <div class="profile-winner">
-                            <img  class="profile-pic2 second" src="{{ top_users.1.user.picture }}" alt="Profile">
+                            <img  class="profile-pic2 second" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
                             <div class="friend-info">
                                 <h4 class="second2" >#2 ???</h4>
                                 <span class="victories">??? tournaments won</span>
@@ -77,7 +77,7 @@
                         </div>
                     {% else %}
                         <div class="profile-winner">
-                            <img  class="profile-pic2 third" src="{{ top_users.2.user.picture }}" alt="Profile">
+                            <img  class="profile-pic2 third" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
                             <div class="friend-info">
                                 <h4 class="third2" >#3 ???</h4>
                                 <span class="victories">??? tournaments won</span>
