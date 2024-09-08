@@ -71,12 +71,11 @@ def profile(request, username):
 		friendship_status = None
 
 	user = get_object_or_404(Users, username=username)
-	#games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id))).order_by('-created_at')
-
-	games = Games.objects.filter(Q(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(tournament=False)).order_by('-created_at')
-	tournament_response = tournament_list_user(request, user_id)
+	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) & Q(tournament=False)).order_by('-created_at')
+	tournament_response = tournament_list_user(request, user_profile.id)
 	user_tournaments = json.loads(tournament_response.content)
-
+	stats_response = user_stats(request, user_profile.id)
+	stats = json.loads(stats_response.content)
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -89,9 +88,10 @@ def profile(request, username):
 		'notification': notification,
 		'games': games,
 		'tours': user_tournaments,
+		'stats': stats,
 		'page': 'profile' if is_own_profile else 'else'
 	}
-	# ic(context)
+	ic(context)
 	return render(request, 'pages/view_profile.html', context)
 
 def user_detail(request, pk):
@@ -129,6 +129,10 @@ def user_create(request):
 
 		myuser = Users.objects.create_user(username=username, password=password1)
 		myuser.save()
+
+		UserStats.objects.create(
+            user_id=myuser
+        )
 
 		user = authenticate(username=username, password=password1)
 
@@ -342,6 +346,53 @@ def update_notification(request, notif_id):
 		return JsonResponse(response_data, status=204)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
 
+#! --------------------------------------- Stats ---------------------------------------
+
+
+
+def user_stats(request, user_id):
+	if request.method == 'GET':
+		try:
+			stats = UserStats.objects.get(user_id=user_id)
+			serializer = UserStatsSerializer(stats)
+			data = serializer.data
+			data['losses']= stats.nb_games_played - stats.nb_games_won
+			data['win_rate'] = stats.nb_games_won/stats.nb_games_played
+			return JsonResponse(data, status=200)
+		except UserStats.DoesNotExist:
+			return JsonResponse({'message': 'UserStats not found.'}, status=404)
+	return JsonResponse({'message': 'Method not allowed'}, status=405)
+
+def leaderboard(request):
+    if request.method == 'GET':
+        top_users = UserStats.objects.all().order_by('-nb_tournaments_won')[:3]
+
+        enriched_top_users = []
+        for top_user in top_users:
+            user = Users.objects.get(pk=top_user.user_id.id)  # Acessa o campo 'id' do objeto user_id
+
+            user_stats_serializer = UserStatsSerializer(top_user)
+            user_serializer = UsersSerializer(user)
+
+            enriched_data = user_stats_serializer.data
+            enriched_data['user'] = user_serializer.data
+
+            enriched_top_users.append(enriched_data)
+
+        return JsonResponse(enriched_top_users, safe=False, status=200)
+
+    return JsonResponse({'message': 'Method not allowed'}, status=405)
+
+
+def current_place(request, user_id):
+	top_users = UserStats.objects.all().order_by('-nb_tournaments_won')
+	position = 1 
+	for user_stats in top_users:
+		if user_stats.user_id.id == user_id:
+			return position
+		position += 1
+	return None
+
 #! --------------------------------------- Games ---------------------------------------
 
 @csrf_exempt
@@ -349,6 +400,7 @@ def game_create(request):
 	try:
 		data = json.loads(request.body.decode('utf-8'))
 		serializer = GamesSerializer(data=data)
+		data['start_date'] = datetime.now().isoformat()
 		if serializer.is_valid():
 			serializer.save()
 			user1_id = data.get('user1_id')
@@ -604,6 +656,7 @@ def tournament_list_games(request, tournament_id):
 
 	return JsonResponse(tgames_list, safe=False)
 
+
 @csrf_exempt
 def tournament_list_user_games(request, user_id):
 	if request.method != 'GET':
@@ -799,12 +852,21 @@ def tournaments(request):
 		num_tour_users = TournamentsUsers.objects.filter(tournament_id=tournament.id).count()
 		num_tour_players.append(num_tour_users)
 		
+	stats_response = user_stats(request, user_id)
+	stats = json.loads(stats_response.content)
+
+	leaders = leaderboard(request)
+	top_users = json.loads(leaders.content)
+	current=current_place(request, user_id)
+	ic(current_place)
 	context = {
 		'friends': friends,
 		'user_id': user_id,
 		'tournaments': zip(tournaments, num_tour_players),
-		'page': 'tournament'
-		
+		'stats': stats,
+		'top_users': top_users,
+		'current_place': current,
+		'page': 'tournament',
 	}
 	return render(request,'pages/tournaments.html', context)
 
@@ -892,6 +954,7 @@ def calculate_placements(tournament_id):
 		user1.save()
 	
 	tournament = Tournaments.objects.get(pk=tournament_id)
+	tournament.winner_id = tour_users.first().user_id
 	tournament.status ='Finished'
 	tournament.save()
 	serializer = TournamentsUsersSerializer(tour_users, many=True)

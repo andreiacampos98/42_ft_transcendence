@@ -48,9 +48,15 @@ urlpatterns =[
     path('notifications/<int:user_id>/<int:notif_id>', views.delete_user_notification, name='delete-notification'),
     path('notifications/update/<int:notif_id>', views.update_notification, name='update-notification'),
     
+    #! Stats
+    path('stats/<int:user_id>', views.user_stats, name='user-stats'),
+    path('leaderboard', views.leaderboard, name='leaderboard'),
+    path('currentplace/<int:user_id>', views.current_place, name='current-place'),
+
 	#! Games
     path('games/create', views.game_create, name='game-create'),
     path('games/update/<int:game_id>', views.game_update, name='game-update'),
+    
     #path('games/<int:game_id>/stats', views.game_stats, name='game-stats'),
 
 	#! Tournaments

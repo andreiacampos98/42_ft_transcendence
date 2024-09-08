@@ -10,6 +10,7 @@
 <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
 <script defer src="{% static 'js/notifications.js' %}"></script>
 <script defer src="{% static 'js/tab-recent-matches.js' %}"></script>
+<script defer src="{% static 'js/view-details-tournaments.js' %}"></script>
 <div class="main-content non_compressed"  id="main-content">
     <div class="main">
         <div id="modal" class="m">
@@ -128,13 +129,13 @@
 
                 </div>
                 <div class="email-joined">
-                    <h5 class="text-block"> 
-                        <img src="{% static 'assets/icons/at.png' %}">
-                        Email
-                    </h5>
                     {% if user_view.email is None or user_view.email == "" %}
-                        <h5 class="text-block"></h5>
+                    <h5 class="text-block"></h5>
                     {% else %}
+                        <h5 class="text-block"> 
+                            <img src="{% static 'assets/icons/at.png' %}">
+                            Email
+                        </h5>
                         <h5 class="text-block">{{ user_view.email }}</h5>
                     {% endif %}
                 </div>
@@ -159,23 +160,23 @@
                         <div class="stats-head">
                             <div class="stat">
                                 <h4 class="stats-title">Wins</h4>
-                                <h6 class="winr"> 100%</h6>
+                                <h6 class="winr"> {{ stats.nb_games_won }} </h6>
                             </div>
                             <div class="stat">
                                 <h4 class="stats-title">Losses</h4>
-                                <h6 class="winr"> 100%</h6>
+                                <h6 class="winr"> {{ stats.losses }}</h6>
                             </div>
                             <div class="stat">
                                 <h4 class="stats-title">Win Rate</h4>
-                                <h6 class="winr"> 100%</h6>
+                                <h6 class="winr"> {{ stats.win_rate }} %</h6>
                             </div>
                             <div class="stat">
                                 <h4 class="stats-title">Goals Scored</h4>
-                                <h6 class="winr"> 100%</h6>
+                                <h6 class="winr"> {{ stats.nb_goals_scored }} </h6>
                             </div>
                             <div class="stat">
                                 <h4 class="stats-title">Goals Suffered</h4>
-                                <h6 class="winr"> 100%</h6>
+                                <h6 class="winr"> {{ stats.nb_goals_suffered }} </h6>
                             </div>
                         </div>
                     </div>
@@ -247,13 +248,29 @@
                                         {% endif %}
                                     </div>
                                     <div class="opponent">
-                                        <img src="{{ game.user1_id.picture.url }}" alt="Opponent Icon">
+                                        {% if user_view == game.user2_id %}
+                                            <a  hx-get="{% url 'user-profile' game.user1_id.username %}"
+                                                hx-trigger="click"
+                                                hx-target="#main"
+                                                hx-push-url="true">
+                                                <img src="{{ game.user1_id.picture.url }}" alt="Opponent Icon">
+                                                <span class="score">{{ game.user1_id.username }}</span>
+                                            </a>
+                                        {% else %}
+                                            <a  hx-get="{% url 'user-profile' game.user2_id.username %}"
+                                            hx-trigger="click"
+                                            hx-target="#main"
+                                            hx-push-url="true">
+                                                <img src="{{ game.user2_id.picture.url }}" alt="Opponent Icon">
+                                                <span class="score">{{ game.user2_id.username }}</span>
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
-                    <div id="tournaments" style="display:none;" >
+                    <div id="tournaments">
                         {% for tour in tours %}
                             {% if tour.tournament.status == 'Finished' %}
                                 <div class="match-block" class="tournament">
@@ -263,24 +280,16 @@
                                     <div class="details">
                                         <span class="date">{{ tour.tournament.created_at }}</span>
                                         <span class="result"> {{ tour.placement }}</span>
-                                        <span class="score">Finished</span>
+                                        <!-- <button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.tournament.id }}">
+                                            <img src="{% static 'assets/icons/tournament.png' %}" alt="Arrow-icon"> Ver Detalhes
+                                        </button>
                                     </div>
-                                </div>
-                            {% else %}
-                                <div class="match-block" class="tournament">
-                                    <div class="icon">
-                                        <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
+                                    <div id="details-{{ tour.tournament.id }}" class="tournament-details" style="display:none;"> !-->
                                     </div>
-                                    <div class="details">
-                                        <span class="date">{{ tour.tournament.created_at }}</span>
-                                        <span class="result"> {{ tour.placement }}</span>
-                                        <span class="score"></span>
-                                    </div>
-
                                 </div>
                             {% endif %}
                         {% endfor %}
-                    </div>
+                    </div>                    
                 </div>
             </div>
         </div>
