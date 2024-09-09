@@ -30,13 +30,14 @@
                             </a>
                         </div>
                     {% else %}
-                        <div class="profile-winner"></div>
-                            <img  class="profile-pic2 first" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                        <div class="profile-winner">
+
+							<img  class="profile-pic2 first" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
                             <div class="friend-info">
-                                <h4 class="first2" >#1 ???</h4>
+								<h4 class="first2" >#1 ???</h4>
                                 <span class="victories">??? tournaments won</span>
                             </div>
-                        </div>
+						</div>
                     {% endif %}
                     {% if top_users|length > 1 %}
                         <div class="profile-winner">

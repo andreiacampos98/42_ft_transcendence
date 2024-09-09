@@ -78,6 +78,7 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 10px;
     height: 127px;
+	min-width: 400px;
 }
 
 .profile-winner {

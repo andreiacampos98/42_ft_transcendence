@@ -119,7 +119,6 @@ body {
     border-top-left-radius: 10px;
     top: 0;
     left: 0;
-    width: 100vw;
     height: 100vh;
     margin-top: 70px;
     display: flex;
@@ -132,15 +131,19 @@ body {
 
 .non_compressed {
 	margin-left: 70px;
+    width: calc(100vw - 70px);
 
 }
 
 .compressed {
     margin-left: 210px;
+    width: calc(100vw - 210px);
 }
 .main {
-    width: 90vw;
-	/* overflow: scroll; */
+    overflow: auto;
+	min-height: 100vh;
+	padding: 15px;
+	width: inherit;
 
 }
 
