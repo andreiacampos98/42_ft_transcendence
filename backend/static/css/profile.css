@@ -1,11 +1,6 @@
-.main {
-    display: flex;
-}
 
 .side-profile {
-    display: flex;
     flex-direction: column;
-    align-items: center;
     width: 15vw; /* Adjust width as needed */
     padding: 20px;
     border-radius: 10px;
@@ -59,25 +54,15 @@ textarea, #username-input, #email-input {
 }
 
 .text-block{
-    display: flex;
     font-size: small;
     margin: 0;
 }
 
-
-
 .email-joined-edit {
-    display: flex;
-    align-items: center;
     padding-top: 5px;
     padding-bottom: 5px;
 }
 
-.email-joined {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 
 .edit-change, .save-cancel {
     display: flex;
@@ -111,11 +96,6 @@ textarea, #username-input, #email-input {
 
 }
 
-.form-div {
-    display: flex;
-    justify-content: center;
-}
-
 #change-password {
     background-color: #1A3141;
 
@@ -126,7 +106,6 @@ textarea, #username-input, #email-input {
 }
 
 #change-password-form {
-    display: flex;
     flex-direction: column;
     color: #c3c3c3bb;
     width: 100%;
@@ -146,14 +125,12 @@ textarea, #username-input, #email-input {
 }
 
 .stats-history {
-    display: flex;
     flex-direction: column;
     flex: 1;
     padding: 20px;
 }
 
 .stats {
-    display: flex;
     flex-direction: column;
     margin-bottom: 20px;
     color: #FFFFFF;
@@ -161,8 +138,6 @@ textarea, #username-input, #email-input {
 }
 
 .topic {
-    display: flex;
-    align-items: center;
     margin-bottom: 20px;
 }
 
@@ -173,43 +148,30 @@ textarea, #username-input, #email-input {
 }
 
 .stats2 {
-    display: flex;
     flex-direction: column;
     
 }
 
 .percentages {
-    display: flex;
-    justify-content: space-around;
     margin-bottom: 20px;
 }
 
 .stats-head {
-    display: flex;
-    justify-content: space-around;
     width: 100%;
 }
 
 .stat {
-    display: flex;
     flex-direction: column;
     text-align: center;
     padding: 10px;
 }
 
-.graphs {
-    display: flex;
-    justify-content: space-around;
-}
 
 .graph1, .graph2, .graph3, .graph4 {
     width: 15vw;
     height: 100px;
     margin-left: 10px;
     background-color: #101d27; /* Light gray background for graphs */
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border-radius: 10px;
 }
 
@@ -228,10 +190,9 @@ textarea, #username-input, #email-input {
 }
 
 .numbers-stat{
-    display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
+
 .numbers-stat h4 {
     margin: 0;
 }

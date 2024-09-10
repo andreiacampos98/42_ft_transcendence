@@ -4,9 +4,7 @@ body {
 .left-div {
     height: 100vh;
     background-color: #1A3141;
-    display: flex;
     flex-direction: column;
-    align-items: center;
     padding: 10px;
     position: fixed;
     top: 0;
@@ -26,18 +24,14 @@ body {
 }
 
 .left-div .selects {
-    display: flex;
     flex-direction: column;
     flex-grow: 1;
-    justify-content: center;
     padding-top: 20vh;
     width: 100%;
     margin-left: 20px;
 }
 
 .select-item {
-    display: flex;
-    align-items: center;
     margin-top: 35px;
     border: none;
     background-color: #1A3141;
@@ -72,7 +66,17 @@ body {
     height: 40px;
 }
 
-.highlight-span1 {
+#highlight-span1 {
+    position: relative;
+    left: -15px;
+    color: #F8D082;
+}
+#highlight-span2 {
+    position: relative;
+    left: -15px;
+    color: #F8D082;
+}
+#highlight-span3 {
     position: relative;
     left: -15px;
     color: #F8D082;
@@ -121,10 +125,7 @@ body {
     left: 0;
     height: 100vh;
     margin-top: 70px;
-    display: flex;
     position: fixed;
-    justify-content: center;
-	align-items: center;
     text-align: center;
     transition: filter 0.3s ease;
 }

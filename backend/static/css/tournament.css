@@ -1,14 +1,10 @@
 .top {
-    display: flex;
     flex-direction: row;
-    justify-content: space-between;
     margin-bottom: 20px;
-    align-items: flex-start;
 }
 
 
 .leaderboard {
-    display: flex;
     flex-direction: column;
     width: 50%;
     flex-grow: 1;
@@ -16,27 +12,21 @@
 }
 
 .stats {
-    display: flex;
     flex-direction: column;
 }
 
 .stats2 {
-    display: flex;
-    align-items: center;
     height: 127px;
 }
 
 .stat {
-    display: flex;
     flex-direction: column;
     background-color: #101d27;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 10px;
-    align-items: center;
     height: 127px;
     width: 127px;
     margin-right: 1vw;
-    justify-content: space-around;
     padding-top: 20px;
     padding-bottom: 20px;
 }
@@ -55,25 +45,8 @@
     color: #F8D082;
 }
 
-.profile-square {
-    background-color: #D9D9D9;
-    width: 127px;
-    height: 127px;
-    border-radius: 10px;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-}
-
-.avail-tournaments {
-    display: flex;
-    justify-content: space-between;
-}
 
 .results {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background-color: #101d27;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 10px;
@@ -116,13 +89,6 @@
     margin: 0;
 }
 
-.tournament-info {
-    display: flex;
-    flex-direction: column;
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
 .numbers {
     color: #101d27;
 }
@@ -149,8 +115,6 @@
 }
 
 .topic {
-    display: flex;
-    align-items: center;
     margin-bottom: 10px;
 }
 
@@ -164,27 +128,21 @@
     width: 200px;
 }
 .tournament-avail {
-    display: flex;
     flex-direction: column;
 }
 
 .table-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     color: #8C8C8C;
     padding: 15px;
 }
 
 .table{
     overflow-y: scroll;
+	overflow-x: hidden;
     height: 300px;
 }
 
 .table-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     background-color: #101d27;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -215,11 +173,6 @@
     color: #FF4F28;
 }
 
-.host {
-    display: flex;
-    align-items: center;
-}
-
 .open-register-tournament-modal {
     border: none;
     background-color: #101d27;
@@ -229,18 +182,12 @@
     background-color: #1D2731;
 }
 
-.form-div {
-    display: flex;
-    justify-content: center;
-}
-
 #registration{
     background-color: #1A3141;
 
 }
 
 #tournament-register-form {
-    display: flex;
     flex-direction: column;
     color: #c3c3c3bb;
     width: 100%;
@@ -310,13 +257,8 @@
     width: 170px;
 }
 
-.form-div {
-    display: flex;
-    justify-content: center;
-}
 
 .new-tournament-modal {
-    display: flex;
     flex-direction: column;
 }
 
@@ -339,21 +281,18 @@
 }
 
 #create-tournament-form {
-    display: flex;
 	flex-direction: column;
     color: #c3c3c3bb;
     width: 100%;
     padding: 10px;
-    justify-content: space-between;
     
 }
+
 .create-tournament-form {
-    display: flex;
     color: #c3c3c3bb;
     width: 100%;
     padding-top: 10px;
     padding-bottom: 10px;
-    justify-content: space-between;
     
 }
 .create-tournament-form label {
@@ -371,7 +310,6 @@
 }
 
 #nick-confirm {
-	display: flex;
 	padding-top: 5px;
 	align-items: flex-start;
 }

@@ -1,8 +1,5 @@
 .top-bar {
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 15px;
     position: fixed;
     top: 0;
@@ -18,8 +15,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 60vw; /* Adjust width as needed */
-    display: flex;
-    align-items: center;
 }
 
 .search-container input {
@@ -58,8 +53,6 @@
 }
 
 .top-right {
-    display: flex;
-    align-items: center;
     margin-left: auto; /* Ensures this section is pushed to the far right */
     margin-right: 45px;
 }

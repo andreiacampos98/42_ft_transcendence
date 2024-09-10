@@ -1,6 +1,4 @@
 .match-block {
-    display: flex;
-    align-items: center;
     width: 98%;
     margin: 10px;
     border-radius: 10px;
@@ -41,9 +39,6 @@
 }
 
 .details {
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
     border-radius: 10px;
     flex: 1;
     height: 64px;
