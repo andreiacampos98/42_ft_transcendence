@@ -3,6 +3,7 @@
 
 {% block body %}
     <link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/scroll.css' %}">
     <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
     <link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
     <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
@@ -29,7 +30,7 @@
                 hx-push-url="true"
                 id="searchForm">
                 <div class="search-container d-flex align-items-center">
-                    <input type="text" placeholder="Search for players..." name="searched" id="search" onkeyup="getSuggestions()">
+                    <input type="text" autocomplete="off" placeholder="Search for players..." name="searched" id="search" onkeyup="getSuggestions()">
                     <button type="submit" id="searchButton">
                         <img id="search-icon" src="{% static 'assets/icons/binoculars.png' %}">
                     </button>
@@ -126,7 +127,7 @@
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true">
-                            <img class="icon" src="{% static 'assets/icons/logout.png' %}" alt="logout">
+                            <img class="logout-img" src="{% static 'assets/icons/logout.png' %}" alt="logout">
                             <span class="icon-title">Logout</span>
                         </a>
                     </button>

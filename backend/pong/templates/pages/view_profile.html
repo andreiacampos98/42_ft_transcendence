@@ -45,13 +45,13 @@
             <h3 class="description"> {{ user_view.status }} </h3>
             {% if is_own_profile %}
                 <div class="edit-change d-flex align-items-center justify-content-around">
-                    <button class="edit" id="edit-profile-button" onclick="onEditButtonClick()">
-                        <img src="{% static 'assets/icons/edit.png' %}">
+                    <button class="edit d-flex align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
+                        <img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
                         Edit Profile
                     </button>
                     <button class="change" id="open-change-password-modal">
-                        <span class="change-b" id="change">
-                            <img src="{% static 'assets/icons/password.png' %}">
+                        <span class="change-b d-flex align-items-center" id="change">
+                            <img class="small-icon" src="{% static 'assets/icons/password.png' %}">
                             Change Password
                         </span>
                     </button>
@@ -64,7 +64,10 @@
                 {% if friendship_status %}
                     <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
                         {% csrf_token %}
-                        <button class="friend-status" id="remove-friend-button">Remove Friend</button>
+						<button class="edit friend-status d-flex align-items-center justify-content-center" id="remove-friend-button">
+							<img class="friends" src="{% static 'assets/icons/remove-friend.png' %}">
+							Remove Friend
+						</button>
                     </form>
                 {% else %}
                     {% if me %}
@@ -82,7 +85,10 @@
             {% else %}
                 <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
                     {% csrf_token %}
-                    <button id="add-friend-button" type="submit">Add Friend</button>
+					<button class="edit d-flex align-items-center justify-content-center" id="add-friend-button" type="submit">
+						<img class="friends" src="{% static 'assets/icons/add-friend.png' %}">
+						Add Friend
+					</button>
                 </form>
             {% endif %}
             
@@ -128,12 +134,12 @@
                     {% endif %}
 
                 </div>
-                <div class="email-joined d-flex justify-content-between align-items-center">
+                <div class="email-joined d-flex justify-content-between align-items-center" style="padding-bottom:10px;">
                     {% if user_view.email is None or user_view.email == "" %}
-                    <h5 class="text-block d-flex"></h5>
+                    	<h5 class="text-block d-flex" ></h5>
                     {% else %}
-                        <h5 class="text-block d-flex"> 
-                            <img src="{% static 'assets/icons/at.png' %}">
+                        <h5 class="text-block d-flex" > 
+                            <img class="small-icon" src="{% static 'assets/icons/at.png' %}">
                             Email
                         </h5>
                         <h5 class="text-block d-flex">{{ user_view.email }}</h5>
@@ -141,7 +147,7 @@
                 </div>
                 <div class="email-joined d-flex justify-content-between align-items-center">
                     <h5 class="text-block d-flex"> 
-                        <img src="{% static 'assets/icons/joined.png' %}">
+                        <img class="small-icon" src="{% static 'assets/icons/joined.png' %}">
                         Joined
                     </h5>
                     <h5 class="text-block d-flex">{{ joined_date }}</h5>

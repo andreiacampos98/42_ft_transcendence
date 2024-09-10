@@ -91,6 +91,18 @@ textarea, #username-input, #email-input {
     background-color: #1A3141;
 }
 
+.small-icon {
+	width: 18px;
+	height: 17px;
+	padding-right: 5px;
+}
+
+.friends {
+	width: 16px;
+	height: 15px;
+	padding-right: 5px;
+}
+
 #open-change-password-modal, #cancel-edit-button, .friend-status {
     background-color: #1D2731;
 
@@ -165,7 +177,6 @@ textarea, #username-input, #email-input {
     text-align: center;
     padding: 10px;
 }
-
 
 .graph1, .graph2, .graph3, .graph4 {
     width: 15vw;
