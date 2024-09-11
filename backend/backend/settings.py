@@ -58,6 +58,9 @@ INSTALLED_APPS = [
     'drf_yasg',
     "pong",
     'bootstrap4',
+    "django.contrib.sites",  # new
+    "allauth",  # new
+    "allauth.account",  # new
 ]
 
 MIDDLEWARE = [
@@ -67,11 +70,13 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    "allauth.account.middleware.AccountMiddleware", 
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 
@@ -96,6 +101,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 ASGI_APPLICATION = "backend.asgi.application"
+
+
+SITE_ID = 1  # new
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
 LOGOUT_REDIRECT_URL = "login"
 LOGIN_REDIRECT_URL = ''

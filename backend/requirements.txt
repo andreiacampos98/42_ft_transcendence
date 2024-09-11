@@ -9,3 +9,4 @@ icecream
 djangorestframework
 django-bootstrap4
 channels_redis
+django-allauth
