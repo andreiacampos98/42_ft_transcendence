@@ -10,7 +10,7 @@
     <div class="main">
         <div class="top d-flex justify-content-between align-items-flex-start">
             <div class="leaderboard d-flex">
-                <div class="topic">
+                <div class="topic d-flex">
                     <img class="icon" src="{% static 'assets/icons/laurel.png' %}" alt="laurel">
                     <span class="icon-title3">Leaderboard</span>
                 </div>
@@ -88,11 +88,11 @@
                 </div>
             </div>
             <div class="stats d-flex">
-                <div class="topic">
+                <div class="topic d-flex">
                     <img class="icon" src="{% static 'assets/icons/chart.png' %}" alt="chart">
                     <span class="icon-title3">Your Stats</span>
                 </div>
-                <div class="stats2 d-flex align-items-center">
+                <div class="stats2 d-flex align-items-center justify-content-between">
                     <div class="stat  d-flex align-items-center justify-content-space-around podium">
                         <img  class="stat-img" src="{% static 'assets/icons/leaderboard.png' %}" alt="Current Rank">
                         <span class="under-title">Current Rank</span>
@@ -159,8 +159,8 @@
                     <span class="icon-title3">Available Tournaments</span>
                 </div>
                 <div class="tournament-button">
-                    <button class="tournament2" id="tournament-creater" onclick="onCreateButtonClick()">
-                        <img class="button-tourn" src="{% static 'assets/icons/tournament-button.png' %}" alt="Button">
+                    <button class="tournament2" style="padding: 0;" id="tournament-creater" onclick="onCreateButtonClick()">
+                        <img class="button-tourn"  src="{% static 'assets/icons/tournament-button.png' %}" alt="Button">
                     </button>
                 </div>
             </div>

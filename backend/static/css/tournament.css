@@ -17,6 +17,7 @@
 
 .stats2 {
     height: 127px;
+    min-width: 401px;
 }
 
 .stat {
@@ -26,7 +27,6 @@
     border-radius: 10px;
     height: 127px;
     width: 127px;
-    margin-right: 1vw;
     padding-top: 20px;
     padding-bottom: 20px;
 }
@@ -51,6 +51,7 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 10px;
     height: 127px;
+    width: 50vw;
 	min-width: 400px;
 }
 

@@ -45,19 +45,17 @@
             <h3 class="description"> {{ user_view.status }} </h3>
             {% if is_own_profile %}
                 <div class="edit-change d-flex align-items-center justify-content-around">
-                    <button class="edit d-flex align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
+                    <button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
                         <img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
                         Edit Profile
                     </button>
+                    <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
                     <button class="change" id="open-change-password-modal">
                         <span class="change-b d-flex align-items-center" id="change">
                             <img class="small-icon" src="{% static 'assets/icons/password.png' %}">
                             Change Password
                         </span>
                     </button>
-                </div>
-                <div class="save-cancel d-flex align-items-center justify-content-around">
-                    <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
                     <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
                 </div>
             {% elif is_friend %}
