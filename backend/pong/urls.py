@@ -77,6 +77,9 @@ urlpatterns =[
     
     #! DEBUG
     path('tournaments', views.tournament_list, name='tournament-list'),
+    
+    path('get-token/', views.token_view, name='get_token'),
+    path('userinfo', views.get_user_info, name='user-info'),
 ] 
 
 websocket_urlpatterns = [

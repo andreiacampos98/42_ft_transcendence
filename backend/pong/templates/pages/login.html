@@ -31,7 +31,9 @@
             </form>
             <div class="bottom">
             <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
-            <button type="submit2"><img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42</button>
+            <a href="{% url 'user-info' %}">
+                <button type="submit2"><img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42</button>
+            </a>
             <div id="firsttime">
                 Your first time? <a class="sign-up"  
                             hx-get="{% url 'signup' %}"

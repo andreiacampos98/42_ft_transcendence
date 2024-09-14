@@ -26,6 +26,18 @@ SECRET_KEY = 'django-insecure-b4amhal1@gob1$prnqgr*chry7pneej76qsy^p+5$m!w&#$qyy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# URL da API da 42 para troca de token
+TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
+# URL da API para obter informações do usuário
+USER_INFO_URL = 'https://api.intra.42.fr/v2/me'
+
+# Suas credenciais da API 42
+CLIENT_ID = 'SEU_CLIENT_ID'
+CLIENT_SECRET = 'SEU_CLIENT_SECRET'
+REDIRECT_URI = 'http://localhost:8002/home/'
+
+LOGOUT_REDIRECT_URL = "login"
+LOGIN_REDIRECT_URL = ''
 LOGIN_URL = 'login'
 
 ALLOWED_HOSTS = ['*']
@@ -107,9 +119,6 @@ SITE_ID = 1  # new
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
-LOGOUT_REDIRECT_URL = "login"
-LOGIN_REDIRECT_URL = ''
-LOGIN_URL = 'login'
 
 DATABASES = {
     'default': {

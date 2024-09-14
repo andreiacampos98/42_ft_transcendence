@@ -11,10 +11,11 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.middleware.csrf import get_token
 from datetime import datetime
 
 
-import json
+import json, requests
 from icecream import ic
 from .models import Users
 import pprint  
@@ -802,6 +803,57 @@ def loginview(request):
 			return JsonResponse({'message': 'Bad Credentials.', 'data': {}}, status=400)
 
 	return render(request, 'pages/login.html')
+
+
+TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
+
+USER_INFO_URL = 'https://api.intra.42.fr/v2/me'
+
+
+CLIENT_ID = 'u-s4t2ud-482bbcf1b62e12c0b0d59d83808869f2036b3df53e2135848b52ab2e27203bec'
+CLIENT_SECRET = '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'
+REDIRECT_URI = 'http://localhost:8002/home/'
+
+def get_access_token(request):
+    csrf_token = get_token(request)
+    response = requests.post(TOKEN_URL, data={
+        'grant_type': 'client_credentials',
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+		'csrf_token': csrf_token,
+    })
+    if response.status_code == 200:
+        token_data = response.json()
+        access_token = token_data.get('access_token')
+        ic(access_token)
+        return access_token
+    else:
+        return None
+
+def token_view(request):
+    token = get_access_token(request)
+    
+    if token:
+        return JsonResponse({'access_token': token})
+    else:
+        return JsonResponse({'error': 'Erro ao obter o token de acesso'}, status=400)
+	
+def get_user_info(request):
+    token = get_access_token(request)
+
+    if not token:
+        return JsonResponse({'error': 'No access token available'}, status=401)
+
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+    user_info_response = requests.get(USER_INFO_URL, headers=headers)
+
+    if user_info_response.status_code == 200:
+        return JsonResponse(user_info_response.json())
+    else:
+        return JsonResponse({'error': 'Failed to fetch user info'}, status=user_info_response.status_code)
+
 
 def resetpassword(request):
 	return render(request, 'pages/password_reset.html')
