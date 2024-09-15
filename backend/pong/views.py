@@ -793,6 +793,7 @@ def signin42(request):
         
         authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={os.environ.get("REDIRECT_URI")}'
         ic(authorization_url)
+        ic(os.environ)
         return HttpResponseRedirect(authorization_url)
     
     except Exception as e:

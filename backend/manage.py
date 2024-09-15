@@ -3,8 +3,16 @@
 import os
 import sys
 
+from dotenv import load_dotenv
+
+
+
+
 
 def main():
+    env_path = os.path.join(os.path.dirname(__file__), '../../.env')
+    print(env_path)
+    load_dotenv(env_path)
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
     try:
