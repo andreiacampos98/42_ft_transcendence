@@ -17,7 +17,11 @@
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true">
-                                <img class="circular-image" src="{{ users.picture.url }}" alt="User Icon">
+                                {% if "http" in users.picture.url %}
+                                    <img class="profile-pic" src="{{ users.picture }}" alt="Profile">
+                                {% else %}
+                                    <img class="profile-pic" src="{{ users.picture.url }}" alt="Profile">
+                                {% endif %}
                                 <h3 class="name">{{ users.username }}</h3>
                             </a>
                         </div>

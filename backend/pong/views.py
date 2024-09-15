@@ -13,9 +13,10 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.middleware.csrf import get_token
 from datetime import datetime
+from urllib.parse import quote
 
 
-import json, requests
+import json, requests, os
 from icecream import ic
 from .models import Users
 import pprint  
@@ -25,7 +26,7 @@ from datetime import datetime
 from rest_framework import status
 
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from .models import Users, Friends, Notifications, TournamentsUsers
 from .serializers import *
 
@@ -50,10 +51,10 @@ total_phase_matches = dict(zip(
 
 @login_required
 def profile(request, username):
-	user_id = request.user.id  # Obtém o ID do usuário atual
+	user_id = request.user.id
 	user_profile = get_object_or_404(Users, username=username)
 	is_own_profile = user_profile == request.user
-	# Obtém a lista de amigos
+
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	friendship = Friends.objects.filter(
 		(Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
@@ -108,7 +109,7 @@ def user_detail(request, pk):
 def user_create(request):
 	if request.method == 'POST':
 		try:
-			data = json.loads(request.body)  # Parseia o JSON do corpo da requisição
+			data = json.loads(request.body) 
 			username = data.get('username')
 			password1 = data.get('password')
 			password2 = data.get('reconfirm')
@@ -171,7 +172,6 @@ def user_update(request, pk):
 
 		if serializer.is_valid():
 			serializer.save()
-			# return JsonResponse(serializer.data, safe=False)
 			return redirect('user-profile', user.username)
 		return JsonResponse(serializer.errors, status=400)
 	else:
@@ -185,30 +185,22 @@ def user_password(request, pk):
 		new_password1 = request.POST.get('password1')
 		new_password2 = request.POST.get('password2')
 
-		# Verifica se a senha antiga está correta
 		if not user.check_password(old_password):
 			return JsonResponse({'message': 'Old password is incorrect.', 'data': {}}, status=400)
 
-		# Verifica se a nova senha é fornecida
 		if not new_password1:
 			return JsonResponse({'message': 'New password is required.', 'data': {}}, status=400)
 
-		# Verifica se a nova senha é a mesma que a antiga
 		if user.check_password(new_password1):
 			return JsonResponse({'message': 'New password cannot be the same as the old password.', 'data': {}}, status=400)
 		
-		# Verifica se as novas senhas são iguais
 		if new_password1 != new_password2:
 			return JsonResponse({'message': 'Passwords did not match.', 'data': {}}, status=400)
 
-		# Atualiza a senha do usuário
 		user.set_password(new_password1)
 		user.save()
 
-		# Atualiza a sessão do usuário para manter ele logado
 		update_session_auth_hash(request, user)
-
-		# return JsonResponse({'message': 'Password updated successfully', 'username': user.username, 'data': {}}, status=200)
 		return JsonResponse({'message': 'Password updated successfully', 'redirect_url': reverse('user-profile', args=[user.username])}, status=200)
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
@@ -217,7 +209,7 @@ def user_password(request, pk):
 def search_suggestions(request):
 	term = request.GET.get('term', '')
 	if term:
-		users = Users.objects.filter(username__icontains=term)[:5]  # Limit to top 5 suggestions
+		users = Users.objects.filter(username__icontains=term)[:5]
 		suggestions = [{'username': user.username} for user in users]
 		return JsonResponse(suggestions, safe=False)
 	return JsonResponse([], safe=False)
@@ -235,7 +227,6 @@ def search_users(request):
 
 #! --------------------------------------- Friends ---------------------------------------
 
-#friends displayed in he side bar right
 def get_user_friends(request, user_id):
 	if request.method == 'GET':
 		friends = Friends.objects.filter(
@@ -247,20 +238,16 @@ def get_user_friends(request, user_id):
 @csrf_exempt
 def add_remove_friend(request, user1_id, user2_id):
 	if request.method == 'POST':
-		# Check if user is trying to add themselves as a friend
 		if user1_id == user2_id:
 			return JsonResponse({'message': 'Users cannot be friends with themselves.', 'data': {}}, status=400)
-
-		# Check if the friendship already exists
+		
 		if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or \
 		Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
 			return JsonResponse({'message': 'Friendship already exists.', 'data': {}}, status=400)
 
-		# Get the user objects
 		user1 = get_object_or_404(Users, id=user1_id)
 		user2 = get_object_or_404(Users, id=user2_id)
 
-		# Create the friendship request
 		friend = Friends.objects.create(user1_id=user1, user2_id=user2, accepted=False)
 		notification = Notifications.objects.create(type='Friend Request', status='Pending', description=' has request to be your friend.', user_id = user2, other_user_id = user1)
 		notification.save()
@@ -273,7 +260,6 @@ def add_remove_friend(request, user1_id, user2_id):
 		return JsonResponse(response_data, status=201)
 
 	elif request.method == 'DELETE':
-		# Check if the friendship exists
 		friendship = Friends.objects.filter(
 			(Q(user1_id=user1_id, user2_id=user2_id) | Q(user1_id=user2_id, user2_id=user1_id))
 		).first()
@@ -281,7 +267,6 @@ def add_remove_friend(request, user1_id, user2_id):
 		if not friendship:
 			return JsonResponse({'message': 'Friendship does not exist.', 'data': {}}, status=404)
 
-		# Delete the friendship
 		friendship.delete()
 
 		response_data = {
@@ -348,8 +333,6 @@ def update_notification(request, notif_id):
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
 
 #! --------------------------------------- Stats ---------------------------------------
-
-
 
 def user_stats(request, user_id):
 	if request.method == 'GET':
@@ -773,6 +756,87 @@ def tournament_update_game(request, tournament_id, game_id):
 
 	return JsonResponse(data, status=200)
 
+#! --------------------------------------- Login42 ---------------------------------------
+
+@csrf_exempt
+def get_access_token(code):
+    response = requests.post(os.environ.get("TOKEN_URL"), data={
+        'grant_type': 'authorization_code',
+        'client_id': os.environ.get("CLIENT_ID"),
+        'client_secret': os.environ.get("CLIENT_SECRET"),
+        'redirect_uri': os.environ.get("REDIRECT_URI"),
+        'code': code,
+    })
+    if response.status_code == 200:
+        token_data = response.json()
+        access_token = token_data.get('access_token')
+        ic(access_token)
+        return access_token
+    else:
+        return None
+
+def get_user_info(token):
+
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+    user_info_response = requests.get(os.environ.get("USER_INFO_URL"), headers=headers)
+
+    if user_info_response.status_code == 200:
+        return user_info_response.json()
+    else:
+        return None
+	
+def signin42(request):
+    try:
+        client_id = os.environ.get("CLIENT_ID")
+        
+        authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={os.environ.get("REDIRECT_URI")}'
+        ic(authorization_url)
+        return HttpResponseRedirect(authorization_url)
+    
+    except Exception as e:
+        return HttpResponseRedirect(os.environ.get("REDIRECT_URI") or '/') 
+	
+
+def login42(request):
+	authorization_code = request.GET.get('code')
+	
+	if authorization_code:
+		access_token = get_access_token(authorization_code)
+		
+		if access_token:
+			user_info = get_user_info(access_token)
+			ic(user_info)
+			
+			if user_info:
+				request.session['access_token'] = access_token
+				request.session['user_info'] = user_info
+
+				username = user_info.get('login')
+				myuser = Users.objects.create_user(username=username, password="password")
+				myuser.email = user_info.get('email')
+				myuser.picture = user_info.get('image', {}).get('versions', {}).get('medium')
+				myuser.save()
+				ic(myuser.picture)
+
+				UserStats.objects.create(
+					user_id=myuser
+				)
+
+				user = authenticate(username=username, password="password")
+
+				if user is not None:
+					myuser.status="Online"
+					myuser.save()
+					login(request, user)
+					return redirect('home')
+					# return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.'}, status=201)
+			else:
+				return JsonResponse({'error': 'Failed to fetch user info', 'data': {}}, status=400)
+		else:
+			return JsonResponse({'error': 'Failed to exchange code for access token', 'data': {}}, status=400)
+
 
 #! --------------------------------------- Pages ---------------------------------------
 
@@ -805,56 +869,6 @@ def loginview(request):
 	return render(request, 'pages/login.html')
 
 
-TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
-
-USER_INFO_URL = 'https://api.intra.42.fr/v2/me'
-
-
-CLIENT_ID = 'u-s4t2ud-482bbcf1b62e12c0b0d59d83808869f2036b3df53e2135848b52ab2e27203bec'
-CLIENT_SECRET = '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'
-REDIRECT_URI = 'http://localhost:8002/home/'
-
-def get_access_token(request):
-    csrf_token = get_token(request)
-    response = requests.post(TOKEN_URL, data={
-        'grant_type': 'client_credentials',
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET,
-		'csrf_token': csrf_token,
-    })
-    if response.status_code == 200:
-        token_data = response.json()
-        access_token = token_data.get('access_token')
-        ic(access_token)
-        return access_token
-    else:
-        return None
-
-def token_view(request):
-    token = get_access_token(request)
-    
-    if token:
-        return JsonResponse({'access_token': token})
-    else:
-        return JsonResponse({'error': 'Erro ao obter o token de acesso'}, status=400)
-	
-def get_user_info(request):
-    token = get_access_token(request)
-
-    if not token:
-        return JsonResponse({'error': 'No access token available'}, status=401)
-
-    headers = {
-        "Authorization": f"Bearer {token}"
-    }
-    user_info_response = requests.get(USER_INFO_URL, headers=headers)
-
-    if user_info_response.status_code == 200:
-        return JsonResponse(user_info_response.json())
-    else:
-        return JsonResponse({'error': 'Failed to fetch user info'}, status=user_info_response.status_code)
-
-
 def resetpassword(request):
 	return render(request, 'pages/password_reset.html')
 
@@ -863,7 +877,6 @@ def resetcode(request):
 
 def setnewpassword(request):
 	return render(request, 'pages/set_new_password.html')
-
 
 @login_required
 def home(request):
@@ -877,6 +890,19 @@ def home(request):
 		'page': 'home'
 	}
 	return render(request, 'pages/home-view.html', context)
+
+
+
+# acrescentar o campo do id 42 na tabela dos users
+# quando um utilizador da 42 loga se pela primeira vez tenho de guardar o id
+# tenho sempre que verificar se o id do user 42 existe na tabela e se sim usa aquele user para entrar
+# caso contratio cria um novo
+
+# login ou sign up normal nao e permitido para user que e user 42
+
+# se o username da 42 ja existir temos de acrescentar um sufixo randomico
+
+
 
 @login_required
 def gamelocal(request):

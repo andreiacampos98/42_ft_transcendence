@@ -11,3 +11,4 @@ django-bootstrap4
 channels_redis
 django-allauth
 requests
+python-dotenv

@@ -55,7 +55,11 @@
                     hx-trigger="click"
                     hx-target="#main"
                     hx-push-url="true">
-                    <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
+                    {% if "http" in user.picture.url %}
+                        <img class="profile-pic" src="{{ user.picture }}" alt="Profile">
+                    {% else %}
+                        <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
+                    {% endif %}
                 </a>
             </div>
             

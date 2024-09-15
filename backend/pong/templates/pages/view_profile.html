@@ -39,7 +39,11 @@
         </div>
         <div class="side-profile d-flex align-items-center">
             <div id="change-info1">
-                <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="User">
+                {% if "http" in user_view.picture.url %}
+                    <img class="profile-pic" src="{{ user_view.picture }}" alt="Profile">
+                {% else %}
+                    <img class="profile-pic" src="{{ user_view.picture.url }}" alt="Profile">
+                {% endif %}
                 <h3 class="description"> {{ user_view.username }} </h3>
             </div>
             <h3 class="description"> {{ user_view.status }} </h3>
@@ -259,7 +263,11 @@
                                                 hx-trigger="click"
                                                 hx-target="#main"
                                                 hx-push-url="true">
-                                                <img src="{{ game.user1_id.picture.url }}" alt="Opponent Icon">
+                                                {% if "http" in game.user1_id.picture.url %}
+                                                    <img class="profile-pic" src="{{ game.user1_id.picture }}" alt="Profile">
+                                                {% else %}
+                                                    <img class="profile-pic" src="{{ game.user1_id.picture.url }}" alt="Profile">
+                                                {% endif %}
                                                 <span class="score">{{ game.user1_id.username }}</span>
                                             </a>
                                         {% else %}
@@ -267,7 +275,11 @@
                                             hx-trigger="click"
                                             hx-target="#main"
                                             hx-push-url="true">
-                                                <img src="{{ game.user2_id.picture.url }}" alt="Opponent Icon">
+                                            {% if "http" in game.user2_id.picture.url %}
+                                                <img class="profile-pic" src="{{ game.user2_id.picture }}" alt="Profile">
+                                            {% else %}
+                                                <img class="profile-pic" src="{{ game.user2_id.picture.url }}" alt="Profile">
+                                            {% endif %}
                                                 <span class="score">{{ game.user2_id.username }}</span>
                                             </a>
                                         {% endif %}
