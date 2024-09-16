@@ -34,7 +34,7 @@
                 <button style="margin-bottom: 10px;" class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
                     <span class="change-b" id="change">Confirm</span>
                 </button>
-                <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Cancel</button>
+                <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Go back</button>
             </div>
         </div>
         <div class="side-profile d-flex align-items-center">
@@ -56,7 +56,7 @@
                             Change Password
                         </span>
                     </button>
-                    <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Cancel</button>
+                    <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
                 </div>
             {% elif is_friend %}
                 {% if friendship_status %}

@@ -4,6 +4,7 @@
    
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/tournament.css' %}">
+<link rel="stylesheet" href="{% static 'css/modals.css' %}">
 <script defer src="{% static 'js/tournament.js' %}"></script>
 <script defer src="{% static 'js/join_tournament.js' %}"></script>
 <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
@@ -111,55 +112,14 @@
                 </div>
             </div>
         </div>
-        <div id="modal2" class="m2">
-            <div class="m-content">
-                
-                <h3 style="padding-top: 20px;padding-left: 10px; text-align: left; color: #c3c3c3bb;">New Tournament</h3>
-                <div class="form-div d-flex justify-content-center">
-                    <form id="create-tournament-form" method="POST">
-						<div class="create-tournament-form d-flex justify-content-between">
-
-							{% csrf_token %}
-							<div class="new-tournament-modal d-flex" id="name-modal">
-								<label for="new-tournament-name">Tournament Name</label>
-								<input class="tournament-modal" type="text" id="new-tournament-name" name="tournament-name" required placeholder="Ex: Pong World Cup">
-							</div>
-							<div class="new-tournament-modal" id="nbr-modal">
-								<label for="numPlayers">No. of Players</label>
-								<select id="numPlayers" name="numPlayers" required>
-									<option value="4">4 Players</option>
-									<option value="8">8 Players</option>
-									<option value="16">16 Players</option>
-								</select>
-							</div>
-						</div>
-                        <div class="nickname1">
-                            <label for="nickname-input">Tournament Nickname</label>
-                            <input class="pass-input" type="text" id="nickname-input-create" name="nickname" placeholder="Insert your nickname here">
-                            <div id="nick-confirm" class="d-flex">
-								<button id="checkmark" class="align-items-center justify-content-center">✓</button>
-								<p id="nick-denial">No thanks, I'll use my username instead.</p>
-							</div>
-                        </div>
-
-                    </form>
-                </div>
-
-                <button style="margin-bottom: 10px;" class="change modal-button" id="create-tournament" onclick="getCreateTournament()" data-user-id="{{ user_id }}">
-                    <span class="change-b" id="change">Create</span>
-                </button>
-                <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-create-tournament">Cancel</button>
-            </div>
-        </div>
-
-        <div class="bot">
-            <div class="avail-tournaments d-flex justify-content-between">
-                <div class="topic d-flex align-items-center">
-                    <img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="tournament">
+        <div class="bot" style="min-width: 850px;">
+			<div class="avail-tournaments d-flex justify-content-between">
+				<div class="topic d-flex align-items-center">
+					<img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="tournament">
                     <span class="icon-title3">Available Tournaments</span>
                 </div>
                 <div class="tournament-button">
-                    <button class="tournament2" style="padding: 0;" id="tournament-creater" onclick="onCreateButtonClick()">
+					<button class="tournament2" style="padding: 0;" id="tournament-creater" onclick="onCreateButtonClick()">
                         <img class="button-tourn"  src="{% static 'assets/icons/tournament-button.png' %}" alt="Button">
                     </button>
                 </div>
@@ -183,36 +143,84 @@
                                 {% if num_players < tournament.capacity %}
                                 <button class="open-register-tournament-modal" data-tournament-id="{{ tournament.id }}">
                                     <span class="change-b" id="change">
-                                        Register
+										Register
                                     </span>
                                 </button>
                                 {% endif %}
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-            </div>
+						{% endfor %}
+				</div>
+			</div>
+			<div id="modal2" class="m">
+				<div class="m-content">
+					<h3 >New Tournament</h3>
+					<div class="form-div d-flex justify-content-center">
+						<form id="create-tournament-form" method="POST">
+							<div class="create-tournament-form d-flex justify-content-between">
+	
+								{% csrf_token %}
+								<div class="new-tournament-modal d-flex" id="name-modal">
+									<label for="new-tournament-name">Tournament Name</label>
+									<input class="tournament-modal" type="text" id="new-tournament-name" name="tournament-name" required placeholder=" Ex: Pong World Cup">
+								</div>
+								<div class="new-tournament-modal" id="nbr-modal">
+									<label for="numPlayers">No. of Players</label>
+									<select id="numPlayers" name="numPlayers" required>
+										<option value="4">4 Players</option>
+										<option value="8">8 Players</option>
+										<option value="16">16 Players</option>
+									</select>
+								</div>
+							</div>
+							<div class="nickname1">
+								<label for="nickname-input">Tournament Nickname</label>
+								<input class="pass-input" type="text" id="nickname-input-create" name="nickname" placeholder=" Insert your nickname here">
+								<div id="nick-confirm" class="d-flex">
+									<button id="checkmark" class="align-items-center justify-content-center">✓</button>
+									<p id="nick-denial">No thanks, I'll use my username instead.</p>
+								</div>
+							</div>
+	
+						</form>
+					</div>
+					<div class="bottom-buttons d-flex justify-content-between">
+
+						<button style="margin-bottom: 10px;" class="change modal-button" id="create-tournament" onclick="getCreateTournament()" data-user-id="{{ user_id }}">
+							<span class="change-b" id="change">Create</span>
+						</button>
+						<button style="margin-bottom: 10px; border: none;" class="cancel modal-button" id="cancel-create-tournament">Go back</button>
+					</div>
+				</div>
+			</div>
             <div id="modal" class="m">
                 <div class="m-content">
-                    
-                    <h3 style="padding-top: 20px;padding-left: 10px; text-align: left; color: #c3c3c3bb;">Tournament Registration</h3>
+                    <h3>Tournament Registration</h3>
                     <div class="form-div d-flex justify-content-center">
                         <form id="tournament-register-form" class="d-flex" method="POST">
+							<div class="create-tournament-form d-flex justify-content-between">
+							<!--<p>You're about to register in a tournament. Please specify a nickname to use within the tournament.</p>-->
                             {% csrf_token %}
+							</div>
+
                             <label for="nickname-input">Tournament Nickname</label>
-                            <input class="pass-input" type="text" id="nickname-input-join" name="nickname" required>
-                            <div id="nick-confirm">
-								<button id="checkmark">✓</button>
+                            <input class="pass-input" type="text" id="nickname-input-join" name="nickname" placeholder=" Insert your nickname here" required>
+                            <div id="nick-confirm" class="d-flex">
+								<button id="checkmark" class="align-items-center justify-content-center">✓</button>
 								<p id="nick-denial">No thanks, I'll use my username instead.</p>
 							</div>
                         </form>
                     </div>
-                    <button style="margin-bottom: 10px;" class="change modal-button" id="registration" onclick="registerTournament()" data-tournament-id="{{ tournament.id }}" data-user-id="{{ user_id }}">
-						<span class="change-b" id="change">Confirm</span>
-					</button>
-					<button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-create-tournament">Cancel</button>
-            </div>
-        </div>
-    </div>
+					<div class="bottom-buttons d-flex justify-content-between">
+
+						<button style="margin-bottom: 10px;" class="change modal-button" id="registration" onclick="registerTournament()" data-tournament-id="{{ tournament.id }}" data-user-id="{{ user_id }}">
+							<span class="change-b" id="change">Confirm</span>
+						</button>
+						<button style="margin-bottom: 10px; border: none;" class="cancel modal-button" id="cancel-register-tournament">Go back</button>
+					</div>
+            	</div>
+        	</div>
+    	</div>
+	</div>
 </div>
 {% endblock %}
