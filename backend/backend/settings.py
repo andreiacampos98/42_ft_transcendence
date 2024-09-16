@@ -13,9 +13,27 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
+from dotenv import load_dotenv
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR_R = Path(__file__).resolve().parent.parent.parent
+env_path = os.path.join(BASE_DIR_R,'.env')
+load_dotenv(dotenv_path=env_path)
+
+TOKEN_URL_A=os.getenv("TOKEN_URL")
+CLIENT_ID_A=os.getenv("CLIENT_ID")
+CLIENT_SECRET_A=os.getenv("CLIENT_SECRET")
+REDIRECT_URI_A=os.getenv("REDIRECT_URI")
+USER_INFO_URL_A=os.getenv("USER_INFO_URL")
+print(f"BASE_DIR: {BASE_DIR}")
+print(f"env_path: {env_path}")
+print(f"TOKEN_URL: {TOKEN_URL_A}")
+print(f"CLIENT_ID: {CLIENT_ID_A}")
+print(f"CLIENT_SECRET: {CLIENT_SECRET_A}")
+print(f"REDIRECT_URI: {REDIRECT_URI_A}")
 
 
 # Quick-start development settings - unsuitable for production
@@ -62,9 +80,6 @@ INSTALLED_APPS = [
     'drf_yasg',
     "pong",
     'bootstrap4',
-    "django.contrib.sites",  # new
-    "allauth",  # new
-    "allauth.account",  # new
 ]
 
 MIDDLEWARE = [
@@ -74,13 +89,11 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    "allauth.account.middleware.AccountMiddleware", 
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 
@@ -107,7 +120,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 ASGI_APPLICATION = "backend.asgi.application"
 
 
-SITE_ID = 1  # new
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
 

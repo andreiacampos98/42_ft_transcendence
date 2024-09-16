@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
@@ -14,7 +15,7 @@ from django.core.exceptions import ValidationError
 from django.middleware.csrf import get_token
 from datetime import datetime
 from urllib.parse import quote
-
+import os
 
 import json, requests, os
 from icecream import ic
@@ -758,13 +759,14 @@ def tournament_update_game(request, tournament_id, game_id):
 
 #! --------------------------------------- Login42 ---------------------------------------
 
+	
 @csrf_exempt
 def get_access_token(code):
-    response = requests.post(os.environ.get("TOKEN_URL"), data={
+    response = requests.post(settings.TOKEN_URL_A, data={
         'grant_type': 'authorization_code',
-        'client_id': os.environ.get("CLIENT_ID"),
-        'client_secret': os.environ.get("CLIENT_SECRET"),
-        'redirect_uri': os.environ.get("REDIRECT_URI"),
+        'client_id': settings.CLIENT_ID_A,
+        'client_secret': settings.CLIENT_SECRET_A,
+        'redirect_uri': settings.REDIRECT_URI_A,
         'code': code,
     })
     if response.status_code == 200:
@@ -780,7 +782,7 @@ def get_user_info(token):
     headers = {
         "Authorization": f"Bearer {token}"
     }
-    user_info_response = requests.get(os.environ.get("USER_INFO_URL"), headers=headers)
+    user_info_response = requests.get(settings.USER_INFO_URL_A, headers=headers)
 
     if user_info_response.status_code == 200:
         return user_info_response.json()
@@ -788,16 +790,15 @@ def get_user_info(token):
         return None
 	
 def signin42(request):
-    try:
-        client_id = os.environ.get("CLIENT_ID")
-        
-        authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={os.environ.get("REDIRECT_URI")}'
-        ic(authorization_url)
-        ic(os.environ)
-        return HttpResponseRedirect(authorization_url)
-    
-    except Exception as e:
-        return HttpResponseRedirect(os.environ.get("REDIRECT_URI") or '/') 
+	try:
+		client_id = settings.CLIENT_ID_A
+		
+		authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={settings.REDIRECT_URI_A}'
+		ic(authorization_url)
+		return HttpResponseRedirect(authorization_url)
+	
+	except Exception as e:
+		return HttpResponseRedirect(settings.REDIRECT_URI_A or '/') 
 	
 
 def login42(request):
