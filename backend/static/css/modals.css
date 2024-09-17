@@ -42,7 +42,7 @@
     to {top: 0; opacity: 1}
 }
 
-.side-profile button, #cancel-create-tournament, #create-tournament, #registration, #cancel-register-tournament, #leaver, #cancel {
+.side-profile button, #cancel-create-tournament, #create-tournament, #registration, #cancel-register-tournament, #leaver, #cancel, #confirm-btn {
     margin-top: 10px;
     padding: 10px;
     color: #fff;
@@ -66,9 +66,13 @@
     width: 200px;
 }
 
-#create-tournament {
+#create-tournament, #confirm-btn {
     background-color: #1A3141;
 
+}
+
+#confirm-btn {
+	width: 200px;
 }
 
 #leaver {

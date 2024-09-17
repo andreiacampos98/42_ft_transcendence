@@ -12,11 +12,10 @@
 <script defer src="{% static 'js/tab-recent-matches.js' %}"></script>
 <script defer src="{% static 'js/view-details-tournaments.js' %}"></script>
 <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
-    <div class="main d-flex">
+    <div class="main d-flex" id="profile-main">
         <div id="modal" class="m">
-            <div class="m-content">
-                
-                <h3 style="padding-top: 20px; color: #f2f2ff; text-align: left; padding: 10px;">Change Password</h3>
+            <div class="m-content"> 
+                <h3>Change Password</h3>
                 <div class="form-div d-flex justify-content-center">
                     <form id="change-password-form" class="d-flex " method="POST">
                         {% csrf_token %}
@@ -37,6 +36,33 @@
                 <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Go back</button>
             </div>
         </div>
+		<div id="modal2" class="m">
+			<div class="m-content d-flex align-items-center flex-column">
+				<h3>Remove friend</h3>
+				<p>You're about to remove {{ user_view.id }} from your friends list. Are you sure?</p>
+				<div class="bottom-buttons d-flex justify-content-between">
+					<form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
+						{% csrf_token %}
+						<button style="margin-bottom: 10px;" class="change modal-button" id="leaver" onclick="leaveTournament()" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
+							<span class="change-b" id="change">Confirm</span>
+						</button>
+					</form>
+					<button style="margin-bottom: 10px; border: none;" class="cancel modal-button" id="cancel">Go back</button>
+				</div>
+			</div>
+		</div>
+		<div id="modal3" class="m">
+			<div class="m-content d-flex align-items-center flex-column">
+				<img style="padding-bottom: 20px;" src="{% static 'assets/icons/success.png' %}" alt="Success">
+				<h3>Password changed</h3>
+				<p style="padding-bottom: 0; padding-top: 5px;">Your password has been reset successfully.</p>
+				<div class="bottom-buttons d-flex justify-content-between">
+					<button class="change modal-button" id="confirm-btn">
+						<span class="change-b" id="change">Confirm</span>
+					</button>
+				</div>
+			</div>
+		</div>
         <div class="side-profile d-flex align-items-center">
             <div id="change-info1">
                 <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="User">
@@ -60,13 +86,10 @@
                 </div>
             {% elif is_friend %}
                 {% if friendship_status %}
-                    <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
-                        {% csrf_token %}
 						<button class="edit friend-status d-flex align-items-center justify-content-center" id="remove-friend-button">
 							<img class="friends" src="{% static 'assets/icons/remove-friend.png' %}">
 							Remove Friend
 						</button>
-                    </form>
                 {% else %}
                     {% if me %}
                         <button class="friend-status">Request Sent</button>
@@ -89,7 +112,6 @@
 					</button>
                 </form>
             {% endif %}
-            
             <form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
                 {% csrf_token %}
                 <input type="file" id="profile-picture-input" name="picture">

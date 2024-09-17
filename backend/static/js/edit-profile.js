@@ -55,3 +55,26 @@ function onSaveButtonClick(event, userId) {
     })
     .catch(error => console.error('Error:', error));
 }
+
+// Get the modal
+var modal2 = document.getElementById("modal2");
+// Get the button that opens the modal
+var btn = document.getElementById("remove-friend-button");
+// Get the  element that closes the modal
+
+var goback = document.getElementById("cancel");
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal2.style.display = "block";
+}
+
+goback.onclick = function() {
+  modal2.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal2, close it
+window.onclick = function(event) {
+  if (event.target == modal2) {
+    modal2.style.display = "none";
+  }
+}

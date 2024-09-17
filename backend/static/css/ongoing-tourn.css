@@ -1,3 +1,23 @@
+.tourn-header {
+	color: #f2f2f2;
+	padding-top: 5vh;
+	min-width: 830px;
+}
+
+.tourn-info {
+	position: absolute;
+  	left: 50%;
+	color: #f2f2f2;
+	transform: translate(-50%);
+}
+
+.all-groups {
+	top: 50%;
+  	position: absolute;
+  	transform: translate(0,-50%);
+	width: 90%;
+}
+
 .round {
     flex-direction: column;
     width: 260px;

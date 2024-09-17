@@ -3,14 +3,18 @@
 
 {% block main_content %}
     <link rel="stylesheet" href="{% static 'css/ongoing-tourn.css' %}">
-    <link rel="stylesheet" href="{% static 'css/modals.css' %}">
     <script defer src="{% static 'js/ongoing-tourn.js' %}"></script>
     <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
-        <span id="tour-id">{{ tournament_id }}</span>
-        <div class="main">
-            <button style="margin-bottom: 10px; border: none; background: none;" class="change modal-button" id="leave-tournament" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
-                <img src="{% static 'assets/icons/leave-tournament.png' %}" alt="Leave Tournament">
-            </button>
+		<div class="main">
+			<div class="tourn-header d-flex align-items-center">
+				<div class="tourn-info d-flex flex-column">
+					<h1 class="tourn-title">{{ tournament_name }} Name</h1>
+					<h3 class="tourn-status">Waiting for players to enter...</h3>
+				</div>
+				<button style="margin-bottom: 10px; border: none; background: none; margin-left: auto;" class="change modal-button" id="leave-tournament" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
+					<img src="{% static 'assets/icons/leave-tournament.png' %}" alt="Leave Tournament">
+				</button>
+			</div>
 			<div id="modal" class="m">
                 <div class="m-content d-flex align-items-center flex-column">
                     <h3>Leave Tournament</h3>
