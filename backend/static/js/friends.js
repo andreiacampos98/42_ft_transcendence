@@ -64,7 +64,12 @@ function toggleSidebar(user_id) {
 
             const profilePic = document.createElement('img');
             profilePic.classList.add('profile-pic');
-            profilePic.src = friend.picture;
+            const uri = friend.picture;
+            if (friend.picture.includes('http')) {
+                profilePic.src = decodeURIComponent(uri.slice(7))
+            } else {
+                profilePic.src = friend.picture;
+            }
             profilePic.alt = 'Profile'; 
 
             const friendInfo = document.createElement('div');

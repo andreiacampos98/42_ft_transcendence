@@ -20,12 +20,18 @@ function getNotifications() {
             
             const profilePic = document.createElement('img');
             profilePic.classList.add('profile-pic-notif');
-            profilePic.src = notification.other_user_id.picture;
+            const uri = notification.other_user_id.picture;
+            if (notification.other_user_id.picture.includes('http')) {
+                profilePic.src = decodeURIComponent(uri.slice(7))
+            } else {
+                profilePic.src = notification.other_user_id.picture;
+            }
             profilePic.alt = `${notification.other_user_id.username}'s profile picture`;
             
             const textContent = document.createElement('h4');
             textContent.classList.add('description-notif');
 
+            
             textContent.innerHTML = `<a class="name-notif">${notification.other_user_id.username}</a> ${notification.description}`;
             textContent.onclick = function() {
                 history.pushState(null, '', `/users/${notification.other_user_id.username}`);

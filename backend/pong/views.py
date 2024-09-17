@@ -803,41 +803,55 @@ def signin42(request):
 def login42(request):
 	authorization_code = request.GET.get('code')
 	
-	if authorization_code:
-		access_token = get_access_token(authorization_code)
-		
-		if access_token:
-			user_info = get_user_info(access_token)
-			ic(user_info)
-			
-			if user_info:
-				request.session['access_token'] = access_token
-				request.session['user_info'] = user_info
+	if authorization_code is None:
+		return JsonResponse({'error': 'Authorization code missing', 'data': {}}, status=400)
 
-				username = user_info.get('login')
-				myuser = Users.objects.create_user(username=username, password="password")
-				myuser.user_42 = user_info.get('id')
-				myuser.email = user_info.get('email')
-				myuser.picture = user_info.get('image', {}).get('versions', {}).get('medium')
-				myuser.save()
-				ic(myuser.picture)
+	access_token = get_access_token(authorization_code)
+	if access_token is None:
+		return JsonResponse({'error': 'Failed to fetch access token', 'data': {}}, status=400)
 
-				UserStats.objects.create(
-					user_id=myuser
-				)
 
-				user = authenticate(username=username, password="password")
+	user_info = get_user_info(access_token)
+	if not user_info:
+		return JsonResponse({'error': 'Failed to fetch user info', 'data': {}}, status=400)
 
-				if user is not None:
-					myuser.status="Online"
-					myuser.save()
-					login(request, user)
-					return redirect('home')
-					# return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.'}, status=201)
-			else:
-				return JsonResponse({'error': 'Failed to fetch user info', 'data': {}}, status=400)
-		else:
-			return JsonResponse({'error': 'Failed to exchange code for access token', 'data': {}}, status=400)
+
+	request.session['access_token'] = access_token
+	request.session['user_info'] = user_info
+
+	username = user_info.get('login')
+	id42 = user_info.get('id')
+	
+
+	searchuser = Users.objects.filter(user_42=id42)
+	
+
+	if searchuser.exists():
+		user = searchuser.first()
+		user = authenticate(username=user.username, password="password")
+		if user is not None:
+			user.status = "Online"
+			user.save()
+			login(request, user)
+			return redirect('home')
+	else:
+		myuser = Users.objects.create_user(username=username, password="password")
+		myuser.user_42 = id42
+		myuser.email = user_info.get('email')
+		myuser.picture = user_info.get('image', {}).get('versions', {}).get('medium')
+		myuser.save()
+
+		UserStats.objects.create(user_id=myuser)
+
+		user = authenticate(username=username, password="password")
+		if user is not None:
+			myuser.status = "Online"
+			myuser.save()
+			login(request, user)
+			return redirect('home')
+
+	return JsonResponse({'error': 'User login failed', 'data': {}}, status=400)
+
 
 
 #! --------------------------------------- Pages ---------------------------------------
@@ -847,7 +861,6 @@ def signup(request):
 
 @csrf_exempt
 def loginview(request):
-	ic(request.method)
 	if request.method == 'POST':
 		try:
 			data = json.loads(request.body) 
@@ -856,6 +869,11 @@ def loginview(request):
 
 		except json.JSONDecodeError:
 			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
+
+		user42 = Users.objects.filter(username=username).first()
+		ic(user42.user_42)
+		if user42.user_42 is not None:
+			return JsonResponse({'message': 'User 42 detected. Please sign in with 42.', 'data': {}}, status=400)
 
 		user = authenticate(username=username, password=password)
 
@@ -897,10 +915,10 @@ def home(request):
 
 # acrescentar o campo do id 42 na tabela dos users [done]
 # quando um utilizador da 42 loga se pela primeira vez tenho de guardar o id [done]
-# tenho sempre que verificar se o id do user 42 existe na tabela e se sim usa aquele user para entrar
-# caso contratio cria um novo
+# tenho sempre que verificar se o id do user 42 existe na tabela e se sim usa aquele user para entrar [done]
+# caso contratio cria um novo [done]
 
-# login ou sign up normal nao e permitido para user que e user 42
+# login ou sign up normal nao e permitido para user que e user 42 [done]
 
 # se o username da 42 ja existir temos de acrescentar um sufixo randomico
 
