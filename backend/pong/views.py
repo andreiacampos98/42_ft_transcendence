@@ -799,7 +799,6 @@ def signin42(request):
 	
 	except Exception as e:
 		return HttpResponseRedirect(settings.REDIRECT_URI_A or '/') 
-	
 
 def login42(request):
 	authorization_code = request.GET.get('code')
@@ -817,6 +816,7 @@ def login42(request):
 
 				username = user_info.get('login')
 				myuser = Users.objects.create_user(username=username, password="password")
+				myuser.user_42 = user_info.get('id')
 				myuser.email = user_info.get('email')
 				myuser.picture = user_info.get('image', {}).get('versions', {}).get('medium')
 				myuser.save()
@@ -895,8 +895,8 @@ def home(request):
 
 
 
-# acrescentar o campo do id 42 na tabela dos users
-# quando um utilizador da 42 loga se pela primeira vez tenho de guardar o id
+# acrescentar o campo do id 42 na tabela dos users [done]
+# quando um utilizador da 42 loga se pela primeira vez tenho de guardar o id [done]
 # tenho sempre que verificar se o id do user 42 existe na tabela e se sim usa aquele user para entrar
 # caso contratio cria um novo
 
