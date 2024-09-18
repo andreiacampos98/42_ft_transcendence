@@ -488,6 +488,11 @@ def tournament_create(request):
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
 	
+	name = data.get('name', '')
+
+	if len(name) > 64:
+		return JsonResponse({'message': 'The name of the tournament is too long.', 'data': {}}, status=400)
+
 	tour_serializer = TournamentsSerializer(data=data)
 	if not tour_serializer.is_valid():
 		return JsonResponse(tour_serializer.errors, status=400)

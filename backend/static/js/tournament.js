@@ -103,16 +103,22 @@ function getCreateTournament()
     })
     .then(response => response.json())
     .then(data => {
+      if (JSON.stringify(data.data) === '{}') {
+          alert(data.message);
+      } else {
+          alert("Tournament created successfully!");
+          const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
+          console.log(data.data);
+          localStorage.setItem('alias', formData.alias);
+          localStorage.setItem('tournament_id', tournamentId);
+          history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
+          htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
+              target: '#main' , 
+          });
+      }
+    })
+    .then(data => {
         if (data.data != {}) {
-            alert("Tournament created successfully!");
-            const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
-            console.log(data.data);
-            localStorage.setItem('alias', formData.alias);
-            localStorage.setItem('tournament_id', tournamentId);
-            history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
-            htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
-                target: '#main' , 
-            });
         } else {
             alert("Error: " + (data.message || 'Unknown error'));
         }
