@@ -47,28 +47,3 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 
 
 
-// document.getElementById('login42').addEventListener('click', function(event) {
-//     event.preventDefault(); 
-
-//     fetch(`/login42`, {
-//         method: 'GET',
-//     })
-//     .then(response => response.json()) 
-//     .then(data => {
-//         if (JSON.stringify(data.data) === '{}') {
-//             console.log('Login in failed');
-//             errorMessage.textContent = data.message;
-//             errorMessage.style.display = 'block';
-//         } else {
-//             console.log('Login in successful');
-//             htmx.ajax('GET', `/home/`, {
-//                 target: '#main'  
-//             });
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error:', error);
-//         errorMessage.textContent = 'An unexpected error occurred. Please try again later.';
-//         errorMessage.style.display = 'block';
-//     });
-// });

@@ -179,6 +179,9 @@ def user_update(request, pk):
 				data['picture'] = user.picture
 	
 		username = data.get('username', None)
+		if Users.objects.filter(username=username).exists:
+			return JsonResponse({'message': 'Username already exist.', 'data': {}}, status=400)
+
 		description = data.get('description', None)
 
 		if username:
@@ -848,6 +851,12 @@ def login42(request):
 			login(request, user)
 			return redirect('home')
 	else:
+		i = 0
+		original_username = username 
+		while Users.objects.filter(username=username).exists():
+			i += 1
+			username = f"{original_username}{i}"
+
 		myuser = Users.objects.create_user(username=username, password="password")
 		myuser.user_42 = id42
 		myuser.email = user_info.get('email')
@@ -923,19 +932,6 @@ def home(request):
 		'page': 'home'
 	}
 	return render(request, 'pages/home-view.html', context)
-
-
-
-# acrescentar o campo do id 42 na tabela dos users [done]
-# quando um utilizador da 42 loga se pela primeira vez tenho de guardar o id [done]
-# tenho sempre que verificar se o id do user 42 existe na tabela e se sim usa aquele user para entrar [done]
-# caso contratio cria um novo [done]
-
-# login ou sign up normal nao e permitido para user que e user 42 [done]
-
-# se o username da 42 ja existir temos de acrescentar um sufixo randomico
-
-
 
 @login_required
 def gamelocal(request):

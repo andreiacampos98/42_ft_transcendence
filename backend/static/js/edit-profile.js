@@ -43,18 +43,16 @@ function onSaveButtonClick(event, userId) {
             "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        history.pushState(null, '', `/users/${userId}`);
-
-        htmx.ajax('GET', `/users/${userId}`, {
-            target: '#main'  
-        });
+        if (JSON.stringify(data.data) === '{}') {
+            alert(data.message);
+        } else {
+            history.pushState(null, '', `/users/${userId}`);
+            htmx.ajax('GET', `/users/${userId}`, {
+                target: '#main'  
+            });
+        }
     })
     .catch(error => console.error('Error:', error));
 }
