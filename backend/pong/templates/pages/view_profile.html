@@ -53,12 +53,14 @@
                         <img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
                         Edit Profile
                     </button>
-                    <button class="change" id="open-change-password-modal">
-                        <span class="change-b d-flex align-items-center" id="change">
-                            <img class="small-icon" src="{% static 'assets/icons/password.png' %}">
-                            Change Password
-                        </span>
-                    </button>
+                    {% if user_view.user_42 is None %}
+                        <button class="change" id="open-change-password-modal">
+                            <span class="change-b d-flex align-items-center" id="change">
+                                <img class="small-icon" src="{% static 'assets/icons/password.png' %}">
+                                Change Password
+                            </span>
+                        </button>
+                    {% endif %}
                 </div>
                 <div class="save-cancel d-flex align-items-center justify-content-around">
                     <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>

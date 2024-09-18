@@ -148,6 +148,13 @@ def user_create(request):
 		
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
+@csrf_exempt
+def delete_profile(request, id):
+	if request.method =='DELETE':
+		Users.objects.filter(id=id).delete()
+		return JsonResponse({'message': 'User deleted'}, status=200)
+	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+
 
 @csrf_exempt
 def user_update(request, pk):
