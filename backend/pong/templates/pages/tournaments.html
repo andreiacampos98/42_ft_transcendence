@@ -18,7 +18,7 @@
                     {% if top_users|length > 0 %}
                         <div class="profile-winner">
                             <a class="side-menu_a" 
-                                hx-get="{% url 'user-profile' top_users.0.user.username %}"
+                                hx-get="{% url 'user-profile' top_users.0.user.id %}"
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true">
@@ -42,7 +42,7 @@
                     {% if top_users|length > 1 %}
                         <div class="profile-winner">
                             <a class="side-menu_a" 
-                                hx-get="{% url 'user-profile' top_users.1.user.username %}"
+                                hx-get="{% url 'user-profile' top_users.1.user.id %}"
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true">
@@ -65,7 +65,7 @@
                     {% if top_users|length > 2 %}
                         <div class="profile-winner">
                             <a class="side-menu_a" 
-                                hx-get="{% url 'user-profile' top_users.2.user.username %}"
+                                hx-get="{% url 'user-profile' top_users.2.user.id %}"
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true">

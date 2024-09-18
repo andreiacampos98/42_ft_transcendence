@@ -259,7 +259,7 @@
                                     </div>
                                     <div class="opponent">
                                         {% if user_view == game.user2_id %}
-                                            <a  hx-get="{% url 'user-profile' game.user1_id.username %}"
+                                            <a  hx-get="{% url 'user-profile' game.user1_id.id %}"
                                                 hx-trigger="click"
                                                 hx-target="#main"
                                                 hx-push-url="true">
@@ -271,7 +271,7 @@
                                                 <span class="score">{{ game.user1_id.username }}</span>
                                             </a>
                                         {% else %}
-                                            <a  hx-get="{% url 'user-profile' game.user2_id.username %}"
+                                            <a  hx-get="{% url 'user-profile' game.user2_id.id %}"
                                             hx-trigger="click"
                                             hx-target="#main"
                                             hx-push-url="true">

@@ -14,7 +14,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.middleware.csrf import get_token
 from datetime import datetime
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 import os
 
 import json, requests, os
@@ -51,9 +51,9 @@ total_phase_matches = dict(zip(
 #! --------------------------------------- Users ---------------------------------------
 
 @login_required
-def profile(request, username):
+def profile(request, id):
 	user_id = request.user.id
-	user_profile = get_object_or_404(Users, username=username)
+	user_profile = get_object_or_404(Users, id=id)
 	is_own_profile = user_profile == request.user
 
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
@@ -73,7 +73,7 @@ def profile(request, username):
 		is_friend = False
 		friendship_status = None
 
-	user = get_object_or_404(Users, username=username)
+	user = get_object_or_404(Users, id=id)
 	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) & Q(tournament=False)).order_by('-created_at')
 	tournament_response = tournament_list_user(request, user_profile.id)
 	user_tournaments = json.loads(tournament_response.content)
@@ -160,21 +160,34 @@ def user_update(request, pk):
 		if email:
 			try:
 				validate_email(email)
+				user.email=email
 			except ValidationError:
 				return JsonResponse({'message': 'Invalid email format.', 'data': {}}, status=400)
 
-		if 'picture' not in request.FILES:
-			data['picture'] = user.picture
-		
-		data.update(request.FILES)
+		if 'picture' in request.FILES:
+			user.picture = request.FILES['picture']
+		else:
+			if user.picture and "http" in user.picture.url:
+				ic(user.picture.url)
+				uri = user.picture.url
+				adjusted_url = uri[7:] if len(uri) > 7 else uri
+				decoded_url = unquote(adjusted_url)
+				ic(decoded_url)
+				user.picture = decoded_url
+			else:
+				ic(user.picture)
+				data['picture'] = user.picture
 	
+		username = data.get('username', None)
+		description = data.get('description', None)
 
-		serializer = UsersSerializer(user, data=data, partial=True)
-
-		if serializer.is_valid():
-			serializer.save()
-			return redirect('user-profile', user.username)
-		return JsonResponse(serializer.errors, status=400)
+		if username:
+			user.username = username
+		if description:
+			user.description = description
+		user.save()
+		ic("Aqui1")
+		return JsonResponse({'message': 'User updated.', }, status=201)
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
 

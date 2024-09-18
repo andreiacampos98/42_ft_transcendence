@@ -47,11 +47,16 @@ function onSaveButtonClick(event, userId) {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.text(); // Se espera um HTML na resposta
+        return response.json();
     })
-    .then(html => {
-        // Atualiza a parte específica da página
-        document.getElementById('main').innerHTML = html;
+    .then(data => {
+        history.pushState(null, '', `/users/${userId}`);
+
+        htmx.ajax('GET', `/users/${userId}`, {
+            target: '#main'  
+        });
     })
     .catch(error => console.error('Error:', error));
 }
+
+

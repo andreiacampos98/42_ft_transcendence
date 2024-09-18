@@ -13,7 +13,7 @@
                 <div class="search d-flex">
                     {% for users in userss %}
                         <div class="square d-flex align-items-center justify-content-between">
-                            <a  class="square d-flex align-items-center justify-content-between" hx-get="{% url 'user-profile' users.username %}"
+                            <a  class="square d-flex align-items-center justify-content-between" hx-get="{% url 'user-profile' users.id %}"
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true">

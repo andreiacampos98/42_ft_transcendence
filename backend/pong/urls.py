@@ -35,7 +35,8 @@ urlpatterns =[
     #path('set_new_password/', views.setnewpassword, name='set_new_password'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('signout/', views.signout, name="signout"),
-    path('users/<int:pk>', views.user_detail, name='user-detail'),
+    path('users/detail/<int:pk>', views.user_detail, name='user-detail'),
+    path('users/<int:id>', views.profile, name='user-profile'),
     path('users/create', views.user_create, name='user-create'),
     path('users/<int:pk>/update', views.user_update, name='user-update'),
     path('users/<int:pk>/password', views.user_password, name='user-update-password'),
@@ -73,7 +74,6 @@ urlpatterns =[
     path('tournaments/user/<int:user_id>', views.tournament_list_user, name='tournament-list-user'),
     path('tournaments/<int:tournament_id>/games/<int:game_id>', views.tournament_update_game, name='tournament-update-game'),
 
-    path('users/<str:username>', views.profile, name='user-profile'),
     
     #! DEBUG
     path('tournaments', views.tournament_list, name='tournament-list'),

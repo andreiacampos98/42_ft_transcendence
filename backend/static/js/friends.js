@@ -84,8 +84,8 @@ function toggleSidebar(user_id) {
             status.textContent = friend.status;
 
             friendBlock.onclick = function() {
-                history.pushState(null, '', `/users/${friend.username}`);
-                htmx.ajax('GET', `/users/${friend.username}`, {
+                history.pushState(null, '', `/users/${friend.id}`);
+                htmx.ajax('GET', `/users/${friend.id}`, {
                     target: '#main'
                 });
             };

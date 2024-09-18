@@ -29,8 +29,8 @@ function getSuggestions() {
                     username.textContent = user.username;
 
                     userBlock.onclick = function() {
-                        history.pushState(null, '', `/users/${user.username}`);
-                        htmx.ajax('GET', `/users/${user.username}`, {
+                        history.pushState(null, '', `/users/${user.id}`);
+                        htmx.ajax('GET', `/users/${user.id}`, {
                             target: '#main'  
                         });
                     };

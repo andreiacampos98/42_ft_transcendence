@@ -51,7 +51,7 @@
                 </div>
             
                 <div id="notifications" ></div>
-                <a  hx-get="{% url 'user-profile' user.username %}"
+                <a  hx-get="{% url 'user-profile' user.id %}"
                     hx-trigger="click"
                     hx-target="#main"
                     hx-push-url="true">
@@ -111,11 +111,11 @@
                     </button>
                     <button class="select-item d-flex align-items-center">
                         <a class="side-menu_a" 
-                            hx-get="{% url 'user-profile' user.username %}"
+                            hx-get="{% url 'user-profile' user.id %}"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true">
-                            <!-- data-url="{% url 'user-profile' user.username %}" data-page="profile" data-icon="{% static 'assets/icons/profile.png' %}" data-highlight="{% static 'assets/icons/profile-highlight.png' %}" onclick="loadPage(event)"> -->
+                            <!-- data-url="{% url 'user-profile' user.id %}" data-page="profile" data-icon="{% static 'assets/icons/profile.png' %}" data-highlight="{% static 'assets/icons/profile-highlight.png' %}" onclick="loadPage(event)"> -->
                             {% if page == "profile" %}
                                 <img class="icon" id="highlight-icon3" src="{% static 'assets/icons/profile-highlight.png' %}" alt="Ping Pong">
                                 <span class="icon-title" id="highlight-span3">User</span>
