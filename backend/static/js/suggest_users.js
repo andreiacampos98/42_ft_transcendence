@@ -2,7 +2,7 @@ function getSuggestions() {
     var input = document.getElementById('search').value;
     var suggestionsBox = document.getElementById('suggestions');
 
-    if (input.length > 2) { // Trigger suggestions after 2 characters
+    if (input.length > 0) { // Trigger suggestions after 2 characters
         fetch(`/users/search_suggestions?term=${encodeURIComponent(input)}&_=${new Date().getTime()}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
