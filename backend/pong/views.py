@@ -540,19 +540,7 @@ def tournament_update(request, tournament_id):
 		serializer.save()
 		return JsonResponse(serializer.data)
 	return JsonResponse(serializer.errors, status=400)
-		
-
-# @csrf_exempt
-# def tournament_cancel(request, tournament_id):
-# 	if request.method != 'DELETE':	
-# 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
-
-# 	tournament = get_object_or_404(Tournaments, pk=tournament_id)
-# 	tournament.delete()
-# 	response_data = {
-# 		'message': f"'{tournament.name}' was deleted."
-# 	}
-# 	return JsonResponse(response_data, status=204)
+	
 
 #! --------------------------------------- Tournaments Users ---------------------------------------
 
@@ -733,17 +721,6 @@ def tournament_update_game(request, tournament_id, game_id):
 	tour_game.game_id.nb_goals_user1 = data['nb_goals_user1']
 	tour_game.game_id.nb_goals_user2 = data['nb_goals_user2']
 
-
-	# try:
-	# 	player1 = TournamentsUsers.objects.get(user_id=tour_game.game_id.user1_id.id, tournament_id=tournament_id)
-	# except TournamentsUsers.DoesNotExist:
-	# 	return JsonResponse({'message': f'Player 1 not found in tournament {tournament_id}', 'data': {}}, status=404)
-
-	# try:
-	# 	player2 = TournamentsUsers.objects.get(user_id=tour_game.game_id.user2_id.id, tournament_id=tournament_id)
-	# except TournamentsUsers.DoesNotExist:
-	# 	return JsonResponse({'message': f'Player 2 not found in tournament {tournament_id}', 'data': {}}, status=404)
-
 	player1 = TournamentsUsers.objects.get(
 		user_id=tour_game.game_id.user1_id.id,
 		tournament_id=tournament_id
@@ -778,6 +755,9 @@ def tournament_update_game(request, tournament_id, game_id):
 	if finished_matches == total_phase_matches[curr_phase] and curr_phase != 'Final':
 		return advance_tournament_phase(curr_phase, tournament_id)
 	elif finished_matches == total_phase_matches[curr_phase] and curr_phase == 'Final':
+		tournament = Tournaments.objects.filter(id=tournament_id).first()
+		tournament.duration = datetime.timestamp(datetime.now())- tournament.created_at.timestamp()
+		tournament.save()
 		return calculate_placements(tournament_id)
 	
 	data = TournamentsGamesSerializer(tour_game).data
