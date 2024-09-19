@@ -1,59 +1,66 @@
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
+.m-content2 {
+	position: absolute;
+	animation-name: none;
+  	animation-duration: 0;
+	min-width: 380px;
+	background-color: #1D2731;
+	margin: auto;
+	margin-top: auto;
+	margin-top: 37vh;
+	padding: 20px;
+	border: 1px solid #336181;
+	border-radius: 5px;
+	width: 20%;
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+	font-size: small;
+	z-index: 10000;
 }
 
-.modal-content {
-    background-color: #1D2731;
-    color: #aaa;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #336181;
-    width: 80%;
+#inner-modal{
+	position: absolute; /* Now position relative to the parent div */
+    top: -29%;             /* Stick to the top */
+    right: 0; 
+	overflow: hidden;
+	height: 230px;
+	overflow-y: scroll;
 }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute;
-    top: 0;
-    left: 0;
-    /*height: 10px;*/
+#inner-modal h4 {
+	font-size: medium;
+	margin-bottom: 0;
 }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+#inner-modal button {
+	font-size: smaller;
 }
 
 .notif-li {
     display: flex;
     color: #F2F2F2;
     align-items: center;
+	height: 105px;
+}
+
+#notificationList {
+	margin-bottom: 0;
+}
+
+#notificationList li:not(:last-child) {
+    border-bottom: 1px solid grey; /* Add grey top border */
 }
 
 .time-text-button {
     display: flex;
     flex-direction: column;
     margin: 10px;
-    justify-content: space-between;
-    height: 130px;
+    /*justify-content: space-between;*/
+    height: 100px;
+	width: 236px;
 }
 
 .timestamp {
     color: grey;
+	padding-bottom: 10px;
 }
 
 .profile-pic-notif {
@@ -71,22 +78,33 @@
     font-size: larger;
 }*/
 
+#inner-modal .close {
+	font-weight: bold;
+	color: gray;
+}
+
+#inner-modal .close:hover {
+	cursor: pointer;
+}
+
 .button-notif {
     color: #F2F2F2;
     border-radius: 5px;
-    margin: 5px;
-    padding: 7px;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     font-size: large;
 }
 
 #accept {
     background-color: #1A3141;
     border: none;
+	margin-right: 5px;
+	height: 26px;
 }
 
 #decline {
     background-color: #1D2731;
     border: 2px solid #F2F2F2;
+	height: 26px;
 }

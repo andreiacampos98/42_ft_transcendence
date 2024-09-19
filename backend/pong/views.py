@@ -261,7 +261,7 @@ def add_remove_friend(request, user1_id, user2_id):
 
 		# Create the friendship request
 		friend = Friends.objects.create(user1_id=user1, user2_id=user2, accepted=False)
-		notification = Notifications.objects.create(type='Friend Request', status='Pending', description=' has request to be your friend.', user_id = user2, other_user_id = user1)
+		notification = Notifications.objects.create(type='Friend Request', status='Pending', description=' has requested to be your friend.', user_id = user2, other_user_id = user1)
 		notification.save()
 		response_data = {
 			'message': 'Friendship request sent successfully.',
