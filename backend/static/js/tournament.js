@@ -83,12 +83,19 @@ window.onclick = function(event) {
 function getCreateTournament()
 {
     const userId = document.querySelector('button[onclick="getCreateTournament()"]').getAttribute('data-user-id');
-
+    const checkbox = document.getElementById('use-username-checkbox');
+    var alias;
+    if(checkbox.checked)
+    {
+      alias = document.getElementById("nickname-input-create").getAttribute('data-user-username');
+    } else {
+      alias = document.getElementById("nickname-input-create").value;
+    }
     var formData = {
         "name": document.getElementById("new-tournament-name").value,
         "capacity":  document.getElementById("numPlayers").value,
         "host_id": userId,
-        "alias": document.getElementById("nickname-input-create").value,
+        "alias": alias,
         "status": 'Open'
     };
     console.log(formData)
@@ -126,3 +133,15 @@ function getCreateTournament()
     .catch(error => console.error('Error:', error));
 }
 
+var checkbox = document.getElementById('use-username-checkbox');
+var nicknameInput = document.getElementById('nickname-input-create');
+
+checkbox.addEventListener('change', function() {
+    if (this.checked) {
+        nicknameInput.disabled = true;  
+        nicknameInput.placeholder = "Using username";
+    } else {
+        nicknameInput.disabled = false; 
+        nicknameInput.placeholder = "Insert your nickname here";
+    }
+});

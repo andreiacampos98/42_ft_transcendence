@@ -26,10 +26,18 @@ document.querySelector('.close').addEventListener('click', function() {
 async function registerTournament() {
     var tournamentId = document.getElementById("registration").getAttribute("data-tournament-id");
     var userId = document.getElementById("registration").getAttribute("data-user-id");
-    
+    const checkbox = document.getElementById('use-usernamejoin-checkbox');
+
+    var alias;
+    if(checkbox.checked)
+    {
+      alias = document.getElementById("nickname-input-join").getAttribute('data-user-username');
+    } else {
+      alias = document.getElementById("nickname-input-join").value;
+    }
     // Prepare form data and send via fetch API
     var formData = {
-        "alias": document.getElementById("nickname-input-join").value
+        "alias": alias
     };
     console.log(formData)
     
@@ -63,4 +71,15 @@ async function registerTournament() {
     }
 }
 
+var checkboxf = document.getElementById('use-usernamejoin-checkbox');
+var nickname = document.getElementById('nickname-input-join');
 
+checkboxf.addEventListener('change', function() {
+    if (this.checked) {
+        nickname.disabled = true;  
+        nickname.placeholder = "Using username";
+    } else {
+        nickname.disabled = false; 
+        nickname.placeholder = "Insert your nickname here";
+    }
+});

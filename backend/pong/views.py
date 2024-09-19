@@ -966,6 +966,7 @@ def tournaments(request):
 	user_id = request.user.id  # Obtém o ID do usuário atual
 
 	# Obtém a lista de amigos
+	act_user = Users.objects.filter(id=user_id)
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	tournaments = Tournaments.objects.exclude(status='Finished')
 
@@ -982,6 +983,7 @@ def tournaments(request):
 	current=current_place(request, user_id)
 	ic(current_place)
 	context = {
+		'act_user':act_user,
 		'friends': friends,
 		'user_id': user_id,
 		'tournaments': zip(tournaments, num_tour_players),

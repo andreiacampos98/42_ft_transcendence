@@ -135,11 +135,16 @@
 						</div>
                         <div class="nickname1">
                             <label for="nickname-input">Tournament Nickname</label>
-                            <input class="pass-input" type="text" id="nickname-input-create" name="nickname" placeholder="Insert your nickname here">
+                            <input class="pass-input" type="text" id="nickname-input-create" name="nickname" placeholder="Insert your nickname here" data-user-username="{{ user.username }}">
                             <div id="nick-confirm" class="d-flex">
+                                <input type="checkbox" id="use-username-checkbox"  name="use_username">
+                                <label id="nick-denial" for="use-username-checkbox">No thanks, I'll use my username instead.</label>
+                            </div>
+                            <!-- Xico alterei porque acho mais correto ser type="checkbox" -->
+                            <!-- <div id="nick-confirm" class="d-flex">
 								<button id="checkmark" class="align-items-center justify-content-center">✓</button>
 								<p id="nick-denial">No thanks, I'll use my username instead.</p>
-							</div>
+							</div> -->
                         </div>
 
                     </form>
@@ -200,11 +205,15 @@
                         <form id="tournament-register-form" class="d-flex" method="POST">
                             {% csrf_token %}
                             <label for="nickname-input">Tournament Nickname</label>
-                            <input class="pass-input" type="text" id="nickname-input-join" name="nickname" required>
-                            <div id="nick-confirm">
+                            <input class="pass-input" type="text" id="nickname-input-join" name="nickname" required  placeholder="Insert your nickname here" data-user-username="{{ user.username }}">
+                            <!-- <div id="nick-confirm">
 								<button id="checkmark">✓</button>
 								<p id="nick-denial">No thanks, I'll use my username instead.</p>
-							</div>
+							</div> -->
+                            <div id="nick-confirm" class="d-flex">
+                                <input type="checkbox" id="use-usernamejoin-checkbox"  name="use_username" class="align-items-center justify-content-center" class="checkmark">
+                                <label id="nick-denial" for="use-username-checkbox">No thanks, I'll use my username instead.</label>
+                            </div>
                         </form>
                     </div>
                     <button style="margin-bottom: 10px;" class="change modal-button" id="registration" onclick="registerTournament()" data-tournament-id="{{ tournament.id }}" data-user-id="{{ user_id }}">
