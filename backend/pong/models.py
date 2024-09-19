@@ -100,6 +100,7 @@ class Notifications(models.Model):
 
 class Games(models.Model):
     id = models.AutoField(primary_key=True)
+    type = models.CharField(max_length=20)
     start_date = models.DateTimeField()
     duration = models.IntegerField(default=0)
     nb_goals_user1 = models.IntegerField(default=0)
@@ -107,8 +108,12 @@ class Games(models.Model):
     winner_id = models.ForeignKey(Users, related_name="game_winner", null=True, on_delete=models.SET_NULL)
     user1_id = models.ForeignKey(Users, related_name="game_user1", null=True, on_delete=models.SET_NULL)
     user2_id = models.ForeignKey(Users, related_name="game_user2", null=True, on_delete=models.SET_NULL)
-    tournament = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if self.type not in ['Remote', 'Local', 'AI', 'Tournament']:
+            raise ValidationError('Type of the game must be one of "[\'Remote\', \'Local\', \'Local\', \'Tournament\']"')
+        super().save(*args, **kwargs)
 
 class Tournaments(models.Model):
     id = models.AutoField(primary_key=True)

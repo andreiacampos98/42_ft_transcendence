@@ -327,20 +327,7 @@
 	padding-left: 5px;
 }
 
-.checkmark {
-	border-radius: 5px;
-	width: 15px;
-	height: 15px;
-	border: none;
-	color: #1D2731;
-	font-size: large;
-	display: flex; 
-    justify-content: center; 
-    align-items: center;
-}
-
-
-.checkmark:checked {
+/* #checkmark {
 	border-radius: 5px;
 	width: 15px;
 	height: 15px;
@@ -351,7 +338,7 @@
 	display: flex; 
     justify-content: center; 
     align-items: center;
-}
+} */
 
 
 input[type="checkbox"] {

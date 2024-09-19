@@ -590,7 +590,7 @@ def tournament_join(request, tournament_id, user_id):
 				'start_date':datetime.now().isoformat(),
 				'user1_id': user1.user_id.id,
 				'user2_id': user2.user_id.id,
-				'tournament': True
+				'type': "Tournament",
 			}
 			games_data.append(game)
 		
@@ -1034,7 +1034,7 @@ def advance_tournament_phase(previous_phase, tournament_id):
 			'start_date':datetime.now().isoformat(),
 			'user1_id': winner1.id,
 			'user2_id': winner2.id,
-			'tournament': True
+			'type': "Tournament"
 		}
 		temp.append(game_data)
 
