@@ -42,7 +42,7 @@
     to {top: 0; opacity: 1}
 }
 
-.side-profile button, #cancel-create-tournament, #create-tournament, #registration, #cancel-register-tournament, #leaver, #cancel, #confirm-btn {
+.side-profile button, #cancel-create-tournament, #create-tournament, #registration, #cancel-register-tournament, #leaver, #cancel, #confirm-btn, #cancel-change-password-button, #change-password {
     margin-top: 10px;
     padding: 10px;
     color: #fff;

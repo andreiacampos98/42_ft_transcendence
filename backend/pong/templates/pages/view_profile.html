@@ -19,21 +19,36 @@
                 <div class="form-div d-flex justify-content-center">
                     <form id="change-password-form" class="d-flex " method="POST">
                         {% csrf_token %}
-                        <label for="old_password-input">Old Password</label>
-                        <input class="pass-input" type="password" id="old_password-input" name="old_password" required>
-
-                        <label for="newpassword1-input">New Password</label>
-                        <input class="pass-input" type="password" id="password1-input" name="password1" required>
-
-                        <label for="newpassword2-input">Confirm new password</label>
-                        <input class="pass-input" type="password" id="password2-input" name="password2" required>
+						
+						<label for="old_password-input">Old Password</label>
+						<div class="password-input-div d-flex">
+							<input class="pass-input" type="password" id="old_password-input" name="old_password" required>
+								<button type="button" id="togglePassword" onclick="toggleOldVisibility()">
+									<img id="togglePasswordImage" src="{% static 'assets/icons/eyeopen.png' %}">
+								</button>
+						</div>
+						<label for="newpassword1-input">New Password</label>
+						<div class="password-input-div d-flex">
+							<input class="pass-input" type="password" id="password1-input" name="password1" required>
+							<button type="button" id="togglePassword2" onclick="toggleReconfirm1Visibility()">
+								<img id="togglePasswordImage2" src="{% static 'assets/icons/eyeopen.png' %}">
+							</button>
+						</div>
+						<label for="newpassword2-input">Confirm new password</label>
+						<div class="password-input-div d-flex">						
+							<input class="pass-input" type="password" id="password2-input" name="password2" required>
+							<button type="button" id="togglePassword3" onclick="toggleReconfirm2Visibility()">
+								<img id="togglePasswordImage3" src="{% static 'assets/icons/eyeopen.png' %}">
+							</button>
+						</div>
                     </form>
                 </div>
-
-                <button style="margin-bottom: 10px;" class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
-                    <span class="change-b" id="change">Confirm</span>
-                </button>
-                <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Go back</button>
+				<div class="bottom-buttons d-flex justify-content-between">
+                	<button style="margin-bottom: 10px;" class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
+                	    <span class="change-b" id="change">Confirm</span>
+                	</button>
+                	<button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Go back</button>
+				</div>
             </div>
         </div>
 		<div id="modal2" class="m">

@@ -59,13 +59,14 @@ function onSaveButtonClick(event, userId) {
 // Get the modal
 var modal2 = document.getElementById("modal2");
 // Get the button that opens the modal
-var btn = document.getElementById("remove-friend-button");
+var btn2 = document.getElementById("remove-friend-button");
 // Get the  element that closes the modal
-
 var goback = document.getElementById("cancel");
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-  modal2.style.display = "block";
+// When the user clicks the button, open the modal
+if (btn2) {
+    btn2.onclick = function() {
+		modal2.style.display = "block";
+	}
 }
 
 goback.onclick = function() {

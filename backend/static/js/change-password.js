@@ -49,3 +49,30 @@ function getChangePassword() {
 })
 .catch(error => console.error('Error:', error));
 }
+
+function toggleOldVisibility() {
+    const passwordInput = document.getElementById('old_password-input');
+    const togglePasswordImage = document.getElementById('togglePasswordImage');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    togglePasswordImage.src = type === 'password' ? "/static/assets/icons/eyeopen.png" : "/static/assets/icons/eyeclosed(1).png";
+    togglePasswordImage.alt = type === 'password' ? 'Show Password' : 'Hide Password';
+}
+
+function toggleReconfirm1Visibility() {
+	const reconfirmInput = document.getElementById('password1-input');
+    const togglereconfirmImage = document.getElementById('togglePasswordImage2');
+    const type = reconfirmInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    reconfirmInput.setAttribute('type', type);
+    togglereconfirmImage.src = type === 'password' ? "/static/assets/icons/eyeopen.png" : "/static/assets/icons/eyeclosed(1).png";
+    togglereconfirmImage.alt = type === 'password' ? 'Show Password' : 'Hide Password';
+}
+
+function toggleReconfirm2Visibility() {
+	const reconfirmInput2 = document.getElementById('password2-input');
+    const togglereconfirmImage2 = document.getElementById('togglePasswordImage3');
+    const type = reconfirmInput2.getAttribute('type') === 'password' ? 'text' : 'password';
+    reconfirmInput2.setAttribute('type', type);
+    togglereconfirmImage2.src = type === 'password' ? "/static/assets/icons/eyeopen.png" : "/static/assets/icons/eyeclosed(1).png";
+    togglereconfirmImage2.alt = type === 'password' ? 'Show Password' : 'Hide Password';
+}
