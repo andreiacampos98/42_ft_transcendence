@@ -12,7 +12,3 @@ function setStatus(elementId, status) {
     statusSpan.textContent = status.charAt(0).toUpperCase() + status.slice(1);
 }
 
-// Example usage
-setStatus('friend1', 'online');  // Can be 'online', 'offline', or 'playing'
-setStatus('friend2', 'offline');  // Can be 'online', 'offline', or 'playing'
-setStatus('friend3', 'playing');  // Can be 'online', 'offline', or 'playing'
