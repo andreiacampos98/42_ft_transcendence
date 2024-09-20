@@ -42,14 +42,28 @@
 
 #suggestions {
     position: absolute;
-    background-color: white;
     width: 100%; 
-    max-height: 200px;
-    overflow-y: auto;
+    max-height: 160px;
     z-index: 1000; 
-    display: block !important;
+    display: block;
     top: 100%;
     left: 0;
+	background-color: #1D2731;
+	color: #f2f2f2;
+    border: 1px solid #336181;
+	overflow-y: scroll;
+	border-radius: 5px;
+}
+
+.suggestion-name {
+	font-weight: inherit;
+	font-size: medium;
+	margin: 0;
+}
+
+.suggestion-pic {
+	width: 30px;
+	height: 30px;
 }
 
 .top-right {
@@ -67,4 +81,10 @@
     height: 40px;
     border-radius: 50%;
     cursor: pointer;
+}
+
+
+.user-block {
+	height: 30px;
+	padding: 5px;
 }

@@ -83,7 +83,7 @@
                 <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="User">
                 <h3 class="description"> {{ user_view.username }} </h3>
             </div>
-            <h3 class="description"> {{ user_view.status }} </h3>
+            <span class="friend-block1 d-flex justify-content-center" data-status="{{ user_view.status }}"> {{ user_view.status }} </span>
             {% if is_own_profile %}
                 <div class="edit-change d-flex align-items-center justify-content-around">
                     <button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">

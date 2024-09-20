@@ -3,24 +3,28 @@
 
 {% block main_content %}
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
-    <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
+    <div class="main-content d-flex justify-content-center align-items-center non_compressed" style="padding-left: 50px;" id="main-content">
         <div class="main">
             {% if searched %}
                 <h3 class="search-results">Search Results</h3>
                 <div class="sub-results d-flex align-items-start">
-                    <h6 class="nbr-results">Your search for "{{ searched }}" has retrieved {{ numbers}} results.</h5>
+                    <h6 class="nbr-results">Your search for <span style="font-weight: bold;">"{{ searched }}"</span> has retrieved <span style="font-weight: bold;">{{ numbers}}</span> 
+						{% if numbers == 1 %}
+							result.
+						{% else %}
+							results.
+						{% endif %}
+					</h6>
                 </div>
                 <div class="search d-flex">
                     {% for users in userss %}
-                        <div class="square d-flex align-items-center justify-content-between">
-                            <a  class="square d-flex align-items-center justify-content-between" hx-get="{% url 'user-profile' users.username %}"
-                                hx-trigger="click"
-                                hx-target="#main"
-                                hx-push-url="true">
-                                <img class="circular-image" src="{{ users.picture.url }}" alt="User Icon">
-                                <h3 class="name">{{ users.username }}</h3>
-                            </a>
-                        </div>
+                        <a  class="square d-flex align-items-center justify-content-between" hx-get="{% url 'user-profile' users.username %}"
+                            hx-trigger="click"
+                            hx-target="#main"
+                            hx-push-url="true">
+                            <img class="circular-image" src="{{ users.picture.url }}" alt="User Icon">
+                            <h3 class="name">{{ users.username }}</h3>
+                        </a>
                     {% endfor %}
 
                 </div>

@@ -4,13 +4,25 @@
 
 }
 .square {
-    width: 150px;           /* Width of each square */
-    height: 180px;          /* Height of each square */
+    width: 100px;           /* Width of each square */
+    height: 150px;          /* Height of each square */
     margin: 5px;           /* Space between squares */
     flex-direction: column; /* Align content center */
     text-decoration: none;
     color: #f2f2f2;
+	margin-right: 20px;
 
+}
+
+.square:hover {
+	cursor: pointer;
+}
+
+.name {
+	font-weight: inherit;
+  	font-size: inherit;
+	width: inherit;
+	overflow: scroll;
 }
 
 .search-results {
@@ -20,17 +32,20 @@
 
 .search-results, .nbr-results {
     color: #f2f2f2;
-
 }
 
+.nbr-results {
+	font-weight: inherit;
+}
 .sub-results {
     flex-direction: row;
     margin-bottom: 20px;
+	padding-top: 10px;
 }
 
 .circular-image {
     width: 100px;          /* Sets the width to 60px */
     height: 130px;         /* Ensures the height is the same, making it a square */
-    object-fit: cover;    /* Ensures the image covers the area */
+	object-fit: contain;
     display: block;       /* Removes extra spacing below the image */
 }

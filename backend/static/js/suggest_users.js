@@ -16,6 +16,8 @@ function getSuggestions() {
                 data.forEach(user => {
                     const userBlock = document.createElement('div');
                     userBlock.classList.add('user-block');
+                    userBlock.classList.add('d-flex');
+                    userBlock.classList.add('align-items-center');
                     userBlock.id = 'search-user';
 
                     const link = document.createElement('a');
@@ -26,6 +28,7 @@ function getSuggestions() {
                     link.style.display = 'block'; 
 
                     const username = document.createElement('h4');
+					username.classList.add('suggestion-name');
                     username.textContent = user.username;
 
                     userBlock.onclick = function() {
@@ -34,7 +37,12 @@ function getSuggestions() {
                             target: '#main'  
                         });
                     };
+					const pic = document.createElement('img');
+					pic.classList.add('suggestion-pic');
+					pic.src = "/static/assets/icons/profile.png"; // Assign the image URL (e.g., profile picture URL)
+					pic.alt = `${user.username}'s profile picture`;
 
+                    userBlock.appendChild(pic);
                     userBlock.appendChild(username);
                     link.appendChild(userBlock);
                     suggestionsBox.appendChild(link);
