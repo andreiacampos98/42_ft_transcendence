@@ -74,7 +74,8 @@ def profile(request, id):
 		friendship_status = None
 
 	user = get_object_or_404(Users, id=id)
-	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) & Q(tournament=False)).order_by('-created_at')
+	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) 
+						).exclude(type="Tournament").order_by('-created_at')
 	tournament_response = tournament_list_user(request, user_profile.id)
 	user_tournaments = json.loads(tournament_response.content)
 	stats_response = user_stats(request, user_profile.id)

@@ -29,12 +29,7 @@ CLIENT_ID_A=os.getenv("CLIENT_ID")
 CLIENT_SECRET_A=os.getenv("CLIENT_SECRET")
 REDIRECT_URI_A=os.getenv("REDIRECT_URI")
 USER_INFO_URL_A=os.getenv("USER_INFO_URL")
-print(f"BASE_DIR: {BASE_DIR}")
-print(f"env_path: {env_path}")
-print(f"TOKEN_URL: {TOKEN_URL_A}")
-print(f"CLIENT_ID: {CLIENT_ID_A}")
-print(f"CLIENT_SECRET: {CLIENT_SECRET_A}")
-print(f"REDIRECT_URI: {REDIRECT_URI_A}")
+
 
 
 # Quick-start development settings - unsuitable for production

@@ -22,7 +22,11 @@
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true">
-                                <img  class="profile-pic2 first" src="{{ top_users.0.user.picture }}" alt="Profile">
+                                {% if "http" in top_users.0.user.picture.url %}
+                                    <img class="profile-pic2 first" src="{{ top_users.0.user.picture }}" alt="Profile">
+                                {% else %}
+                                    <img class="profile-pic2 first" src="{{ top_users.0.user.picture.url }}" alt="Profile">
+                                {% endif %}
                                 <div class="friend-info">
                                     <h4 class="first2" >#1 {{ top_users.0.user.username }}</h4>
                                     <span class="victories">{{ top_users.0.nb_tournaments_won }} tournaments won</span>
@@ -46,7 +50,11 @@
                                 hx-trigger="click"
                                 hx-target="#main"
                                 hx-push-url="true">
-                                <img  class="profile-pic2 second" src="{{ top_users.1.user.picture }}" alt="Profile">
+                                {% if "http" in top_users.1.user.picture.url %}
+                                    <img class="profile-pic2 second" src="{{ top_users.1.user.picture }}" alt="Profile">
+                                {% else %}
+                                    <img class="profile-pic2 second" src="{{ top_users.1.user.picture.url }}" alt="Profile">
+                                {% endif %}
                                 <div class="friend-info">
                                     <h4 class="second2" >#2 {{ top_users.1.user.username }}</h4>
                                     <span class="victories">{{ top_users.1.nb_tournaments_won }} tournaments won</span>
