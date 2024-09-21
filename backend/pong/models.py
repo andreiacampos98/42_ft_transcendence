@@ -70,16 +70,6 @@ class Friends(models.Model):
         unique_together = ["user1_id", "user2_id"]
 
 
-class UserStats(models.Model):
-    id = models.AutoField(primary_key=True)
-    nb_tournaments_played = models.IntegerField(default=0)
-    nb_tournaments_won = models.IntegerField(default=0)
-    nb_games_played = models.IntegerField(default=0)
-    nb_games_won = models.IntegerField(default=0)
-    nb_goals_scored = models.IntegerField(default=0)
-    nb_goals_suffered = models.IntegerField(default=0)
-    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
-    updated_at = models.DateTimeField(auto_now=True)
 
 class Notifications(models.Model):
     id = models.AutoField(primary_key=True)
@@ -155,3 +145,50 @@ class TournamentsUsers(models.Model):
 
     class Meta:
         unique_together = ["user_id", "tournament_id"]
+
+
+class UserStats(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+    nb_tournaments_played = models.IntegerField(default=0)
+    nb_tournaments_won = models.IntegerField(default=0)
+    nb_games_played = models.IntegerField(default=0)
+    nb_games_won = models.IntegerField(default=0)
+    nb_goals_scored = models.IntegerField(default=0)
+    nb_goals_suffered = models.IntegerField(default=0)
+    max_ball_speed = models.IntegerField(default=0)
+    max_rally_lenght = models.IntegerField(default=0)
+    quickest_game = models.IntegerField(default=0)
+    longest_game = models.IntegerField(default=0)
+    num_first_goals = models.IntegerField(default=0)
+    remote_time_played = models.IntegerField(default=0)
+    local_time_played =models.IntegerField(default=0)
+    ai_time_played = models.IntegerField(default=0)
+    tournament_time_played = models.IntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Goals(models.Model):
+    id = models.AutoField(primary_key=True)
+    timestamp = models.IntegerField(default=0)
+    user = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name='user_goals')
+    game =  models.ForeignKey(Games, on_delete=models.CASCADE)
+    rally_lenght = models.IntegerField(default=0)
+    ball_speed = models.IntegerField(default=0)
+
+class GamesStats(models.Model):
+    id = models.AutoField(primary_key=True)
+    game =  models.ForeignKey(Games, on_delete=models.CASCADE)  
+    longer_rally = models.IntegerField(default=0)
+    shorter_rally = models.IntegerField(default=0)
+    average_rally = models.IntegerField(default=0)
+    max_ball_speed = models.IntegerField(default=0)
+    min_ball_speed = models.IntegerField(default=0)
+    average_ball_speed = models.IntegerField(default=0)
+    greatest_deficit_overcome = models.IntegerField(default=0)
+    gdo_user = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name='gdo_games')
+    most_consecutive_goals = models.IntegerField(default=0)
+    mcg_user = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name='mcg_games')
+    biggest_lead = models.IntegerField(default=0)
+    bg_user = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name='bg_games')
+
