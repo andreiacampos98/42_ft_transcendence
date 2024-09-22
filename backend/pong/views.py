@@ -357,7 +357,7 @@ def update_notification(request, notif_id):
 		return JsonResponse(response_data, status=204)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
 
-#! --------------------------------------- Stats ---------------------------------------
+#! --------------------------------------- User Stats ---------------------------------------
 
 def user_stats(request, user_id):
 	if request.method == 'GET':
@@ -381,7 +381,7 @@ def leaderboard(request):
 
         enriched_top_users = []
         for top_user in top_users:
-            user = Users.objects.get(pk=top_user.user_id.id)  # Acessa o campo 'id' do objeto user_id
+            user = Users.objects.get(pk=top_user.user_id.id) 
 
             user_stats_serializer = UserStatsSerializer(top_user)
             user_serializer = UsersSerializer(user)
@@ -404,6 +404,77 @@ def current_place(request, user_id):
 			return position
 		position += 1
 	return None
+
+@csrf_exempt
+def user_stats_update(request, user_id):
+	if request.method != 'POST':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	if request.content_type != 'application/json':
+		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
+
+	data = {}
+
+	try:
+		data = json.loads(request.body.decode('utf-8'))
+	except json.JSONDecodeError:
+		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+	except KeyError as e:
+		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+
+	gametype = data.get('type')
+	if not gametype:
+		return JsonResponse({'message': 'Missing key: type', 'data': {}}, status=400)
+
+	stats = UserStats.objects.get(user_id=user_id)
+	if not stats:
+		return JsonResponse({'message': 'User stats not found', 'data': {}}, status=404)
+	
+	stats.nb_tournaments_played = int(stats.nb_tournaments_played or 0)
+	stats.nb_games_played = int(stats.nb_games_played or 0)
+	stats.nb_goals_scored = int(stats.nb_goals_scored or 0)
+	stats.nb_goals_suffered = int(stats.nb_goals_suffered or 0)
+
+	try:
+		duration = int(data.get('duration', 0))
+		goals_scored = int(data.get('goals_scored', 0))
+		goals_suffered = int(data.get('goals_suffered', 0))
+		won = data.get('won') == "True"
+	except ValueError:
+		return JsonResponse({'message': 'Invalid value for one of the fields', 'data': {}}, status=400)
+
+
+	if gametype == "Tournament":
+		stats.nb_tournaments_played += 1
+		stats.tournament_time_played += duration
+	elif gametype == "Remote":
+		stats.remote_time_played += duration
+	elif gametype == "Local":
+		stats.local_time_played += duration
+	elif gametype == "AI":
+		stats.ai_time_played += duration
+
+	if gametype in ("Remote", "Local", "AI"):
+		stats.nb_goals_scored += goals_scored
+		stats.nb_goals_suffered += goals_suffered
+		stats.nb_games_played += 1
+		if (won == "True"):
+			stats.nb_games_won += 1
+	else:
+		stats.nb_tournaments_played += 1
+		if (won == "True"):
+			stats.nb_tournaments_won += 1
+	stats.save()
+	data_stats = UserStatsSerializer(stats)
+	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
+
+def user_stats_all(request):
+	if request.method != 'GET':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	elif request.method == 'GET':
+		stats = UserStats.objects.all()
+		data_stats = UserStatsSerializer(stats, many=True)
+		return JsonResponse({'message': 'All users stats', 'data': data_stats.data}, status=200)
+	return JsonResponse({'message': 'All users stats', 'data':{} }, safe=False, status=400)
 
 #! --------------------------------------- Games ---------------------------------------
 
@@ -765,6 +836,37 @@ def tournament_update_game(request, tournament_id, game_id):
 	data['game'] = GamesSerializer(tour_game.game_id).data
 
 	return JsonResponse(data, status=200)
+
+#! --------------------------------------- Game Stats ---------------------------------------
+#continuar aqui
+def game_stats_create(request, game_id):
+	if request.method != 'POST':
+		return JsonResponse({'message': 'Method not allowed'}, status=405)
+	
+	return JsonResponse({'message': 'Method not allowed'}, status=405)
+
+def game_stats(request, game_id):
+	if request.method !='GET':
+		return JsonResponse({'message': 'Method not allowed'}, status=405)
+	if request.method == 'GET':
+		try:
+			stats = GamesStats.objects.get(id=game_id)
+			serializer = GamesStatsSerializer(stats)
+			data = serializer.data
+			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
+		except GamesStats.DoesNotExist:
+			return JsonResponse({'message': 'GamesStats not found.'}, status=404)
+
+
+def game_stats_all(request):
+	if request.method != 'GET':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	elif request.method == 'GET':
+		stats = GamesStats.objects.all()
+		data_stats = GamesStatsSerializer(stats, many=True)
+		return JsonResponse({'message': 'All games stats', 'data': data_stats.data}, status=200)
+	return JsonResponse({'message': 'All games stats', 'data':{} }, safe=False, status=400)
+
 
 #! --------------------------------------- Login42 ---------------------------------------
 
