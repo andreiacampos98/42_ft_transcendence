@@ -52,6 +52,7 @@
 	color: #f2f2f2;
     border: 1px solid #336181;
 	overflow-y: scroll;
+    overflow-x: hidden;
 	border-radius: 5px;
 }
 
@@ -87,4 +88,12 @@
 .user-block {
 	height: 30px;
 	padding: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+
+}
+
+.user-block:hover {
+    cursor: pointer;
+    background-color: #e0e0e07c;
+    transform: scale(1.002);
 }

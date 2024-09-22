@@ -78,6 +78,7 @@
 #leaver {
 	background-color: #F8D082;
 	color: #A48955;
+    font-weight: bold;
 }
 
 #cancel-create-tournament, #cancel-register-tournament, #cancel {
