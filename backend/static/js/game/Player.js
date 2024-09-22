@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 
 export class Player {
-	constructor (alias, position, controls) {
+	constructor (id, alias, position, controls) {
+		this.id = id
 		this.alias = alias;
 
 		this.paddleSemiLength = 0.5;

@@ -7,13 +7,16 @@ import { Arena } from './Arena.js';
 export class ArcadeController extends THREE.Group {
 	constructor({}) {
 		super();
-		
+
+		this.gameId = 0;
 		this.pressedKeys = {};
 		this.arena = new Arena({});
 		this.ball = new Ball({});
-		this.player = new Player('Player', [-25, 0, 0], {'up': 'w', 'down': 's'});
-		this.enemy = new Player('Enemy Player', [25, 0, 0], {'up': 'ArrowUp', 'down': 'ArrowDown'});
+		this.player = new Player(1, 'Player', [-25, 0, 0], {'up': 'w', 'down': 's'});
+		this.enemy = new Player(1, 'Enemy Player', [25, 0, 0], {'up': 'ArrowUp', 'down': 'ArrowDown'});
 		
+		this.goals = [];
+
 		this.init();
 		this.build();
 	}
@@ -39,13 +42,23 @@ export class ArcadeController extends THREE.Group {
 		this.add(this.player.paddle);
 		this.add(this.enemy.paddle);
 		this.add(this.ball);
-		// this.add(this.display);
 	}
 
 	update() {
-		// this.display.update(this.pressedKeys);
 		this.player.update(this.pressedKeys, this.arena.semiHeight);
 		this.enemy.update(this.pressedKeys, this.arena.semiHeight);
-		this.ball.collide(this.arena, this.player, this.enemy);
+		this.ball.move(this);
+	}
+
+	registerGoal(ball, player) {
+		const goal = {
+			'timestamp': new Date().toISOString(),
+			'user': player.id,
+			'rally_length': ball.rally_length,
+			'ball_speed': ball.speed,
+			'game': this.gameId
+		};
+		this.goals.push(goal);
+		console.log(this.goals);
 	}
 }

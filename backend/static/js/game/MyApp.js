@@ -78,7 +78,7 @@ export class MyApp  {
      * initializes all the cameras
      */
     initCameras() {
-        const aspect = window.innerWidth / window.innerHeight;
+        const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
         const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 )
         perspective1.position.set(0, 0, 35);

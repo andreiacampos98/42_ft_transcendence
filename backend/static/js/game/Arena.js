@@ -9,6 +9,8 @@ export class Arena extends THREE.Group {
 
 		this.upperBoundary = null;
 		this.lowerBoundary = null;
+		this.leftBoundary = null;
+		this.rightBoundary = null;
 
 		this.build();
 	}
@@ -22,18 +24,18 @@ export class Arena extends THREE.Group {
 			new THREE.BoxGeometry(length, depth, depth),
 			new THREE.MeshPhongMaterial()
 		);
-		const leftBoundary = new THREE.Mesh(
+		this.leftBoundary = new THREE.Mesh(
 			new THREE.BoxGeometry(depth, height, depth),
 			new THREE.MeshPhongMaterial()
 		);
 		this.lowerBoundary = this.upperBoundary.clone();
-		const rightBoundary = leftBoundary.clone();
+		this.rightBoundary = this.leftBoundary.clone();
 
 		this.upperBoundary.position.set(0, this.semiHeight - this.semiDepth, 0);
 		this.lowerBoundary.position.set(0, -this.semiHeight + this.semiDepth, 0);
-		leftBoundary.position.set(-this.semiLength, 0, 0);
-		rightBoundary.position.set(this.semiLength, 0, 0);
+		this.leftBoundary.position.set(-this.semiLength, 0, 0);
+		this.rightBoundary.position.set(this.semiLength, 0, 0);
 
-		this.add(this.lowerBoundary, this.upperBoundary, leftBoundary, rightBoundary);
+		this.add(this.lowerBoundary, this.upperBoundary, this.leftBoundary, this.rightBoundary);
 	}
 }
