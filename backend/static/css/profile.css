@@ -12,6 +12,7 @@
     width: 150px;
     height: 150px;
     border-radius: 50%;
+	object-fit: contain;
 }
 
 #change-info2 {
@@ -47,12 +48,12 @@ textarea, #username-input, #email-input {
 .user-description {
     display: inline;
     vertical-align: middle;
-    margin: 10px;
+    margin-block: 10px;
 	overflow-y: scroll;
 	text-overflow: ellipsis;
 	max-height: 200px;
 	text-align: justify;
-	
+	margin-left: 5px;
 }
 
 .text-block{
@@ -65,12 +66,8 @@ textarea, #username-input, #email-input {
     padding-bottom: 5px;
 }
 
-
 .edit-change, .save-cancel {
-    display: flex;
-    align-items: center;
     width: 360px;
-    justify-content: space-around;
 	height: 52.3px;
 }
 
@@ -79,13 +76,7 @@ textarea, #username-input, #email-input {
 }*/
 
 .side-profile button {
-    margin-top: 10px;
     padding: 10px 20px;
-    color: #fff;
-    font-size: small;
-    cursor: pointer;
-    border-radius: 5px;
-    border: 1px solid #1A3141;
     width: 170px;
 }
 
@@ -94,7 +85,7 @@ textarea, #username-input, #email-input {
 }
 
 .small-icon {
-	width: 18px;
+	width: 17px;
 	height: 17px;
 	padding-right: 5px;
 }

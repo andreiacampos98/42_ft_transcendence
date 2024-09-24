@@ -23,6 +23,7 @@
 	overflow: hidden;
 	height: 230px;
 	overflow-y: scroll;
+	padding: 5px;
 }
 
 #inner-modal h4 {
@@ -43,6 +44,8 @@
 
 #notificationList {
 	margin-bottom: 0;
+	padding-left: 0;
+	width: 95%;
 }
 
 #notificationList li:not(:last-child) {
@@ -66,6 +69,7 @@
 .profile-pic-notif {
     width: 50px;
     height: 50px;
+	border-radius: 50%;
 }
 
 .name-notif {
@@ -81,6 +85,8 @@
 #inner-modal .close {
 	font-weight: bold;
 	color: gray;
+	position: relative;
+    right: -30px;
 }
 
 #inner-modal .close:hover {

@@ -11,6 +11,11 @@
 	transform: translate(-50%);
 }
 
+.tourn-status {
+	color: #8E8E8E;
+	font-size: medium;
+}
+
 .all-groups {
 	top: 50%;
   	position: absolute;
@@ -53,8 +58,12 @@
 }
 
 .icon {
-    height: 80%;
+    height: 40px;
     margin-right: 10px;
+	margin-left: 10px;
+    border-radius: 50%;
+    width: 40px;
+    object-fit: contain;
 }
 
 .name {

@@ -21,7 +21,7 @@
 
 .stat {
     flex-direction: column;
-    background-color: #101d27;
+    background-color: #ffffff05;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 10px;
     height: 127px;
@@ -46,16 +46,19 @@
 
 
 .results {
-    background-color: #101d27;
+    background-color: #ffffff05;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 10px;
     height: 127px;
-    width: 50vw;
+	width: 100%;
 	min-width: 460px;
 }
 
 .profile-winner {
     padding: 15px;
+	height: inherit;
+	width: 10vw;
+	min-width: 140px;
 }
 
 .profile-pic2 {
@@ -68,29 +71,34 @@
     border: 2px solid #DBB635;
 }
 .first2 {
-    color: #DBB635;
+    color: #DBB635 !important;
+	overflow: hidden;
 }
 
 .second {
     border: 2px solid #D9D9D9;
 }
 .second2 {
-    color: #D9D9D9;
+    color: #D9D9D9 !important;
+	overflow: hidden;
 }
 
 .third {
     border: 2px solid #AC5024;
 }
 .third2 {
-    color: #AC5024;
+    color: #AC5024 !important;
+	overflow: hidden;
 }
 
 .friend-info h4 {
     margin: 0;
+	white-space: nowrap;
+	padding-top: 13px;
 }
 
 .numbers {
-    color: #101d27;
+    color: #ffffff05;
 }
 
 #nbr2 {
@@ -105,6 +113,7 @@
     margin: 0;
     font-size:small;
     color: #D9D9D9;
+	white-space: nowrap;
 
 }
 
@@ -143,21 +152,25 @@
 }
 
 .table-content {
-    background-color: #101d27;
+    background-color: #ffffff05;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     padding: 15px;
     margin-bottom: 10px;
     height: 60px;
 }
+
 .table-title {
-    width: 6vw;
+	padding-left: 25px;
+	width: 20%;
     font-weight:bold;
     text-align: left;
 }
+
 .table-info2 {
+	padding-left: 25px;
     color: #F2F2F2;
-    width: 6vw;
+	width: 20%;
     text-align: left;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -165,36 +178,27 @@
 	position: relative;
 	display: flex;
 	align-items: center;
+	overflow: hidden;
 }
 
-.table-info2:hover::after {
-	content: attr(data-full-text);       /* Display the full text stored in the title attribute */
-	position: absolute;
-	top: 100%;                  /* Position below the container */
-	left: 0;
-	background-color: #fff;     /* Background color for the hover tooltip */
-	padding: 5px;
-	border: 1px solid #ddd;     /* Optional border */
-	white-space: nowrap;        /* Prevent wrapping in tooltip */
-	z-index: 10000;                 /* Make sure the tooltip appears above other content */
-	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for tooltip */
-	border-radius: 4px;         /* Rounded corners for tooltip */
-  }
 .status-ongoing {
     color: #6CFFED;
+	font-weight: bold;
 }
 
 .status-open {
     color: #B6FF6C;
+	font-weight: bold;
 }
 
 .status-closed {
     color: #FF4F28;
+	font-weight: bold;
 }
 
 .open-register-tournament-modal {
     border: none;
-    background-color: #101d27  !important;
+    background-color: #ffffff05  !important;
     color: #F2F2F2  !important;
 	font-weight: bold;
 	padding: 0% !important;

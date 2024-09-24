@@ -23,7 +23,7 @@ function onEditButtonClick() {
 }
 
 function onCancelButtonClick() {
-    document.getElementById("edit-profile-button").style.display = "inline-block";
+    document.getElementById("edit-profile-button").style.display = "flex";
     document.getElementById("save-profile-button").style.display = "none";
     document.getElementById("cancel-edit-button").style.display = "none";
     document.getElementById("edit-profile-form").style.display = "none";

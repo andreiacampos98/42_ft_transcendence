@@ -11,18 +11,24 @@
     text-decoration: none;
     color: #f2f2f2;
 	margin-right: 20px;
-
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .square:hover {
-	cursor: pointer;
+    cursor: pointer;
+    background-color: #e0e0e07c;
+    transform: scale(1.002);
 }
 
 .name {
 	font-weight: inherit;
-  	font-size: inherit;
-	width: inherit;
-	overflow: scroll;
+    font-size: inherit;
+    width: inherit;
+    /* overflow-x: scroll;
+	overflow-y: hidden*/
+    white-space: nowrap;
+    overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .search-results {
