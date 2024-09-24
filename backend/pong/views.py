@@ -838,19 +838,56 @@ def tournament_update_game(request, tournament_id, game_id):
 	return JsonResponse(data, status=200)
 
 #! --------------------------------------- Game Stats ---------------------------------------
-#continuar aqui
+@csrf_exempt
 def game_stats_create(request, game_id):
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed'}, status=405)
+	data = {}
+	game = Games.objects.get(pk=game_id)
+
+	try:
+		data = json.loads(request.body.decode('utf-8'))
+	except json.JSONDecodeError:
+		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+	except KeyError as e:
+		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
 	
-	return JsonResponse({'message': 'Method not allowed'}, status=405)
+	try:
+		game_stats = GamesStats.objects.create(game=game)
+
+		game_stats.average_rally = data.get('average_rally', 0) 
+		game_stats.longer_rally = data.get('longer_rally', 0)
+		game_stats.shorter_rally = data.get('shorter_rally', 0)
+		game_stats.max_ball_speed = data.get('max_ball_speed', 0)
+		game_stats.min_ball_speed = data.get('min_ball_speed', 0)
+		game_stats.average_ball_speed = data.get('average_ball_speed', 0)
+		game_stats.greatest_deficit_overcome = data.get('greatest_deficit_overcome', 0)
+		if data.get('gdo_user'):
+			game_stats.gdo_user = Users.objects.get(pk=data.get('gdo_user'))
+		game_stats.most_consecutive_goals = data.get('most_consecutive_goals', 0)
+		if data.get('mcg_user'):
+			game_stats.mcg_user = Users.objects.get(pk=data.get('mcg_user'))
+		game_stats.biggest_lead = data.get('biggest_lead', 0)
+		if data.get('bg_user'):
+			game_stats.bg_user = Users.objects.get(pk=data.get('bg_user'))
+
+		game_stats.save()
+		#data_stats = GamesStatsSerializer(data=game_stats)
+		#if not data_stats.is_valid():
+		#	return JsonResponse(data_stats.errors, status=400, safe=False)
+		#data_stats.save()
+		return JsonResponse({'message': 'Game Stats updated.'}, status=201)
+	except Exception as e:
+		return JsonResponse({'message': f'Error creating stats: {str(e)}'}, status=500)
+
+
 
 def game_stats(request, game_id):
 	if request.method !='GET':
 		return JsonResponse({'message': 'Method not allowed'}, status=405)
 	if request.method == 'GET':
 		try:
-			stats = GamesStats.objects.get(id=game_id)
+			stats = GamesStats.objects.get(game=game_id)
 			serializer = GamesStatsSerializer(stats)
 			data = serializer.data
 			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
