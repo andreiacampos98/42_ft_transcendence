@@ -22,10 +22,6 @@ function getSuggestions() {
                     userBlock.id = 'search-user';
 
                     const link = document.createElement('a');
-                    // link.setAttribute('hx-get', `/users/${user.id}`);
-                    // link.setAttribute('hx-target', '#main'); 
-                    // link.setAttribute('hx-push-url', 'true');
-                    // link.setAttribute('hx-trigger', 'click');
                     link.style.display = 'block'; 
 
                     const username = document.createElement('h4');
@@ -40,7 +36,10 @@ function getSuggestions() {
                     };
 					const pic = document.createElement('img');
 					pic.classList.add('suggestion-pic');
-					pic.src = "/static/assets/icons/profile.png"; // Assign the image URL (e.g., profile picture URL)
+					if (user.picture.includes("http"))
+						pic.src = decodeURIComponent(user.picture.slice(7));
+					else
+						pic.src = user.picture;
 					pic.alt = `${user.username}'s profile picture`;
 
                     userBlock.appendChild(pic);

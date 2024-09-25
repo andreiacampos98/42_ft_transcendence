@@ -4,9 +4,8 @@
 
 }
 .square {
-    width: 100px;           /* Width of each square */
-    height: 150px;          /* Height of each square */
     margin: 5px;           /* Space between squares */
+	padding: 8px;
     flex-direction: column; /* Align content center */
     text-decoration: none;
     color: #f2f2f2;
@@ -54,4 +53,5 @@
     height: 130px;         /* Ensures the height is the same, making it a square */
 	object-fit: cover;
     display: block;       /* Removes extra spacing below the image */
+	margin-bottom: 8px;
 }
