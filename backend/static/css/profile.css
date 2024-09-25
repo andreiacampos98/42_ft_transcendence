@@ -86,6 +86,11 @@ textarea, #username-input, #email-input {
     background-color: #1A3141;
 }
 
+.edit:hover, #save-profile-button:hover  {
+	background-color: #2c536e;
+	transition: 0.2s
+}
+
 .small-icon {
 	width: 17px;
 	height: 17px;
@@ -100,12 +105,14 @@ textarea, #username-input, #email-input {
 
 #open-change-password-modal, #cancel-edit-button, .friend-status {
     background-color: #1D2731;
+}
 
+#open-change-password-modal:hover, #cancel-edit-button:hover {
+	background-color: #2c536e;
 }
 
 #change-password {
     background-color: #1A3141;
-
 }
 
 #cancel-change-password-button {

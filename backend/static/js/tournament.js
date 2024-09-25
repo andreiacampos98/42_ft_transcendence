@@ -57,6 +57,14 @@ window.onclick = function(event) {
   }
 }
 
+const createTournamentButton = document.getElementById('tournament-creater');
+createTournamentButton.onmouseenter = function () {
+	document.getElementById('plus-icon').src = "/static/assets/icons/plus-hover.png";
+}
+createTournamentButton.onmouseleave = function () {
+	document.getElementById('plus-icon').src = "/static/assets/icons/plus.png";
+}
+
 function onCreateButtonClick()
 {
     const userId = document.querySelector('button[onclick="onCreateButtonClick()"]').getAttribute('data-user-id');
