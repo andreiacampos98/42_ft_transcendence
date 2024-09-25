@@ -1,7 +1,5 @@
 .match-block {
-    display: flex;
-    align-items: center;
-    width: 100%;
+    width: 98%;
     margin: 10px;
     border-radius: 10px;
     background-color: #1A3141;
@@ -41,9 +39,6 @@
 }
 
 .details {
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
     border-radius: 10px;
     flex: 1;
     height: 64px;

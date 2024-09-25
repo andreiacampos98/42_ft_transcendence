@@ -23,7 +23,7 @@ function onEditButtonClick() {
 }
 
 function onCancelButtonClick() {
-    document.getElementById("edit-profile-button").style.display = "inline-block";
+    document.getElementById("edit-profile-button").style.display = "flex";
     document.getElementById("save-profile-button").style.display = "none";
     document.getElementById("cancel-edit-button").style.display = "none";
     document.getElementById("edit-profile-form").style.display = "none";
@@ -43,15 +43,39 @@ function onSaveButtonClick(event, userId) {
             "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (JSON.stringify(data.data) === '{}') {
-            alert(data.message);
-        } else {
-            window.location.href = `/users/${data.username}`; // Atualiza a página para refletir as alterações
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.text(); // Se espera um HTML na resposta
+    })
+    .then(html => {
+        // Atualiza a parte específica da página
+        document.getElementById('main').innerHTML = html;
     })
     .catch(error => console.error('Error:', error));
 }
 
+// Get the modal
+var modal2 = document.getElementById("modal2");
+// Get the button that opens the modal
+var btn2 = document.getElementById("remove-friend-button");
+// Get the  element that closes the modal
+var goback = document.getElementById("cancel");
+// When the user clicks the button, open the modal
+if (btn2) {
+    btn2.onclick = function() {
+		modal2.style.display = "block";
+	}
+}
 
+goback.onclick = function() {
+  modal2.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal2, close it
+window.onclick = function(event) {
+  if (event.target == modal2) {
+    modal2.style.display = "none";
+  }
+}

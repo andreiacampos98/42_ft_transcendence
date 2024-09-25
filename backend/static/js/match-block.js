@@ -1,8 +1,10 @@
 const matches = [
     { type: 'tournament', place: 3 , date: "08/02/1997", score: "1 - 7"},
     { type: 'tournament', place: 4 , date: "08/02/1997", score: "1 - 7"},
-    { type: 'pingpong', result: 'victory', opponentIcon: '/static/assets/icons/user.png' , date: "08/02/1997", score: "1 - 7"},
-    { type: 'pingpong', result: 'defeat', opponentIcon: '/static/assets/icons/user.png' , date: "08/02/1997", score: "1 - 7"}
+    { type: 'pingpong', result: 'victory', opponentIcon: '/static/assets/icons/profile.png' , date: "08/02/1997", score: "1 - 7"},
+    { type: 'pingpong', result: 'defeat', opponentIcon: '/static/assets/icons/profile.png' , date: "08/02/1997", score: "1 - 7"},
+    { type: 'pingpong', result: 'defeat', opponentIcon: '/static/assets/icons/profile.png' , date: "08/02/1997", score: "1 - 7"},
+    { type: 'pingpong', result: 'defeat', opponentIcon: '/static/assets/icons/profile.png' , date: "08/02/1997", score: "1 - 7"}
 ];
 
 const matchContainer = document.getElementById('match-container');
@@ -32,7 +34,7 @@ matches.forEach(match => {
 
         matchBlock.innerHTML = `
             <div class="icon">
-                <img src="/static/assets/icons/pingpong.png" alt="Pingpong Icon">
+                <img src="/static/assets/icons/pong.png" alt="Pingpong Icon">
             </div>
             <div class="details">
                 <span class="date">${match.date}</span>

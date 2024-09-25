@@ -13,6 +13,8 @@ from . import consumers
 urlpatterns =[
     path('', views.loginview, name="login"),
     path('home/', views.home, name="home"),
+    path('gamelocal/', views.gamelocal, name="gamelocal"),
+    path('gameonline/', views.gameonline, name="gameonline"),
     path('tournaments/', views.tournaments, name="tournaments"),
     path('tournaments/ongoing/<int:tournament_id>', views.ongoingtournaments, name="ongoingtournaments"),
     path('signup/', views.signup, name='signup'),
@@ -32,6 +34,7 @@ urlpatterns =[
     #path('reset_code/', views.resetcode, name='reset_code'),
     #path('set_new_password/', views.setnewpassword, name='set_new_password'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+    path('signout/', views.signout, name="signout"),
     path('users/<int:pk>', views.user_detail, name='user-detail'),
     path('users/create', views.user_create, name='user-create'),
     path('users/<int:pk>/update', views.user_update, name='user-update'),
@@ -45,8 +48,15 @@ urlpatterns =[
     path('notifications/<int:user_id>/<int:notif_id>', views.delete_user_notification, name='delete-notification'),
     path('notifications/update/<int:notif_id>', views.update_notification, name='update-notification'),
     
+    #! Stats
+    path('stats/<int:user_id>', views.user_stats, name='user-stats'),
+    path('leaderboard', views.leaderboard, name='leaderboard'),
+    path('currentplace/<int:user_id>', views.current_place, name='current-place'),
+
 	#! Games
     path('games/create', views.game_create, name='game-create'),
+    path('games/update/<int:game_id>', views.game_update, name='game-update'),
+    
     #path('games/<int:game_id>/stats', views.game_stats, name='game-stats'),
 
 	#! Tournaments
@@ -60,6 +70,7 @@ urlpatterns =[
     # path('tournaments/<int:tournament_id>/advance', views.tournament_advance_phase, name='tournament-advance-phase'),
     path('tournaments/<int:tournament_id>/games', views.tournament_list_games, name='tournament-list-games'),
     path('tournaments/games/user/<int:user_id>', views.tournament_list_user_games, name='tournament-list-user-games'),
+    path('tournaments/user/<int:user_id>', views.tournament_list_user, name='tournament-list-user'),
     path('tournaments/<int:tournament_id>/games/<int:game_id>', views.tournament_update_game, name='tournament-update-game'),
 
     path('users/<str:username>', views.profile, name='user-profile'),

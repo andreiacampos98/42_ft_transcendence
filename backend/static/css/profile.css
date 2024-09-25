@@ -1,31 +1,31 @@
-.main {
-    display: flex;
-}
 
 .side-profile {
-    display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 350px; /* Adjust width as needed */
+    width: 15vw; /* Adjust width as needed */
     padding: 20px;
     border-radius: 10px;
     color: #FFFFFF;
+	min-width: 360px;
 }
 
 .side-profile img.profile-big {
     width: 150px;
     height: 150px;
     border-radius: 50%;
+	object-fit: contain;
 }
 
 #change-info2 {
     width: inherit;
     font-size: small;
-    color:#c3c3c3bb;
+    color: #f2f2f2;
+    /*color:#c3c3c3bb;*/
+	min-width: inherit;
 }
+
 .side-profile .description {
     text-align: center;
-    margin: 10px 0;
+    margin-top: 10px;
 }
 
 #description-form{
@@ -48,55 +48,36 @@ textarea, #username-input, #email-input {
 .user-description {
     display: inline;
     vertical-align: middle;
-    margin: 10px;
+    margin-block: 10px;
+	overflow-y: scroll;
+	text-overflow: ellipsis;
+	max-height: 200px;
+	text-align: justify;
+    overflow-x: hidden;
+
 }
 
 .text-block{
-    display: flex;
-    text-align: justify;
     font-size: small;
     margin: 0;
-    margin-right: 30px;
-}
-.side-profile {
-    display: block;
-    margin: 5px 0;
-    padding-right: 5px;
-    padding-left: 5px;
 }
 
 .email-joined-edit {
-    display: flex;
-    align-items: center;
     padding-top: 5px;
     padding-bottom: 5px;
 }
 
-.email-joined {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .edit-change, .save-cancel {
-    display: flex;
-    align-items: center;
     width: 360px;
-    justify-content: space-around;
+	height: 52.3px;
 }
 
 /*#edit-profile-form{
     width: 100%;
 }*/
 
-.side-profile button, #cancel-change-password-button, #change-password {
-    margin-top: 10px;
+.side-profile button {
     padding: 10px 20px;
-    color: #fff;
-    font-size: small;
-    cursor: pointer;
-    border-radius: 5px;
-    border: 1px solid #1A3141;
     width: 170px;
 }
 
@@ -104,14 +85,21 @@ textarea, #username-input, #email-input {
     background-color: #1A3141;
 }
 
-#open-change-password-modal, #cancel-edit-button {
-    background-color: #1D2731;
-
+.small-icon {
+	width: 17px;
+	height: 17px;
+	padding-right: 5px;
 }
 
-.form-div {
-    display: flex;
-    justify-content: center;
+.friends {
+	width: 16px;
+	height: 15px;
+	padding-right: 5px;
+}
+
+#open-change-password-modal, #cancel-edit-button, .friend-status {
+    background-color: #1D2731;
+
 }
 
 #change-password {
@@ -121,36 +109,37 @@ textarea, #username-input, #email-input {
 
 #cancel-change-password-button {
     background-color: #1D2731;
+	border: none;
 }
 
 #change-password-form {
-    display: flex;
     flex-direction: column;
-    color: #c3c3c3bb;
+    color: #f2f2f2;
     width: 100%;
-    padding: 10px;
+	padding-top: 10px;
+	padding-bottom: 16px;
     
 }
 #change-password-form label {
-    align-self: baseline;
+    padding-top: 6px;
 }
 
 .pass-input {
     background-color: #101d27;
     width: 99%;
     border-radius: 5px;
-    border: 1px solid #c3c3c3bb;
+    border: none;
+	color: #c3c3c3bb;
+    flex-shrink: 0;
 }
 
 .stats-history {
-    display: flex;
     flex-direction: column;
     flex: 1;
     padding: 20px;
 }
 
 .stats {
-    display: flex;
     flex-direction: column;
     margin-bottom: 20px;
     color: #FFFFFF;
@@ -158,8 +147,6 @@ textarea, #username-input, #email-input {
 }
 
 .topic {
-    display: flex;
-    align-items: center;
     margin-bottom: 20px;
 }
 
@@ -170,33 +157,22 @@ textarea, #username-input, #email-input {
 }
 
 .stats2 {
-    display: flex;
     flex-direction: column;
     
 }
 
 .percentages {
-    display: flex;
-    justify-content: space-around;
     margin-bottom: 20px;
 }
 
 .stats-head {
-    display: flex;
-    justify-content: space-around;
     width: 100%;
 }
 
 .stat {
-    display: flex;
     flex-direction: column;
     text-align: center;
     padding: 10px;
-}
-
-.graphs {
-    display: flex;
-    justify-content: space-around;
 }
 
 .graph1, .graph2, .graph3, .graph4 {
@@ -204,9 +180,6 @@ textarea, #username-input, #email-input {
     height: 100px;
     margin-left: 10px;
     background-color: #101d27; /* Light gray background for graphs */
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border-radius: 10px;
 }
 
@@ -225,10 +198,9 @@ textarea, #username-input, #email-input {
 }
 
 .numbers-stat{
-    display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
+
 .numbers-stat h4 {
     margin: 0;
 }
@@ -238,52 +210,26 @@ textarea, #username-input, #email-input {
     max-height: 50%;
 }
 
-/* The Modal (background) */
-.m {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 10000; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  }
-  /* m Content */
-  .m-content {
-    position: relative;
-    background-color: #1D2731;
-    margin: auto;
-    margin-top: 37vh;
-    padding: 0;
-    border: 1px solid #336181;
-    border-radius: 5px;
-    width: 20%;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    animation-name: animatetop;
-    animation-duration: 0.4s
-  }
-  /* Add Animation */
-  @keyframes animatetop {
-    from {top: -300px; opacity: 0} 
-    to {top: 0; opacity: 1}
-  }
-  /* The Close Button */
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute;
-    top: 0;
-    left: 0;
-    /*height: 10px;*/
-  }
-  .close:hover,
-  .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-  }
+#games{
+    height: 260px;
+    overflow-y: scroll;
+}
+
+#tournaments{
+    overflow-y: scroll;
+    height: 260px;
+}
+
+#match-container {
+	width: inherit;
+}
+
+#togglePassword, #togglePassword2, #togglePassword3 {
+	position: relative;
+  	right: 30px;
+  	top: -4%;
+  	background: none;
+  	border: none;
+  	cursor: pointer;
+  	padding: 0;
+}

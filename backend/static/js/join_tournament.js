@@ -14,11 +14,21 @@ document.querySelectorAll('.open-register-tournament-modal').forEach(button => {
     });
 });
 
-// Código para fechar o modal
-document.querySelector('.close').addEventListener('click', function() {
-    var modal = document.getElementById('modal');
-    modal.style.display = 'none';
-});
+
+var goback = document.getElementById("cancel-register-tournament");
+
+
+var modal2 = document.getElementById("modal");
+
+goback.onclick = function() {
+  modal2.style.display = "none";
+}
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal2) {
+    modal2.style.display = "none";
+  }
+}
 
 // fazer fetch(tournaments/<int:tournament_id>/users/<int:user_id>/join)
 //com a resposta do fetch anterior vou enviar para socket atraves do send ou fetch(ws/tournaments/${tournament_id})
@@ -47,10 +57,12 @@ async function registerTournament() {
         console.log("aqui")
         console.log(data.data)
         if (response.ok) {
-            alert("Registered successfully!");
             localStorage.setItem('alias', formData.alias);
             localStorage.setItem('tournament_id', tournamentId);
-            window.location.href = `/tournaments/ongoing/${tournamentId}`;
+            history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
+            htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
+                target: '#main'  
+            });
         } else {
             alert("Registration failed: " + (data.message || 'Unknown error'));
         }

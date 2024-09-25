@@ -23,6 +23,9 @@
     border: 1px solid #336181;
 }
 
+.a-links {
+    text-decoration: none;
+}
 .sidebar.show {
     transform: translateX(0);
 }

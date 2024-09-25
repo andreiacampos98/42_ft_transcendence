@@ -26,8 +26,14 @@ function getNotifications() {
             const textContent = document.createElement('h4');
             textContent.classList.add('description-notif');
 
-            textContent.innerHTML = `<a class="name-notif" href="/users/${notification.other_user_id.username}">${notification.other_user_id.username}</a> ${notification.description}`;
-            
+            textContent.innerHTML = `<a class="name-notif">${notification.other_user_id.username}</a> ${notification.description}`;
+            textContent.onclick = function() {
+                history.pushState(null, '', `/users/${notification.other_user_id.username}`);
+                htmx.ajax('GET', `/users/${notification.other_user_id.username}`, {
+                    target: '#main'  
+                });
+            };
+
             const timestamp = document.createElement('span');
             timestamp.classList.add('timestamp');
             const date = new Date(notification.created_at);
@@ -60,16 +66,27 @@ function getNotifications() {
                 declineButton.onclick = () => handleNotificationAction(notification.id, 'decline', userId, notification.other_user_id.id);
 
                 const buttons = document.createElement('div');
+                buttons.classList.add('d-flex');
+                buttons.classList.add('align-items-center');
                 right_div.classList.add('accept-decline');
+
                 buttons.appendChild(acceptButton);
                 buttons.appendChild(declineButton);
+
                 right_div.appendChild(buttons);
+				
+				
             }
+
+			const closeSpan = document.createElement('span');
+			closeSpan.classList.add('close');
+			closeSpan.textContent = 'x';
+			listItem.appendChild(closeSpan);
 
             notificationList.appendChild(listItem);
         });
 
-        const modal = document.getElementById('notificationModal');
+        const modal = document.getElementById('modal-notif');
         modal.style.display = 'block';
     })
     .catch(error => {
@@ -144,13 +161,13 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
 
 
 function closeModal() {
-    const modal = document.getElementById('notificationModal');
+    const modal = document.getElementById('modal-notif');
     modal.style.display = 'none';
 }
 
 // Close the modal if the user clicks outside of it
 window.onclick = function(event) {
-    const modal = document.getElementById('notificationModal');
+    const modal = document.getElementById('modal-notif');
     if (event.target == modal) {
         modal.style.display = 'none';
     }

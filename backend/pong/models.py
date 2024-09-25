@@ -71,10 +71,12 @@ class Friends(models.Model):
 
 class UserStats(models.Model):
     id = models.AutoField(primary_key=True)
-    nb_games_played = models.IntegerField()
-    nb_games_won = models.IntegerField()
-    nb_goals_scored = models.IntegerField()
-    nb_goals_suffered = models.IntegerField()
+    nb_tournaments_played = models.IntegerField(default=0)
+    nb_tournaments_won = models.IntegerField(default=0)
+    nb_games_played = models.IntegerField(default=0)
+    nb_games_won = models.IntegerField(default=0)
+    nb_goals_scored = models.IntegerField(default=0)
+    nb_goals_suffered = models.IntegerField(default=0)
     user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -104,6 +106,7 @@ class Games(models.Model):
     winner_id = models.ForeignKey(Users, related_name="game_winner", null=True, on_delete=models.SET_NULL)
     user1_id = models.ForeignKey(Users, related_name="game_user1", null=True, on_delete=models.SET_NULL)
     user2_id = models.ForeignKey(Users, related_name="game_user2", null=True, on_delete=models.SET_NULL)
+    tournament = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Tournaments(models.Model):

@@ -4,9 +4,7 @@ body {
 .left-div {
     height: 100vh;
     background-color: #1A3141;
-    display: flex;
     flex-direction: column;
-    align-items: center;
     padding: 10px;
     position: fixed;
     top: 0;
@@ -26,23 +24,19 @@ body {
 }
 
 .left-div .selects {
-    display: flex;
     flex-direction: column;
     flex-grow: 1;
-    justify-content: center;
     padding-top: 20vh;
     width: 100%;
-    margin-left: 20px;
 }
 
 .select-item {
-    display: flex;
-    align-items: center;
     margin-top: 35px;
     border: none;
     background-color: #1A3141;
     cursor: pointer;
     width: 100%;
+    padding: 0;
 }
 
 .expandable-section {
@@ -51,7 +45,7 @@ body {
 
 .icon-title {
     display: none;
-    margin-left: 30px;
+    margin-left: 15px;
     color: #FFFFFF;
 }
 
@@ -65,22 +59,29 @@ body {
     color: #FFFFFF;
 }
 
-#highlight-icon1, #highlight-icon2, #highlight-icon3 {
+.highlight-icon1 {
     position: relative;
     left: -5px;
     width: 40px; /* Adjust icon size as needed */
     height: 40px;
 }
 
-#highlight-span1, #highlight-span2, #highlight-span3 {
+#highlight-span1 {
     position: relative;
-    left: -15px;
+    color: #F8D082;
+}
+#highlight-span2 {
+    position: relative;
+    color: #F8D082;
+}
+#highlight-span3 {
+    position: relative;
     color: #F8D082;
 }
 
 .left-div .icon {
-    width: 30px; /* Adjust icon size as needed */
-    height: 30px;
+    width: 48px; /* Adjust icon size as needed */
+    height: 48px;
     margin: 5px 0; /* Vertical margin between icons */
 }
 
@@ -88,6 +89,8 @@ body {
     width: 50px; /* Adjust icon size as needed */
     height: 50px;
     margin: 5px 0; /* Vertical margin between icons */
+	margin-right: 15px;
+
 }
 
 .left-div.expanded .icon-title {
@@ -104,6 +107,8 @@ body {
 .left-div .logout-icon {
     margin-top: auto; /* Push the logout icon to the bottom */
     margin-bottom: 2vh;
+	margin-left: 7px;
+	margin-right: 7px;
     
 }
 
@@ -119,36 +124,42 @@ body {
     border-top-left-radius: 10px;
     top: 0;
     left: 0;
-    width: 100vw;
     height: 100vh;
     margin-top: 70px;
-    display: flex;
     position: fixed;
-    justify-content: center;
-	align-items: center;
     text-align: center;
     transition: filter 0.3s ease;
 }
 
 .non_compressed {
 	margin-left: 70px;
+    width: calc(100vw - 70px);
 
 }
 
 .compressed {
     margin-left: 210px;
+    width: calc(100vw - 210px);
 }
 .main {
-    width: 90vw;
+    overflow: auto;
+	min-height: 100vh;
+	padding: 30px;
+	width: inherit;
+
 }
 
 .icon {
     height: 32px;
 }
 
+.logout-img {
+	height: 32px;
+}
+
 h3 {
     margin: 0;
-    color: #E65C19;
+    /*color: #E65C19;*/
     padding: 0; /* Ensure no padding */
 }
 
