@@ -70,6 +70,7 @@ textarea, #username-input, #email-input {
 .edit-change, .save-cancel {
     width: 360px;
 	height: 52.3px;
+	
 }
 
 /*#edit-profile-form{

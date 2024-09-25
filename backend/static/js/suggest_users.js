@@ -21,7 +21,7 @@ function getSuggestions() {
                     userBlock.id = 'search-user';
 
                     const link = document.createElement('a');
-                    // link.setAttribute('hx-get', `/users/${user.username}`);
+                    // link.setAttribute('hx-get', `/users/${user.id}`);
                     // link.setAttribute('hx-target', '#main'); 
                     // link.setAttribute('hx-push-url', 'true');
                     // link.setAttribute('hx-trigger', 'click');
