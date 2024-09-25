@@ -13,7 +13,7 @@ RUN apk add --update --no-cache python3-dev python3 py3-pip gcc musl-dev libpq-d
     && source /.venv/bin/activate \
     && python3 -m ensurepip \
     && pip3 install --no-cache -r requirements.txt \
-    && pip install channels["daphne"] \
+    && pip install "channels[daphne]" \
     && rm -rf /var/cache/apk/*
 
 

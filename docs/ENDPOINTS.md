@@ -14,6 +14,14 @@
 | ` `| `POST` | Login user | | loginview | ' ' - login
 | `users/auth` | `POST` | Login user with 42 | |
 
+
+## UserStats
+
+| Route | HTTP Method | Description | Parameters | View | URL - Name |
+| --- | :--: | --- | --- | --- | --- |
+| `stats/<int:user_id>` | `GET` | List all stats for a given user | `user_id` - the user's id | user_stats | 'stats/<int:user_id>' - user-stats |
+
+
 ## Games
 
 | Route | HTTP Method | Description | Parameters | Name |

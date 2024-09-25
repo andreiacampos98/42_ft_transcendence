@@ -13,8 +13,23 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
+from dotenv import load_dotenv
+
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+BASE_DIR_R = Path(__file__).resolve().parent.parent.parent
+env_path = os.path.join(BASE_DIR_R,'.env')
+load_dotenv(dotenv_path=env_path)
+
+TOKEN_URL_A=os.getenv("TOKEN_URL")
+CLIENT_ID_A=os.getenv("CLIENT_ID")
+CLIENT_SECRET_A=os.getenv("CLIENT_SECRET")
+REDIRECT_URI_A=os.getenv("REDIRECT_URI")
+USER_INFO_URL_A=os.getenv("USER_INFO_URL")
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,6 +41,9 @@ SECRET_KEY = 'django-insecure-b4amhal1@gob1$prnqgr*chry7pneej76qsy^p+5$m!w&#$qyy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+LOGOUT_REDIRECT_URL = "login"
+LOGIN_REDIRECT_URL = ''
 LOGIN_URL = 'login'
 
 ALLOWED_HOSTS = ['*']
@@ -97,9 +115,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 ASGI_APPLICATION = "backend.asgi.application"
 
-LOGOUT_REDIRECT_URL = "login"
-LOGIN_REDIRECT_URL = ''
-LOGIN_URL = 'login'
+
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
 
 DATABASES = {
     'default': {

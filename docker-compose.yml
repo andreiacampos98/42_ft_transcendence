@@ -14,6 +14,8 @@ services:
         depends_on:
             - postgres
             - redis
+        env_file:
+            - .env
 
     postgres:
         container_name: postgres-container
@@ -27,9 +29,8 @@ services:
             - "5432:5432"
         networks:
             - Transcendence
-        environment:
-            POSTGRES_USER: "anaraujo"            
-            POSTGRES_PASSWORD: "1234"
+        env_file:
+            - .env
 
     pgadmin4:
         container_name: pgadmin4-container
@@ -38,10 +39,8 @@ services:
             context: ./pgadmin
             dockerfile: Dockerfile
         restart: always
-        environment:
-            PGADMIN_DEFAULT_EMAIL: "admin@email.com"
-            PGADMIN_DEFAULT_PASSWORD: "1234"
-            PGADMIN_LISTEN_PORT: "8080"
+        env_file:
+            - .env
         networks:
             - Transcendence
         ports:

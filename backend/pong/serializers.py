@@ -81,5 +81,9 @@ class TournamentsGamesSerializer(serializers.ModelSerializer):
 		model = TournamentsGames
 		fields = '__all__'
 
+class GamesStatsSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = GamesStats
+		fields = '__all__'
 
 

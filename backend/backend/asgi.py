@@ -16,6 +16,8 @@ from pong.consumers import TournamentConsumer # <- Add this
 
 import pong.urls
 
+
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 
 application = ProtocolTypeRouter(

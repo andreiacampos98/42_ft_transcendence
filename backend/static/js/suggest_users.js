@@ -2,7 +2,7 @@ function getSuggestions() {
     var input = document.getElementById('search').value;
     var suggestionsBox = document.getElementById('suggestions');
 
-    if (input.length > 2) { // Trigger suggestions after 2 characters
+    if (input.length > 0) { // Trigger suggestions after 2 characters
         fetch(`/users/search_suggestions?term=${encodeURIComponent(input)}&_=${new Date().getTime()}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -32,8 +32,8 @@ function getSuggestions() {
                     username.textContent = user.username;
 
                     userBlock.onclick = function() {
-                        history.pushState(null, '', `/users/${user.username}`);
-                        htmx.ajax('GET', `/users/${user.username}`, {
+                        history.pushState(null, '', `/users/${user.id}`);
+                        htmx.ajax('GET', `/users/${user.id}`, {
                             target: '#main'  
                         });
                     };

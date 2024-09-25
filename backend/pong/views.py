@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
@@ -11,10 +12,12 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.middleware.csrf import get_token
 from datetime import datetime
+from urllib.parse import quote, unquote
+import os
 
-
-import json
+import json, requests, os
 from icecream import ic
 from .models import Users
 import pprint  
@@ -24,7 +27,7 @@ from datetime import datetime
 from rest_framework import status
 
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from .models import Users, Friends, Notifications, TournamentsUsers
 from .serializers import *
 
@@ -48,11 +51,11 @@ total_phase_matches = dict(zip(
 #! --------------------------------------- Users ---------------------------------------
 
 @login_required
-def profile(request, username):
-	user_id = request.user.id  # Obtém o ID do usuário atual
-	user_profile = get_object_or_404(Users, username=username)
+def profile(request, id):
+	user_id = request.user.id
+	user_profile = get_object_or_404(Users, id=id)
 	is_own_profile = user_profile == request.user
-	# Obtém a lista de amigos
+
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	friendship = Friends.objects.filter(
 		(Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
@@ -70,8 +73,9 @@ def profile(request, username):
 		is_friend = False
 		friendship_status = None
 
-	user = get_object_or_404(Users, username=username)
-	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) & Q(tournament=False)).order_by('-created_at')
+	user = get_object_or_404(Users, id=id)
+	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) 
+						).exclude(type="Tournament").order_by('-created_at')
 	tournament_response = tournament_list_user(request, user_profile.id)
 	user_tournaments = json.loads(tournament_response.content)
 	stats_response = user_stats(request, user_profile.id)
@@ -107,7 +111,7 @@ def user_detail(request, pk):
 def user_create(request):
 	if request.method == 'POST':
 		try:
-			data = json.loads(request.body)  # Parseia o JSON do corpo da requisição
+			data = json.loads(request.body) 
 			username = data.get('username')
 			password1 = data.get('password')
 			password2 = data.get('reconfirm')
@@ -145,6 +149,13 @@ def user_create(request):
 		
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
+@csrf_exempt
+def delete_profile(request, id):
+	if request.method =='DELETE':
+		Users.objects.filter(id=id).delete()
+		return JsonResponse({'message': 'User deleted'}, status=200)
+	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+
 
 @csrf_exempt
 def user_update(request, pk):
@@ -157,22 +168,37 @@ def user_update(request, pk):
 		if email:
 			try:
 				validate_email(email)
+				user.email=email
 			except ValidationError:
 				return JsonResponse({'message': 'Invalid email format.', 'data': {}}, status=400)
 
-		if 'picture' not in request.FILES:
-			data['picture'] = user.picture
-		
-		data.update(request.FILES)
+		if 'picture' in request.FILES:
+			user.picture = request.FILES['picture']
+		else:
+			if user.picture and "http" in user.picture.url:
+				ic(user.picture.url)
+				uri = user.picture.url
+				adjusted_url = uri[7:] if len(uri) > 7 else uri
+				decoded_url = unquote(adjusted_url)
+				ic(decoded_url)
+				user.picture = decoded_url
+			else:
+				ic(user.picture)
+				data['picture'] = user.picture
 	
+		username = data.get('username', None)
+		if Users.objects.filter(username=username).exists:
+			return JsonResponse({'message': 'Username already exist.', 'data': {}}, status=400)
 
-		serializer = UsersSerializer(user, data=data, partial=True)
+		description = data.get('description', None)
 
-		if serializer.is_valid():
-			serializer.save()
-			# return JsonResponse(serializer.data, safe=False)
-			return redirect('user-profile', user.username)
-		return JsonResponse(serializer.errors, status=400)
+		if username:
+			user.username = username
+		if description:
+			user.description = description
+		user.save()
+		ic("Aqui1")
+		return JsonResponse({'message': 'User updated.', }, status=201)
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
 
@@ -184,30 +210,22 @@ def user_password(request, pk):
 		new_password1 = request.POST.get('password1')
 		new_password2 = request.POST.get('password2')
 
-		# Verifica se a senha antiga está correta
 		if not user.check_password(old_password):
 			return JsonResponse({'message': 'Old password is incorrect.', 'data': {}}, status=400)
 
-		# Verifica se a nova senha é fornecida
 		if not new_password1:
 			return JsonResponse({'message': 'New password is required.', 'data': {}}, status=400)
 
-		# Verifica se a nova senha é a mesma que a antiga
 		if user.check_password(new_password1):
 			return JsonResponse({'message': 'New password cannot be the same as the old password.', 'data': {}}, status=400)
 		
-		# Verifica se as novas senhas são iguais
 		if new_password1 != new_password2:
 			return JsonResponse({'message': 'Passwords did not match.', 'data': {}}, status=400)
 
-		# Atualiza a senha do usuário
 		user.set_password(new_password1)
 		user.save()
 
-		# Atualiza a sessão do usuário para manter ele logado
 		update_session_auth_hash(request, user)
-
-		# return JsonResponse({'message': 'Password updated successfully', 'username': user.username, 'data': {}}, status=200)
 		return JsonResponse({'message': 'Password updated successfully', 'redirect_url': reverse('user-profile', args=[user.username])}, status=200)
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
@@ -216,7 +234,7 @@ def user_password(request, pk):
 def search_suggestions(request):
 	term = request.GET.get('term', '')
 	if term:
-		users = Users.objects.filter(username__icontains=term)[:5]  # Limit to top 5 suggestions
+		users = Users.objects.filter(username__icontains=term)[:5]
 		suggestions = [{'username': user.username} for user in users]
 		return JsonResponse(suggestions, safe=False)
 	return JsonResponse([], safe=False)
@@ -234,7 +252,6 @@ def search_users(request):
 
 #! --------------------------------------- Friends ---------------------------------------
 
-#friends displayed in he side bar right
 def get_user_friends(request, user_id):
 	if request.method == 'GET':
 		friends = Friends.objects.filter(
@@ -246,20 +263,16 @@ def get_user_friends(request, user_id):
 @csrf_exempt
 def add_remove_friend(request, user1_id, user2_id):
 	if request.method == 'POST':
-		# Check if user is trying to add themselves as a friend
 		if user1_id == user2_id:
 			return JsonResponse({'message': 'Users cannot be friends with themselves.', 'data': {}}, status=400)
-
-		# Check if the friendship already exists
+		
 		if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or \
 		Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
 			return JsonResponse({'message': 'Friendship already exists.', 'data': {}}, status=400)
 
-		# Get the user objects
 		user1 = get_object_or_404(Users, id=user1_id)
 		user2 = get_object_or_404(Users, id=user2_id)
 
-		# Create the friendship request
 		friend = Friends.objects.create(user1_id=user1, user2_id=user2, accepted=False)
 		notification = Notifications.objects.create(type='Friend Request', status='Pending', description=' has requested to be your friend.', user_id = user2, other_user_id = user1)
 		notification.save()
@@ -272,7 +285,6 @@ def add_remove_friend(request, user1_id, user2_id):
 		return JsonResponse(response_data, status=201)
 
 	elif request.method == 'DELETE':
-		# Check if the friendship exists
 		friendship = Friends.objects.filter(
 			(Q(user1_id=user1_id, user2_id=user2_id) | Q(user1_id=user2_id, user2_id=user1_id))
 		).first()
@@ -280,7 +292,6 @@ def add_remove_friend(request, user1_id, user2_id):
 		if not friendship:
 			return JsonResponse({'message': 'Friendship does not exist.', 'data': {}}, status=404)
 
-		# Delete the friendship
 		friendship.delete()
 
 		response_data = {
@@ -346,9 +357,7 @@ def update_notification(request, notif_id):
 		return JsonResponse(response_data, status=204)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
 
-#! --------------------------------------- Stats ---------------------------------------
-
-
+#! --------------------------------------- User Stats ---------------------------------------
 
 def user_stats(request, user_id):
 	if request.method == 'GET':
@@ -372,7 +381,7 @@ def leaderboard(request):
 
         enriched_top_users = []
         for top_user in top_users:
-            user = Users.objects.get(pk=top_user.user_id.id)  # Acessa o campo 'id' do objeto user_id
+            user = Users.objects.get(pk=top_user.user_id.id) 
 
             user_stats_serializer = UserStatsSerializer(top_user)
             user_serializer = UsersSerializer(user)
@@ -395,6 +404,77 @@ def current_place(request, user_id):
 			return position
 		position += 1
 	return None
+
+@csrf_exempt
+def user_stats_update(request, user_id):
+	if request.method != 'POST':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	if request.content_type != 'application/json':
+		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
+
+	data = {}
+
+	try:
+		data = json.loads(request.body.decode('utf-8'))
+	except json.JSONDecodeError:
+		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+	except KeyError as e:
+		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+
+	gametype = data.get('type')
+	if not gametype:
+		return JsonResponse({'message': 'Missing key: type', 'data': {}}, status=400)
+
+	stats = UserStats.objects.get(user_id=user_id)
+	if not stats:
+		return JsonResponse({'message': 'User stats not found', 'data': {}}, status=404)
+	
+	stats.nb_tournaments_played = int(stats.nb_tournaments_played or 0)
+	stats.nb_games_played = int(stats.nb_games_played or 0)
+	stats.nb_goals_scored = int(stats.nb_goals_scored or 0)
+	stats.nb_goals_suffered = int(stats.nb_goals_suffered or 0)
+
+	try:
+		duration = int(data.get('duration', 0))
+		goals_scored = int(data.get('goals_scored', 0))
+		goals_suffered = int(data.get('goals_suffered', 0))
+		won = data.get('won') == "True"
+	except ValueError:
+		return JsonResponse({'message': 'Invalid value for one of the fields', 'data': {}}, status=400)
+
+
+	if gametype == "Tournament":
+		stats.nb_tournaments_played += 1
+		stats.tournament_time_played += duration
+	elif gametype == "Remote":
+		stats.remote_time_played += duration
+	elif gametype == "Local":
+		stats.local_time_played += duration
+	elif gametype == "AI":
+		stats.ai_time_played += duration
+
+	if gametype in ("Remote", "Local", "AI"):
+		stats.nb_goals_scored += goals_scored
+		stats.nb_goals_suffered += goals_suffered
+		stats.nb_games_played += 1
+		if (won == "True"):
+			stats.nb_games_won += 1
+	else:
+		stats.nb_tournaments_played += 1
+		if (won == "True"):
+			stats.nb_tournaments_won += 1
+	stats.save()
+	data_stats = UserStatsSerializer(stats)
+	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
+
+def user_stats_all(request):
+	if request.method != 'GET':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	elif request.method == 'GET':
+		stats = UserStats.objects.all()
+		data_stats = UserStatsSerializer(stats, many=True)
+		return JsonResponse({'message': 'All users stats', 'data': data_stats.data}, status=200)
+	return JsonResponse({'message': 'All users stats', 'data':{} }, safe=False, status=400)
 
 #! --------------------------------------- Games ---------------------------------------
 
@@ -480,6 +560,11 @@ def tournament_create(request):
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
 	
+	name = data.get('name', '')
+
+	if len(name) > 64:
+		return JsonResponse({'message': 'The name of the tournament is too long.', 'data': {}}, status=400)
+
 	tour_serializer = TournamentsSerializer(data=data)
 	if not tour_serializer.is_valid():
 		return JsonResponse(tour_serializer.errors, status=400)
@@ -527,19 +612,7 @@ def tournament_update(request, tournament_id):
 		serializer.save()
 		return JsonResponse(serializer.data)
 	return JsonResponse(serializer.errors, status=400)
-		
-
-# @csrf_exempt
-# def tournament_cancel(request, tournament_id):
-# 	if request.method != 'DELETE':	
-# 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
-
-# 	tournament = get_object_or_404(Tournaments, pk=tournament_id)
-# 	tournament.delete()
-# 	response_data = {
-# 		'message': f"'{tournament.name}' was deleted."
-# 	}
-# 	return JsonResponse(response_data, status=204)
+	
 
 #! --------------------------------------- Tournaments Users ---------------------------------------
 
@@ -577,7 +650,7 @@ def tournament_join(request, tournament_id, user_id):
 				'start_date':datetime.now().isoformat(),
 				'user1_id': user1.user_id.id,
 				'user2_id': user2.user_id.id,
-				'tournament': True
+				'type': "Tournament",
 			}
 			games_data.append(game)
 		
@@ -720,17 +793,6 @@ def tournament_update_game(request, tournament_id, game_id):
 	tour_game.game_id.nb_goals_user1 = data['nb_goals_user1']
 	tour_game.game_id.nb_goals_user2 = data['nb_goals_user2']
 
-
-	# try:
-	# 	player1 = TournamentsUsers.objects.get(user_id=tour_game.game_id.user1_id.id, tournament_id=tournament_id)
-	# except TournamentsUsers.DoesNotExist:
-	# 	return JsonResponse({'message': f'Player 1 not found in tournament {tournament_id}', 'data': {}}, status=404)
-
-	# try:
-	# 	player2 = TournamentsUsers.objects.get(user_id=tour_game.game_id.user2_id.id, tournament_id=tournament_id)
-	# except TournamentsUsers.DoesNotExist:
-	# 	return JsonResponse({'message': f'Player 2 not found in tournament {tournament_id}', 'data': {}}, status=404)
-
 	player1 = TournamentsUsers.objects.get(
 		user_id=tour_game.game_id.user1_id.id,
 		tournament_id=tournament_id
@@ -765,12 +827,185 @@ def tournament_update_game(request, tournament_id, game_id):
 	if finished_matches == total_phase_matches[curr_phase] and curr_phase != 'Final':
 		return advance_tournament_phase(curr_phase, tournament_id)
 	elif finished_matches == total_phase_matches[curr_phase] and curr_phase == 'Final':
+		tournament = Tournaments.objects.filter(id=tournament_id).first()
+		tournament.duration = datetime.timestamp(datetime.now())- tournament.created_at.timestamp()
+		tournament.save()
 		return calculate_placements(tournament_id)
 	
 	data = TournamentsGamesSerializer(tour_game).data
 	data['game'] = GamesSerializer(tour_game.game_id).data
 
 	return JsonResponse(data, status=200)
+
+#! --------------------------------------- Game Stats ---------------------------------------
+@csrf_exempt
+def game_stats_create(request, game_id):
+	if request.method != 'POST':
+		return JsonResponse({'message': 'Method not allowed'}, status=405)
+	data = {}
+	game = Games.objects.get(pk=game_id)
+
+	try:
+		data = json.loads(request.body.decode('utf-8'))
+	except json.JSONDecodeError:
+		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+	except KeyError as e:
+		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+	
+	try:
+		game_stats = GamesStats.objects.create(game=game)
+
+		game_stats.average_rally = data.get('average_rally', 0) 
+		game_stats.longer_rally = data.get('longer_rally', 0)
+		game_stats.shorter_rally = data.get('shorter_rally', 0)
+		game_stats.max_ball_speed = data.get('max_ball_speed', 0)
+		game_stats.min_ball_speed = data.get('min_ball_speed', 0)
+		game_stats.average_ball_speed = data.get('average_ball_speed', 0)
+		game_stats.greatest_deficit_overcome = data.get('greatest_deficit_overcome', 0)
+		if data.get('gdo_user'):
+			game_stats.gdo_user = Users.objects.get(pk=data.get('gdo_user'))
+		game_stats.most_consecutive_goals = data.get('most_consecutive_goals', 0)
+		if data.get('mcg_user'):
+			game_stats.mcg_user = Users.objects.get(pk=data.get('mcg_user'))
+		game_stats.biggest_lead = data.get('biggest_lead', 0)
+		if data.get('bg_user'):
+			game_stats.bg_user = Users.objects.get(pk=data.get('bg_user'))
+
+		game_stats.save()
+		#data_stats = GamesStatsSerializer(data=game_stats)
+		#if not data_stats.is_valid():
+		#	return JsonResponse(data_stats.errors, status=400, safe=False)
+		#data_stats.save()
+		return JsonResponse({'message': 'Game Stats updated.'}, status=201)
+	except Exception as e:
+		return JsonResponse({'message': f'Error creating stats: {str(e)}'}, status=500)
+
+
+
+def game_stats(request, game_id):
+	if request.method !='GET':
+		return JsonResponse({'message': 'Method not allowed'}, status=405)
+	if request.method == 'GET':
+		try:
+			stats = GamesStats.objects.get(game=game_id)
+			serializer = GamesStatsSerializer(stats)
+			data = serializer.data
+			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
+		except GamesStats.DoesNotExist:
+			return JsonResponse({'message': 'GamesStats not found.'}, status=404)
+
+
+def game_stats_all(request):
+	if request.method != 'GET':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	elif request.method == 'GET':
+		stats = GamesStats.objects.all()
+		data_stats = GamesStatsSerializer(stats, many=True)
+		return JsonResponse({'message': 'All games stats', 'data': data_stats.data}, status=200)
+	return JsonResponse({'message': 'All games stats', 'data':{} }, safe=False, status=400)
+
+
+#! --------------------------------------- Login42 ---------------------------------------
+
+	
+@csrf_exempt
+def get_access_token(code):
+    response = requests.post(settings.TOKEN_URL_A, data={
+        'grant_type': 'authorization_code',
+        'client_id': settings.CLIENT_ID_A,
+        'client_secret': settings.CLIENT_SECRET_A,
+        'redirect_uri': settings.REDIRECT_URI_A,
+        'code': code,
+    })
+    if response.status_code == 200:
+        token_data = response.json()
+        access_token = token_data.get('access_token')
+        ic(access_token)
+        return access_token
+    else:
+        return None
+
+def get_user_info(token):
+
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+    user_info_response = requests.get(settings.USER_INFO_URL_A, headers=headers)
+
+    if user_info_response.status_code == 200:
+        return user_info_response.json()
+    else:
+        return None
+	
+def signin42(request):
+	try:
+		client_id = settings.CLIENT_ID_A
+		
+		authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={settings.REDIRECT_URI_A}'
+		ic(authorization_url)
+		return HttpResponseRedirect(authorization_url)
+	
+	except Exception as e:
+		return HttpResponseRedirect(settings.REDIRECT_URI_A or '/') 
+
+def login42(request):
+	authorization_code = request.GET.get('code')
+	
+	if authorization_code is None:
+		return JsonResponse({'error': 'Authorization code missing', 'data': {}}, status=400)
+
+	access_token = get_access_token(authorization_code)
+	if access_token is None:
+		return JsonResponse({'error': 'Failed to fetch access token', 'data': {}}, status=400)
+
+
+	user_info = get_user_info(access_token)
+	if not user_info:
+		return JsonResponse({'error': 'Failed to fetch user info', 'data': {}}, status=400)
+
+
+	request.session['access_token'] = access_token
+	request.session['user_info'] = user_info
+
+	username = user_info.get('login')
+	id42 = user_info.get('id')
+	
+
+	searchuser = Users.objects.filter(user_42=id42)
+	
+
+	if searchuser.exists():
+		user = searchuser.first()
+		user = authenticate(username=user.username, password="password")
+		if user is not None:
+			user.status = "Online"
+			user.save()
+			login(request, user)
+			return redirect('home')
+	else:
+		i = 0
+		original_username = username 
+		while Users.objects.filter(username=username).exists():
+			i += 1
+			username = f"{original_username}{i}"
+
+		myuser = Users.objects.create_user(username=username, password="password")
+		myuser.user_42 = id42
+		myuser.email = user_info.get('email')
+		myuser.picture = user_info.get('image', {}).get('versions', {}).get('medium')
+		myuser.save()
+
+		UserStats.objects.create(user_id=myuser)
+
+		user = authenticate(username=username, password="password")
+		if user is not None:
+			myuser.status = "Online"
+			myuser.save()
+			login(request, user)
+			return redirect('home')
+
+	return JsonResponse({'error': 'User login failed', 'data': {}}, status=400)
+
 
 
 #! --------------------------------------- Pages ---------------------------------------
@@ -780,7 +1015,6 @@ def signup(request):
 
 @csrf_exempt
 def loginview(request):
-	ic(request.method)
 	if request.method == 'POST':
 		try:
 			data = json.loads(request.body) 
@@ -789,6 +1023,11 @@ def loginview(request):
 
 		except json.JSONDecodeError:
 			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
+
+		user42 = Users.objects.filter(username=username).first()
+		ic(user42.user_42)
+		if user42.user_42 is not None:
+			return JsonResponse({'message': 'User 42 detected. Please sign in with 42.', 'data': {}}, status=400)
 
 		user = authenticate(username=username, password=password)
 
@@ -803,6 +1042,7 @@ def loginview(request):
 
 	return render(request, 'pages/login.html')
 
+
 def resetpassword(request):
 	return render(request, 'pages/password_reset.html')
 
@@ -811,7 +1051,6 @@ def resetcode(request):
 
 def setnewpassword(request):
 	return render(request, 'pages/set_new_password.html')
-
 
 @login_required
 def home(request):
@@ -847,6 +1086,7 @@ def tournaments(request):
 	user_id = request.user.id  # Obtém o ID do usuário atual
 
 	# Obtém a lista de amigos
+	act_user = Users.objects.filter(id=user_id)
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	tournaments = Tournaments.objects.exclude(status='Finished')
 
@@ -863,6 +1103,7 @@ def tournaments(request):
 	current=current_place(request, user_id)
 	ic(current_place)
 	context = {
+		'act_user':act_user,
 		'friends': friends,
 		'user_id': user_id,
 		'tournaments': zip(tournaments, num_tour_players),
@@ -913,7 +1154,7 @@ def advance_tournament_phase(previous_phase, tournament_id):
 			'start_date':datetime.now().isoformat(),
 			'user1_id': winner1.id,
 			'user2_id': winner2.id,
-			'tournament': True
+			'type': "Tournament"
 		}
 		temp.append(game_data)
 

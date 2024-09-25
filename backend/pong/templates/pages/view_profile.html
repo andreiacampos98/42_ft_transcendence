@@ -80,7 +80,11 @@
 		</div>
         <div class="side-profile d-flex align-items-center">
             <div id="change-info1">
-                <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="User">
+                {% if "http" in user_view.picture.url %}
+                    <img class="profile-pic" src="{{ user_view.picture }}" alt="Profile">
+                {% else %}
+                    <img class="profile-pic" src="{{ user_view.picture.url }}" alt="Profile">
+                {% endif %}
                 <h3 class="description"> {{ user_view.username }} </h3>
             </div>
             <span class="friend-block1 d-flex justify-content-center" data-status="{{ user_view.status }}"> {{ user_view.status }} </span>
@@ -90,13 +94,18 @@
                         <img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
                         Edit Profile
                     </button>
+
+                    {% if user_view.user_42 is None %}
+                        <button class="change" id="open-change-password-modal">
+                            <span class="change-b d-flex align-items-center" id="change">
+                                <img class="small-icon" src="{% static 'assets/icons/password.png' %}">
+                                Change Password
+                            </span>
+                        </button>
+                    {% endif %}
+                </div>
+                <div class="save-cancel d-flex align-items-center justify-content-around">
                     <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
-                    <button class="change" id="open-change-password-modal">
-                        <span class="change-b d-flex align-items-center" id="change">
-                            <img class="small-icon" src="{% static 'assets/icons/password.png' %}">
-                            Change Password
-                        </span>
-                    </button>
                     <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
                 </div>
             {% elif is_friend %}
@@ -295,19 +304,27 @@
                                     </div>
                                     <div class="opponent">
                                         {% if user_view == game.user2_id %}
-                                            <a  hx-get="{% url 'user-profile' game.user1_id.username %}"
+                                            <a  hx-get="{% url 'user-profile' game.user1_id.id %}"
                                                 hx-trigger="click"
                                                 hx-target="#main"
                                                 hx-push-url="true">
-                                                <img src="{{ game.user1_id.picture.url }}" alt="Opponent Icon">
+                                                {% if "http" in game.user1_id.picture.url %}
+                                                    <img class="profile-pic" src="{{ game.user1_id.picture }}" alt="Profile">
+                                                {% else %}
+                                                    <img class="profile-pic" src="{{ game.user1_id.picture.url }}" alt="Profile">
+                                                {% endif %}
                                                 <span class="score">{{ game.user1_id.username }}</span>
                                             </a>
                                         {% else %}
-                                            <a  hx-get="{% url 'user-profile' game.user2_id.username %}"
+                                            <a  hx-get="{% url 'user-profile' game.user2_id.id %}"
                                             hx-trigger="click"
                                             hx-target="#main"
                                             hx-push-url="true">
-                                                <img src="{{ game.user2_id.picture.url }}" alt="Opponent Icon">
+                                            {% if "http" in game.user2_id.picture.url %}
+                                                <img class="profile-pic" src="{{ game.user2_id.picture }}" alt="Profile">
+                                            {% else %}
+                                                <img class="profile-pic" src="{{ game.user2_id.picture.url }}" alt="Profile">
+                                            {% endif %}
                                                 <span class="score">{{ game.user2_id.username }}</span>
                                             </a>
                                         {% endif %}
