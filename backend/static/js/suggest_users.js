@@ -14,6 +14,7 @@ function getSuggestions() {
             suggestionsBox.style.display = 'block'; // Ensure suggestions are visible
             if (data.length > 0) {
                 data.forEach(user => {
+					console.log(user);
                     const userBlock = document.createElement('div');
                     userBlock.classList.add('user-block');
                     userBlock.classList.add('d-flex');

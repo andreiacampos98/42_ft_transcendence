@@ -235,7 +235,7 @@ def search_suggestions(request):
 	term = request.GET.get('term', '')
 	if term:
 		users = Users.objects.filter(username__icontains=term)[:5]
-		suggestions = [{'username': user.username} for user in users]
+		suggestions = [{'id': user.id, 'username': user.username} for user in users]
 		return JsonResponse(suggestions, safe=False)
 	return JsonResponse([], safe=False)
 
