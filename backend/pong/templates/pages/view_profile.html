@@ -53,16 +53,16 @@
         </div>
 		<div id="modal2" class="m">
 			<div class="m-content d-flex align-items-center flex-column">
-				<h3>Remove friend</h3>
+				<h3  style="padding-top: 10px;">Remove friend</h3>
 				<p>You're about to remove {{ user_view.id }} from your friends list. Are you sure?</p>
-				<div class="bottom-buttons d-flex justify-content-between">
+				<div style="width: 100%;" class="bottom-buttons d-flex justify-content-between">
 					<form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
 						{% csrf_token %}
-						<button style="margin-bottom: 10px;" class="change modal-button" id="leaver" onclick="leaveTournament()" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
-							<span class="change-b" id="change">Confirm</span>
+						<button class="change modal-button" id="leaver" onclick="leaveTournament()" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
+							<span class="change-b" id="change">Yes, I am.</span>
 						</button>
 					</form>
-					<button style="margin-bottom: 10px; border: none;" class="cancel modal-button" id="cancel">Go back</button>
+					<button style=" border: none;" class="cancel modal-button" id="cancel">Go back</button>
 				</div>
 			</div>
 		</div>
@@ -112,9 +112,11 @@
 							Request Sent
 						</button>
                     {% elif notification.status == 'Pending' %}
-                        <button class="friend-status" id="decline-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'decline', '{{ user_id }}', '{{ user_view.id }}', event)">Decline</button>
-                        <button class="friend-status" id="accept-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'accept', '{{ user_id }}', '{{ user_view.id }}', event)">Accept</button>                    
-                    {% else %}
+						<div class="edit-change d-flex align-items-center justify-content-between">
+                        	<button class="friend-status" id="decline-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'decline', '{{ user_id }}', '{{ user_view.id }}', event)">Decline</button>
+                        	<button class="friend-status" id="accept-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'accept', '{{ user_id }}', '{{ user_view.id }}', event)">Accept</button>                    
+						</div>		
+					{% else %}
                         <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
                             {% csrf_token %}
                             <button id="add-friend-button" type="submit">Add Friend</button>

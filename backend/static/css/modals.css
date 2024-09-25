@@ -44,6 +44,7 @@
 
 .side-profile button, #cancel-create-tournament, #create-tournament, #registration, #cancel-register-tournament, #leaver, #cancel, #confirm-btn, #cancel-change-password-button, #change-password {
     margin-top: 10px;
+	margin-bottom: 0;
     padding: 10px;
     color: #fff;
     font-size: small;
@@ -51,6 +52,7 @@
     border-radius: 5px;
     border: 1px solid #1A3141;
     width: 160px;
+	height: 40px;
 }
 
 .new-tournament-modal {
@@ -106,6 +108,8 @@
 
 .m-content p {
 	font-weight: inherit;
+	padding-top: 5px;
+    padding-bottom: 0;
 }
 
 .m-content label {

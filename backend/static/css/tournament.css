@@ -184,16 +184,19 @@
 .status-ongoing {
     color: #6CFFED;
 	font-weight: bold;
+	text-transform: uppercase;
 }
 
 .status-open {
     color: #B6FF6C;
 	font-weight: bold;
+	text-transform: uppercase;
 }
 
 .status-closed {
     color: #FF4F28;
 	font-weight: bold;
+	text-transform: uppercase;
 }
 
 .open-register-tournament-modal {
