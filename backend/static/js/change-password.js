@@ -44,10 +44,9 @@ function getChangePassword() {
 			document.getElementById("confirm-btn").addEventListener("click", () => {
 				window.location.href = data.redirect_url;
 			});
-		
-	}
-})
-.catch(error => console.error('Error:', error));
+		}
+	})
+	.catch(error => console.error('Error:', error));
 }
 
 function toggleOldVisibility() {

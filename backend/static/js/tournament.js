@@ -59,7 +59,7 @@ window.onclick = function(event) {
 
 function onCreateButtonClick()
 {
-    const userId = document.querySelector('button[onclick="getCreateTournament()"]').getAttribute('data-user-id');
+    const userId = document.querySelector('button[onclick="onCreateButtonClick()"]').getAttribute('data-user-id');
     const checkbox = document.getElementById('use-username-checkbox');
     var alias;
     if(checkbox.checked)

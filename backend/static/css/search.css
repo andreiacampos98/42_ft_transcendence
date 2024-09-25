@@ -52,6 +52,6 @@
 .circular-image {
     width: 100px;          /* Sets the width to 60px */
     height: 130px;         /* Ensures the height is the same, making it a square */
-	object-fit: contain;
+	object-fit: cover;
     display: block;       /* Removes extra spacing below the image */
 }

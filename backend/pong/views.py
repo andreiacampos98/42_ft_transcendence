@@ -186,14 +186,14 @@ def user_update(request, pk):
 				ic(user.picture)
 				data['picture'] = user.picture
 	
-		username = data.get('username', None)
-		if Users.objects.filter(username=username).exists:
+		new_username = data.get('username', None)
+		if Users.objects.filter(username=new_username).exists and user.username != new_username:
 			return JsonResponse({'message': 'Username already exist.', 'data': {}}, status=400)
 
 		description = data.get('description', None)
 
-		if username:
-			user.username = username
+		if new_username:
+			user.username = new_username
 		if description:
 			user.description = description
 		user.save()
@@ -226,7 +226,7 @@ def user_password(request, pk):
 		user.save()
 
 		update_session_auth_hash(request, user)
-		return JsonResponse({'message': 'Password updated successfully', 'redirect_url': reverse('user-profile', args=[user.username])}, status=200)
+		return JsonResponse({'message': 'Password updated successfully', 'redirect_url': reverse('user-profile', args=[user.id])}, status=200)
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
 

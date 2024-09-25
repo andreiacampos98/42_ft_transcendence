@@ -54,7 +54,7 @@
 		<div id="modal2" class="m">
 			<div class="m-content d-flex align-items-center flex-column">
 				<h3  style="padding-top: 10px;">Remove friend</h3>
-				<p>You're about to remove {{ user_view.id }} from your friends list. Are you sure?</p>
+				<p>You're about to remove <strong>{{ user_view.username }}</strong> from your friends list. Are you sure?</p>
 				<div style="width: 100%;" class="bottom-buttons d-flex justify-content-between">
 					<form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
 						{% csrf_token %}
@@ -81,9 +81,9 @@
         <div class="side-profile d-flex align-items-center">
             <div id="change-info1">
                 {% if "http" in user_view.picture.url %}
-                    <img class="profile-pic" src="{{ user_view.picture }}" alt="Profile">
+                    <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture }}" alt="Profile">
                 {% else %}
-                    <img class="profile-pic" src="{{ user_view.picture.url }}" alt="Profile">
+                    <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="Profile">
                 {% endif %}
                 <h3 class="description"> {{ user_view.username }} </h3>
             </div>
