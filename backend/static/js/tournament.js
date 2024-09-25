@@ -1,21 +1,3 @@
-/*function setStatus(elementId, status) {
-    const friendBlock = document.getElementById(elementId);
-    const statusSpan = friendBlock.querySelector('.status');
-    
-    // Set the data-status attribute
-    friendBlock.setAttribute('data-status', status);
-
-    // Update the status text
-    statusSpan.textContent = status.charAt(0).toUpperCase() + status.slice(1);
-}
-
-// Example usage
-setStatus('friend1', 'online');  // Can be 'online', 'offline', or 'playing'
-setStatus('friend2', 'offline');  // Can be 'online', 'offline', or 'playing'
-setStatus('friend3', 'playing');  // Can be 'online', 'offline', or 'playing'
-
-*/
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const observer = new MutationObserver((mutations) => {
@@ -57,16 +39,11 @@ var modal = document.getElementById("modal2");
 // Get the button that opens the modal
 var btn = document.getElementById("tournament-creater");
 // Get the  element that closes the modal
-var span = document.getElementsByClassName("close")[0];
 
 var goback = document.getElementById("cancel-create-tournament");
 // When the user clicks the button, open the modal 
 btn.onclick = function() {
   modal.style.display = "block";
-}
-// When the user clicks on  (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
 }
 
 goback.onclick = function() {
@@ -80,7 +57,7 @@ window.onclick = function(event) {
   }
 }
 
-function getCreateTournament()
+function onCreateButtonClick()
 {
     const userId = document.querySelector('button[onclick="getCreateTournament()"]').getAttribute('data-user-id');
     const checkbox = document.getElementById('use-username-checkbox');

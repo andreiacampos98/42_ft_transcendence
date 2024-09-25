@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
     <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
     <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
+	<link rel="stylesheet" href="{% static 'css/modals.css' %}">
+	<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script defer src="{% static 'js/navs.js' %}"></script>
     <script defer src="{% static 'js/suggest_users.js' %}"></script>
@@ -21,6 +23,13 @@
         {% endblock %}
     </main>
     {% if user.is_authenticated %}
+		{% block friend-bar %}
+            <button class="toggle-button" id="toggle-button" onclick="toggleSidebar('{{user_id}}')">
+                <img src="{% static 'assets/icons/puxador.png' %}">
+            </button>
+            <div class="sidebar" id="sidebar"></div>
+        {% endblock %}
+
         {% block top-bar %}
         <div class="top-bar d-flex justify-content-between align-items-center">
             <form  
@@ -34,7 +43,7 @@
                     <button type="submit" id="searchButton">
                         <img id="search-icon" src="{% static 'assets/icons/binoculars.png' %}">
                     </button>
-                    <div id="suggestions" ></div>    
+                    <div style="display: none;" id="suggestions" ></div>    
                 </div>
             </form>
             <div class="top-right d-flex align-items-center">
@@ -43,9 +52,8 @@
                 </button>
                 
                 <!-- Popup Modal -->
-                <div id="notificationModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal()">&times;</span>
+                <div id="modal-notif" class="m">
+					<div class="m-content2 d-flex align-items-center flex-column" id="inner-modal">
                         <ul id="notificationList"></ul>
                     </div>
                 </div>
@@ -139,12 +147,7 @@
             </div>
         {% endblock %}
 
-        {% block friend-bar %}
-            <button class="toggle-button" id="toggle-button" onclick="toggleSidebar('{{user_id}}')">
-                <img src="{% static 'assets/icons/puxador.png' %}">
-            </button>
-            <div class="sidebar" id="sidebar"></div>
-        {% endblock %}
+        
     {% endif %}
         
 

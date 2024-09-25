@@ -18,26 +18,51 @@
     margin-right: 10px;
 }
 
-.friend-block h4 {
+.friend-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.friend-info h4 {
     margin: 0;
     font-size: 1.2em;
     color: #FFFFFF;
 }
 
-
-.friend-block .status {
+.friend-block1 {
     font-size: 0.8em;
     color: #666;
+    display: inline-flex;
+    align-items: center;
 }
 
-.friend-block .status::before {
+/* Orb Styling */
+.friend-block1::before {
     content: '';
     display: inline-block;
-    width: 10px; /* Adjust size as needed */
-    height: 10px; /* Adjust size as needed */
+    width: 7px; /* Adjust size as needed */
+    height: 7px; /* Adjust size as needed */
     border-radius: 50%;
     margin-right: 5px;
-    background-color: currentColor;
+    background-color: white;
+}
+
+/* Empty orb for offline */
+.friend-block1[data-status="offline"]::before {
+    border: 1px solid #929292; /* Empty orb */
+    background-color: transparent;
+}
+
+/* Circle with a center for online */
+.friend-block1[data-status="playing"]::before {
+    background: radial-gradient(circle, #F8D082 40%, transparent 41%);
+    border: 1px solid #F8D082;
+}
+
+/* Full orb for playing */
+.friend-block1[data-status="online"]::before {
+    background-color: #05FF00; /* Full orb */
+    border: 1px solid #05FF00;
 }
 
 /* Status colors */
@@ -50,5 +75,40 @@
 }
 
 .friend-block1[data-status="playing"] {
-    color: #E65C19;
+    color: #F8D082;
+}
+
+/* Empty orb for offline */
+.friend-block1[data-status="Offline"]::before {
+    border: 1px solid #929292; /* Empty orb */
+    background-color: transparent;
+}
+
+/* Circle with a center for online */
+.friend-block1[data-status="Playing"]::before {
+    background: radial-gradient(circle, #F8D082 40%, transparent 41%);
+    border: 1px solid #F8D082;
+}
+
+/* Full orb for playing */
+.friend-block1[data-status="Online"]::before {
+    background-color: #05FF00; /* Full orb */
+    border: 1px solid #05FF00;
+}
+
+/* Status colors */
+.friend-block1[data-status="Online"] {
+    color: #05FF00;
+}
+
+.friend-block1[data-status="Offline"] {
+    color: #929292;
+}
+
+.friend-block1[data-status="Playing"] {
+    color: #F8D082;
+}
+
+#sidebar a:hover {
+	cursor: pointer;
 }
