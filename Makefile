@@ -15,6 +15,7 @@ migrations:
 
 clean:
 	sudo rm -rf data/
+	mkdir data/
 
 prune:
 	docker system prune
