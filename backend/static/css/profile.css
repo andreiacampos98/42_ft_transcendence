@@ -53,6 +53,8 @@ textarea, #username-input, #email-input {
 	text-overflow: ellipsis;
 	max-height: 200px;
 	text-align: justify;
+    overflow-x: hidden;
+
 }
 
 .text-block{
