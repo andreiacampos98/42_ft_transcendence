@@ -407,63 +407,44 @@ def current_place(request, user_id):
 	return None
 
 @csrf_exempt
-def user_stats_update(request, user_id):
-	if request.method != 'POST':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
-	if request.content_type != 'application/json':
-		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
-
-	data = {}
-
-	try:
-		data = json.loads(request.body.decode('utf-8'))
-	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
-	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
-
-	gametype = data.get('type')
-	if not gametype:
-		return JsonResponse({'message': 'Missing key: type', 'data': {}}, status=400)
+def user_stats_update(user_id, game_id, data):
 
 	stats = UserStats.objects.get(user_id=user_id)
 	if not stats:
 		return JsonResponse({'message': 'User stats not found', 'data': {}}, status=404)
 	
-	stats.nb_tournaments_played = int(stats.nb_tournaments_played or 0)
-	stats.nb_games_played = int(stats.nb_games_played or 0)
-	stats.nb_goals_scored = int(stats.nb_goals_scored or 0)
-	stats.nb_goals_suffered = int(stats.nb_goals_suffered or 0)
-
-	try:
-		duration = int(data.get('duration', 0))
-		goals_scored = int(data.get('goals_scored', 0))
-		goals_suffered = int(data.get('goals_suffered', 0))
-		won = data.get('won') == "True"
-	except ValueError:
-		return JsonResponse({'message': 'Invalid value for one of the fields', 'data': {}}, status=400)
-
-
-	if gametype == "Tournament":
-		stats.nb_tournaments_played += 1
-		stats.tournament_time_played += duration
-	elif gametype == "Remote":
-		stats.remote_time_played += duration
-	elif gametype == "Local":
-		stats.local_time_played += duration
-	elif gametype == "AI":
-		stats.ai_time_played += duration
-
-	if gametype in ("Remote", "Local", "AI"):
-		stats.nb_goals_scored += goals_scored
-		stats.nb_goals_suffered += goals_suffered
-		stats.nb_games_played += 1
-		if (won == "True"):
+	game = Games.objects.get(pk=game_id)
+	if game.user1_id.id == user_id:
+		stats.nb_goals_scored = data['nb_goals_user1']
+		stats.nb_goals_suffered = data['nb_goals_user2']
+		if data['user1_stats']['scored_first']:
+			stats.num_first_goals += 1
+		if data['nb_goals_user1'] > data['nb_goals_user2']:
 			stats.nb_games_won += 1
 	else:
-		stats.nb_tournaments_played += 1
-		if (won == "True"):
-			stats.nb_tournaments_won += 1
+		stats.nb_goals_scored = data['nb_goals_user2']
+		stats.nb_goals_suffered = data['nb_goals_user1']
+		if data['user2_stats']['scored_first']:
+			stats.num_first_goals += 1
+		if data['nb_goals_user2'] > data['nb_goals_user1']:
+			stats.nb_games_won += 1
+	
+	stats.nb_games_played += 1
+	if game.type == "Remote":
+		stats.remote_time_played += data['duration']
+	elif game.type == "Local":
+		stats.local_time_played += data['duration']
+	elif game.type == "AI":
+		stats.ai_time_played += data['duration']
+
+	if data['game_stats']['max_ball_speed'] > stats.max_ball_speed:
+		stats.max_ball_speed = data['game_stats']['max_ball_speed']
+	if data['game_stats']['longer_rally'] > stats.max_rally_length:
+		stats.max_rally_length = data['game_stats']['longer_rally']
+	if data['duration'] < stats.quickest_game :
+		stats.quickest_game = data['duration']
+	if data['duration'] > stats.longest_game:
+		stats.longest_game = data['duration']
 	stats.save()
 	data_stats = UserStatsSerializer(stats)
 	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
@@ -541,8 +522,10 @@ def game_update(request, game_id):
 	player1.save()
 	player2.status = "Online"
 	player2.save()
-
 	
+	user_stats_update(player1.id, game_id, data)
+	user_stats_update(player2.id, game_id, data)
+
 	data = GamesSerializer(game).data
 	return JsonResponse(data, status=200)
 
@@ -1186,6 +1169,7 @@ def advance_tournament_phase(previous_phase, tournament_id):
 	return JsonResponse(new_phase_games_data, status=200, safe=False)
 
 def calculate_placements(tournament_id):
+	tournament = Tournaments.objects.get(pk=tournament_id)
 	tour_users = TournamentsUsers.objects \
 		.filter(tournament_id=tournament_id) \
 		.order_by('-score')
@@ -1197,6 +1181,14 @@ def calculate_placements(tournament_id):
 		user1 = user.user_id 
 		user1.status = "Online"
 		user1.save()
+		user_stats = UserStats.objects.get(user_id=user1)
+		if i == 0:
+			user_stats.nb_tournaments_won += 1
+		user_stats.nb_tournaments_played += 1
+		user_stats.tournament_time_played += tournament.duration
+		user_stats.save()
+		ic(user_stats)
+
 	
 	tournament = Tournaments.objects.get(pk=tournament_id)
 	tournament.winner_id = tour_users.first().user_id
