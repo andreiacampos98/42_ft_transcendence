@@ -69,8 +69,6 @@ class Friends(models.Model):
     class Meta:
         unique_together = ["user1_id", "user2_id"]
 
-
-
 class Notifications(models.Model):
     id = models.AutoField(primary_key=True)
     type = models.CharField()
@@ -157,7 +155,7 @@ class UserStats(models.Model):
     nb_goals_scored = models.IntegerField(default=0)
     nb_goals_suffered = models.IntegerField(default=0)
     max_ball_speed = models.IntegerField(default=0)
-    max_rally_lenght = models.IntegerField(default=0)
+    max_rally_length = models.IntegerField(default=0)
     quickest_game = models.IntegerField(default=0)
     longest_game = models.IntegerField(default=0)
     num_first_goals = models.IntegerField(default=0)
@@ -173,8 +171,8 @@ class Goals(models.Model):
     timestamp = models.IntegerField(default=0)
     user = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name='user_goals')
     game =  models.ForeignKey(Games, on_delete=models.CASCADE)
-    rally_lenght = models.IntegerField(default=0)
-    ball_speed = models.IntegerField(default=0)
+    rally_length = models.IntegerField(default=0)
+    ball_speed = models.FloatField(default=0)
 
 class GamesStats(models.Model):
     id = models.AutoField(primary_key=True)
