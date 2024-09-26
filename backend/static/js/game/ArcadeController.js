@@ -12,7 +12,7 @@ export class ArcadeController extends THREE.Group {
 		this.arena = new Arena({});
 		this.ball = new Ball({});
 		this.player = new Player(1, 'Player', [-25, 0, 0], {'up': 'w', 'down': 's'});
-		this.enemy = new Player(1, 'Enemy Player', [25, 0, 0], {'up': 'ArrowUp', 'down': 'ArrowDown'});
+		this.enemy = new Player(2, 'Enemy Player', [25, 0, 0], {'up': 'ArrowUp', 'down': 'ArrowDown'});
 		
 		this.goals = [];
 
@@ -53,11 +53,11 @@ export class ArcadeController extends THREE.Group {
 		const goal = {
 			'timestamp': new Date().toISOString(),
 			'user': player.id,
-			'rally_length': ball.rally_length,
+			'rally_length': ball.rally,
 			'ball_speed': ball.speed,
 			'game': this.gameId
 		};
 		this.goals.push(goal);
-		console.log(this.goals);
+		console.log(goal);
 	}
 }

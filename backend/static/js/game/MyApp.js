@@ -1,6 +1,7 @@
 
 import * as THREE from 'three';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import  Stats  from 'three/addons/libs/stats.module.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Axis } from './Axis.js';
 import { ArcadeController } from './ArcadeController.js';
@@ -50,7 +51,11 @@ export class MyApp  {
 
 		this.gui = new GUI({ autoPlace: false });
 		this.gui.domElement.id = 'gui';
-		document.getElementById('main-content').appendChild(this.gui.domElement)
+		document.getElementById('main-content').appendChild(this.gui.domElement);
+
+		this.stats = new Stats();
+        this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+        document.body.appendChild(this.stats.dom);
 		
 		const lightFolder = this.gui.addFolder('Light')
         lightFolder.add(this.light, 'intensity', 0, 100).name("Intensity")
@@ -135,14 +140,16 @@ export class MyApp  {
     * the main render function. Called in a requestAnimationFrame loop
     */
     render () {
+		this.stats.begin();
         this.updateCameraIfRequired()
-
+		
         this.controls.update();
 		this.arcade.update();
         this.renderer.render(this.scene, this.activeCamera);
-
+		
         requestAnimationFrame( this.render.bind(this) );
-
+		
         this.lastCameraName = this.activeCameraName
+		this.stats.end();
     }
 }

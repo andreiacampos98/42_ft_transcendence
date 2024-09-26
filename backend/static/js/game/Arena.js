@@ -1,11 +1,12 @@
 import * as THREE from 'three';
+import { ARENA_SEMI_HEIGHT, ARENA_SEMI_LENGTH, ARENA_SEMI_DEPTH } from './macros.js';
 
 export class Arena extends THREE.Group {
 	constructor({ height, length, depth }) {
 		super();
-		this.semiHeight = height || 20;
-		this.semiLength = length || 30;
-		this.semiDepth = depth || 0.25;
+		this.semiHeight = height || ARENA_SEMI_HEIGHT;
+		this.semiLength = length || ARENA_SEMI_LENGTH;
+		this.semiDepth = depth || ARENA_SEMI_DEPTH;
 
 		this.upperBoundary = null;
 		this.lowerBoundary = null;
