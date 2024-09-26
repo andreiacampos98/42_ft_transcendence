@@ -64,7 +64,7 @@ urlpatterns =[
     path('stats/<int:user_id>', views.user_stats, name='user-stats'),
     path('leaderboard', views.leaderboard, name='leaderboard'),
     path('currentplace/<int:user_id>', views.current_place, name='current-place'),
-    path('stats/<int:user_id>/update', views.user_stats_update, name='user-stats-update'),
+    # path('stats/<int:user_id>/update', views.user_stats_update, name='user-stats-update'),
     path('stats/users', views.user_stats_all, name='user-stats-all'),
 
 	#! Games
@@ -72,7 +72,6 @@ urlpatterns =[
     path('games/update/<int:game_id>', views.game_update, name='game-update'),
     
     #! Games Stats
-    path('games/<int:game_id>/stats/add', views.game_stats_create, name='game-stats-create'),
     path('games/<int:game_id>/stats', views.game_stats, name='game-stats'),
     path('games/stats', views.game_stats_all, name='game-stats-all'),
     
