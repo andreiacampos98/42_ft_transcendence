@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { GameDisplay } from './GameDisplay.js';
 import { Ball } from './Ball.js';
 import { Player } from './Player.js';
 import { Arena } from './Arena.js';
