@@ -187,7 +187,7 @@ def user_update(request, pk):
 				data['picture'] = user.picture
 	
 		new_username = data.get('username', None)
-		if Users.objects.filter(username=new_username).exists and user.username != new_username:
+		if Users.objects.filter(username=new_username).exists() and user.username != new_username:
 			return JsonResponse({'message': 'Username already exist.', 'data': {}}, status=400)
 
 		description = data.get('description', None)
