@@ -87,6 +87,10 @@
     font-weight: bold;
 }
 
+#leaver:hover {
+	background-color: #ffeeaa;
+}
+
 #cancel-create-tournament, #cancel-register-tournament, #cancel {
     background-color: #1D2731;
 }
