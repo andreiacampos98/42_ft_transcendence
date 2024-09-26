@@ -77,8 +77,9 @@
 }
 
 .bell-icon {
-    margin-right: 30px;
+    margin-right: 32px;
     cursor: pointer;
+	width: 28px;
 }
 
 .profile-pic {

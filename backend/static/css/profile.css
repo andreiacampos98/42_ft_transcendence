@@ -3,7 +3,7 @@
     flex-direction: column;
     width: 15vw; /* Adjust width as needed */
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 8px;
     color: #FFFFFF;
 	min-width: 360px;
 }
@@ -106,12 +106,16 @@ textarea, #username-input, #email-input {
     background-color: #1D2731;
 }
 
-#change-password:hover {
-	background-color: #2c536e;
+#decline-friend-button {
+	background-color: transparent;
 }
 
-#change-password {
-    background-color: #1A3141;
+#change-password, #accept-friend-button {
+	background-color: #1A3141;
+}
+
+#change-password:hover, #accept-friend-button:hover {
+	background-color: #2c536e;
 }
 
 #cancel-change-password-button {
@@ -119,7 +123,8 @@ textarea, #username-input, #email-input {
 	border: none;
 }
 
-#open-change-password-modal:hover, #cancel-edit-button:hover, #cancel-change-password-button:hover {
+#open-change-password-modal:hover, #cancel-edit-button:hover, #cancel-change-password-button:hover,
+	#decline-friend-button:hover {
 	background-color: #FFFFFF55;
 }
 
@@ -191,7 +196,7 @@ textarea, #username-input, #email-input {
     height: 100px;
     margin-left: 10px;
     background-color: #101d27; /* Light gray background for graphs */
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 .stats-title {

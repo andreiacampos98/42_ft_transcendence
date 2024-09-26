@@ -21,9 +21,8 @@
 
 .stat {
     flex-direction: column;
-    background-color: #ffffff05;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    border-radius: 10px;
+    background-color: #ffffff0C;
+    border-radius: 8px;
     height: 127px;
     width: 127px;
     padding-top: 20px;
@@ -46,9 +45,8 @@
 
 
 .results {
-    background-color: #ffffff05;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    border-radius: 10px;
+    background-color: #ffffff0C;
+    border-radius: 8px;
     height: 127px;
 	width: 100%;
 	min-width: 460px;
@@ -75,6 +73,9 @@
     color: #DBB635 !important;
 	overflow: hidden;
 }
+.first2:hover {
+	cursor: pointer;
+}
 
 .second {
     border: 2px solid #D9D9D9;
@@ -82,6 +83,9 @@
 .second2 {
     color: #D9D9D9 !important;
 	overflow: hidden;
+}
+.second2:hover {
+	cursor: pointer;
 }
 
 .third {
@@ -91,6 +95,9 @@
     color: #AC5024 !important;
 	overflow: hidden;
 }
+.third2:hover {
+	cursor: pointer;
+}
 
 .friend-info h4 {
     margin: 0;
@@ -99,7 +106,7 @@
 }
 
 .numbers {
-    color: #ffffff05;
+    color: #ffffff0C;
 }
 
 #nbr2 {
@@ -164,9 +171,8 @@
 }
 
 .table-content {
-    background-color: #ffffff05;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background-color: #ffffff0C;
+    border-radius: 8px;
     padding: 15px;
     margin-bottom: 10px;
     height: 60px;
@@ -213,7 +219,7 @@
 
 .open-register-tournament-modal {
     border: none;
-    background-color: #ffffff05  !important;
+    background-color: transparent !important;
     color: #F2F2F2  !important;
 	font-weight: bold;
 	padding: 0% !important;

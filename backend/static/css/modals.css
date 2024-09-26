@@ -70,12 +70,16 @@
 
 #create-tournament, #confirm-btn {
     background-color: #1A3141;
-
 }
 
 #confirm-btn {
 	width: 200px;
 }
+
+#create-tournament:hover, #confirm-btn:hover, #registration:hover {
+    background-color: #2c536e;
+}
+
 
 #leaver {
 	background-color: #F8D082;
@@ -85,6 +89,10 @@
 
 #cancel-create-tournament, #cancel-register-tournament, #cancel {
     background-color: #1D2731;
+}
+
+#cancel-create-tournament:hover, #cancel-register-tournament:hover, #cancel:hover {
+    background-color: #FFFFFF55;
 }
 
 .cancel {

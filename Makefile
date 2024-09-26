@@ -14,7 +14,14 @@ migrations:
 		python3 manage.py migrate'
 
 clean:
-	sudo rm -rf data/
+	sudo rm -rf \
+		data/  \
+		backend/backend/__pycache__/  \
+		backend/pong/__pycache__/ \
+		backend/pong/migrations/__pycache__/ \
+		backend/pong/templatetags/__pycache__/ \
+		backend/pong/migrations/*_initial.py
+
 	mkdir data/
 
 prune:

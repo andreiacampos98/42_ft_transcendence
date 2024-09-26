@@ -1,7 +1,7 @@
 .match-block {
     width: 98%;
     margin: 10px;
-    border-radius: 10px;
+    border-radius: 8px;
     background-color: #1A3141;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .details {
-    border-radius: 10px;
+    border-radius: 8px;
     flex: 1;
     height: 64px;
     z-index: 100;

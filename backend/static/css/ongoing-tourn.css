@@ -42,7 +42,7 @@
 .player {
     background-color: #1A3141;
     color: #8E8E8E;
-    border-radius: 10px;
+    border-radius: 8px;
     margin: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -54,7 +54,7 @@
     background-color: #13232e;
 	width: 225px;
     height: 50px;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 .icon {

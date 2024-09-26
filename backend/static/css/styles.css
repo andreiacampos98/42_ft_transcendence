@@ -19,7 +19,7 @@ body {
 
 .login-container {
 	background-color: #808080;
-	border-radius: 10px;
+	border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 1000px;
     height: 600px;
