@@ -1,5 +1,5 @@
 export const HELLO = "Hello";
-export const BALL_START_SPEED = {'x': -0.5, 'y': 0.5};
+export const BALL_START_SPEED = {'x': -0.3, 'y': 0.3};
 export const BALL_SPEED_FACTOR = 0.02;
 export const BALL_RADIUS = 1.25;
 
