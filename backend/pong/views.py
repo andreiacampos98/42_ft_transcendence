@@ -14,6 +14,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.middleware.csrf import get_token
 from datetime import datetime
+
 from urllib.parse import quote, unquote
 import os
 
@@ -21,7 +22,6 @@ import json, requests, os
 from icecream import ic
 from .models import Users
 import pprint  
-from datetime import datetime
 # Since we want to create an API endpoint for reading, creating, and updating 
 # Company objects, we can use Django Rest Framework mixins for such actions.
 from rest_framework import status
@@ -80,6 +80,13 @@ def profile(request, id):
 	user_tournaments = json.loads(tournament_response.content)
 	stats_response = user_stats(request, user_profile.id)
 	stats = json.loads(stats_response.content)
+	if stats['nb_goals_suffered'] != 0:
+		goals_sored_suffered_ratio = stats['nb_goals_scored'] / stats['nb_goals_suffered']
+	else:
+		goals_sored_suffered_ratio = 0
+	ic(stats['nb_goals_suffered'])
+	ic(stats['nb_goals_scored'])
+	ic(goals_sored_suffered_ratio)
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -93,6 +100,7 @@ def profile(request, id):
 		'games': games,
 		'tours': user_tournaments,
 		'stats': stats,
+		'goals_sored_suffered_ratio': goals_sored_suffered_ratio,
 		'page': 'profile' if is_own_profile else 'else'
 	}
 	ic(context)
@@ -504,11 +512,43 @@ def game_stats_all(request):
 	return JsonResponse({'message': 'All games stats', 'data':{} }, safe=False, status=400)
 
 #! --------------------------------------- Goals ---------------------------------------
-# continuar nos golos
 def game_goals_create(game_id, data):
-	
+	game =Games.objects.get(pk=game_id)
+	for goal_data in data['goals']:
+		timestamp_str = goal_data['timestamp'].replace('Z', '+00:00')
+		timestamp = datetime.fromisoformat(timestamp_str)
+
+		goals_create = Goals.objects.create(
+			game=game,
+			timestamp=timestamp,  
+			user=Users.objects.get(pk=goal_data['user']),
+			rally_length=goal_data['rally_length'],
+			ball_speed=goal_data['ball_speed']
+		)
+
 	return JsonResponse({'message': 'Goals added.'}, status=201)
 
+
+def game_goals(request, game_id):
+	if request.method !='GET':
+		return JsonResponse({'message': 'Method not allowed'}, status=405)
+	if request.method == 'GET':
+		try:
+			stats = Goals.objects.filter(game=game_id)
+			serializer = GoalsSerializer(stats, many=True)
+			data = serializer.data
+			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
+		except Goals.DoesNotExist:
+			return JsonResponse({'message': 'Goals not found.'}, status=404)
+
+def game_goals_all(request):
+	if request.method != 'GET':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	elif request.method == 'GET':
+		stats = Goals.objects.all()
+		data_stats = GoalsSerializer(stats, many=True)
+		return JsonResponse({'message': 'All goals', 'data': data_stats.data}, status=200)
+	return JsonResponse({'message': 'No goals', 'data':{} }, safe=False, status=400)
 
 #! --------------------------------------- Games ---------------------------------------
 
@@ -578,6 +618,7 @@ def game_update(request, game_id):
 	user_stats_update(player1.id, game_id, data)
 	user_stats_update(player2.id, game_id, data)
 	game_stats_create(game_id, data)
+	game_goals_create(game_id, data)
 
 	data = GamesSerializer(game).data
 	return JsonResponse(data, status=200)
@@ -1092,6 +1133,27 @@ def ongoingtournaments(request, tournament_id):
 		'tournament_id': tournament_id
 	}
 	return render(request,'pages/ongoing-tourn.html', context)
+
+@login_required
+def tournamentstats(request, tournament_id):
+	context = {
+		'tournament_id': tournament_id
+	}
+	return render(request,'pages/tournament_stats.html', context)
+
+@login_required
+def gamestats(request, game_id):
+	stats = game_stats(request, game_id)
+	data_stats = json.loads(stats.content)
+	goals = game_goals(request, game_id)
+	data_goals = json.loads(goals.content)
+	ic(data_goals)
+	context = {
+		'game_id': game_id,
+		'stats': data_stats,
+		'goals': data_goals
+	}
+	return render(request,'pages/game_stats.html', context)
 
 @login_required
 @csrf_exempt

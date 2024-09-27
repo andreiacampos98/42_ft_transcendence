@@ -82,8 +82,16 @@ class TournamentsGamesSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 class GamesStatsSerializer(serializers.ModelSerializer):
+	gdo_user = UsersSerializer(read_only=True)
+	mcg_user = UsersSerializer(read_only=True)
+	bg_user = UsersSerializer(read_only=True)
+	
 	class Meta:
 		model = GamesStats
 		fields = '__all__'
 
+class GoalsSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Goals
+		fields = '__all__'
 

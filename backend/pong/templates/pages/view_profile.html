@@ -202,160 +202,157 @@
                     <h5 class="text-block d-flex">{{ joined_date }}</h5>
                 </div>
             </div>
-            
         </div>
-        <div class="stats-history d-flex">
-            <div class="stats d-flex">
-                <div class="topic d-flex align-items-center">
-                    <img class="icon" src="{% static 'assets/icons/chart.png' %}" alt="chart">
-                    <span class="icon-title3">Your Stats</span>
-                </div>
-                <div class="stats2 d-flex">
-                    <div class="percentages d-flex justify-content-around">
-                        <div class="stats-head d-flex justify-content-around">
-                            <div class="stat d-flex">
-                                <h4 class="stats-title">Wins</h4>
-                                <h6 class="winr"> {{ stats.nb_games_won }} </h6>
-                            </div>
-                            <div class="stat d-flex">
-                                <h4 class="stats-title">Losses</h4>
-                                <h6 class="winr"> {{ stats.losses }}</h6>
-                            </div>
-                            <div class="stat d-flex">
-                                <h4 class="stats-title">Win Rate</h4>
-                                <h6 class="winr"> {{ stats.win_rate }} %</h6>
-                            </div>
-                            <div class="stat d-flex">
-                                <h4 class="stats-title">Goals Scored</h4>
-                                <h6 class="winr"> {{ stats.nb_goals_scored }} </h6>
-                            </div>
-                            <div class="stat d-flex">
-                                <h4 class="stats-title">Goals Suffered</h4>
-                                <h6 class="winr"> {{ stats.nb_goals_suffered }} </h6>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="graphs d-flex justify-content-around">
-                        <div class="graph1 d-flex align-items-center justify-content-center">
-                            <div class="numbers-stat d-flex justify-content-between">
-                                <h6 class="graph-title">Win Rate</h6>
-                                <h6 class="graph-value">21312</h6>
-                            </div>
-                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
-                        </div>
-                        <div class="graph2 d-flex align-items-center justify-content-center">
-                            <div class="numbers-stat d-flex justify-content-between">
-                                <h6 class="graph-title">Raly Length</h6>
-                                <h6 class="graph-value">21312</h6>
-                            </div>
-                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
-                        </div>
-                        <div class="graph3 d-flex align-items-center justify-content-center">
-                            <div class="numbers-stat d-flex justify-content-between">
-                                <h6 class="graph-title">Games/day</h6>
-                                <h6 class="graph-value">21312</h6>
-                            </div>
-                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
-                        </div>
-                        <div class="graph4 d-flex align-items-center justify-content-center">
-                            <div class="numbers-stat d-flex justify-content-between">
-                                <h6 class="graph-title">21312</h6>
-                                <h6 class="graph-value">21312</h6>
-                            </div>
-                            <img class="graph-img" src="{% static 'assets/icons/graph.png' %}" alt="graph">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="stats">
-                <div class="topic">
-                    <img class="icon" src="{% static 'assets/icons/history.png' %}" alt="chart">
-                    <span class="icon-title3">Recent Matches</span>
-                </div>
-                <div class="stats2 d-flex">
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                          <a class="nav-link active" id="tab-games" aria-current="page" onclick="onGamesClick()">Games</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="tab-tournaments" onclick="onTournamentsClick()">Tournaments</a>
-                        </li>
-                    </ul>
 
-                    <div id="games" style="display:block;">
-                        {% for game in games %}
-                            <div id="match-container">
-                                <div class="match-block d-flex align-items-center pingpong victory">
-                                    <div class="icon">
-                                        <img src="{% static 'assets/icons/pong.png' %}" alt="Pingpong Icon">
-                                    </div>
-                                    <div class="details d-flex align-items-center justify-content-evenly" >
-                                        <span class="date">{{ game.created_at }}</span>
-                                        {% if user_view == game.winner_id %}
-                                            <span class="result" >Victory</span>
-                                        {% else %}
-                                            <span class="result">Defect</span>
-                                        {% endif %}
-                                        {% if user_view == game.user1_id %}
-                                            <span class="score">{{ game.nb_goals_user1 }} - {{ game.nb_goals_user2 }}</span>
-                                        {% else %}
-                                            <span class="score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="opponent">
-                                        {% if user_view == game.user2_id %}
-                                            <a  hx-get="{% url 'user-profile' game.user1_id.id %}"
-                                                hx-trigger="click"
-                                                hx-target="#main"
-                                                hx-push-url="true">
-                                                {% if "http" in game.user1_id.picture.url %}
-                                                    <img class="profile-pic" src="{{ game.user1_id.picture }}" alt="Profile">
-                                                {% else %}
-                                                    <img class="profile-pic" src="{{ game.user1_id.picture.url }}" alt="Profile">
-                                                {% endif %}
-                                                <span class="score">{{ game.user1_id.username }}</span>
-                                            </a>
-                                        {% else %}
-                                            <a  hx-get="{% url 'user-profile' game.user2_id.id %}"
-                                            hx-trigger="click"
-                                            hx-target="#main"
-                                            hx-push-url="true">
-                                            {% if "http" in game.user2_id.picture.url %}
-                                                <img class="profile-pic" src="{{ game.user2_id.picture }}" alt="Profile">
-                                            {% else %}
-                                                <img class="profile-pic" src="{{ game.user2_id.picture.url }}" alt="Profile">
-                                            {% endif %}
-                                                <span class="score">{{ game.user2_id.username }}</span>
-                                            </a>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
+        <div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" id="tab-profile" aria-current="page" onclick="onProfileClick()">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab-games" aria-current="page" onclick="onGamesClick()">Games</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab-tournaments" onclick="onTournamentsClick()">Tournaments</a>
+                </li>
+            </ul>
+        </div>
+        <div id="profile" style="display:block;">
+            <div class="stats2 d-flex">
+                <div class="percentages justify-content-around">
+                    <div class="stats-head d-flex justify-content-around">
+                        <div class="stat d-flex">
+                            <h4 class="stats-title">Wins</h4>
+                            <h6 class="winr"> {{ stats.nb_games_won }} </h6>
+                        </div>
+                        <div class="stat d-flex">
+                            <h4 class="stats-title">Games Played</h4>
+                            <h6 class="winr"> {{ stats.nb_games_played }} </h6>
+                        </div>
+                        <div class="stat d-flex">
+                            <h4 class="stats-title">First Round Goals</h4>
+                            <h6 class="winr"> {{ stats.num_first_goals }} </h6>
+                        </div>
+                        <div class="stat d-flex">
+                            <h4 class="stats-title">Goals Scored / Goals Suffered Ratio</h4>
+                            <h6 class="winr"> {{ goals_sored_suffered_ratio }} </h6>
+                        </div>
                     </div>
-                    <div id="tournaments" style="display:none;">
-                        {% for tour in tours %}
-                            {% if tour.tournament.status == 'Finished' %}
-                                <div class="match-block d-flex align-items-center" class="tournament">
-                                    <div class="icon">
-                                        <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
-                                    </div>
-                                    <div class="details d-flex align-items-center justify-content-evenly">
-                                        <span class="date">{{ tour.tournament.created_at }}</span>
-                                        <span class="result"> {{ tour.placement }}</span>
-                                        <!-- <button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.tournament.id }}">
-                                            <img src="{% static 'assets/icons/tournament.png' %}" alt="Arrow-icon"> Ver Detalhes
-                                        </button>
-                                    </div>
-                                    <div id="details-{{ tour.tournament.id }}" class="tournament-details" style="display:none;"> !-->
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>                    
+                </div>
+                <div class="graphs d-flex justify-content-around">
+                    <div class="graph1 d-flex align-items-center justify-content-center">
+                        <div class="numbers-stat d-flex justify-content-between">
+                            <h6 class="graph-title">Time Spent per Mode</h6>
+                            <h6 class="graph-value">Remote Game: {{ stats.remote_time_played }}</h6>
+                            <h6 class="graph-value">AI Game: {{ stats.ai_time_played }}</h6>
+                            <h6 class="graph-value">Local Game: {{ stats.local_time_played }}</h6>
+                            <h6 class="graph-value">Tournaments Game: {{ stats.tournament_time_played }}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="graphs d-flex justify-content-around"></div>
+                    <div class="graph1 d-flex align-items-center justify-content-center">
+                        <div class="numbers-stat d-flex justify-content-between">
+                            <h6 class="graph-title">Win Rate and Games Played / Day </h6>
+                            <h6 class="graph-value">Ainda nao tenho isto</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="graphs d-flex justify-content-around"></div>
+                    <div class="graph1 d-flex align-items-center justify-content-center">
+                        <div class="numbers-stat d-flex justify-content-between">
+                            <h6 class="graph-title">Records</h6>
+                            <h6 class="graph-value">Maximum Ball Speed: {{ stats.max_ball_speed }}</h6>
+                            <h6 class="graph-value">Maximum Rally Length: {{ stats.max_rally_length }}</h6>
+                            <h6 class="graph-value">Longest Game: {{ stats.quickest_game }}</h6>
+                            <h6 class="graph-value">Quickest Game: {{ stats.longest_game }}</h6>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <div id="games" style="display:none;">
+            {% for game in games %}
+                <div id="match-container">
+                    <div class="match-block d-flex align-items-center pingpong victory">
+                        <a hx-get="{% url 'game-stats' game.id %}"
+                            hx-trigger="click"
+                            hx-target="#main"
+                            hx-push-url="true"> aqui
+                        </a>
+                        <div class="icon">
+                            <img src="{% static 'assets/icons/pong.png' %}" alt="Pingpong Icon">
+                        </div>
+                        <div class="details d-flex align-items-center justify-content-evenly" >
+                            <span class="date">{{ game.created_at }}</span>
+                            {% if user_view == game.winner_id %}
+                                <span class="result" >Victory</span>
+                            {% else %}
+                                <span class="result">Defect</span>
+                            {% endif %}
+                            {% if user_view == game.user1_id %}
+                                <span class="score">{{ game.nb_goals_user1 }} - {{ game.nb_goals_user2 }}</span>
+                            {% else %}
+                                <span class="score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="opponent">
+                            {% if user_view == game.user2_id %}
+                                <a  hx-get="{% url 'user-profile' game.user1_id.id %}"
+                                    hx-trigger="click"
+                                    hx-target="#main"
+                                    hx-push-url="true">
+                                    {% if "http" in game.user1_id.picture.url %}
+                                        <img class="profile-pic" src="{{ game.user1_id.picture }}" alt="Profile">
+                                    {% else %}
+                                        <img class="profile-pic" src="{{ game.user1_id.picture.url }}" alt="Profile">
+                                    {% endif %}
+                                    <span class="score">{{ game.user1_id.username }}</span>
+                                </a>
+                            {% else %}
+                                <a  hx-get="{% url 'user-profile' game.user2_id.id %}"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true">
+                                {% if "http" in game.user2_id.picture.url %}
+                                    <img class="profile-pic" src="{{ game.user2_id.picture }}" alt="Profile">
+                                {% else %}
+                                    <img class="profile-pic" src="{{ game.user2_id.picture.url }}" alt="Profile">
+                                {% endif %}
+                                    <span class="score">{{ game.user2_id.username }}</span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="tournaments" style="display:none;">
+            {% for tour in tours %}
+                {% if tour.tournament.status == 'Finished' %}
+                    <div class="match-block d-flex align-items-center" class="tournament">
+                        <div class="icon">
+                            <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
+                        </div>
+                        <div class="details d-flex align-items-center justify-content-evenly">
+                            <span class="date">{{ tour.tournament.created_at }}</span>
+                            <span class="result"> {{ tour.placement }}</span>
+                            <a hx-get="{% url 'tournament-stats' tour.tournament.id %}"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true">
+                                <img src="{% static 'assets/icons/detail.png' %}" alt="detail">
+                            </a>
+                            <!-- <button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.tournament.id }}">
+                                <img src="{% static 'assets/icons/tournament.png' %}" alt="Arrow-icon"> Ver Detalhes
+                            </button>
+                        </div>
+                        <div id="details-{{ tour.tournament.id }}" class="tournament-details" style="display:none;"> !-->
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>                    
     </div>
 </div>
 {% endblock %}

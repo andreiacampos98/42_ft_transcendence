@@ -1,0 +1,29 @@
+{% extends 'navs.html' %}
+{% load static %}
+
+
+{% block main_content %}
+<div>
+    <h1>Game {{ game_id }}</h1>
+    <p>Longer Rally {{ stats.data.longer_rally }}</p>
+    <p>Shorter Rally {{ stats.data.shorter_rally }}</p>
+    <p>Average Rally {{ stats.data.average_rally }}</p>
+    <p>Max Ball Speed {{ stats.data.max_ball_speed }}</p>
+    <p>Min Ball Speed  {{ stats.data.min_ball_speed }}</p>
+    <p>Average Ball Speed  {{ stats.data.average_ball_speed }}</p>
+    <p>Greatest Deficit Overcome  {{ stats.data.greatest_deficit_overcome }}</p>
+    <p>User GDO {{ stats.data.gdo_user.username }}</p>
+    <p>Most Consecutive Goals  {{ stats.data.most_consecutive_goals }}</p>
+    <p>User MCG {{ stats.data.mcg_user.username }}</p>
+    <p>Biggest Lead {{ stats.data.biggest_lead }}</p>
+    <p>User BG  {{ stats.data.bg_user.username }}</p>
+    <h1>Goals: </h1>
+    {% for goal in goals.data %}
+        <p>Goal Rally Length: {{ goal.rally_length }}</p>
+        <p>Ball Speed: {{ goal.ball_speed }}</p>
+        <p>Timestamp: {{ goal.timestamp }}</p>
+        <p>User: {{ goal.user }}</p>
+    {% endfor %}
+</div>
+
+{% endblock %}
