@@ -12,7 +12,6 @@ export class Ball extends THREE.Object3D {
 		this.ball = null;
 		this.build();
 		this.reset();
-		console.log('Starting position: ', this.position);
 	}
 
 	build() {
@@ -28,7 +27,8 @@ export class Ball extends THREE.Object3D {
 		const { arena, player, enemy } = arcade;
 
 		this.collideWithArena(arcade, arena, player, enemy);
-		this.collideWithPaddles(player, enemy);
+		this.collideWithPaddle(player.paddle, true);
+		this.collideWithPaddle(enemy.paddle, false);
 		
 		this.position.x += this.speed.x;
 		this.position.y += this.speed.y;
@@ -55,67 +55,47 @@ export class Ball extends THREE.Object3D {
 
 	}
 
-	collideWithPaddles(player, enemy) {
-		const { paddle: playerPaddle } = player;
-		const { paddle: enemyPaddle } = enemy;
+	collideWithPaddle(paddle, isPlayer){
+		const paddleRange = {
+			'x': {
+				'start': paddle.position.x - PADDLE_SEMI_LENGTH,
+				'end': paddle.position.x + PADDLE_SEMI_LENGTH
+			},
+			'y': {
+				'start': paddle.position.y - PADDLE_SEMI_HEIGHT,
+				'end': paddle.position.y + PADDLE_SEMI_HEIGHT
+			}
+		}
+		const ballRange = {
+			'x': {
+				'start': this.position.x - BALL_RADIUS,
+				'end': this.position.x + BALL_RADIUS
+			},
+			'y': {
+				'start': this.position.y - BALL_RADIUS,
+				'end': this.position.y + BALL_RADIUS
+			}
+		}
+
+		const minX = paddleRange.x.start < ballRange.x.start ? paddleRange.x : ballRange.x;
+		const maxX = minX == paddleRange.x ? ballRange.x : paddleRange.x;
+		const minY = paddleRange.y.start < ballRange.y.start ? paddleRange.y : ballRange.y;
+		const maxY = minY == paddleRange.y ? ballRange.y : paddleRange.y;
+
+		if (minX.end < maxX.start || minY.end < maxY.start)
+			return ;
 
 		//! - Change ball speed according to the speed of the paddle at the time
-		if (
-			this.position.y + this.radius >= playerPaddle.position.y - PADDLE_SEMI_HEIGHT &&
-			this.position.y - this.radius <= playerPaddle.position.y + PADDLE_SEMI_HEIGHT
-		){			
-			// Collision from the right side
-			if (
-				this.position.x - this.radius >= playerPaddle.position.x - PADDLE_SEMI_LENGTH &&
-				this.position.x - this.radius <= playerPaddle.position.x + PADDLE_SEMI_LENGTH 
-			){
-				console.log('Collided right');
-				this.position.x = playerPaddle.position.x + PADDLE_SEMI_LENGTH + this.radius;
-				this.speed.x = Math.abs(this.speed.x);	
-				this.speed.x += BALL_SPEED_FACTOR;				
-				this.rally += 1;
-			}
-			// // Collision from the left side
-			// else if (
-			// 	this.position.x + this.radius >= playerPaddle.position.x - PADDLE_SEMI_LENGTH &&
-			// 	this.position.x + this.radius <= playerPaddle.position.x + PADDLE_SEMI_LENGTH 
-			// ){
-			// 	console.log('Collided left');
-			// 	this.position.x = playerPaddle.position.x - PADDLE_SEMI_LENGTH - this.radius;
-			// 	this.speed.x = -Math.abs(this.speed.x);	
-			// 	this.speed.x -= BALL_SPEED_FACTOR;
-			// 	this.rally += 1;
-			// }			
+		if (isPlayer) {
+			this.position.x = paddle.position.x + PADDLE_SEMI_LENGTH + this.radius;
+			this.speed.x = Math.abs(this.speed.x) + BALL_SPEED_FACTOR;
 		}
-		else if (
-			this.position.y + this.radius >= enemyPaddle.position.y - PADDLE_SEMI_HEIGHT &&
-			this.position.y - this.radius <= enemyPaddle.position.y + PADDLE_SEMI_HEIGHT
-		){
-			
-			// Collision from the left side
-			if (
-				this.position.x + this.radius >= enemyPaddle.position.x - PADDLE_SEMI_LENGTH &&
-				this.position.x + this.radius <= enemyPaddle.position.x + PADDLE_SEMI_LENGTH 
-			){
-				console.log('Collided left');
-				this.position.x = enemyPaddle.position.x - PADDLE_SEMI_LENGTH - this.radius;
-				this.speed.x = -Math.abs(this.speed.x);	
-				this.speed.x -= BALL_SPEED_FACTOR;
-				this.rally += 1;
-			}			
-			// // Collision from the right side
-			// else if (
-			// 	this.position.x - this.radius >= enemyPaddle.position.x - PADDLE_SEMI_LENGTH &&
-			// 	this.position.x - this.radius <= enemyPaddle.position.x + PADDLE_SEMI_LENGTH 
-			// ){
-			// 	console.log('Collided right');
-			// 	this.position.x = enemyPaddle.position.x + PADDLE_SEMI_LENGTH + this.radius;
-			// 	this.speed.x = Math.abs(this.speed.x);	
-			// 	this.speed.x += BALL_SPEED_FACTOR;				
-			// 	this.rally += 1;
-			// }
-		}
-		
+		else {
+			this.position.x = paddle.position.x - PADDLE_SEMI_LENGTH - this.radius;
+			this.speed.x = -(Math.abs(this.speed.x) + BALL_SPEED_FACTOR);
+		}	
+
+		this.rally += 1;
 	}
 
 	reset() {
@@ -123,5 +103,10 @@ export class Ball extends THREE.Object3D {
 		this.speed.x = BALL_START_SPEED.x;
 		this.speed.y = BALL_START_SPEED.y;
 		this.position.set(0, 0, 0);
+	}
+
+	dispose() {
+		this.ball.geometry.dispose();
+		this.ball.material.dispose();
 	}
 }

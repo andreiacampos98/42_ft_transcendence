@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, PADDLE_SPEED } from './macros.js';
 export class Player {
-	constructor (id, alias, position, controls) {
+	constructor (id, username, position, controls) {
 		this.id = id
-		this.alias = alias;
+		this.username = username;
 		this.controls = controls;
 		this.paddle = null;
 

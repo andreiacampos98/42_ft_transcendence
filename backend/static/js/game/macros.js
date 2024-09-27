@@ -10,3 +10,5 @@ export const PADDLE_SPEED = 2;
 export const ARENA_SEMI_HEIGHT = 20;
 export const ARENA_SEMI_LENGTH = 30;
 export const ARENA_SEMI_DEPTH = 0.25;
+
+export const MAX_GOALS = 5;
