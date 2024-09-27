@@ -26,33 +26,38 @@ export class Ball extends THREE.Object3D {
 	move(arcade) {
 		const { arena, player, enemy } = arcade;
 
-		this.collideWithArena(arcade, arena, player, enemy);
-		this.collideWithPaddle(player.paddle, true);
-		this.collideWithPaddle(enemy.paddle, false);
-		
 		this.position.x += this.speed.x;
 		this.position.y += this.speed.y;
+		
+		this.collideWithVerticalBounds(arena);
+		this.collideWithPaddle(player.paddle, true);
+		this.collideWithPaddle(enemy.paddle, false);
+		return this.collidedWithGoals(arena, player, enemy);
 	}
 
-	collideWithArena(arcade, arena, player, enemy) {
-		const { upperBoundary, lowerBoundary, 
-			rightBoundary, leftBoundary } = arena;
+	collidedWithGoals(arena, player, enemy) {
+		const { rightBoundary, leftBoundary } = arena;
+
+		if (this.position.x - this.radius <= leftBoundary.position.x)
+		{
+			this.reset();
+			return player;
+		}
+		else if (this.position.x + this.radius >= rightBoundary.position.x)
+		{
+			this.reset();
+			return enemy;
+		}
+		return null;
+	}
+
+	collideWithVerticalBounds(arena) {
+		const { upperBoundary, lowerBoundary } = arena;
 				
 		if (this.position.y + this.radius >= upperBoundary.position.y)
 			this.speed.y = -Math.abs(this.speed.y);
 		else if (this.position.y - this.radius <= lowerBoundary.position.y)
 			this.speed.y = Math.abs(this.speed.y);
-		else if (this.position.x - this.radius <= leftBoundary.position.x)
-		{
-			arcade.registerGoal(this, enemy);
-			this.reset();
-		}
-		else if (this.position.x + this.radius >= rightBoundary.position.x)
-		{
-			arcade.registerGoal(this, player);
-			this.reset();
-		}
-
 	}
 
 	collideWithPaddle(paddle, isPlayer){

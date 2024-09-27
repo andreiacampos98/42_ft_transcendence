@@ -4,7 +4,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import  Stats  from 'three/addons/libs/stats.module.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Axis } from './Axis.js';
-import { ArcadeController } from './ArcadeController.js';
+import { GameController } from './GameController.js';
 
 /**
  * This class contains the application object
@@ -39,7 +39,7 @@ export class MyApp  {
         this.scene.background = new THREE.Color( 0x101010 );
 		this.scene.add(new Axis(this));
 
-		this.arcade = new ArcadeController({});
+		this.arcade = new GameController({});
 		this.scene.add(this.arcade);
 
 		this.light = new THREE.PointLight('#FFFFFF', 100);
