@@ -44,19 +44,19 @@ export class GameController extends THREE.Group {
 	}
 
 	update() {
-		this.player.update(this.pressedKeys, this.arena.semiHeight);
-		this.enemy.update(this.pressedKeys, this.arena.semiHeight);
-		if (this.ball == null)
-			return ;
+		// this.player.update(this.pressedKeys, this.arena.semiHeight);
+		// this.enemy.update(this.pressedKeys, this.arena.semiHeight);
+		// if (this.ball == null)
+		// 	return ;
 
-		const scorer = this.ball.move(this);
-		if (scorer != null)
-			this.stats.registerGoal(scorer, this.ball);
-		if (this.stats.winner != null)
-		{
-			this.remove(this.ball);
-			this.ball.dispose();
-			this.ball = null;
-		}
+		// const scorer = this.ball.move(this);
+		// if (scorer != null)
+		// 	this.stats.registerGoal(scorer, this.ball);
+		// if (this.stats.winner != null)
+		// {
+		// 	this.remove(this.ball);
+		// 	this.ball.dispose();
+		// 	this.ball = null;
+		// }
 	}
 }

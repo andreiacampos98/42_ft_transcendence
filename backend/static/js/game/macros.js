@@ -12,3 +12,62 @@ export const ARENA_SEMI_LENGTH = 30;
 export const ARENA_SEMI_DEPTH = 0.25;
 
 export const MAX_GOALS = 5;
+
+//! DEPENDENCY INJECTION TESTING
+
+export var TEST_GOALS = [
+	{
+		'timestamp': new Date().toISOString(),
+		'user': 2,
+		'rally_length': Math.round(Math.random() * 30),
+		'ball_speed': Math.random() * 10,
+	},
+	{
+		'timestamp': new Date().toISOString(),
+		'user': 1,
+		'rally_length': Math.round(Math.random() * 30),
+		'ball_speed': Math.random() * 10,
+	},
+	{
+		'timestamp': new Date().toISOString(),
+		'user': 2,
+		'rally_length': Math.round(Math.random() * 30),
+		'ball_speed': Math.random() * 10,
+	},
+	{
+		'timestamp': new Date().toISOString(),
+		'user': 2,
+		'rally_length': Math.round(Math.random() * 30),
+		'ball_speed': Math.random() * 10,
+	},
+	{
+		'timestamp': new Date().toISOString(),
+		'user': 2,
+		'rally_length': Math.round(Math.random() * 30),
+		'ball_speed': Math.random() * 10,
+	},
+	{
+		'timestamp': new Date().toISOString(),
+		'user': 1,
+		'rally_length': Math.round(Math.random() * 30),
+		'ball_speed': Math.random() * 10,
+	},
+	{
+		'timestamp': new Date().toISOString(),
+		'user': 1,
+		'rally_length': Math.round(Math.random() * 30),
+		'ball_speed': Math.random() * 10,
+	},
+	{
+		'timestamp': new Date().toISOString(),
+		'user': 1,
+		'rally_length': Math.round(Math.random() * 30),
+		'ball_speed': Math.random() * 10,
+	},
+	{
+		'timestamp': new Date().toISOString(),
+		'user': 1,
+		'rally_length': Math.round(Math.random() * 30),
+		'ball_speed': Math.random() * 10,
+	},
+];
