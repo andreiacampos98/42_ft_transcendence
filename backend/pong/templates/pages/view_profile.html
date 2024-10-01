@@ -12,347 +12,350 @@
 <script defer src="{% static 'js/tab-recent-matches.js' %}"></script>
 <script defer src="{% static 'js/view-details-tournaments.js' %}"></script>
 <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
-    <div class="main d-flex" id="profile-main">
-        <div id="modal" class="m">
-            <div class="m-content"> 
-                <h3>Change Password</h3>
-                <div class="form-div d-flex justify-content-center">
-                    <form id="change-password-form" class="d-flex " method="POST">
-                        {% csrf_token %}
-						
-						<label for="old_password-input">Old Password</label>
-						<div class="password-input-div d-flex">
-							<input class="pass-input" type="password" id="old_password-input" name="old_password" required>
-								<button type="button" id="togglePassword" onclick="toggleOldVisibility()">
-									<img id="togglePasswordImage" src="{% static 'assets/icons/eyeopen.png' %}">
-								</button>
-						</div>
-						<label for="newpassword1-input">New Password</label>
-						<div class="password-input-div d-flex">
-							<input class="pass-input" type="password" id="password1-input" name="password1" required>
-							<button type="button" id="togglePassword2" onclick="toggleReconfirm1Visibility()">
-								<img id="togglePasswordImage2" src="{% static 'assets/icons/eyeopen.png' %}">
-							</button>
-						</div>
-						<label for="newpassword2-input">Confirm new password</label>
-						<div class="password-input-div d-flex">						
-							<input class="pass-input" type="password" id="password2-input" name="password2" required>
-							<button type="button" id="togglePassword3" onclick="toggleReconfirm2Visibility()">
-								<img id="togglePasswordImage3" src="{% static 'assets/icons/eyeopen.png' %}">
-							</button>
-						</div>
-                    </form>
-                </div>
-				<div class="bottom-buttons d-flex justify-content-between">
-                	<button style="margin-bottom: 10px;" class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
-                	    <span class="change-b" id="change">Confirm</span>
-                	</button>
-                	<button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Go back</button>
-				</div>
-            </div>
-        </div>
-		<div id="modal2" class="m">
-			<div class="m-content d-flex align-items-center flex-column">
-				<h3  style="padding-top: 10px;">Remove friend</h3>
-				<p>You're about to remove <strong>{{ user_view.username }}</strong> from your friends list. Are you sure?</p>
-				<div style="width: 100%;" class="bottom-buttons d-flex justify-content-between">
-					<form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
-						{% csrf_token %}
-						<button class="change modal-button" id="leaver" onclick="leaveTournament()" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
-							<span class="change-b" id="change">Yes, I am.</span>
-						</button>
-					</form>
-					<button style=" border: none;" class="cancel modal-button" id="cancel">Go back</button>
-				</div>
-			</div>
-		</div>
-		<div id="modal3" class="m">
-			<div class="m-content d-flex align-items-center flex-column">
-				<img style="padding-bottom: 20px;" src="{% static 'assets/icons/success.png' %}" alt="Success">
-				<h3>Password changed</h3>
-				<p style="padding-bottom: 0; padding-top: 5px;">Your password has been reset successfully.</p>
-				<div class="bottom-buttons d-flex justify-content-between">
-					<button class="change modal-button" id="confirm-btn">
-						<span class="change-b" id="change">Confirm</span>
-					</button>
-				</div>
-			</div>
-		</div>
-        <div class="side-profile d-flex align-items-center">
-            <div id="change-info1">
-                {% if "http" in user_view.picture.url %}
-                    <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture }}" alt="Profile">
-                {% else %}
-                    <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="Profile">
-                {% endif %}
-                <h3 class="description"> {{ user_view.username }} </h3>
-            </div>
-            <span class="friend-block1 d-flex justify-content-center" data-status="{{ user_view.status }}"> {{ user_view.status }} </span>
-            {% if is_own_profile %}
-                <div class="edit-change d-flex align-items-center justify-content-between">
-                    <button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
-                        <img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
-                        Edit Profile
-                    </button>
-
-                    {% if user_view.user_42 is None %}
-                        <button class="change" id="open-change-password-modal">
-                            <span class="change-b d-flex align-items-center" id="change">
-                                <img class="small-icon" src="{% static 'assets/icons/password.png' %}">
-                                Change Password
-                            </span>
-                        </button>
-                    {% endif %}
-                </div>
-                <div class="save-cancel align-items-center justify-content-around" style="display: none;">
-                    <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
-                    <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
-                </div>
-            {% elif is_friend %}
-                {% if friendship_status %}
-						<button class="edit friend-status d-flex align-items-center justify-content-center" id="remove-friend-button">
-							<img class="friends" src="{% static 'assets/icons/remove-friend.png' %}">
-							Remove Friend
-						</button>
-                {% else %}
-                    {% if me %}
-                        <button class="friend-status  d-flex align-items-center justify-content-center">
-							<img class="friends" src="{% static 'assets/icons/sent.png' %}">
-							Request Sent
-						</button>
-                    {% elif notification.status == 'Pending' %}
-						<div class="edit-change d-flex align-items-center justify-content-between">
-                        	<button class="friend-status" id="accept-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'accept', '{{ user_id }}', '{{ user_view.id }}', event)">Accept</button>                    
-                        	<button class="friend-status" id="decline-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'decline', '{{ user_id }}', '{{ user_view.id }}', event)">Decline</button>
-						</div>		
-					{% else %}
-                        <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
+    <div class="main d-flex" id="main-wrapper">
+        <div class="main d-flex" id="profile-main">
+            <div id="modal" class="m">
+                <div class="m-content"> 
+                    <h3>Change Password</h3>
+                    <div class="form-div d-flex justify-content-center">
+                        <form id="change-password-form" class="d-flex " method="POST">
                             {% csrf_token %}
-                            <button id="add-friend-button" type="submit">Add Friend</button>
+                            
+                            <label for="old_password-input">Old Password</label>
+                            <div class="password-input-div d-flex">
+                                <input class="pass-input" type="password" id="old_password-input" name="old_password" required>
+                                    <button type="button" id="togglePassword" onclick="toggleOldVisibility()">
+                                        <img id="togglePasswordImage" src="{% static 'assets/icons/eyeopen.png' %}">
+                                    </button>
+                            </div>
+                            <label for="newpassword1-input">New Password</label>
+                            <div class="password-input-div d-flex">
+                                <input class="pass-input" type="password" id="password1-input" name="password1" required>
+                                <button type="button" id="togglePassword2" onclick="toggleReconfirm1Visibility()">
+                                    <img id="togglePasswordImage2" src="{% static 'assets/icons/eyeopen.png' %}">
+                                </button>
+                            </div>
+                            <label for="newpassword2-input">Confirm new password</label>
+                            <div class="password-input-div d-flex">						
+                                <input class="pass-input" type="password" id="password2-input" name="password2" required>
+                                <button type="button" id="togglePassword3" onclick="toggleReconfirm2Visibility()">
+                                    <img id="togglePasswordImage3" src="{% static 'assets/icons/eyeopen.png' %}">
+                                </button>
+                            </div>
                         </form>
-                    {% endif %}
-                {% endif %}
-            {% else %}
-                <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
-                    {% csrf_token %}
-					<button class="edit d-flex align-items-center justify-content-center" id="add-friend-button" type="submit">
-						<img class="friends" src="{% static 'assets/icons/add-friend.png' %}">
-						Add Friend
-					</button>
-                </form>
-            {% endif %}
-            <form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
-                {% csrf_token %}
-                <input type="file" id="profile-picture-input" name="picture">
-                <div class="email-joined-edit d-flex align-items-center">
-                    <label for="username-input">
-                        <h5 class="text-block d-flex"> 
-                            <img style="width: 15px; height: 15px;" src="{% static 'assets/icons/profile.png' %}">
-                            Username
-                        </h5>
-                    </label>
-                    <input style="text-align: right; " type="text" id="username-input" name="username" value="{{ user_view.username }}" required>
+                    </div>
+                    <div class="bottom-buttons d-flex justify-content-between">
+                        <button style="margin-bottom: 10px;" class="change modal-button" id="change-password" onclick="getChangePassword()" data-user-id="{{ user_id }}">
+                            <span class="change-b" id="change">Confirm</span>
+                        </button>
+                        <button style="margin-bottom: 10px;" class="cancel modal-button" id="cancel-change-password-button">Go back</button>
+                    </div>
                 </div>
-                <label for="description-input">Description</label>
-                {% if user_view.description is None or user_view.description == "" %}
-                    <textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50"></textarea>
+            </div>
+            <div id="modal2" class="m">
+                <div class="m-content d-flex align-items-center flex-column">
+                    <h3  style="padding-top: 10px;">Remove friend</h3>
+                    <p>You're about to remove <strong>{{ user_view.username }}</strong> from your friends list. Are you sure?</p>
+                    <div style="width: 100%;" class="bottom-buttons d-flex justify-content-between">
+                        <form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
+                            {% csrf_token %}
+                            <button class="change modal-button" id="leaver" onclick="leaveTournament()" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
+                                <span class="change-b" id="change">Yes, I am.</span>
+                            </button>
+                        </form>
+                        <button style=" border: none;" class="cancel modal-button" id="cancel">Go back</button>
+                    </div>
+                </div>
+            </div>
+            <div id="modal3" class="m">
+                <div class="m-content d-flex align-items-center flex-column">
+                    <img style="padding-bottom: 20px;" src="{% static 'assets/icons/success.png' %}" alt="Success">
+                    <h3>Password changed</h3>
+                    <p style="padding-bottom: 0; padding-top: 5px;">Your password has been reset successfully.</p>
+                    <div class="bottom-buttons d-flex justify-content-between">
+                        <button class="change modal-button" id="confirm-btn">
+                            <span class="change-b" id="change">Confirm</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="side-profile d-flex align-items-center">
+                <div id="change-info1">
+                    {% if "http" in user_view.picture.url %}
+                        <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture }}" alt="Profile">
+                    {% else %}
+                        <img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="Profile">
+                    {% endif %}
+                    <h3 class="description"> {{ user_view.username }} </h3>
+                </div>
+                <span class="friend-block1 d-flex justify-content-center" data-status="{{ user_view.status }}"> {{ user_view.status }} </span>
+                {% if is_own_profile %}
+                    <div class="edit-change d-flex align-items-center justify-content-between">
+                        <button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
+                            <img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
+                            Edit Profile
+                        </button>
+    
+                        {% if user_view.user_42 is None %}
+                            <button class="change" id="open-change-password-modal">
+                                <span class="change-b d-flex align-items-center" id="change">
+                                    <img class="small-icon" src="{% static 'assets/icons/password.png' %}">
+                                    Change Password
+                                </span>
+                            </button>
+                        {% endif %}
+                    </div>
+                    <div class="save-cancel align-items-center justify-content-around" style="display: none;">
+                        <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+                        <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
+                    </div>
+                {% elif is_friend %}
+                    {% if friendship_status %}
+                            <button class="edit friend-status d-flex align-items-center justify-content-center" id="remove-friend-button">
+                                <img class="friends" src="{% static 'assets/icons/remove-friend.png' %}">
+                                Remove Friend
+                            </button>
+                    {% else %}
+                        {% if me %}
+                            <button class="friend-status  d-flex align-items-center justify-content-center">
+                                <img class="friends" src="{% static 'assets/icons/sent.png' %}">
+                                Request Sent
+                            </button>
+                        {% elif notification.status == 'Pending' %}
+                            <div class="edit-change d-flex align-items-center justify-content-between">
+                                <button class="friend-status" id="accept-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'accept', '{{ user_id }}', '{{ user_view.id }}', event)">Accept</button>                    
+                                <button class="friend-status" id="decline-friend-button" onclick="handleNotificationProfile('{{ notification.id }}', 'decline', '{{ user_id }}', '{{ user_view.id }}', event)">Decline</button>
+                            </div>		
+                        {% else %}
+                            <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
+                                {% csrf_token %}
+                                <button id="add-friend-button" type="submit">Add Friend</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
                 {% else %}
-                    <textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50">{{ user_view.description }}</textarea>
+                    <form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
+                        {% csrf_token %}
+                        <button class="edit d-flex align-items-center justify-content-center" id="add-friend-button" type="submit">
+                            <img class="friends" src="{% static 'assets/icons/add-friend.png' %}">
+                            Add Friend
+                        </button>
+                    </form>
                 {% endif %}
-                
+                <form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
+                    {% csrf_token %}
+                    <input type="file" id="profile-picture-input" name="picture">
                     <div class="email-joined-edit d-flex align-items-center">
-                    <label for="email-input">
-                        <h5 class="text-block d-flex" style="color: #FFFFFFC0;"> 
-                            <img src="{% static 'assets/icons/at.png' %}">
-                            Email
-                        </h5>
-                    </label>
-                    {% if user_view.email is None or user_view.email == "" %}
-                        <input style="text-align: right; " type="email" id="email-input" name="email" value="" required>
-                    {% else %}
-                        <input style="text-align: right; " type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
-                    {% endif %}
-                </div>
-            </form>
-            <div id="change-info2">
-                <div class="text-block d-flex">
+                        <label for="username-input">
+                            <h5 class="text-block d-flex"> 
+                                <img style="width: 15px; height: 15px;" src="{% static 'assets/icons/profile.png' %}">
+                                Username
+                            </h5>
+                        </label>
+                        <input style="text-align: right; " type="text" id="username-input" name="username" value="{{ user_view.username }}" required>
+                    </div>
+                    <label for="description-input">Description</label>
                     {% if user_view.description is None or user_view.description == "" %}
-                        <span class="user-description"></span>
+                        <textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50"></textarea>
                     {% else %}
-                        <span class="user-description">{{ user_view.description }}</span>
+                        <textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50">{{ user_view.description }}</textarea>
                     {% endif %}
-
-                </div>
-                <div class="email-joined d-flex justify-content-between align-items-center" style="padding-bottom:10px;">
-                    {% if user_view.email is None or user_view.email == "" %}
-                    	<h5 class="text-block d-flex" ></h5>
-                    {% else %}
-                        <h5 class="text-block d-flex"  style="color: #FFFFFFC0;"> 
-                            <img class="small-icon" src="{% static 'assets/icons/at.png' %}">
-                            Email
+                    
+                        <div class="email-joined-edit d-flex align-items-center">
+                        <label for="email-input">
+                            <h5 class="text-block d-flex" style="color: #FFFFFFC0;"> 
+                                <img src="{% static 'assets/icons/at.png' %}">
+                                Email
+                            </h5>
+                        </label>
+                        {% if user_view.email is None or user_view.email == "" %}
+                            <input style="text-align: right; " type="email" id="email-input" name="email" value="" required>
+                        {% else %}
+                            <input style="text-align: right; " type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
+                        {% endif %}
+                    </div>
+                </form>
+                <div id="change-info2">
+                    <div class="text-block d-flex">
+                        {% if user_view.description is None or user_view.description == "" %}
+                            <span class="user-description"></span>
+                        {% else %}
+                            <span class="user-description">{{ user_view.description }}</span>
+                        {% endif %}
+    
+                    </div>
+                    <div class="email-joined d-flex justify-content-between align-items-center" style="padding-bottom:10px;">
+                        {% if user_view.email is None or user_view.email == "" %}
+                            <h5 class="text-block d-flex" ></h5>
+                        {% else %}
+                            <h5 class="text-block d-flex"  style="color: #FFFFFFC0;"> 
+                                <img class="small-icon" src="{% static 'assets/icons/at.png' %}">
+                                Email
+                            </h5>
+                            <h5 class="text-block d-flex">{{ user_view.email }}</h5>
+                        {% endif %}
+                    </div>
+                    <div class="email-joined d-flex justify-content-between align-items-center">
+                        <h5 class="text-block d-flex" style="color: #FFFFFFC0;"> 
+                            <img class="small-icon" src="{% static 'assets/icons/joined.png' %}">
+                            Joined
                         </h5>
-                        <h5 class="text-block d-flex">{{ user_view.email }}</h5>
-                    {% endif %}
-                </div>
-                <div class="email-joined d-flex justify-content-between align-items-center">
-                    <h5 class="text-block d-flex" style="color: #FFFFFFC0;"> 
-                        <img class="small-icon" src="{% static 'assets/icons/joined.png' %}">
-                        Joined
-                    </h5>
-                    <h5 class="text-block d-flex">{{ joined_date }}</h5>
-                </div>
-            </div>
-        </div>
-
-        <div>
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link active" id="tab-profile" aria-current="page" onclick="onProfileClick()">Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="tab-games" aria-current="page" onclick="onGamesClick()">Games</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="tab-tournaments" onclick="onTournamentsClick()">Tournaments</a>
-                </li>
-            </ul>
-        </div>
-        <div id="profile" style="display:block;">
-            <div class="stats2 d-flex">
-                <div class="percentages justify-content-around">
-                    <div class="stats-head d-flex justify-content-around">
-                        <div class="stat d-flex">
-                            <h4 class="stats-title">Wins</h4>
-                            <h6 class="winr"> {{ stats.nb_games_won }} </h6>
-                        </div>
-                        <div class="stat d-flex">
-                            <h4 class="stats-title">Games Played</h4>
-                            <h6 class="winr"> {{ stats.nb_games_played }} </h6>
-                        </div>
-                        <div class="stat d-flex">
-                            <h4 class="stats-title">First Round Goals</h4>
-                            <h6 class="winr"> {{ stats.num_first_goals }} </h6>
-                        </div>
-                        <div class="stat d-flex">
-                            <h4 class="stats-title">Goals Scored / Goals Suffered Ratio</h4>
-                            <h6 class="winr"> {{ goals_sored_suffered_ratio }} </h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="graphs d-flex justify-content-around">
-                    <div class="graph1 d-flex align-items-center justify-content-center">
-                        <div class="numbers-stat d-flex justify-content-between">
-                            <h6 class="graph-title">Time Spent per Mode</h6>
-                            <h6 class="graph-value">Remote Game: {{ stats.remote_time_played }}</h6>
-                            <h6 class="graph-value">AI Game: {{ stats.ai_time_played }}</h6>
-                            <h6 class="graph-value">Local Game: {{ stats.local_time_played }}</h6>
-                            <h6 class="graph-value">Tournaments Game: {{ stats.tournament_time_played }}</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="graphs d-flex justify-content-around"></div>
-                    <div class="graph1 d-flex align-items-center justify-content-center">
-                        <div class="numbers-stat d-flex justify-content-between">
-                            <h6 class="graph-title">Win Rate and Games Played / Day </h6>
-                            <h6 class="graph-value">Ainda nao tenho isto</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="graphs d-flex justify-content-around"></div>
-                    <div class="graph1 d-flex align-items-center justify-content-center">
-                        <div class="numbers-stat d-flex justify-content-between">
-                            <h6 class="graph-title">Records</h6>
-                            <h6 class="graph-value">Maximum Ball Speed: {{ stats.max_ball_speed }}</h6>
-                            <h6 class="graph-value">Maximum Rally Length: {{ stats.max_rally_length }}</h6>
-                            <h6 class="graph-value">Longest Game: {{ stats.quickest_game }}</h6>
-                            <h6 class="graph-value">Quickest Game: {{ stats.longest_game }}</h6>
-                        </div>
+                        <h5 class="text-block d-flex">{{ joined_date }}</h5>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="games" style="display:none;">
-            {% for game in games %}
-                <div id="match-container">
-                    <div class="match-block d-flex align-items-center pingpong victory">
-                        <a hx-get="{% url 'game-stats' game.id %}"
-                            hx-trigger="click"
-                            hx-target="#main"
-                            hx-push-url="true"> aqui
-                        </a>
-                        <div class="icon">
-                            <img src="{% static 'assets/icons/pong.png' %}" alt="Pingpong Icon">
+        <div id="tabs">
+            <div>
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="tab-profile" aria-current="page" onclick="onProfileClick()">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-games" aria-current="page" onclick="onGamesClick()">Games</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-tournaments" onclick="onTournamentsClick()">Tournaments</a>
+                    </li>
+                </ul>
+            </div>
+            <div id="profile" style="display:block;">
+                <div class="stats2 d-flex">
+                    <div class="percentages justify-content-around">
+                        <div class="stats-head d-flex justify-content-around">
+                            <div class="stat d-flex">
+                                <h4 class="stats-title">Wins</h4>
+                                <h6 class="winr"> {{ stats.nb_games_won }} </h6>
+                            </div>
+                            <div class="stat d-flex">
+                                <h4 class="stats-title">Games Played</h4>
+                                <h6 class="winr"> {{ stats.nb_games_played }} </h6>
+                            </div>
+                            <div class="stat d-flex">
+                                <h4 class="stats-title">First Round Goals</h4>
+                                <h6 class="winr"> {{ stats.num_first_goals }} </h6>
+                            </div>
+                            <div class="stat d-flex">
+                                <h4 class="stats-title">Goals Scored / Goals Suffered Ratio</h4>
+                                <h6 class="winr"> {{ goals_sored_suffered_ratio }} </h6>
+                            </div>
                         </div>
-                        <div class="details d-flex align-items-center justify-content-evenly" >
-                            <span class="date">{{ game.created_at }}</span>
-                            {% if user_view == game.winner_id %}
-                                <span class="result" >Victory</span>
-                            {% else %}
-                                <span class="result">Defect</span>
-                            {% endif %}
-                            {% if user_view == game.user1_id %}
-                                <span class="score">{{ game.nb_goals_user1 }} - {{ game.nb_goals_user2 }}</span>
-                            {% else %}
-                                <span class="score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
-                            {% endif %}
+                    </div>
+                    <div class="graphs d-flex justify-content-around">
+                        <div class="graph1 d-flex align-items-center justify-content-center">
+                            <div class="numbers-stat d-flex justify-content-between">
+                                <h6 class="graph-title">Time Spent per Mode</h6>
+                                <h6 class="graph-value">Remote Game: {{ stats.remote_time_played }}</h6>
+                                <h6 class="graph-value">AI Game: {{ stats.ai_time_played }}</h6>
+                                <h6 class="graph-value">Local Game: {{ stats.local_time_played }}</h6>
+                                <h6 class="graph-value">Tournaments Game: {{ stats.tournament_time_played }}</h6>
+                            </div>
                         </div>
-                        <div class="opponent">
-                            {% if user_view == game.user2_id %}
-                                <a  hx-get="{% url 'user-profile' game.user1_id.id %}"
+                    </div>
+                    <div class="graphs d-flex justify-content-around">
+                        <div class="graph1 d-flex align-items-center justify-content-center">
+                            <div class="numbers-stat d-flex justify-content-between">
+                                <h6 class="graph-title">Win Rate and Games Played / Day </h6>
+                                <h6 class="graph-value">Ainda nao tenho isto</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="graphs d-flex justify-content-around">
+                        <div class="graph1 d-flex align-items-center justify-content-center">
+                            <div class="numbers-stat d-flex justify-content-between">
+                                <h6 class="graph-title">Records</h6>
+                                <h6 class="graph-value">Maximum Ball Speed: {{ stats.max_ball_speed }}</h6>
+                                <h6 class="graph-value">Maximum Rally Length: {{ stats.max_rally_length }}</h6>
+                                <h6 class="graph-value">Longest Game: {{ stats.quickest_game }}</h6>
+                                <h6 class="graph-value">Quickest Game: {{ stats.longest_game }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="games" style="display:none;">
+                {% for game in games %}
+                    <div id="match-container">
+                        <div class="match-block d-flex align-items-center pingpong victory">
+                            <a hx-get="{% url 'game-stats' game.id %}"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true"> aqui
+                            </a>
+                            <div class="icon">
+                                <img src="{% static 'assets/icons/pong.png' %}" alt="Pingpong Icon">
+                            </div>
+                            <div class="details d-flex align-items-center justify-content-evenly" >
+                                <span class="date">{{ game.created_at }}</span>
+                                {% if user_view == game.winner_id %}
+                                    <span class="result" >Victory</span>
+                                {% else %}
+                                    <span class="result">Defect</span>
+                                {% endif %}
+                                {% if user_view == game.user1_id %}
+                                    <span class="score">{{ game.nb_goals_user1 }} - {{ game.nb_goals_user2 }}</span>
+                                {% else %}
+                                    <span class="score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="opponent">
+                                {% if user_view == game.user2_id %}
+                                    <a  hx-get="{% url 'user-profile' game.user1_id.id %}"
+                                        hx-trigger="click"
+                                        hx-target="#main"
+                                        hx-push-url="true">
+                                        {% if "http" in game.user1_id.picture.url %}
+                                            <img class="profile-pic" src="{{ game.user1_id.picture }}" alt="Profile">
+                                        {% else %}
+                                            <img class="profile-pic" src="{{ game.user1_id.picture.url }}" alt="Profile">
+                                        {% endif %}
+                                        <span class="score">{{ game.user1_id.username }}</span>
+                                    </a>
+                                {% else %}
+                                    <a  hx-get="{% url 'user-profile' game.user2_id.id %}"
                                     hx-trigger="click"
                                     hx-target="#main"
                                     hx-push-url="true">
-                                    {% if "http" in game.user1_id.picture.url %}
-                                        <img class="profile-pic" src="{{ game.user1_id.picture }}" alt="Profile">
+                                    {% if "http" in game.user2_id.picture.url %}
+                                        <img class="profile-pic" src="{{ game.user2_id.picture }}" alt="Profile">
                                     {% else %}
-                                        <img class="profile-pic" src="{{ game.user1_id.picture.url }}" alt="Profile">
+                                        <img class="profile-pic" src="{{ game.user2_id.picture.url }}" alt="Profile">
                                     {% endif %}
-                                    <span class="score">{{ game.user1_id.username }}</span>
-                                </a>
-                            {% else %}
-                                <a  hx-get="{% url 'user-profile' game.user2_id.id %}"
-                                hx-trigger="click"
-                                hx-target="#main"
-                                hx-push-url="true">
-                                {% if "http" in game.user2_id.picture.url %}
-                                    <img class="profile-pic" src="{{ game.user2_id.picture }}" alt="Profile">
-                                {% else %}
-                                    <img class="profile-pic" src="{{ game.user2_id.picture.url }}" alt="Profile">
+                                        <span class="score">{{ game.user2_id.username }}</span>
+                                    </a>
                                 {% endif %}
-                                    <span class="score">{{ game.user2_id.username }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="tournaments" style="display:none;">
+                {% for tour in tours %}
+                    {% if tour.tournament.status == 'Finished' %}
+                        <div class="match-block d-flex align-items-center" class="tournament">
+                            <div class="icon">
+                                <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
+                            </div>
+                            <div class="details d-flex align-items-center justify-content-evenly">
+                                <span class="date">{{ tour.tournament.created_at }}</span>
+                                <span class="result"> {{ tour.placement }}</span>
+                                <a hx-get="{% url 'tournament-stats' tour.tournament.id %}"
+                                    hx-trigger="click"
+                                    hx-target="#main"
+                                    hx-push-url="true">
+                                    <img src="{% static 'assets/icons/detail.png' %}" alt="detail">
                                 </a>
-                            {% endif %}
+                                <!-- <button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.tournament.id }}">
+                                    <img src="{% static 'assets/icons/tournament.png' %}" alt="Arrow-icon"> Ver Detalhes
+                                </button>
+                            </div>
+                            <div id="details-{{ tour.tournament.id }}" class="tournament-details" style="display:none;"> !-->
+                            </div>
                         </div>
-                    </div>
-                </div>
-            {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>                    
         </div>
-        <div id="tournaments" style="display:none;">
-            {% for tour in tours %}
-                {% if tour.tournament.status == 'Finished' %}
-                    <div class="match-block d-flex align-items-center" class="tournament">
-                        <div class="icon">
-                            <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
-                        </div>
-                        <div class="details d-flex align-items-center justify-content-evenly">
-                            <span class="date">{{ tour.tournament.created_at }}</span>
-                            <span class="result"> {{ tour.placement }}</span>
-                            <a hx-get="{% url 'tournament-stats' tour.tournament.id %}"
-                                hx-trigger="click"
-                                hx-target="#main"
-                                hx-push-url="true">
-                                <img src="{% static 'assets/icons/detail.png' %}" alt="detail">
-                            </a>
-                            <!-- <button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.tournament.id }}">
-                                <img src="{% static 'assets/icons/tournament.png' %}" alt="Arrow-icon"> Ver Detalhes
-                            </button>
-                        </div>
-                        <div id="details-{{ tour.tournament.id }}" class="tournament-details" style="display:none;"> !-->
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>                    
     </div>
 </div>
 {% endblock %}
