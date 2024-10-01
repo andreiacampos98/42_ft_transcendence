@@ -65,6 +65,7 @@ urlpatterns =[
     path('stats/<int:user_id>', views.user_stats, name='user-stats'),
     path('leaderboard', views.leaderboard, name='leaderboard'),
     path('currentplace/<int:user_id>', views.current_place, name='current-place'),
+    path('graph/<int:user_id>', views.win_rate_nb_games_day, name='win-rate-nb-games'),
     # path('stats/<int:user_id>/update', views.user_stats_update, name='user-stats-update'),
     path('stats/users', views.user_stats_all, name='user-stats-all'),
 

@@ -67,6 +67,7 @@ class GamesSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 class TournamentsSerializer(serializers.ModelSerializer):
+	winner_id = UsersSerializer(read_only=True)
 	class Meta:
 		model = Tournaments
 		fields = '__all__'

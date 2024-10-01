@@ -1,6 +1,6 @@
 {% extends 'navs.html' %}
 {% load static %}
-
+{% load custom_filters %}
 
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
@@ -283,10 +283,15 @@
                                 hx-push-url="true"> aqui
                             </a>
                             <div class="icon">
-                                <img src="{% static 'assets/icons/pong.png' %}" alt="Pingpong Icon">
+                                {% if game.type == 'AI' %}
+                                    <img src="{% static 'assets/icons/ai.png' %}" alt="Pingpong Icon">
+                                {% else %}
+                                    <img src="{% static 'assets/icons/pong.png' %}" alt="Pingpong Icon">
+                                {% endif %}
                             </div>
                             <div class="details d-flex align-items-center justify-content-evenly" >
                                 <span class="date">{{ game.created_at }}</span>
+                                <span> {{ game.duration }} </span>
                                 {% if user_view == game.winner_id %}
                                     <span class="result" >Victory</span>
                                 {% else %}
@@ -338,7 +343,20 @@
                             </div>
                             <div class="details d-flex align-items-center justify-content-evenly">
                                 <span class="date">{{ tour.tournament.created_at }}</span>
+                                <span class="date">{{ tour.tournament.duration }}</span>
                                 <span class="result"> {{ tour.placement }}</span>
+                                <span class="date">{{ tour.tournament.capacity }} players</span>
+                                <a  hx-get="{% url 'user-profile'  tour.tournament.winner_id.id %}"
+                                    hx-trigger="click"
+                                    hx-target="#main"
+                                    hx-push-url="true">
+                                    {% if "http" in  tour.tournament.winner_id.picture.url %}
+                                        <img class="profile-pic" src="{{ tour.tournament.winner_id.picture.url|urlunquote|slice:'7:' }}" alt="Profile">
+                                    {% else %}
+                                        <img class="profile-pic" src="{{ tour.tournament.winner_id.picture }}" alt="Profile">
+                                    {% endif %}
+                                    <span class="score">{{  tour.tournament.winner_id.username }}</span>
+                                </a>
                                 <a hx-get="{% url 'tournament-stats' tour.tournament.id %}"
                                     hx-trigger="click"
                                     hx-target="#main"

@@ -14,8 +14,10 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.middleware.csrf import get_token
 from datetime import datetime
-
+from django.utils import timezone
+from datetime import timedelta
 from urllib.parse import quote, unquote
+from django.db.models.functions import TruncDay
 import os
 
 import json, requests, os
@@ -26,7 +28,7 @@ import pprint
 # Company objects, we can use Django Rest Framework mixins for such actions.
 from rest_framework import status
 
-from django.db.models import Q
+from django.db.models import Q, Count, Case, When, IntegerField
 from django.http import JsonResponse, HttpResponseRedirect
 from .models import Users, Friends, Notifications, TournamentsUsers
 from .serializers import *
@@ -456,6 +458,23 @@ def user_stats_update(user_id, game_id, data):
 	stats.save()
 	data_stats = UserStatsSerializer(stats)
 	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
+
+def win_rate_nb_games_day(request, user_id):
+	today = timezone.now()
+	seven_day_before = today - timedelta(days=7)
+	games = Games.objects.filter((Q(user1_id = user_id) | Q(user2_id = user_id)) & Q(created_at__gte=seven_day_before) 
+							  & ~Q(type='Tournament')).order_by('-created_at')
+
+	stats = games.annotate(day=TruncDay('created_at')).values('day').annotate(
+        total_games=Count('id'), ).annotate(
+		  win_rate=Case(
+            When(total_games=0, then=0), 
+            default=(100 * Count(Case(When(winner_id=user_id, then=1))) / Count('id')),
+            output_field=IntegerField()
+           )
+		).order_by('-day')
+
+	return JsonResponse(list(stats), safe=False) 
 
 def user_stats_all(request):
 	if request.method != 'GET':
