@@ -101,6 +101,7 @@ urlpatterns = [
     
     #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
+    path('debug/games/<int:game_id>', views.get_game, name='debug-get-game'),
     
 ] 
 

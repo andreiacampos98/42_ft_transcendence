@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GameStats.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncarvalh <ncarvalh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: crypted <crypted@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/09/30 19:01:48 by ncarvalh         ###   ########.fr       */
+/*   Updated: 2024/10/01 21:41:00 by crypted          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,23 @@ export class GameStats {
 		this.goals = [];
 		this.loser = null;
 		this.winner = null;
+		this.gameId = 0;
 		this.gameStats = {};
 		this.scoredFirst = null;
-		this.start = null;
+		this.startTime = null;
 		this.init();
 	}
 
 	init() {
-		this.start = new Date().getTime();
+		this.startTime = new Date().getTime();
 		this.score[this.player.username] = 0;
 		this.score[this.enemy.username] = 0;
 
-		this.goals = TEST_GOALS;
-		this.calculateSmallStats();
-		this.calculateAdvancedStats();
-		this.sendGameResults();
+		//! Testing
+		// this.goals = TEST_GOALS;
+		// this.calculateSmallStats();
+		// this.calculateAdvancedStats();
+		// this.sendGameResults();
 	}
 
 	registerGoal(scorer, ball) {
@@ -42,7 +44,7 @@ export class GameStats {
 			'timestamp': new Date().toISOString(),
 			'user': scorer.id,
 			'rally_length': ball.rally,
-			'ball_speed': ball.speed,
+			'ball_speed': Math.abs(ball.speed.x),
 		};
 		this.score[scorer.username] += 1;
 		this.goals.push(goal);
@@ -50,6 +52,7 @@ export class GameStats {
 
 		if (this.gameHasEnded()){
 			this.calculateSmallStats();
+			this.calculateAdvancedStats();
 			this.sendGameResults();
 		}
 	}
@@ -113,13 +116,13 @@ export class GameStats {
 		this.gameStats["most_consecutive_goals"] = Math.max(stats[p1].maxConsecutive, stats[p2].maxConsecutive);
 		this.gameStats["mcg_user"] = stats[p1].maxConsecutive > stats[p2].maxConsecutive ? p1 : p2;
 		this.gameStats["biggest_lead"] = Math.max(stats[p1].maxLead, stats[p2].maxLead);
-		this.gameStats["bl_user"] = stats[p1].maxLead > stats[p2].maxLead ? p1 : p2;
+		this.gameStats["bg_user"] = stats[p1].maxLead > stats[p2].maxLead ? p1 : p2;
 	}
 
-	sendGameResults() {
+	async sendGameResults() {
 		const now = new Date().getTime();
-		const data = {
-			"duration": Math.round((now - this.start) / 1000),
+		const formData = {
+			"duration": Math.round((now - this.startTime) / 1000),
 			"nb_goals_user1": this.score[this.player.username],
 			"nb_goals_user2": this.score[this.enemy.username],
 			"game_stats": this.gameStats,
@@ -131,10 +134,21 @@ export class GameStats {
 			},
 			"goals": this.goals
 		};
-		console.log(data);
+		console.log(formData);
 
 		this.winner = this.score[this.player.username] == MAX_GOALS ? this.player : this.enemy;
 		this.loser = this.winner == this.player ? this.enemy : this.player;
+
+		const response = await fetch(`/games/update/${this.gameId}`, {
+			method: 'POST',
+			body: JSON.stringify(formData),
+			headers: {
+				'Content-Type': 'application/json',
+			}
+		});
+
+		const responseData = await response.json();
+		console.log(responseData);
 	}
 
 	gameHasEnded() {

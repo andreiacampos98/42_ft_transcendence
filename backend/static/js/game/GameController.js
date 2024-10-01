@@ -11,7 +11,6 @@ export class GameController extends THREE.Group {
 		super();
 
 		this.gameType = gameType;
-		this.gameId = 0;
 		this.keybinds = null;
 		this.arena = null;
 		this.ball = null;
@@ -23,30 +22,46 @@ export class GameController extends THREE.Group {
 		this.build();
 	}
 
-	init() {
+	async init() {
+		this.arena = new Arena({});
+		this.ball = new Ball({});
+		this.player = new LocalPlayer(1, 'Nuno', [-25, 0, 0], {'up': 'w', 'down': 's'});
+		if (this.gameType == "Local")
+			this.enemy = new LocalPlayer(2, 'Andreia', [25, 0, 0], {'up': 'ArrowUp', 'down': 'ArrowDown'});
+		this.stats = new GameStats(this.player, this.enemy);
+		
 		this.keybinds = {
 			'w': false, 's': false,
 			'ArrowUp': false, 'ArrowDown': false
 		};
-		this.arena = new Arena({});
-		this.ball = new Ball({});
-		this.player = new Player(1, 'Nuno', [-25, 0, 0], {'up': 'w', 'down': 's'});
-		if (this.gameType == "local")
-			this.enemy = new LocalPlayer(2, 'Andreia', [25, 0, 0], {'up': 'ArrowUp', 'down': 'ArrowDown'});
-		// else if (this.gameType == "remote")
-		// 	this.enemy = new RemotePlayer(2, 'Andreia', [25, 0, 0], {'up': 'ArrowUp', 'down': 'ArrowDown'});
-		// else
-		// 	this.enemy = new AIPlayer(2, 'Andreia', [25, 0, 0], {'up': 'ArrowUp', 'down': 'ArrowDown'});
-		this.stats = new GameStats(this.player, this.enemy);
-		
 		document.addEventListener('keydown', (event) => {
-			if (event.key in this.keybinds)
+			if (event.key in this.keybinds) 
 				this.keybinds[event.key] = true;
 		});
 		document.addEventListener('keyup', (event) => {
-			if (event.key in this.keybinds)
+			if (event.key in this.keybinds) 
 				this.keybinds[event.key] = false;
 		});
+
+		const formData = {
+		    "user1_id": document.getElementById('game-engine').getAttribute('data-user-id'),
+		    "user2_id": null,
+		    "type": document.getElementById('game-engine').getAttribute('game-type')
+		}
+
+		const response = await fetch(`/games/create`, {
+			method: 'POST',
+			body: JSON.stringify(formData),
+			headers: {
+				'Content-Type': 'application/json',
+			} 
+		});
+
+		const data = await response.json();
+		console.log(data);
+		this.stats.gameId = data.id;
+		console.log(this.stats.gameId);
+
 	}
 
 	build() {
@@ -63,8 +78,10 @@ export class GameController extends THREE.Group {
 			return ;
 
 		const scorer = this.ball.move(this);
-		if (scorer != null)
+		if (scorer != null) {
 			this.stats.registerGoal(scorer, this.ball);
+			this.ball.reset();
+		}
 		if (this.stats.winner != null)
 		{
 			this.remove(this.ball);

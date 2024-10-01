@@ -21,5 +21,6 @@
 	<div id="camera"></div>
 </div>
 
-<script id="game-engine" type="module" game-type="local" src="{% static 'js/game/main.js' %}" ></script>
+<script id="game-engine" type="module" src="{% static 'js/game/main.js' %}" 
+	data-user-id="{{ user.id }}" game-type="Local"></script>
 {% endblock %}
