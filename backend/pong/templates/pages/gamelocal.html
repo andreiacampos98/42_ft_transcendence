@@ -1,6 +1,25 @@
 {% extends 'navs.html' %}
 {% load static %}
 
-{% block main_content %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/game/game.css' %}">
+<link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
+<script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.156.1/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.156.1/examples/jsm/"
+      }
+    }
+  </script>
+{% endblock %}
 
+
+{% block main_content %}
+<div class="main-content non_compressed" id="main-content">
+	<div id="canvas-container"></div>
+	<div id="camera"></div>
+</div>
+
+<script id="game-engine" type="module" game-type="local" src="{% static 'js/game/main.js' %}" ></script>
 {% endblock %}

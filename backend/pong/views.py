@@ -1043,7 +1043,6 @@ def loginview(request):
 
 	return render(request, 'pages/login.html')
 
-
 def resetpassword(request):
 	return render(request, 'pages/password_reset.html')
 
