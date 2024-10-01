@@ -52,62 +52,6 @@ total_phase_matches = dict(zip(
 
 #! --------------------------------------- Users ---------------------------------------
 
-@login_required
-def profile(request, id):
-	user_id = request.user.id
-	user_profile = get_object_or_404(Users, id=id)
-	is_own_profile = user_profile == request.user
-
-	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
-	friendship = Friends.objects.filter(
-		(Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
-	).first()
-
-	notification = Notifications.objects.filter(Q(type='Friend Request') & Q(user_id=user_id, other_user_id=user_profile.id)).first()
-	me = False
-
-	if friendship:
-		is_friend = True
-		friendship_status = friendship.accepted
-		if friendship.user1_id.id == user_id:
-			me = True
-	else:
-		is_friend = False
-		friendship_status = None
-
-	user = get_object_or_404(Users, id=id)
-	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) 
-						).exclude(type="Tournament").order_by('-created_at')
-	tournament_response = tournament_list_user(request, user_profile.id)
-	user_tournaments = json.loads(tournament_response.content)
-	stats_response = user_stats(request, user_profile.id)
-	stats = json.loads(stats_response.content)
-	if stats['nb_goals_suffered'] != 0:
-		goals_sored_suffered_ratio = stats['nb_goals_scored'] / stats['nb_goals_suffered']
-	else:
-		goals_sored_suffered_ratio = 0
-	ic(stats['nb_goals_suffered'])
-	ic(stats['nb_goals_scored'])
-	ic(goals_sored_suffered_ratio)
-	context = {
-		'friends': friends,
-		'user_id': user_id,
-		'user_view': user,
-		'joined_date':user.created_at.strftime('%d/%m/%Y'),
-		'is_own_profile': is_own_profile,
-		'is_friend': is_friend,
-		'friendship_status': friendship_status,
-		'me': me,
-		'notification': notification,
-		'games': games,
-		'tours': user_tournaments,
-		'stats': stats,
-		'goals_sored_suffered_ratio': goals_sored_suffered_ratio,
-		'page': 'profile' if is_own_profile else 'else'
-	}
-	ic(context)
-	return render(request, 'pages/view_profile.html', context)
-
 def user_detail(request, pk):
 	if request.method == 'GET':
 		user = get_object_or_404(Users, pk=pk)
@@ -459,7 +403,7 @@ def user_stats_update(user_id, game_id, data):
 	data_stats = UserStatsSerializer(stats)
 	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
 
-def win_rate_nb_games_day(request, user_id):
+def win_rate_nb_games_day(user_id):
 	today = timezone.now()
 	seven_day_before = today - timedelta(days=7)
 	games = Games.objects.filter((Q(user1_id = user_id) | Q(user2_id = user_id)) & Q(created_at__gte=seven_day_before) 
@@ -1173,6 +1117,63 @@ def gamestats(request, game_id):
 		'goals': data_goals
 	}
 	return render(request,'pages/game_stats.html', context)
+
+@login_required
+def profile(request, id):
+	user_id = request.user.id
+	user_profile = get_object_or_404(Users, id=id)
+	is_own_profile = user_profile == request.user
+
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	friendship = Friends.objects.filter(
+		(Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
+	).first()
+
+	notification = Notifications.objects.filter(Q(type='Friend Request') & Q(user_id=user_id, other_user_id=user_profile.id)).first()
+	me = False
+
+	if friendship:
+		is_friend = True
+		friendship_status = friendship.accepted
+		if friendship.user1_id.id == user_id:
+			me = True
+	else:
+		is_friend = False
+		friendship_status = None
+
+	user = get_object_or_404(Users, id=id)
+	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) 
+						).exclude(type="Tournament").order_by('-created_at')
+	tournament_response = tournament_list_user(request, user_profile.id)
+	user_tournaments = json.loads(tournament_response.content)
+	stats_response = user_stats(request, user_profile.id)
+	stats = json.loads(stats_response.content)
+	if stats['nb_goals_suffered'] != 0:
+		goals_sored_suffered_ratio = stats['nb_goals_scored'] / stats['nb_goals_suffered']
+	else:
+		goals_sored_suffered_ratio = 0
+	graph = win_rate_nb_games_day(user_id)
+	graph_send = json.loads(graph.content)
+	context = {
+		'friends': friends,
+		'user_id': user_id,
+		'user_view': user,
+		'joined_date':user.created_at.strftime('%d/%m/%Y'),
+		'is_own_profile': is_own_profile,
+		'is_friend': is_friend,
+		'friendship_status': friendship_status,
+		'me': me,
+		'notification': notification,
+		'games': games,
+		'tours': user_tournaments,
+		'stats': stats,
+		'goals_sored_suffered_ratio': goals_sored_suffered_ratio,
+		'graph': graph_send,
+		'page': 'profile' if is_own_profile else 'else'
+	}
+	ic(context)
+	return render(request, 'pages/view_profile.html', context)
+
 
 @login_required
 @csrf_exempt
