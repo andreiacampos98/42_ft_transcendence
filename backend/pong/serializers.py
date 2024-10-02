@@ -95,4 +95,3 @@ class GoalsSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Goals
 		fields = '__all__'
-

@@ -403,7 +403,7 @@ def user_stats_update(user_id, game_id, data):
 	data_stats = UserStatsSerializer(stats)
 	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
 
-def win_rate_nb_games_day(user_id):
+def win_rate_nb_games_day(request, user_id):
 	today = timezone.now()
 	seven_day_before = today - timedelta(days=7)
 	games = Games.objects.filter((Q(user1_id = user_id) | Q(user2_id = user_id)) & Q(created_at__gte=seven_day_before) 
@@ -757,6 +757,33 @@ def tournament_list_users(request, tournament_id):
 
 #! --------------------------------------- Tournaments Games ---------------------------------------
 
+# @csrf_exempt
+# def tournament_list_games(request, tournament_id):
+# 	if request.method != 'GET':
+# 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+
+# 	tgames = TournamentsGames.objects.filter(tournament_id=tournament_id)
+# 	serializer = TournamentsGamesSerializer(tgames, many=True)
+# 	tgames_list = serializer.data
+
+# 	for tgame in tgames_list:
+# 		game = Games.objects.get(pk=tgame['game_id'])
+# 		serializer = GamesSerializer(game)
+# 		tgame['game'] = serializer.data
+# 		winner = Users.objects.get(pk=game.winner_id) 
+# 		user1 = Users.objects.get(pk=game.user1_id)
+# 		user2 = Users.objects.get(pk=game.user2_id)
+# 		winner_serializer = UsersSerializer(winner)
+# 		user1_serializer = UsersSerializer(user1)
+# 		user2_serializer = UsersSerializer(user2)
+# 		tgame['game']['winner'] = winner_serializer.data
+# 		tgame['game']['user1'] = user1_serializer.data
+# 		tgame['game']['user2'] = user2_serializer.data
+
+
+
+# 	return JsonResponse(tgames_list, safe=False)
+
 @csrf_exempt
 def tournament_list_games(request, tournament_id):
 	if request.method != 'GET':
@@ -765,13 +792,30 @@ def tournament_list_games(request, tournament_id):
 	tgames = TournamentsGames.objects.filter(tournament_id=tournament_id)
 	serializer = TournamentsGamesSerializer(tgames, many=True)
 	tgames_list = serializer.data
-
 	for tgame in tgames_list:
-		game = Games.objects.get(pk=tgame['game_id'])
-		serializer = GamesSerializer(game)
-		tgame['game'] = serializer.data
+		try:
+			game = Games.objects.get(pk=tgame['game_id'])
+			game_serializer = GamesSerializer(game)
+			tgame['game'] = game_serializer.data
+			
+			winner = Users.objects.get(pk=game.winner_id.id) if game.winner_id else None
+			user1 = Users.objects.get(pk=game.user1_id.id)
+			user2 = Users.objects.get(pk=game.user2_id.id)
+
+			tgame['game']['winner'] = UsersSerializer(winner).data if winner else None
+			tgame['game']['user1'] = UsersSerializer(user1).data
+			tgame['game']['user2'] = UsersSerializer(user2).data
+
+
+		except Games.DoesNotExist:
+			return JsonResponse({'message': 'Game not found', 'data': {}}, status=404)
+		except Users.DoesNotExist as e:
+			return JsonResponse({'message': 'User not found', 'error': str(e)}, status=404)
+		except Exception as e:
+			return JsonResponse({'message': 'An error occurred', 'error': str(e)}, status=500)
 
 	return JsonResponse(tgames_list, safe=False)
+
 
 
 @csrf_exempt
@@ -1152,7 +1196,7 @@ def profile(request, id):
 		goals_sored_suffered_ratio = stats['nb_goals_scored'] / stats['nb_goals_suffered']
 	else:
 		goals_sored_suffered_ratio = 0
-	graph = win_rate_nb_games_day(user_id)
+	graph = win_rate_nb_games_day(request, user_profile.id)
 	graph_send = json.loads(graph.content)
 	context = {
 		'friends': friends,

@@ -255,14 +255,19 @@
                     <div class="graphs d-flex justify-content-around">
                         <div class="graph1 d-flex align-items-center justify-content-center">
                             <div class="numbers-stat d-flex justify-content-between">
+                                <br>
+                                <br>
                                 <h6 class="graph-title">Win Rate and Games Played / Day </h6>
-                                <h6 class="graph-value">Ainda nao tenho isto</h6>
+                                <h6 class="graph-value">{{ graph.0.win_rate }}</h6>
+                                <h6 class="graph-value">{{ graph.0.total_games }}</h6>
                             </div>
                         </div>
                     </div>
                     <div class="graphs d-flex justify-content-around">
                         <div class="graph1 d-flex align-items-center justify-content-center">
                             <div class="numbers-stat d-flex justify-content-between">
+                                <br>
+                                <br>
                                 <h6 class="graph-title">Records</h6>
                                 <h6 class="graph-value">Maximum Ball Speed: {{ stats.max_ball_speed }}</h6>
                                 <h6 class="graph-value">Maximum Rally Length: {{ stats.max_rally_length }}</h6>
@@ -363,11 +368,11 @@
                                     hx-push-url="true">
                                     <img src="{% static 'assets/icons/detail.png' %}" alt="detail">
                                 </a>
-                                <!-- <button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.tournament.id }}">
-                                    <img src="{% static 'assets/icons/tournament.png' %}" alt="Arrow-icon"> Ver Detalhes
+                                <button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.tournament.id }}">
+                                    <img src="{% static 'assets/icons/Expand-Arrow.png' %}" alt="Arrow-icon">
                                 </button>
                             </div>
-                            <div id="details-{{ tour.tournament.id }}" class="tournament-details" style="display:none;"> !-->
+                            <div id="details-{{ tour.tournament.id }}" class="tournament-details" style="display:none;">
                             </div>
                         </div>
                     {% endif %}
