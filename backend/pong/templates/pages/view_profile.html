@@ -24,9 +24,9 @@
                             <label for="old_password-input">Old Password</label>
                             <div class="password-input-div d-flex">
                                 <input class="pass-input" type="password" id="old_password-input" name="old_password" required>
-                                    <button type="button" id="togglePassword" onclick="toggleOldVisibility()">
-                                        <img id="togglePasswordImage" src="{% static 'assets/icons/eyeopen.png' %}">
-                                    </button>
+                                <button type="button" id="togglePassword" onclick="toggleOldVisibility()">
+                                    <img id="togglePasswordImage" src="{% static 'assets/icons/eyeopen.png' %}">
+                                </button>
                             </div>
                             <label for="newpassword1-input">New Password</label>
                             <div class="password-input-div d-flex">
@@ -89,32 +89,32 @@
                     <h3 class="description"> {{ user_view.username }} </h3>
                 </div>
                 <span class="friend-block1 d-flex justify-content-center" data-status="{{ user_view.status }}"> {{ user_view.status }} </span>
-                {% if is_own_profile %}
-                    <div class="edit-change d-flex align-items-center justify-content-between">
-                        <button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
-                            <img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
-                            Edit Profile
-                        </button>
-    
-                        {% if user_view.user_42 is None %}
-                            <button class="change" id="open-change-password-modal">
-                                <span class="change-b d-flex align-items-center" id="change">
-                                    <img class="small-icon" src="{% static 'assets/icons/password.png' %}">
-                                    Change Password
-                                </span>
+                <div class="edit-change d-flex align-items-center justify-content-between">
+                    {% if is_own_profile %}
+                            <button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
+                                <img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
+                                Edit Profile
                             </button>
-                        {% endif %}
-                    </div>
-                    <div class="save-cancel align-items-center justify-content-around" style="display: none;">
-                        <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
-                        <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
-                    </div>
+                        
+                    {% if user_view.user_42 is None %}
+                        <button class="change" id="open-change-password-modal">
+                            <span class="change-b d-flex align-items-center" id="change">
+                                <img class="small-icon" src="{% static 'assets/icons/password.png' %}">
+                                Change Password
+                            </span>
+                        </button>
+                    {% endif %}
+                </div>
+                <div class="save-cancel align-items-center justify-content-around" style="display: none;">
+                    <button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+                    <button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
+                </div>
                 {% elif is_friend %}
                     {% if friendship_status %}
-                            <button class="edit friend-status d-flex align-items-center justify-content-center" id="remove-friend-button">
-                                <img class="friends" src="{% static 'assets/icons/remove-friend.png' %}">
-                                Remove Friend
-                            </button>
+                        <button class="edit friend-status d-flex align-items-center justify-content-center" id="remove-friend-button">
+                            <img class="friends" src="{% static 'assets/icons/remove-friend.png' %}">
+                            Remove Friend
+                        </button>
                     {% else %}
                         {% if me %}
                             <button class="friend-status  d-flex align-items-center justify-content-center">
@@ -161,18 +161,18 @@
                         <textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50">{{ user_view.description }}</textarea>
                     {% endif %}
                     
-                        <div class="email-joined-edit d-flex align-items-center">
-                        <label for="email-input">
-                            <h5 class="text-block d-flex" style="color: #FFFFFFC0;"> 
-                                <img src="{% static 'assets/icons/at.png' %}">
-                                Email
-                            </h5>
-                        </label>
-                        {% if user_view.email is None or user_view.email == "" %}
-                            <input style="text-align: right; " type="email" id="email-input" name="email" value="" required>
-                        {% else %}
-                            <input style="text-align: right; " type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
-                        {% endif %}
+                    <div class="email-joined-edit d-flex align-items-center">
+                    <label for="email-input">
+                        <h5 class="text-block d-flex" style="color: #FFFFFFC0;"> 
+                            <img src="{% static 'assets/icons/at.png' %}">
+                            Email
+                        </h5>
+                    </label>
+                    {% if user_view.email is None or user_view.email == "" %}
+                        <input style="text-align: right; " type="email" id="email-input" name="email" value="" required>
+                    {% else %}
+                        <input style="text-align: right; " type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
+                    {% endif %}
                     </div>
                 </form>
                 <div id="change-info2">
@@ -182,7 +182,6 @@
                         {% else %}
                             <span class="user-description">{{ user_view.description }}</span>
                         {% endif %}
-    
                     </div>
                     <div class="email-joined d-flex justify-content-between align-items-center" style="padding-bottom:10px;">
                         {% if user_view.email is None or user_view.email == "" %}
@@ -219,32 +218,46 @@
                     </li>
                 </ul>
             </div>
-            <div id="profile" style="display:block;">
+            <div id="profile" style="display:block; height: 80%;">
                 <div class="stats2 d-flex">
-                    <div class="percentages justify-content-around">
+                    <div class="profile-head d-flex align-items-center">
                         <div class="stats-head d-flex justify-content-around">
-                            <div class="stat d-flex">
-                                <h4 class="stats-title">Wins</h4>
-                                <h6 class="winr"> {{ stats.nb_games_won }} </h6>
+                            <div class="two-joined d-flex">
+                                <div class="stat d-flex justify-content-between align-items-center">
+                                    <div class="d-flex flex-column align-items-baseline">
+                                        <h4 class="stats-title">Wins</h4>
+                                        <h6 class="winr"> {{ stats.nb_games_won }} </h6>
+                                    </div>
+                                    <img class="icon-stat" src="{% static 'assets/icons/prize.png' %}" alt="">
+                                </div>
+                                <div class="stat d-flex justify-content-between align-items-center">
+                                    <div class="d-flex flex-column align-items-baseline">
+                                        <h4 class="stats-title">Games Played</h4>
+                                        <h6 class="winr"> {{ stats.nb_games_played }} </h6>
+                                    </div>
+                                    <img class="icon-stat" src="{% static 'assets/icons/pong2.png' %}" alt="">
+                                </div>
                             </div>
-                            <div class="stat d-flex">
-                                <h4 class="stats-title">Games Played</h4>
-                                <h6 class="winr"> {{ stats.nb_games_played }} </h6>
-                            </div>
-                            <div class="stat d-flex">
-                                <h4 class="stats-title">First Round Goals</h4>
-                                <h6 class="winr"> {{ stats.num_first_goals }} </h6>
-                            </div>
-                            <div class="stat d-flex">
-                                <h4 class="stats-title">Goals Scored / Goals Suffered Ratio</h4>
-                                <h6 class="winr"> {{ goals_sored_suffered_ratio }} </h6>
+                            <div class="two-joined d-flex">
+                                <div class="stat d-flex justify-content-between align-items-center">
+                                    <div class="d-flex flex-column align-items-baseline">
+                                        <h4 class="stats-title">First Round Goals</h4>
+                                        <h6 class="winr"> {{ stats.num_first_goals }} </h6>
+                                    </div>
+                                    <img class="icon-stat" src="{% static 'assets/icons/fast.png' %}" alt="">
+                                </div>
+                                <div class="stat d-flex justify-content-between align-items-center">
+                                    <div class="d-flex flex-column align-items-baseline">
+                                        <h4 class="stats-title">Goals Scored / Goals Suffered Ratio</h4>
+                                        <h6 class="winr"> {{ goals_sored_suffered_ratio }} </h6>
+                                    </div>
+                                    <img class="icon-stat" src="{% static 'assets/icons/pie.png' %}" alt="">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="graphs d-flex justify-content-around">
-                        <div class="graph1 d-flex align-items-center justify-content-center">
+                        <div class="donut d-flex justify-content-around">
                             <div class="numbers-stat d-flex justify-content-between">
-                                <h6 class="graph-title">Time Spent per Mode</h6>
+                                <h6 class="graph-title" style="color:#fff">Time Spent per Mode</h6>
                                 <h6 class="graph-value">Remote Game: {{ stats.remote_time_played }}</h6>
                                 <h6 class="graph-value">AI Game: {{ stats.ai_time_played }}</h6>
                                 <h6 class="graph-value">Local Game: {{ stats.local_time_played }}</h6>
@@ -252,25 +265,60 @@
                             </div>
                         </div>
                     </div>
-                    <div class="graphs d-flex justify-content-around">
-                        <div class="graph1 d-flex align-items-center justify-content-center">
-                            <div class="numbers-stat d-flex justify-content-between">
-                                <h6 class="graph-title">Win Rate and Games Played / Day </h6>
-                                <h6 class="graph-value">Ainda nao tenho isto</h6>
+                    <div class="profile-foot d-flex align-items-center">
+                        <div class="bar-graphs d-flex justify-content-around">
+                            <div class=" d-flex align-items-center justify-content-center">
+                                <div class="numbers-stat d-flex justify-content-between">
+                                    <h6 class="graph-title" style="color:#fff">Win Rate and Games Played / Day </h6>
+                                    <h6 class="graph-value">Ainda nao tenho isto</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="records d-flex numbers-stat justify-content-around">
+                            <h6 class="graph-title" style="color:#fff">Records</h6>
+                            <div class="record-info d-flex justify-content-between align-items-center">
+                                <div class="img-tit d-flex">
+                                    <img src="{% static 'assets/icons/speed.png' %}" alt="Max Speed">
+                                    <div class="record-info-tit">
+                                        <h6 class="record-tit">Maximum Ball Speed</h6>
+                                        <h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
+                                    </div>
+                                </div>
+                                <h6 class="winr"> {{ stats.max_ball_speed }} </h6>
+                            </div>
+                            <div class="record-info d-flex justify-content-between align-items-center">
+                                <div class="img-tit d-flex">
+                                    <img src="{% static 'assets/icons/rally.png' %}" alt="Max Speed">
+                                    <div class="record-info-tit">
+                                        <h6 class="record-tit">Maximum Rally Length</h6>
+                                        <h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
+                                    </div>
+                                </div>
+                                <h6 class="winr"> {{ stats.max_rally_length }} </h6>
+                            </div>
+                            <div class="record-info d-flex justify-content-between align-items-center">
+                                <div class="img-tit d-flex">
+                                    <img src="{% static 'assets/icons/longest.png' %}" alt="Max Speed">
+                                    <div class="record-info-tit">
+                                        <h6 class="record-tit">Longest Game</h6>
+                                        <h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
+                                    </div>
+                                </div>
+                                <h6 class="winr"> {{ stats.longest_game }} </h6>
+                            </div>
+                            <div class="record-info d-flex justify-content-between align-items-center">
+                                <div class="img-tit d-flex">
+                                    <img src="{% static 'assets/icons/quickest.png' %}" alt="Max Speed">
+                                    <div class="record-info-tit">
+                                        <h6 class="record-tit">Quickest Game</h6>
+                                        <h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
+                                    </div>
+                                </div>
+                                <h6 class="winr"> {{ stats.longest_game }} </h6>
                             </div>
                         </div>
                     </div>
-                    <div class="graphs d-flex justify-content-around">
-                        <div class="graph1 d-flex align-items-center justify-content-center">
-                            <div class="numbers-stat d-flex justify-content-between">
-                                <h6 class="graph-title">Records</h6>
-                                <h6 class="graph-value">Maximum Ball Speed: {{ stats.max_ball_speed }}</h6>
-                                <h6 class="graph-value">Maximum Rally Length: {{ stats.max_rally_length }}</h6>
-                                <h6 class="graph-value">Longest Game: {{ stats.quickest_game }}</h6>
-                                <h6 class="graph-value">Quickest Game: {{ stats.longest_game }}</h6>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
             <div id="games" style="display:none;">
