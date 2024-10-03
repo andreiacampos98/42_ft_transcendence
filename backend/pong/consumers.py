@@ -5,6 +5,7 @@ from icecream import ic
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from channels.layers import get_channel_layer
 
 
 class TournamentConsumer(WebsocketConsumer):
@@ -47,7 +48,8 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 	queue = {}
 
 	def connect(self):
-		self.room_group_name = "Remote Game Queue"
+		self.room_group_name = "game_queue"
+		ic(self.channel_name)
 		self.accept()
 
 	def disconnect(self, code):
@@ -58,4 +60,13 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 	def receive(self, text_data=None):
 		user_id = self.scope['user'].id
 		self.queue[user_id] = self.scope['client']
-		ic(self.queue)
+
+
+# if the queue is empty: (no room available)
+#	- create a new channel_name and add it to the object
+# 	- push the new object alongside the channel name to the queue
+# else: (available rooms)
+# 	- Pop the first available room in the queue
+#	- Add the client to the room
+# 	- Broadcast a message to the channel with the IPs of both
+				
