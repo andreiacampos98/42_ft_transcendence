@@ -582,11 +582,7 @@ def game_update(request, game_id):
 		game.winner_id = player2
 	game.save()
   
-	player1.status = "Online"
-	player1.save()
-	player2.status = "Online"
-	player2.save()
-	
+
 	user_stats_update(player1.id, game_id, data)
 	user_stats_update(player2.id, game_id, data)
 	game_stats_create(game_id, data)
