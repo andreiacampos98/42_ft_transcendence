@@ -1093,7 +1093,8 @@ def ongoingtournaments(request, tournament_id):
 	user_id = request.user.id
 	context = {
 		'user_id': user_id,
-		'tournament_id': tournament_id
+		'tournament_id': tournament_id,
+		'tournament_size': 8
 	}
 	return render(request,'pages/ongoing-tourn.html', context)
 
@@ -1102,7 +1103,7 @@ def tournamentstats(request, tournament_id):
 	context = {
 		'tournament_id': tournament_id
 	}
-	return render(request,'pages/tournament_stats.html', context)
+	return render(request,'pages/tournament_overview.html', context)
 
 @login_required
 def gamestats(request, game_id):

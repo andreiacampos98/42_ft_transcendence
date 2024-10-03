@@ -1,7 +1,9 @@
 .tourn-header {
-	color: #f2f2f2;
-	padding-top: 5vh;
-	min-width: 830px;
+    color: #f2f2f2;
+    padding-top: 5vh;
+    min-width: 1750px;
+    height: 100px;
+
 }
 
 .tourn-info {
@@ -20,7 +22,7 @@
 	top: 50%;
   	position: absolute;
   	transform: translate(0,-50%);
-	width: 90%;
+    width: 70%;
 }
 
 .round {
@@ -33,8 +35,15 @@
     flex-direction: column;
     margin-bottom: 20px;
     position: relative;
+    height: inherit;
 }
 
+.matchup8 {
+    flex-direction: column;
+    margin-bottom: 20px;
+    position: relative;
+    height: 428px;
+}
 .group {
     color: white;
     font-size: large;
@@ -48,6 +57,7 @@
     transition: all 0.3s ease;
     width: 250px;
     height: 50px;
+    margin-bottom: 50px;
 }
 
 .main-core {
@@ -78,19 +88,45 @@
 
 }
 .score {
-    font-size: 14px;
-    color: #666;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ccc;
 }
 
-.line {
-    position: absolute;
-    width: 2px;
-    height: 100%;
+.line-h {
+    position: relative;
+    width: 100%;
+    height: 4px;
     background-color: #ccc;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 40%;
+    /* transform: translateX(-50%); */
     z-index: -1;
     transition: background-color 0.3s ease;
+    top: -77px;
+}
+
+.line-v-d {
+    position: absolute;
+    width: 4px;
+    height: 117px;
+    background-color: #ccc;
+    left: 140%;
+    /* transform: translateX(-50%); */
+    /* z-index: -1; */
+    /* transition: background-color 0.3s ease; */
+    top: 57px;
+}
+
+.line-h2 {
+    position: relative;
+    width: 50%;
+    height: 4px;
+    background-color: #ccc;
+    left: 140%;
+    /* transform: translateX(-50%); */
+    z-index: -1;
+    transition: background-color 0.3s ease;
+    top: -29px;
 }
 
 .round-1 .matchup .line {
@@ -104,4 +140,5 @@
 .round-3 .matchup .line {
     top: 50%;
     height: 50%;
+    
 }
