@@ -567,14 +567,21 @@ def game_update(request, game_id):
 	game.nb_goals_user2 = data['nb_goals_user2']
 
 	player1 = Users.objects.get(pk=game.user1_id.id)
-	player2 = Users.objects.get(pk=game.user2_id.id)
+	player1.status = "Online"
+	player1.save()
 
+	player2 = None
+	if game.type != "Local":
+		player2 = Users.objects.get(pk=game.user2_id.id)
+		player2.status = "Online"
+		player2.save()
 
 	if data['nb_goals_user1'] > data['nb_goals_user2']:
 		game.winner_id = player1
-	else:
+	elif data['nb_goals_user1'] > data['nb_goals_user2'] and game.type != "Local":
 		game.winner_id = player2
 	game.save()
+  
 	player1.status = "Online"
 	player1.save()
 	player2.status = "Online"
@@ -587,6 +594,18 @@ def game_update(request, game_id):
 
 	data = GamesSerializer(game).data
 	return JsonResponse(data, status=200)
+
+@csrf_exempt
+def get_game(request, game_id):
+	if request.method !='GET':
+		return JsonResponse({'message': 'Method not allowed'}, status=405)
+	if request.method == 'GET':
+		try:
+			game = Games.objects.get(id=game_id)
+			serializer = GamesSerializer(game)
+			return JsonResponse({'message': 'Game Info', 'data': serializer.data}, status=200)
+		except Games.DoesNotExist:
+			return JsonResponse({'message': 'Game not found.'}, status=404)
 
 
 #! --------------------------------------- Tournaments ---------------------------------------
@@ -1061,7 +1080,6 @@ def loginview(request):
 			return JsonResponse({'message': 'Bad Credentials.', 'data': {}}, status=400)
 
 	return render(request, 'pages/login.html')
-
 
 def resetpassword(request):
 	return render(request, 'pages/password_reset.html')
