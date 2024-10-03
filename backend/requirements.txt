@@ -11,3 +11,5 @@ django-bootstrap4
 channels_redis
 requests
 python-dotenv
+django-crispy-forms
+crispy-bootstrap4

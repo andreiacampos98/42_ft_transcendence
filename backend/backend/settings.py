@@ -65,6 +65,8 @@ CSRF_COOKIE_HTTPONLY = True
 
 INSTALLED_APPS = [
     'daphne',
+    'crispy_forms',
+    'crispy_bootstrap4',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -191,7 +193,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'andreiacampos98.15@gmail.com'
-EMAIL_HOST_PASSWORD = 'nfvzbxadhvgzfgpq'
+EMAIL_HOST_PASSWORD = 'uwgk hbmf sera vxch'
 
 
 # Default primary key field type
