@@ -5,6 +5,10 @@ socket.onopen = (event) => {
     console.log('Socket opening', event);
 };
 
+socket.onmessage = (event) => {
+	console.log(JSON.parse(event.data))
+}
+
 let app = new MyApp()
 app.init()
 app.render()

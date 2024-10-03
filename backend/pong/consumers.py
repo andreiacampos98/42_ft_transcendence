@@ -48,9 +48,37 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 	queue = {}
 
 	def connect(self):
-		self.room_group_name = "game_queue"
-		ic(self.channel_name)
 		self.accept()
+
+		if len(self.queue) == 0:
+			user_id = self.scope['user'].id
+			room_name = "room_%s" % user_id
+
+			self.queue[user_id] = {
+				'ip': self.scope['client'],
+				'user_id': user_id,
+				'username': self.scope['user'].username,
+				'room_name': room_name
+			}
+			async_to_sync(self.channel_layer.group_add)(room_name, self.channel_name)
+		else:
+			other_id = ic(list(self.queue.keys())[0])
+			other_user = self.queue[other_id]
+			room_name = other_user['room_name']
+			curr_user = {
+				'ip': self.scope['client'],
+				'user_id': self.scope['user'].id,
+				'username': self.scope['user'].username,
+				'room_name': room_name
+			}
+			async_to_sync(self.channel_layer.group_add)(other_user['room_name'], self.channel_name)
+			async_to_sync(self.channel_layer.group_send)(
+				room_name, {"type": "send.message", "message": json.dumps({
+					'player1': curr_user, 
+					'player2': other_user
+				})}
+			)
+
 
 	def disconnect(self, code):
 		del self.queue[self.scope['user'].id]
@@ -58,8 +86,20 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		return super().disconnect(code)
 	
 	def receive(self, text_data=None):
-		user_id = self.scope['user'].id
-		self.queue[user_id] = self.scope['client']
+		pass
+
+	def send_message(self, event):
+		data = json.loads(event["message"])
+		curr_username = self.scope['user'].username
+		if data['player1']['username'] == curr_username:
+			ic(f'Current user: {curr_username} Opponent: {data['player2']['username']}')
+			self.send(text_data=json.dumps({'opponent': data['player2']}))
+		else:
+			ic(f'Current user: {curr_username} Opponent: {data['player1']['username']}')
+			self.send(text_data=json.dumps({'opponent': data['player1']}))
+
+		#! WAS looking it what the players were receiving.
+			
 
 
 # if the queue is empty: (no room available)
