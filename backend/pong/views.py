@@ -325,6 +325,8 @@ def user_stats(request, user_id):
 				data['win_rate'] = (stats.nb_games_won/stats.nb_games_played) * 100
 			else:
 				data['win_rate'] = 0
+			if data['quickest_game'] == 2147483647:
+				data['quickest_game'] = 0 
 			return JsonResponse(data, status=200)
 		except UserStats.DoesNotExist:
 			return JsonResponse({'message': 'UserStats not found.'}, status=404)
@@ -1211,7 +1213,7 @@ def profile(request, id):
 		'games': games,
 		'tours': user_tournaments,
 		'stats': stats,
-		'goals_sored_suffered_ratio': goals_sored_suffered_ratio,
+		'goals_scored_suffered_ratio': goals_sored_suffered_ratio,
 		'graph': graph_send,
 		'page': 'profile' if is_own_profile else 'else'
 	}
