@@ -14,19 +14,21 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.middleware.csrf import get_token
 from datetime import datetime
+from django.utils import timezone
+from datetime import timedelta
 from urllib.parse import quote, unquote
+from django.db.models.functions import TruncDay
 import os
 
 import json, requests, os
 from icecream import ic
 from .models import Users
 import pprint  
-from datetime import datetime
 # Since we want to create an API endpoint for reading, creating, and updating 
 # Company objects, we can use Django Rest Framework mixins for such actions.
 from rest_framework import status
 
-from django.db.models import Q
+from django.db.models import Q, Count, Case, When, IntegerField
 from django.http import JsonResponse, HttpResponseRedirect
 from .models import Users, Friends, Notifications, TournamentsUsers
 from .serializers import *
@@ -49,54 +51,6 @@ total_phase_matches = dict(zip(
 
 
 #! --------------------------------------- Users ---------------------------------------
-
-@login_required
-def profile(request, id):
-	user_id = request.user.id
-	user_profile = get_object_or_404(Users, id=id)
-	is_own_profile = user_profile == request.user
-
-	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
-	friendship = Friends.objects.filter(
-		(Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
-	).first()
-
-	notification = Notifications.objects.filter(Q(type='Friend Request') & Q(user_id=user_id, other_user_id=user_profile.id)).first()
-	me = False
-
-	if friendship:
-		is_friend = True
-		friendship_status = friendship.accepted
-		if friendship.user1_id.id == user_id:
-			me = True
-	else:
-		is_friend = False
-		friendship_status = None
-
-	user = get_object_or_404(Users, id=id)
-	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) 
-		).exclude(type="Tournament").order_by('-created_at')
-	tournament_response = tournament_list_user(request, user_profile.id)
-	user_tournaments = json.loads(tournament_response.content)
-	stats_response = user_stats(request, user_profile.id)
-	stats = json.loads(stats_response.content)
-	context = {
-		'friends': friends,
-		'user_id': user_id,
-		'user_view': user,
-		'joined_date':user.created_at.strftime('%d/%m/%Y'),
-		'is_own_profile': is_own_profile,
-		'is_friend': is_friend,
-		'friendship_status': friendship_status,
-		'me': me,
-		'notification': notification,
-		'games': games,
-		'tours': user_tournaments,
-		'stats': stats,
-		'page': 'profile' if is_own_profile else 'else'
-	}
-	ic(context)
-	return render(request, 'pages/view_profile.html', context)
 
 def user_detail(request, pk):
 	if request.method == 'GET':
@@ -371,6 +325,8 @@ def user_stats(request, user_id):
 				data['win_rate'] = (stats.nb_games_won/stats.nb_games_played) * 100
 			else:
 				data['win_rate'] = 0
+			if data['quickest_game'] == 2147483647:
+				data['quickest_game'] = 0 
 			return JsonResponse(data, status=200)
 		except UserStats.DoesNotExist:
 			return JsonResponse({'message': 'UserStats not found.'}, status=404)
@@ -407,66 +363,64 @@ def current_place(request, user_id):
 	return None
 
 @csrf_exempt
-def user_stats_update(request, user_id):
-	if request.method != 'POST':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
-	if request.content_type != 'application/json':
-		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
-
-	data = {}
-
-	try:
-		data = json.loads(request.body.decode('utf-8'))
-	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
-	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
-
-	gametype = data.get('type')
-	if not gametype:
-		return JsonResponse({'message': 'Missing key: type', 'data': {}}, status=400)
+def user_stats_update(user_id, game_id, data):
 
 	stats = UserStats.objects.get(user_id=user_id)
 	if not stats:
 		return JsonResponse({'message': 'User stats not found', 'data': {}}, status=404)
 	
-	stats.nb_tournaments_played = int(stats.nb_tournaments_played or 0)
-	stats.nb_games_played = int(stats.nb_games_played or 0)
-	stats.nb_goals_scored = int(stats.nb_goals_scored or 0)
-	stats.nb_goals_suffered = int(stats.nb_goals_suffered or 0)
-
-	try:
-		duration = int(data.get('duration', 0))
-		goals_scored = int(data.get('goals_scored', 0))
-		goals_suffered = int(data.get('goals_suffered', 0))
-		won = data.get('won') == "True"
-	except ValueError:
-		return JsonResponse({'message': 'Invalid value for one of the fields', 'data': {}}, status=400)
-
-
-	if gametype == "Tournament":
-		stats.nb_tournaments_played += 1
-		stats.tournament_time_played += duration
-	elif gametype == "Remote":
-		stats.remote_time_played += duration
-	elif gametype == "Local":
-		stats.local_time_played += duration
-	elif gametype == "AI":
-		stats.ai_time_played += duration
-
-	if gametype in ("Remote", "Local", "AI"):
-		stats.nb_goals_scored += goals_scored
-		stats.nb_goals_suffered += goals_suffered
-		stats.nb_games_played += 1
-		if (won == "True"):
+	game = Games.objects.get(pk=game_id)
+	if game.user1_id.id == user_id:
+		stats.nb_goals_scored = data['nb_goals_user1']
+		stats.nb_goals_suffered = data['nb_goals_user2']
+		if data['user1_stats']['scored_first']:
+			stats.num_first_goals += 1
+		if data['nb_goals_user1'] > data['nb_goals_user2']:
 			stats.nb_games_won += 1
 	else:
-		stats.nb_tournaments_played += 1
-		if (won == "True"):
-			stats.nb_tournaments_won += 1
+		stats.nb_goals_scored = data['nb_goals_user2']
+		stats.nb_goals_suffered = data['nb_goals_user1']
+		if data['user2_stats']['scored_first']:
+			stats.num_first_goals += 1
+		if data['nb_goals_user2'] > data['nb_goals_user1']:
+			stats.nb_games_won += 1
+	
+	stats.nb_games_played += 1
+	if game.type == "Remote":
+		stats.remote_time_played += data['duration']
+	elif game.type == "Local":
+		stats.local_time_played += data['duration']
+	elif game.type == "AI":
+		stats.ai_time_played += data['duration']
+
+	if data['game_stats']['max_ball_speed'] > stats.max_ball_speed:
+		stats.max_ball_speed = data['game_stats']['max_ball_speed']
+	if data['game_stats']['longer_rally'] > stats.max_rally_length:
+		stats.max_rally_length = data['game_stats']['longer_rally']
+	if data['duration'] < stats.quickest_game :
+		stats.quickest_game = data['duration']
+	if data['duration'] > stats.longest_game:
+		stats.longest_game = data['duration']
 	stats.save()
 	data_stats = UserStatsSerializer(stats)
 	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
+
+def win_rate_nb_games_day(request, user_id):
+	today = timezone.now()
+	seven_day_before = today - timedelta(days=7)
+	games = Games.objects.filter((Q(user1_id = user_id) | Q(user2_id = user_id)) & Q(created_at__gte=seven_day_before) 
+							  & ~Q(type='Tournament')).order_by('-created_at')
+
+	stats = games.annotate(day=TruncDay('created_at')).values('day').annotate(
+        total_games=Count('id'), ).annotate(
+		  win_rate=Case(
+            When(total_games=0, then=0), 
+            default=(100 * Count(Case(When(winner_id=user_id, then=1))) / Count('id')),
+            output_field=IntegerField()
+           )
+		).order_by('-day')
+
+	return JsonResponse(list(stats), safe=False) 
 
 def user_stats_all(request):
 	if request.method != 'GET':
@@ -476,6 +430,90 @@ def user_stats_all(request):
 		data_stats = UserStatsSerializer(stats, many=True)
 		return JsonResponse({'message': 'All users stats', 'data': data_stats.data}, status=200)
 	return JsonResponse({'message': 'All users stats', 'data':{} }, safe=False, status=400)
+
+
+#! --------------------------------------- Game Stats ---------------------------------------
+@csrf_exempt
+def game_stats_create(game_id, data):
+	game = Games.objects.get(pk=game_id)
+	game_stats, created = GamesStats.objects.get_or_create(game=game)
+	game_stats.average_rally = data['game_stats']['average_rally'] 
+	game_stats.longer_rally = data['game_stats']['longer_rally']
+	game_stats.shorter_rally = data['game_stats']['shorter_rally']
+	game_stats.max_ball_speed = data['game_stats']['max_ball_speed']
+	game_stats.min_ball_speed = data['game_stats']['min_ball_speed']
+	game_stats.average_ball_speed = data['game_stats']['average_ball_speed']
+	game_stats.greatest_deficit_overcome = data['game_stats']['greatest_deficit_overcome']
+	game_stats.gdo_user = Users.objects.get(pk=data['game_stats']['gdo_user'])
+	game_stats.most_consecutive_goals = data['game_stats']['most_consecutive_goals']
+	game_stats.mcg_user = Users.objects.get(pk=data['game_stats']['mcg_user'])
+	game_stats.biggest_lead = data['game_stats']['biggest_lead']
+	game_stats.bg_user = Users.objects.get(pk=data['game_stats']['bg_user'])
+
+	game_stats.save()
+	return JsonResponse({'message': 'Game Stats updated.'}, status=201)
+
+
+def game_stats(request, game_id):
+	if request.method !='GET':
+		return JsonResponse({'message': 'Method not allowed'}, status=405)
+	if request.method == 'GET':
+		try:
+			stats = GamesStats.objects.get(game=game_id)
+			serializer = GamesStatsSerializer(stats)
+			data = serializer.data
+			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
+		except GamesStats.DoesNotExist:
+			return JsonResponse({'message': 'GamesStats not found.'}, status=404)
+
+
+def game_stats_all(request):
+	if request.method != 'GET':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	elif request.method == 'GET':
+		stats = GamesStats.objects.all()
+		data_stats = GamesStatsSerializer(stats, many=True)
+		return JsonResponse({'message': 'All games stats', 'data': data_stats.data}, status=200)
+	return JsonResponse({'message': 'All games stats', 'data':{} }, safe=False, status=400)
+
+#! --------------------------------------- Goals ---------------------------------------
+def game_goals_create(game_id, data):
+	game =Games.objects.get(pk=game_id)
+	for goal_data in data['goals']:
+		timestamp_str = goal_data['timestamp'].replace('Z', '+00:00')
+		timestamp = datetime.fromisoformat(timestamp_str)
+
+		goals_create = Goals.objects.create(
+			game=game,
+			timestamp=timestamp,  
+			user=Users.objects.get(pk=goal_data['user']),
+			rally_length=goal_data['rally_length'],
+			ball_speed=goal_data['ball_speed']
+		)
+
+	return JsonResponse({'message': 'Goals added.'}, status=201)
+
+
+def game_goals(request, game_id):
+	if request.method !='GET':
+		return JsonResponse({'message': 'Method not allowed'}, status=405)
+	if request.method == 'GET':
+		try:
+			stats = Goals.objects.filter(game=game_id)
+			serializer = GoalsSerializer(stats, many=True)
+			data = serializer.data
+			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
+		except Goals.DoesNotExist:
+			return JsonResponse({'message': 'Goals not found.'}, status=404)
+
+def game_goals_all(request):
+	if request.method != 'GET':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	elif request.method == 'GET':
+		stats = Goals.objects.all()
+		data_stats = GoalsSerializer(stats, many=True)
+		return JsonResponse({'message': 'All goals', 'data': data_stats.data}, status=200)
+	return JsonResponse({'message': 'No goals', 'data':{} }, safe=False, status=400)
 
 #! --------------------------------------- Games ---------------------------------------
 
@@ -543,9 +581,16 @@ def game_update(request, game_id):
 	elif data['nb_goals_user1'] > data['nb_goals_user2'] and game.type != "Local":
 		game.winner_id = player2
 	game.save()
-
-	gameStats = GamesStats.objects.create()
+  
+	player1.status = "Online"
+	player1.save()
+	player2.status = "Online"
+	player2.save()
 	
+	user_stats_update(player1.id, game_id, data)
+	user_stats_update(player2.id, game_id, data)
+	game_stats_create(game_id, data)
+	game_goals_create(game_id, data)
 
 	data = GamesSerializer(game).data
 	return JsonResponse(data, status=200)
@@ -733,6 +778,33 @@ def tournament_list_users(request, tournament_id):
 
 #! --------------------------------------- Tournaments Games ---------------------------------------
 
+# @csrf_exempt
+# def tournament_list_games(request, tournament_id):
+# 	if request.method != 'GET':
+# 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+
+# 	tgames = TournamentsGames.objects.filter(tournament_id=tournament_id)
+# 	serializer = TournamentsGamesSerializer(tgames, many=True)
+# 	tgames_list = serializer.data
+
+# 	for tgame in tgames_list:
+# 		game = Games.objects.get(pk=tgame['game_id'])
+# 		serializer = GamesSerializer(game)
+# 		tgame['game'] = serializer.data
+# 		winner = Users.objects.get(pk=game.winner_id) 
+# 		user1 = Users.objects.get(pk=game.user1_id)
+# 		user2 = Users.objects.get(pk=game.user2_id)
+# 		winner_serializer = UsersSerializer(winner)
+# 		user1_serializer = UsersSerializer(user1)
+# 		user2_serializer = UsersSerializer(user2)
+# 		tgame['game']['winner'] = winner_serializer.data
+# 		tgame['game']['user1'] = user1_serializer.data
+# 		tgame['game']['user2'] = user2_serializer.data
+
+
+
+# 	return JsonResponse(tgames_list, safe=False)
+
 @csrf_exempt
 def tournament_list_games(request, tournament_id):
 	if request.method != 'GET':
@@ -741,13 +813,30 @@ def tournament_list_games(request, tournament_id):
 	tgames = TournamentsGames.objects.filter(tournament_id=tournament_id)
 	serializer = TournamentsGamesSerializer(tgames, many=True)
 	tgames_list = serializer.data
-
 	for tgame in tgames_list:
-		game = Games.objects.get(pk=tgame['game_id'])
-		serializer = GamesSerializer(game)
-		tgame['game'] = serializer.data
+		try:
+			game = Games.objects.get(pk=tgame['game_id'])
+			game_serializer = GamesSerializer(game)
+			tgame['game'] = game_serializer.data
+			
+			winner = Users.objects.get(pk=game.winner_id.id) if game.winner_id else None
+			user1 = Users.objects.get(pk=game.user1_id.id)
+			user2 = Users.objects.get(pk=game.user2_id.id)
+
+			tgame['game']['winner'] = UsersSerializer(winner).data if winner else None
+			tgame['game']['user1'] = UsersSerializer(user1).data
+			tgame['game']['user2'] = UsersSerializer(user2).data
+
+
+		except Games.DoesNotExist:
+			return JsonResponse({'message': 'Game not found', 'data': {}}, status=404)
+		except Users.DoesNotExist as e:
+			return JsonResponse({'message': 'User not found', 'error': str(e)}, status=404)
+		except Exception as e:
+			return JsonResponse({'message': 'An error occurred', 'error': str(e)}, status=500)
 
 	return JsonResponse(tgames_list, safe=False)
+
 
 
 @csrf_exempt
@@ -853,73 +942,6 @@ def tournament_update_game(request, tournament_id, game_id):
 	data['game'] = GamesSerializer(tour_game.game_id).data
 
 	return JsonResponse(data, status=200)
-
-#! --------------------------------------- Game Stats ---------------------------------------
-@csrf_exempt
-def game_stats_create(request, game_id):
-	if request.method != 'POST':
-		return JsonResponse({'message': 'Method not allowed'}, status=405)
-	data = {}
-	game = Games.objects.get(pk=game_id)
-
-	try:
-		data = json.loads(request.body.decode('utf-8'))
-	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
-	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
-	
-	try:
-		game_stats = GamesStats.objects.create(game=game)
-
-		game_stats.average_rally = data.get('average_rally', 0) 
-		game_stats.longer_rally = data.get('longer_rally', 0)
-		game_stats.shorter_rally = data.get('shorter_rally', 0)
-		game_stats.max_ball_speed = data.get('max_ball_speed', 0)
-		game_stats.min_ball_speed = data.get('min_ball_speed', 0)
-		game_stats.average_ball_speed = data.get('average_ball_speed', 0)
-		game_stats.greatest_deficit_overcome = data.get('greatest_deficit_overcome', 0)
-		if data.get('gdo_user'):
-			game_stats.gdo_user = Users.objects.get(pk=data.get('gdo_user'))
-		game_stats.most_consecutive_goals = data.get('most_consecutive_goals', 0)
-		if data.get('mcg_user'):
-			game_stats.mcg_user = Users.objects.get(pk=data.get('mcg_user'))
-		game_stats.biggest_lead = data.get('biggest_lead', 0)
-		if data.get('bg_user'):
-			game_stats.bg_user = Users.objects.get(pk=data.get('bg_user'))
-
-		game_stats.save()
-		#data_stats = GamesStatsSerializer(data=game_stats)
-		#if not data_stats.is_valid():
-		#	return JsonResponse(data_stats.errors, status=400, safe=False)
-		#data_stats.save()
-		return JsonResponse({'message': 'Game Stats updated.'}, status=201)
-	except Exception as e:
-		return JsonResponse({'message': f'Error creating stats: {str(e)}'}, status=500)
-
-
-
-def game_stats(request, game_id):
-	if request.method !='GET':
-		return JsonResponse({'message': 'Method not allowed'}, status=405)
-	if request.method == 'GET':
-		try:
-			stats = GamesStats.objects.get(game=game_id)
-			serializer = GamesStatsSerializer(stats)
-			data = serializer.data
-			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
-		except GamesStats.DoesNotExist:
-			return JsonResponse({'message': 'GamesStats not found.'}, status=404)
-
-
-def game_stats_all(request):
-	if request.method != 'GET':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
-	elif request.method == 'GET':
-		stats = GamesStats.objects.all()
-		data_stats = GamesStatsSerializer(stats, many=True)
-		return JsonResponse({'message': 'All games stats', 'data': data_stats.data}, status=200)
-	return JsonResponse({'message': 'All games stats', 'data':{} }, safe=False, status=400)
 
 
 #! --------------------------------------- Login42 ---------------------------------------
@@ -1140,6 +1162,84 @@ def ongoingtournaments(request, tournament_id):
 	return render(request,'pages/ongoing-tourn.html', context)
 
 @login_required
+def tournamentstats(request, tournament_id):
+	context = {
+		'tournament_id': tournament_id
+	}
+	return render(request,'pages/tournament_stats.html', context)
+
+@login_required
+def gamestats(request, game_id):
+	stats = game_stats(request, game_id)
+	data_stats = json.loads(stats.content)
+	goals = game_goals(request, game_id)
+	data_goals = json.loads(goals.content)
+	ic(data_goals)
+	context = {
+		'game_id': game_id,
+		'stats': data_stats,
+		'goals': data_goals
+	}
+	return render(request,'pages/game_stats.html', context)
+
+@login_required
+def profile(request, id):
+	user_id = request.user.id
+	user_profile = get_object_or_404(Users, id=id)
+	is_own_profile = user_profile == request.user
+
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	friendship = Friends.objects.filter(
+		(Q(user1_id=user_id, user2_id=user_profile.id) | Q(user1_id=user_profile.id, user2_id=user_id))
+	).first()
+
+	notification = Notifications.objects.filter(Q(type='Friend Request') & Q(user_id=user_id, other_user_id=user_profile.id)).first()
+	me = False
+
+	if friendship:
+		is_friend = True
+		friendship_status = friendship.accepted
+		if friendship.user1_id.id == user_id:
+			me = True
+	else:
+		is_friend = False
+		friendship_status = None
+
+	user = get_object_or_404(Users, id=id)
+	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) 
+						).exclude(type="Tournament").order_by('-created_at')
+	tournament_response = tournament_list_user(request, user_profile.id)
+	user_tournaments = json.loads(tournament_response.content)
+	stats_response = user_stats(request, user_profile.id)
+	stats = json.loads(stats_response.content)
+	if stats['nb_goals_suffered'] != 0:
+		goals_sored_suffered_ratio = stats['nb_goals_scored'] / stats['nb_goals_suffered']
+	else:
+		goals_sored_suffered_ratio = 0
+	graph = win_rate_nb_games_day(request, user_profile.id)
+	graph_send = json.loads(graph.content)
+	context = {
+		'friends': friends,
+		'user_id': user_id,
+		'user_view': user,
+		'joined_date':user.created_at.strftime('%d/%m/%Y'),
+		'is_own_profile': is_own_profile,
+		'is_friend': is_friend,
+		'friendship_status': friendship_status,
+		'me': me,
+		'notification': notification,
+		'games': games,
+		'tours': user_tournaments,
+		'stats': stats,
+		'goals_scored_suffered_ratio': goals_sored_suffered_ratio,
+		'graph': graph_send,
+		'page': 'profile' if is_own_profile else 'else'
+	}
+	ic(context)
+	return render(request, 'pages/view_profile.html', context)
+
+
+@login_required
 @csrf_exempt
 def signout(request):
 	print("A função signout foi chamada")
@@ -1201,6 +1301,7 @@ def advance_tournament_phase(previous_phase, tournament_id):
 	return JsonResponse(new_phase_games_data, status=200, safe=False)
 
 def calculate_placements(tournament_id):
+	tournament = Tournaments.objects.get(pk=tournament_id)
 	tour_users = TournamentsUsers.objects \
 		.filter(tournament_id=tournament_id) \
 		.order_by('-score')
@@ -1212,6 +1313,14 @@ def calculate_placements(tournament_id):
 		user1 = user.user_id 
 		user1.status = "Online"
 		user1.save()
+		user_stats = UserStats.objects.get(user_id=user1)
+		if i == 0:
+			user_stats.nb_tournaments_won += 1
+		user_stats.nb_tournaments_played += 1
+		user_stats.tournament_time_played += tournament.duration
+		user_stats.save()
+		ic(user_stats)
+
 	
 	tournament = Tournaments.objects.get(pk=tournament_id)
 	tournament.winner_id = tour_users.first().user_id

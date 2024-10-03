@@ -67,6 +67,7 @@ class GamesSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 class TournamentsSerializer(serializers.ModelSerializer):
+	winner_id = UsersSerializer(read_only=True)
 	class Meta:
 		model = Tournaments
 		fields = '__all__'
@@ -82,8 +83,15 @@ class TournamentsGamesSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 class GamesStatsSerializer(serializers.ModelSerializer):
+	gdo_user = UsersSerializer(read_only=True)
+	mcg_user = UsersSerializer(read_only=True)
+	bg_user = UsersSerializer(read_only=True)
+	
 	class Meta:
 		model = GamesStats
 		fields = '__all__'
 
-
+class GoalsSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Goals
+		fields = '__all__'

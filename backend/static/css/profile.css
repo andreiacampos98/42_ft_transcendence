@@ -1,3 +1,13 @@
+#main-wrapper {
+    display: flex;
+    width: 100%;
+    gap: 20px; 
+}
+
+#profile-main {
+    width: 30%; 
+    flex-shrink: 0; 
+}
 
 .side-profile {
     flex-direction: column;
@@ -19,7 +29,6 @@
     width: inherit;
     font-size: small;
     color: #f2f2f2;
-    /*color:#c3c3c3bb;*/
 	min-width: inherit;
 }
 
@@ -73,9 +82,6 @@ textarea, #username-input, #email-input {
 	
 }
 
-/*#edit-profile-form{
-    width: 100%;
-}*/
 
 .side-profile button {
     padding: 10px 20px;
@@ -148,6 +154,29 @@ textarea, #username-input, #email-input {
 	color: #c3c3c3bb;
     flex-shrink: 0;
 }
+
+
+
+#tabs {
+    flex-grow: 1; 
+    width: 70%; 
+    padding-top: 30px;
+}
+
+#tabs .nav-tabs {
+    margin-bottom: 20px; 
+}
+
+#tabs .nav-item .nav-link {
+    cursor: pointer;
+}
+
+#tabs .nav-item .nav-link.active {
+    background-color: #f8f9fa;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+
+
 
 .stats-history {
     flex-direction: column;
@@ -226,15 +255,11 @@ textarea, #username-input, #email-input {
     max-height: 50%;
 }
 
-#games{
-    height: 260px;
-    overflow-y: scroll;
+#games, #tournaments{
+    max-height: 80%;
+    overflow-y: auto;
 }
 
-#tournaments{
-    overflow-y: scroll;
-    height: 260px;
-}
 
 #match-container {
 	width: inherit;

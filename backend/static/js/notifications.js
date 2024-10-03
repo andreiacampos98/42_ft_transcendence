@@ -1,3 +1,38 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === 1 && !node["htmx-internal-data"]) {
+              htmx.process(node)
+            }
+          })
+        })
+      });
+    observer.observe(document, {childList: true, subtree: true});
+})
+
+
+function removeNotification(notificationId, listItem){
+    const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
+    fetch(`/notifications/${userId}/${notificationId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            listItem.remove();
+        } else {
+            console.error('Error deleting notification:', response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting notification:', error);
+    });
+}
+
+
 function getNotifications() {
     const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
 
@@ -87,6 +122,8 @@ function getNotifications() {
 			const closeSpan = document.createElement('span');
 			closeSpan.classList.add('close');
 			closeSpan.textContent = 'x';
+            closeSpan.style.cursor = 'pointer';
+            closeSpan.onclick = () => removeNotification(notification.id, listItem);
 			listItem.appendChild(closeSpan);
 
             notificationList.appendChild(listItem);
@@ -99,6 +136,8 @@ function getNotifications() {
         console.error('Error fetching notifications:', error);
     });
 }
+
+
 
 async function handleNotificationAction(notificationId, status, userId, otherUserId, event) {
     if (event) {

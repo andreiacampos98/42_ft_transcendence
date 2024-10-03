@@ -156,7 +156,7 @@ class UserStats(models.Model):
     nb_goals_suffered = models.IntegerField(default=0)
     max_ball_speed = models.IntegerField(default=0)
     max_rally_length = models.IntegerField(default=0)
-    quickest_game = models.IntegerField(default=0)
+    quickest_game = models.IntegerField(default=2147483647)
     longest_game = models.IntegerField(default=0)
     num_first_goals = models.IntegerField(default=0)
     remote_time_played = models.IntegerField(default=0)
@@ -168,7 +168,7 @@ class UserStats(models.Model):
 
 class Goals(models.Model):
     id = models.AutoField(primary_key=True)
-    timestamp = models.IntegerField(default=0)
+    timestamp = models.DateTimeField(null=True)     
     user = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name='user_goals')
     game =  models.ForeignKey(Games, on_delete=models.CASCADE)
     rally_length = models.IntegerField(default=0)

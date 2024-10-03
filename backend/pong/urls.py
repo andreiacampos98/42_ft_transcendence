@@ -22,7 +22,8 @@ urlpatterns = [
     path('tournaments/ongoing/<int:tournament_id>', views.ongoingtournaments, name="ongoingtournaments"),
     path('signup/', views.signup, name='signup'),
     path('signout/', views.signout, name="signout"),
-    
+    path('games/<int:game_id>/stats', views.gamestats, name="game-stats"),
+    path('tournaments/<int:tournament_id>/stats', views.tournamentstats, name="tournament-stats"),
 
     path('password-reset/', 
             auth_views.PasswordResetView.as_view(template_name='pages/password_reset.html'), 
@@ -65,7 +66,8 @@ urlpatterns = [
     path('stats/<int:user_id>', views.user_stats, name='user-stats'),
     path('leaderboard', views.leaderboard, name='leaderboard'),
     path('currentplace/<int:user_id>', views.current_place, name='current-place'),
-    path('stats/<int:user_id>/update', views.user_stats_update, name='user-stats-update'),
+    path('graph/<int:user_id>', views.win_rate_nb_games_day, name='win-rate-nb-games'),
+    # path('stats/<int:user_id>/update', views.user_stats_update, name='user-stats-update'),
     path('stats/users', views.user_stats_all, name='user-stats-all'),
 
 	#! Games
@@ -73,14 +75,13 @@ urlpatterns = [
     path('games/update/<int:game_id>', views.game_update, name='game-update'),
     
     #! Games Stats
-    path('games/<int:game_id>/stats/add', views.game_stats_create, name='game-stats-create'),
-    path('games/<int:game_id>/stats', views.game_stats, name='game-stats'),
-    path('games/stats', views.game_stats_all, name='game-stats-all'),
+    path('debug/games/<int:game_id>/stats', views.game_stats, name='debug-game-stats'),
+    path('debug/games/stats', views.game_stats_all, name='debug-game-stats-all'),
     
     #! Goals
     #path('games/<int:game_id>/goals/add', views.game_goals_create, name='game-goals-create'),
-    #path('games/<int:game_id>/goals', views.game_goals, name='game-goals'),
-    #path('games/goals', views.game_goals_all, name='game-goals-all'),
+    path('debug/games/<int:game_id>/goals', views.game_goals, name='game-goals'),
+    path('debug/games/goals', views.game_goals_all, name='game-goals-all'),
 
 	#! Tournaments
     path('tournaments/create', views.tournament_create, name='tournament-create'),
