@@ -582,11 +582,7 @@ def game_update(request, game_id):
 		game.winner_id = player2
 	game.save()
   
-	player1.status = "Online"
-	player1.save()
-	player2.status = "Online"
-	player2.save()
-	
+
 	user_stats_update(player1.id, game_id, data)
 	user_stats_update(player2.id, game_id, data)
 	game_stats_create(game_id, data)
@@ -623,13 +619,22 @@ def tournament_create(request):
 		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
 	
 	name = data.get('name', '')
+	nickname = data.get('alias', '')
+
+	if name == '':
+		return JsonResponse({'message': 'The name is blank', 'data': {}}, status=400)
+	if nickname == '':
+		return JsonResponse({'message': 'The nickname is blank', 'data': {}}, status=400)
 
 	if len(name) > 64:
 		return JsonResponse({'message': 'The name of the tournament is too long.', 'data': {}}, status=400)
+	
+	if len(nickname) > 64:
+		return JsonResponse({'message': 'The nickname is too long.', 'data': {}}, status=400)
 
 	tour_serializer = TournamentsSerializer(data=data)
 	if not tour_serializer.is_valid():
-		return JsonResponse(tour_serializer.errors, status=400)
+		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_serializer.errors, 'data': {}}, status=400)
 
 	tournament = tour_serializer.save()
 	user_data = {
@@ -640,7 +645,7 @@ def tournament_create(request):
 
 	tour_user_serializer = TournamentsUsersSerializer(data=user_data)
 	if not tour_user_serializer.is_valid():
-		return JsonResponse(tour_user_serializer.errors, status=400)
+		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_user_serializer.errors, 'data': {}}, status=400)
 	tour_user_serializer.save()
 	ic(data['host_id'])
 	user= Users.objects.get(pk=data['host_id'])
@@ -692,6 +697,12 @@ def tournament_join(request, tournament_id, user_id):
 
 	data['tournament_id'] = tournament_id
 	data['user_id'] = user_id
+	nickname = data.get('alias', '')
+	ic(nickname)
+	if nickname == '':
+		return JsonResponse({'message': 'The nickname is blank', 'data': {}}, status=400)
+	if len(nickname) > 64:
+		return JsonResponse({'message': 'The nickname is too long.', 'data': {}}, status=400)
 		
 	serializer = TournamentsUsersSerializer(data=data)
 	if not serializer.is_valid():
