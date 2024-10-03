@@ -5,8 +5,10 @@
 }
 
 #profile-main {
-    width: 30%; 
-    flex-shrink: 0; 
+    /*width: 30%; */
+    flex-shrink: 0;
+    width:initial;
+    padding-top: 80px;
 }
 
 .side-profile {
@@ -155,28 +157,37 @@ textarea, #username-input, #email-input {
     flex-shrink: 0;
 }
 
-
-
 #tabs {
-    flex-grow: 1; 
-    width: 70%; 
+    width: 80%; 
     padding-top: 30px;
+    min-width: 900px;
 }
 
-#tabs .nav-tabs {
-    margin-bottom: 20px; 
+.my-nav-tabs {
+    padding-left: 10vw;
+}
+
+#tabs .my-nav-tabs {
+    margin-bottom: 20px;
+    border-bottom: none;
 }
 
 #tabs .nav-item .nav-link {
+    display: inline-block;
     cursor: pointer;
+    color: #c3c3c3bb;
 }
 
+.nav-item {
+    padding: 10px;
+}
 #tabs .nav-item .nav-link.active {
-    background-color: #f8f9fa;
-    border-color: #dee2e6 #dee2e6 #fff;
+    color: #f8f9fa;
+    font-weight: bold;
+    background: none;
+    border: none;
+    border-bottom: 2px solid #F8D082;
 }
-
-
 
 .stats-history {
     flex-direction: column;
@@ -219,6 +230,8 @@ textarea, #username-input, #email-input {
     flex-direction: column;
     width: 50%;
     height: 100%;
+    margin: 5px;
+
 }
 
 .two-joined {
@@ -230,12 +243,14 @@ textarea, #username-input, #email-input {
     width: 49%;
     border-radius: 8px;
     background-color: #ffffff0C;
-    margin: 5px;
+    border: 1px solid #ffffff2a;
+    
 }
 
 .donut {
     border-radius: 8px;
     background-color: #ffffff0C;
+    border: 1px solid #ffffff2a;
     flex-direction: column;
     width: 50%;
     height: 100%;
@@ -246,11 +261,13 @@ textarea, #username-input, #email-input {
 .profile-foot {
     width: 100%;
     height: 60%;
+    margin-top: 10px;
 }
 
 .bar-graphs {
     border-radius: 8px;
     background-color: #ffffff0C;
+    border: 1px solid #ffffff2a;
     width: 65%;
     height: 100%;
     margin: 5px;
@@ -260,6 +277,7 @@ textarea, #username-input, #email-input {
     margin: 5px;
     border-radius: 8px;
     background-color: #ffffff0C;
+    border: 1px solid #ffffff2a;
     width: 35%;
     height: 100%;
 
@@ -267,7 +285,7 @@ textarea, #username-input, #email-input {
 
 .record-info {
     width: 100%;
-    padding: 10px;
+    padding: 20px;
     padding-bottom: 5px;
 }
 
@@ -289,13 +307,13 @@ textarea, #username-input, #email-input {
 
 .record-tit {
     color: #FFFFFF;
-    font-size: x-small;
+    font-size: small;
     margin-bottom: 0;
 }
 
 .record-date {
     color: #ffffff83;
-    font-size: xx-small;
+    font-size: x-small;
 
 }
 
@@ -309,17 +327,21 @@ textarea, #username-input, #email-input {
 
 .stats-title {
     color: #c3c3c3bb;
-    font-size: xx-small;
+    font-size: x-small;
 }
 
+.stat .winr {
+    font-size: larger !important;
+}
 .icon-stat {
-    height: 20px;
-    width: 20px;
+    height: 30px;
+    width: 30px;
 }
 
 .graph-title {
-    font-size: smaller;
-    color: #c3c3c3bb;
+    align-self: flex-start;
+    padding: 20px;
+    font-size: x-large;
 }
 
 .winr, .graph-value {
