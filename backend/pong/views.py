@@ -628,6 +628,9 @@ def tournament_create(request):
 
 	if len(name) > 64:
 		return JsonResponse({'message': 'The name of the tournament is too long.', 'data': {}}, status=400)
+	
+	if len(nickname) > 64:
+		return JsonResponse({'message': 'The nickname is too long.', 'data': {}}, status=400)
 
 	tour_serializer = TournamentsSerializer(data=data)
 	if not tour_serializer.is_valid():
@@ -694,6 +697,12 @@ def tournament_join(request, tournament_id, user_id):
 
 	data['tournament_id'] = tournament_id
 	data['user_id'] = user_id
+	nickname = data.get('alias', '')
+	ic(nickname)
+	if nickname == '':
+		return JsonResponse({'message': 'The nickname is blank', 'data': {}}, status=400)
+	if len(nickname) > 64:
+		return JsonResponse({'message': 'The nickname is too long.', 'data': {}}, status=400)
 		
 	serializer = TournamentsUsersSerializer(data=data)
 	if not serializer.is_valid():
