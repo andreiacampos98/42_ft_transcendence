@@ -619,13 +619,19 @@ def tournament_create(request):
 		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
 	
 	name = data.get('name', '')
+	nickname = data.get('alias', '')
+
+	if name == '':
+		return JsonResponse({'message': 'The name is blank', 'data': {}}, status=400)
+	if nickname == '':
+		return JsonResponse({'message': 'The nickname is blank', 'data': {}}, status=400)
 
 	if len(name) > 64:
 		return JsonResponse({'message': 'The name of the tournament is too long.', 'data': {}}, status=400)
 
 	tour_serializer = TournamentsSerializer(data=data)
 	if not tour_serializer.is_valid():
-		return JsonResponse(tour_serializer.errors, status=400)
+		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_serializer.errors, 'data': {}}, status=400)
 
 	tournament = tour_serializer.save()
 	user_data = {
@@ -636,7 +642,7 @@ def tournament_create(request):
 
 	tour_user_serializer = TournamentsUsersSerializer(data=user_data)
 	if not tour_user_serializer.is_valid():
-		return JsonResponse(tour_user_serializer.errors, status=400)
+		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_user_serializer.errors, 'data': {}}, status=400)
 	tour_user_serializer.save()
 	ic(data['host_id'])
 	user= Users.objects.get(pk=data['host_id'])
