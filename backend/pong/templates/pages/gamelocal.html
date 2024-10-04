@@ -22,5 +22,5 @@
 </div>
 
 <script id="game-engine" type="module" src="{% static 'js/game/main.js' %}" 
-	data-user-id="{{ user.id }}" game-type="Local"></script>
+	data-user-id="{{ user.id }}" data-username="{{ user.username }}" game-type="Local"></script>
 {% endblock %}

@@ -27,9 +27,6 @@ export class GameController extends THREE.Group {
 	createPlayers(playerData, enemyData, socket) {
 		const { id: playerID, username: playerUsername } = playerData;
 		const { id: enemyID, username: enemyUsername } = enemyData;
-
-		this.arena = new Arena({});
-		this.ball = new Ball({});
 		
 		if (this.gameType == "Local") {
 			this.player = new LocalPlayer({ id: playerID, username: playerUsername, 
@@ -49,6 +46,8 @@ export class GameController extends THREE.Group {
 			});
 			console.log(this.enemy );
 		}
+		this.arena = new Arena({});
+		this.ball = new Ball({});
 		this.stats = new GameStats(this.player, this.enemy);
 	}
 
@@ -58,6 +57,8 @@ export class GameController extends THREE.Group {
 		    "user2_id": this.enemy.id,
 		    "type": this.gameType
 		}
+
+		console.log(formData);
 
 		const response = await fetch(`/games/create`, {
 			method: 'POST',
@@ -106,8 +107,7 @@ export class GameController extends THREE.Group {
 			this.stats.registerGoal(scorer, this.ball);
 			this.ball.reset();
 		}
-		if (this.stats.winner != null)
-		{
+		if (this.stats.winner != null) {
 			this.remove(this.ball);
 			this.ball.dispose();
 			this.ball = null;

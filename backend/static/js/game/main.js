@@ -1,17 +1,14 @@
 import { MyApp } from './MyApp.js';
 
 const gameType = document.getElementById('game-engine').getAttribute('game-type');
-const currUserId = document.getElementById('game-engine').getAttribute('data-user-id');
+const userID = document.getElementById('game-engine').getAttribute('data-user-id');
+const username = document.getElementById('game-engine').getAttribute('data-username');
 
 if (gameType == "Remote") {
 	let socket = new WebSocket(`ws://${window.location.host}/ws/games/remote/queue`);
-	socket.onopen = (event) => {
-		console.log('Socket opening', event);
-	};
-	
 	socket.onmessage = (event) => {
 		const { player1, player2, direction } = JSON.parse(event.data);
-		const player = player1.id == currUserId ? player1 : player2;
+		const player = player1.id == userID ? player1 : player2;
 		const enemy = player == player1 ? player2 : player1;
 
 		console.log(JSON.parse(event.data));
@@ -27,6 +24,10 @@ if (gameType == "Remote") {
 }
 else {
 	let app = new MyApp();
-	app.init({ gameType: gameType });
+	app.init({ 
+		playerData: {'id': userID, 'username': username},
+		enemyData: {'id': '', 'username': ''},
+		gameType: gameType 
+	});
 	app.render();
 }
