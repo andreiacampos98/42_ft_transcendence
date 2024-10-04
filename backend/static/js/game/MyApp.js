@@ -6,6 +6,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Axis } from './Axis.js';
 import { GameController } from './GameController.js';
 
+
+var frameID;
 /**
  * This class contains the application object
  */
@@ -152,9 +154,23 @@ export class MyApp  {
 		this.gameController.update();
         this.renderer.render(this.scene, this.activeCamera);
 		
-        requestAnimationFrame( this.render.bind(this) );
+        frameID = requestAnimationFrame( this.render.bind(this) );
 		
         this.lastCameraName = this.activeCameraName
 		this.stats.end();
     }
 }
+
+window.addEventListener('beforeunload', () => {
+	cancelAnimationFrame(frameID);
+  });
+
+window.addEventListener('popstate', function(event) {
+    var r = confirm("You're about to leave the game! Are you sure?!");
+	
+    if (r == true) {
+		document.getElementById('game-engine').remove();
+		this.window.cancelAnimationFrame(frameID);
+    }
+
+}, false);
