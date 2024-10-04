@@ -26,22 +26,26 @@ export class MyApp  {
         this.renderer = null;
         this.controls = null;
 		this.gui = null;
-		this.arcade = null;
+		this.gameController = null;
 
 		this.canvas = document.querySelector('#canvas-container');
-		this.gameType = document.getElementById('game-engine').getAttribute('game-type');
     }
     /**
      * initializes the application
      */
-    init() {
+    init({playerData, enemyData, socket=null, gameType}) {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
 		this.scene.add(new Axis(this));
 
-		this.arcade = new GameController(this.gameType);
-		this.scene.add(this.arcade);
+		this.gameController = new GameController({ 
+			playerData: playerData, 
+			enemyData: enemyData,
+			socket: socket, 
+			gameType: gameType, 
+		});
+		this.scene.add(this.gameController);
 
 		this.light = new THREE.PointLight('#FFFFFF', 100);
 		this.light.position.set(0, 0, 5);
@@ -145,7 +149,7 @@ export class MyApp  {
         this.updateCameraIfRequired()
 		
         this.controls.update();
-		this.arcade.update();
+		this.gameController.update();
         this.renderer.render(this.scene, this.activeCamera);
 		
         requestAnimationFrame( this.render.bind(this) );

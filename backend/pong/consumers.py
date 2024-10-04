@@ -6,6 +6,7 @@ from icecream import ic
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from channels.layers import get_channel_layer
+import random
 
 
 class TournamentConsumer(WebsocketConsumer):
@@ -51,54 +52,66 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		self.accept()
 
 		if len(self.queue) == 0:
-			user_id = self.scope['user'].id
-			room_name = "room_%s" % user_id
-
-			self.queue[user_id] = {
-				'ip': self.scope['client'],
-				'user_id': user_id,
-				'username': self.scope['user'].username,
-				'room_name': room_name
-			}
-			async_to_sync(self.channel_layer.group_add)(room_name, self.channel_name)
+			ic('adding player to queue')
+			self.add_player_to_queue()
 		else:
-			other_id = ic(list(self.queue.keys())[0])
-			other_user = self.queue[other_id]
-			room_name = other_user['room_name']
-			curr_user = {
-				'ip': self.scope['client'],
-				'user_id': self.scope['user'].id,
-				'username': self.scope['user'].username,
-				'room_name': room_name
-			}
-			async_to_sync(self.channel_layer.group_add)(other_user['room_name'], self.channel_name)
-			async_to_sync(self.channel_layer.group_send)(
-				room_name, {"type": "send.message", "message": json.dumps({
-					'player1': curr_user, 
-					'player2': other_user
-				})}
-			)
+			ic('adding player to waiting room')
+			self.add_player_to_waiting_room()
+		ic(self.queue)
 
+	def add_player_to_queue(self):
+		""" 
+		This will add the new player to the queue and also create a channel group
+		(a 'waiting room') to allow another player to join in
+		"""
+
+		user_id = self.scope['user'].id
+		room_name = "room_%s" % user_id
+
+		self.queue[user_id] = {
+			'id': user_id,
+			'username': self.scope['user'].username,
+			'room_name': room_name
+		}
+		async_to_sync(self.channel_layer.group_add)(room_name, self.channel_name)
+
+	def add_player_to_waiting_room(self):
+		""" 
+		Since the queue is not empty, this means there is already at least
+		1 waiting room. We add the current player to the waiting room and 
+		send a START command to initiate the game. This also removes the 
+		waiting room from the queue.
+		"""
+
+		host_id = ic(list(self.queue.keys())[0])
+		host_player = self.queue[host_id]
+		room_name = host_player['room_name']
+		curr_player = {
+			'id': self.scope['user'].id,
+			'username': self.scope['user'].username,
+			'room_name': room_name
+		}
+		async_to_sync(self.channel_layer.group_add)(host_player['room_name'], self.channel_name)
+		async_to_sync(self.channel_layer.group_send)(
+			room_name, {"type": "send.message", "message": json.dumps({
+				'player1': curr_player,
+				'player2': host_player,
+				'direction': 1 if random.randint(0, 1) == 1 else -1
+			})}
+		)
+		del self.queue[host_id]
 
 	def disconnect(self, code):
 		del self.queue[self.scope['user'].id]
-		ic(self.queue)
 		return super().disconnect(code)
 	
 	def receive(self, text_data=None):
+		ic(f'{self.scope['user'].username} has sent:', json.loads(text_data))
 		pass
 
 	def send_message(self, event):
 		data = json.loads(event["message"])
-		curr_username = self.scope['user'].username
-		if data['player1']['username'] == curr_username:
-			ic(f'Current user: {curr_username} Opponent: {data['player2']['username']}')
-			self.send(text_data=json.dumps({'opponent': data['player2']}))
-		else:
-			ic(f'Current user: {curr_username} Opponent: {data['player1']['username']}')
-			self.send(text_data=json.dumps({'opponent': data['player1']}))
-
-		#! WAS looking it what the players were receiving.
+		self.send(event['message'])
 			
 
 
@@ -108,5 +121,11 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 # else: (available rooms)
 # 	- Pop the first available room in the queue
 #	- Add the client to the room
-# 	- Broadcast a message to the channel with the IPs of both
+# 	- Broadcast a message to the channel with a starting command
+
+# If receive() function is triggered:
+#	- Create a new object with the position of the paddle of the player who sent it
+#	- Send position to the other player
+
+
 				

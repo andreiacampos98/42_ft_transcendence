@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 import { Ball } from './Ball.js';
-import { Player } from './Player.js';
 import { Arena } from './Arena.js';
 import { GameStats } from './GameStats.js';
 import { LocalPlayer } from './LocalPlayer.js';
+import { RemotePlayer } from './RemotePlayer.js';
 
 
 export class GameController extends THREE.Group {
-	constructor(gameType) {
+	constructor({ playerData, enemyData, gameType, socket }) {
 		super();
 
 		this.gameType = gameType;
@@ -18,16 +18,21 @@ export class GameController extends THREE.Group {
 		this.enemy = null;
 		this.stats = null;
 		
-		this.init();
+		this.init(playerData, enemyData);
 		this.build();
 	}
 
-	async init() {
+	async init(playerData, enemyData) {
+		const { id: playerID, username: playerUsername } = playerData;
+		const { id: enemyID, username: enemyUsername } = enemyData;
+
 		this.arena = new Arena({});
 		this.ball = new Ball({});
-		this.player = new LocalPlayer(1, 'Nuno', [-25, 0, 0], {'up': 'w', 'down': 's'});
+		this.player = new LocalPlayer(playerID, playerUsername, [-25, 0, 0], {'up': 'w', 'down': 's'});
 		if (this.gameType == "Local")
 			this.enemy = new LocalPlayer(2, 'Andreia', [25, 0, 0], {'up': 'ArrowUp', 'down': 'ArrowDown'});
+		else if (this.gameType == "Remote")
+			this.enemy = new RemotePlayer(enemyID, enemyUsername, [25, 0, 0], {'up': 'ArrowUp', 'down': 'ArrowDown'});
 		this.stats = new GameStats(this.player, this.enemy);
 		
 		this.keybinds = {
@@ -44,9 +49,9 @@ export class GameController extends THREE.Group {
 		});
 
 		const formData = {
-		    "user1_id": document.getElementById('game-engine').getAttribute('data-user-id'),
-		    "user2_id": null,
-		    "type": document.getElementById('game-engine').getAttribute('game-type')
+		    "user1_id": this.player.id,
+		    "user2_id": this.enemy.id,
+		    "type": this.gameType
 		}
 
 		const response = await fetch(`/games/create`, {
