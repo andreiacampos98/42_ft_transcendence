@@ -2,9 +2,8 @@ from django.urls import path, include, re_path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from rest_framework.routers import DefaultRouter
-from . import views
 from . import consumers
-
+from . import views
 # Routers provide an easy way of automatically determining the URL conf.
 #router = DefaultRouter()
 #router.register('users', UsersViewSet)
@@ -14,6 +13,7 @@ urlpatterns = [
 
     #! Pages
     path('', views.loginview, name="login"),
+    #path('', tf_views.LoginView.as_view(), name="login"),
     path('home/', views.home, name="home"),
     path('gamelocal/', views.gamelocal, name="gamelocal"),
     path('gameonline/', views.gameonline, name="gameonline"),

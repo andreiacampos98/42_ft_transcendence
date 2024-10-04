@@ -42,9 +42,9 @@ SECRET_KEY = 'django-insecure-b4amhal1@gob1$prnqgr*chry7pneej76qsy^p+5$m!w&#$qyy
 DEBUG = True
 
 
-LOGOUT_REDIRECT_URL = "login"
-LOGIN_REDIRECT_URL = ''
-LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = 'two_factor:login'
 
 ALLOWED_HOSTS = ['*']
 APPEND_SLASH = False
@@ -75,6 +75,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework', #django rest framework
     'rest_framework_swagger',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_static',
+    'two_factor',
     'drf_yasg',
     "pong",
     'bootstrap4',
@@ -88,6 +92,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_otp.middleware.OTPMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [

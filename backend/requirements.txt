@@ -13,3 +13,5 @@ requests
 python-dotenv
 django-crispy-forms
 crispy-bootstrap4
+django-two-factor-auth 
+django-two-factor-auth[phonenumbers]
