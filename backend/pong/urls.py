@@ -13,7 +13,7 @@ urlpatterns = [
 
     #! Pages
     path('', views.loginview, name="login"),
-    #path('', tf_views.LoginView.as_view(), name="login"),
+    path('otp/', views.otp_view, name='otp'),
     path('home/', views.home, name="home"),
     path('gamelocal/', views.gamelocal, name="gamelocal"),
     path('gameonline/', views.gameonline, name="gameonline"),

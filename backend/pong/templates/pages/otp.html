@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <script defer src="{% static 'js/login.js' %}"></script>
+    <div class="login-container">
+        <div class="login-container2">
+            <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
+            <form id="otpForm" method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="otp">Otp</label>
+                    <input type="text" id="username" name="otp" placeholder="Code" required>
+                </div>
+                <button type="submit"> Confirm </button>
+            </form>
+        </div>
+    </div>
+    {% comment %} <script defer src="{% static 'js/script.js' %}"></script> {% endcomment %}
+{% endblock %}
+    

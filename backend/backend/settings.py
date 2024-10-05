@@ -44,7 +44,7 @@ DEBUG = True
 
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
-LOGIN_URL = 'two_factor:login'
+LOGIN_URL = 'login'
 
 ALLOWED_HOSTS = ['*']
 APPEND_SLASH = False
@@ -78,7 +78,6 @@ INSTALLED_APPS = [
     'django_otp',
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
-    'two_factor',
     'drf_yasg',
     "pong",
     'bootstrap4',

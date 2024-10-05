@@ -26,14 +26,20 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     })
     .then(response => response.json()) 
     .then(data => {
-        if (JSON.stringify(data.data) === '{}') {
+        console.log(data);
+        if (Object.keys(data.data).length === 0) {
             errorMessage.textContent = data.message;
             errorMessage.style.display = 'block';
+        } else if (data.data.hasOwnProperty('otp')) {
+            history.pushState(null, '', `/otp/`);
+            htmx.ajax('GET', `/otp/`, {
+                target: '#main',
+            });
         } else {
             console.log('Login in successful');
             history.pushState(null, '', `/home/`);
             htmx.ajax('GET', `/home/`, {
-                    target: '#main',
+                target: '#main',
             });
         }
     })

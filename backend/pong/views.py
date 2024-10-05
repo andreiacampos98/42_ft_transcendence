@@ -19,7 +19,7 @@ from datetime import timedelta
 from urllib.parse import quote, unquote
 from django.db.models.functions import TruncDay
 import os
-
+import pyotp
 import json, requests, os
 from icecream import ic
 from .models import Users
@@ -1057,6 +1057,15 @@ def login42(request):
 	return JsonResponse({'error': 'User login failed', 'data': {}}, status=400)
 
 
+def send_otp(request):
+	totp=pyotp.TOTP(pyotp.random_base32(), interval=60)
+	otp = totp.now()
+	request.session['otp_secret_key'] = totp.secret
+	valid_date = datetime.now() + timedelta(minutes=1)
+	request.session['otp_valid_date'] = str(valid_date) 
+	ic(otp)
+	print(f"Your one time password is {otp}")
+
 
 #! --------------------------------------- Pages ---------------------------------------
 
@@ -1084,13 +1093,47 @@ def loginview(request):
 		if user is not None:
 			user.status = "Online"
 			user.save()
+			if user.two_factor:
+				send_otp(request)
+				request.session['username']=username
+				return JsonResponse({'message': 'You have successufly logged in.', 'data': {'otp': True }}, status=201)
+			
 			login(request, user)
-			return JsonResponse({'message': 'You have successufly logged in.'}, status=201)
+			return JsonResponse({'message': 'You have successufly logged in.', 'data': {'home': True }}, status=201)
 
 		else:
 			return JsonResponse({'message': 'Bad Credentials.', 'data': {}}, status=400)
 
 	return render(request, 'pages/login.html')
+
+def otp_view(request):
+	if request.method=='POST':
+		otp = request.POST['otp']
+		username = request.session['username']
+
+		otp_secret_key = request.session['otp_secret_key']
+		otp_valid_date = request.session['otp_valid_date']
+
+		if otp_secret_key and otp_valid_date is not None:
+			valid_date = datetime.fromisoformat(otp_valid_date)
+			if valid_date > datetime.now():
+				totp = pyotp.TOTP(otp_secret_key, interval=60)
+				if totp.verify(otp):
+					user = get_object_or_404(Users, username=username)
+					login(request, user)
+
+					del request.session['otp_secret_key']
+					del request.session['otp_valid_date']
+
+					return redirect('home')
+				else:
+					return JsonResponse({'message': 'Invalid one time password', 'data': {}}, status=400)
+			else:
+				return JsonResponse({'message': 'One time password has expired', 'data': {}}, status=400)
+		else:
+			return JsonResponse({'message': 'Ups, something went wrong', 'data': {}}, status=400)
+				
+	return render(request, 'pages/otp.html', {})
 
 def resetpassword(request):
 	return render(request, 'pages/password_reset.html')
@@ -1103,6 +1146,8 @@ def setnewpassword(request):
 
 @login_required
 def home(request):
+	if 'username' in request.session:
+		del request.session['username']
 	user_id = request.user.id  # Obtém o ID do usuário atual
 
 	# Obtém a lista de amigos
