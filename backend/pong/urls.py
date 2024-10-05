@@ -14,6 +14,7 @@ urlpatterns = [
     #! Pages
     path('', views.loginview, name="login"),
     path('otp/', views.otp_view, name='otp'),
+    path('otpmethod/', views.otp_method, name='otp-method'),
     path('home/', views.home, name="home"),
     path('gamelocal/', views.gamelocal, name="gamelocal"),
     path('gameonline/', views.gameonline, name="gameonline"),

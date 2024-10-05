@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from rest_framework.parsers import JSONParser 
 from django.urls import reverse
+from django.core.mail import send_mail
 
 from django.contrib.auth.hashers import make_password 
 from django.contrib.auth.forms import AuthenticationForm
@@ -1057,14 +1058,25 @@ def login42(request):
 	return JsonResponse({'error': 'User login failed', 'data': {}}, status=400)
 
 
-def send_otp(request):
-	totp=pyotp.TOTP(pyotp.random_base32(), interval=60)
-	otp = totp.now()
-	request.session['otp_secret_key'] = totp.secret
-	valid_date = datetime.now() + timedelta(minutes=1)
-	request.session['otp_valid_date'] = str(valid_date) 
-	ic(otp)
-	print(f"Your one time password is {otp}")
+def send_otp(request, method, info):
+	if method == 'email':
+		totp=pyotp.TOTP(pyotp.random_base32(), interval=60)
+		otp = totp.now()
+		request.session['otp_secret_key'] = totp.secret
+		valid_date = datetime.now() + timedelta(minutes=1)
+		request.session['otp_valid_date'] = str(valid_date) 
+		ic(otp)
+		send_mail(
+            'Email Verification OTP',
+            f'Your OTP for email verification is: {otp}',
+            settings.EMAIL_HOST_USER,
+            [info],
+            fail_silently=False,
+        )
+
+
+	#elif method == 'sms':
+	#elif method == 'auth_app':
 
 
 #! --------------------------------------- Pages ---------------------------------------
@@ -1094,8 +1106,6 @@ def loginview(request):
 			user.status = "Online"
 			user.save()
 			if user.two_factor:
-				send_otp(request)
-				request.session['username']=username
 				return JsonResponse({'message': 'You have successufly logged in.', 'data': {'otp': True }}, status=201)
 			
 			login(request, user)
@@ -1106,6 +1116,24 @@ def loginview(request):
 
 	return render(request, 'pages/login.html')
 
+@csrf_exempt
+def otp_method(request):
+	if(request.method == 'POST'):
+		try:
+			data = json.loads(request.body) 
+			info = data.get('info')
+			method = data.get('method')
+			ic(method)
+			ic(info)
+		except json.JSONDecodeError:
+			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
+		
+		send_otp(request, method, info)
+		return JsonResponse({'message': 'Code sent.'}, status=200)
+
+	return render(request, 'pages/otp_method.html')
+
+@csrf_exempt
 def otp_view(request):
 	if request.method=='POST':
 		otp = request.POST['otp']

@@ -31,8 +31,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             errorMessage.textContent = data.message;
             errorMessage.style.display = 'block';
         } else if (data.data.hasOwnProperty('otp')) {
-            history.pushState(null, '', `/otp/`);
-            htmx.ajax('GET', `/otp/`, {
+            history.pushState(null, '', `/otpmethod/`);
+            htmx.ajax('GET', `/otpmethod/`, {
                 target: '#main',
             });
         } else {
