@@ -316,13 +316,20 @@
                 </div>
             </div>
             <div id="games" style="display:none;">
+                <div class="header d-flex align-items-center justify-content-evenly">
+                    <span class="title">Date</span>
+                    <span class="title">Duration</span>
+                    <span class="title">Outcome</span>
+                    <span class="title">Score</span>
+                    <span class="title">Opponent</span>
+                </div>
                 {% for game in games %}
                     <div id="match-container">
-                        <div class="match-block d-flex align-items-center pingpong victory">
+                        <div class="match-block d-flex align-items-center pingpong">
                             <a hx-get="{% url 'game-stats' game.id %}"
                                 hx-trigger="click"
                                 hx-target="#main"
-                                hx-push-url="true"> aqui
+                                hx-push-url="true">
                             </a>
                             <div class="icon">
                                 {% if game.type == 'AI' %}
@@ -332,20 +339,22 @@
                                 {% endif %}
                             </div>
                             <div class="details d-flex align-items-center justify-content-evenly" >
-                                <span class="date">{{ game.created_at }}</span>
-                                <span> {{ game.duration }} </span>
+                                <span class="content date d-flex flex-column" style="height: 42px; align-items: baseline"   id="isoDateDiv2">{{ game.created_at }}
+                                    <div class="date-day">{{ game.created_at }}</div>
+                                    <div class="date-second">{{ game.created_at }}</div>
+                                </span>
+                                <span class="content duration"> {{ game.duration }} </span>
                                 {% if user_view == game.winner_id %}
-                                    <span class="result" >Victory</span>
+                                    <span class="content victory" style="font-weight: bold;">Victory</span>
                                 {% else %}
-                                    <span class="result">Defect</span>
+                                    <span class="content" style="font-weight: bold;">Defeat</span>
                                 {% endif %}
                                 {% if user_view == game.user1_id %}
-                                    <span class="score">{{ game.nb_goals_user1 }} - {{ game.nb_goals_user2 }}</span>
+                                    <span class="content score">{{ game.nb_goals_user1 }} - {{ game.nb_goals_user2 }}</span>
                                 {% else %}
-                                    <span class="score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
+                                    <span class="content score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
                                 {% endif %}
-                            </div>
-                            <div class="opponent">
+                            <div class="content last opponent">
                                 {% if user_view == game.user2_id %}
                                     <a  hx-get="{% url 'user-profile' game.user1_id.id %}"
                                         hx-trigger="click"
@@ -373,10 +382,19 @@
                                 {% endif %}
                             </div>
                         </div>
+
+                        </div>
                     </div>
                 {% endfor %}
             </div>
             <div id="tournaments" style="display:none;">
+                <div class="header d-flex align-items-center justify-content-evenly">
+                    <span class="title">Date</span>
+                    <span class="title">Duration</span>
+                    <span class="title">Placement</span>
+                    <span class="title">Size</span>
+                    <span class="title">Winner</span>
+                </div>
                 {% for tour in tours %}
                     {% if tour.tournament.status == 'Finished' %}
                         <div class="match-block d-flex align-items-center" class="tournament">
@@ -384,27 +402,34 @@
                                 <img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
                             </div>
                             <div class="details d-flex align-items-center justify-content-evenly">
-                                <span class="date">{{ tour.tournament.created_at }}</span>
-                                <span class="date">{{ tour.tournament.duration }}</span>
-                                <span class="result"> {{ tour.placement }}</span>
-                                <span class="date">{{ tour.tournament.capacity }} players</span>
-                                <a  hx-get="{% url 'user-profile'  tour.tournament.winner_id.id %}"
-                                    hx-trigger="click"
-                                    hx-target="#main"
-                                    hx-push-url="true">
-                                    {% if "http" in  tour.tournament.winner_id.picture.url %}
-                                        <img class="profile-pic" src="{{ tour.tournament.winner_id.picture.url|urlunquote|slice:'7:' }}" alt="Profile">
-                                    {% else %}
-                                        <img class="profile-pic" src="{{ tour.tournament.winner_id.picture }}" alt="Profile">
-                                    {% endif %}
-                                    <span class="score">{{  tour.tournament.winner_id.username }}</span>
-                                </a>
-                                <a hx-get="{% url 'tournament-stats' tour.tournament.id %}"
-                                    hx-trigger="click"
-                                    hx-target="#main"
-                                    hx-push-url="true">
-                                    <img src="{% static 'assets/icons/detail.png' %}" alt="detail">
-                                </a>
+                                <span class="content date d-flex flex-column" style="height: 42px; align-items: baseline" id="isoDateDiv1">
+                                    <div class="date-day">{{ tour.tournament.created_at }}</div>
+                                    <div  class="date-second">{{ tour.tournament.created_at }}</div>
+                                </span>
+                                <span class="content duration">{{ tour.tournament.duration }}</span>
+                                <span class="content placement"> {{ tour.placement }}</span>
+                                <span class="content capacity">{{ tour.tournament.capacity }} players</span>
+                                <span class="content last">
+
+                                    <a  hx-get="{% url 'user-profile'  tour.tournament.winner_id.id %}"
+                                        hx-trigger="click"
+                                        hx-target="#main"
+                                        hx-push-url="true">
+                                        {% if "http" in  tour.tournament.winner_id.picture.url %}
+                                            <img class="profile-pic" src="{{ tour.tournament.winner_id.picture.url|urlunquote|slice:'7:' }}" alt="Profile">
+                                        {% else %}
+                                            <img class="profile-pic" src="{{ tour.tournament.winner_id.picture }}" alt="Profile">
+                                        {% endif %}
+                                        <span class="score">{{  tour.tournament.winner_id.username }}</span>
+                                    </a>
+                                    <a hx-get="{% url 'tournament-stats' tour.tournament.id %}"
+                                        hx-trigger="click"
+                                        hx-target="#main"
+                                        hx-push-url="true">
+                                        <img src="{% static 'assets/icons/detail.png' %}" alt="detail">
+                                    </a>
+                                </span>
+
                                 <!-- <button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.tournament.id }}">
                                     <img src="{% static 'assets/icons/tournament.png' %}" alt="Arrow-icon"> Ver Detalhes
                                 </button>

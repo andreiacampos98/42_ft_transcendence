@@ -108,7 +108,7 @@
 .line-v-d {
     position: absolute;
     width: 4px;
-    height: 117px;
+    height: 58px;
     background-color: #ccc;
     left: 140%;
     /* transform: translateX(-50%); */
@@ -117,6 +117,29 @@
     top: 57px;
 }
 
+.u {
+    position: absolute;
+    width: 4px;
+    height: 58px;
+    background-color: #ccc;
+    left: 140%;
+    /* transform: translateX(-50%); */
+    /* z-index: -1; */
+    /* transition: background-color 0.3s ease; */
+    top: 57px;
+}
+
+.d {
+    position: absolute;
+    width: 4px;
+    height: 62px;
+    background-color: #ccc;
+    left: 140%;
+    /* transform: translateX(-50%); */
+    /* z-index: -1; */
+    /* transition: background-color 0.3s ease; */
+    top: 113px;
+}
 .line-h2 {
     position: relative;
     width: 50%;

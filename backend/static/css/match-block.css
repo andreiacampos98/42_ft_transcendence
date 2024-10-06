@@ -1,3 +1,4 @@
+
 .match-block {
     width: 98%;
     margin: 10px;
@@ -5,22 +6,39 @@
     background-color: #1A3141;
 }
 
-.match-block.tournament.third-place .details .result {
-    color: #E65C19;
+.header {
+    padding-left: 40px;
+    width: calc(98% - 55px);
+    float: right;
+    margin-right: 1.5%;
+
 }
 
-.match-block.tournament.below-third-place .details .result {
-    color: grey;
+.header .title {
+    color: #f2f2f269;
+    width: 20%;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 30px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
 }
 
-.match-block.pingpong.victory .details .result {
-    color: green;
+.date-second {
+    color: #ffffffc0;
+    font-size: small;
 }
 
-.match-block.pingpong.defeat .details .result {
-    color: red;
+.placement {
+    font-weight: bold;
 }
 
+.victory {
+    color: #F8D082;;
+}
 .match-block .icon {
     padding: 10px 10px 10px 5px;
     border-top-left-radius: 10px;
@@ -43,17 +61,31 @@
     flex: 1;
     height: 64px;
     z-index: 100;
-    background-color: #101d27;
+    background-color: #28313a;
+    color: #FFF;
+    padding-left: 40px;
+}
+
+.details .content {
+    width: 20%;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 30px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.details .last {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 40px;
 }
 
 .match-block .details .type {
     font-weight: bold;
-}
-
-.match-block .details .result {
-    margin-top: 5px;
-}
-
-.match-block .opponent {
-    margin-left: 10px;
 }

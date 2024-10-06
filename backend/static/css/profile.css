@@ -365,6 +365,7 @@ textarea, #username-input, #email-input {
 #games, #tournaments{
     max-height: 80%;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 
