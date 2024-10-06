@@ -1057,6 +1057,7 @@ def login42(request):
 
 	return JsonResponse({'error': 'User login failed', 'data': {}}, status=400)
 
+#! --------------------------------------- 2FA ---------------------------------------
 
 def send_otp(request, method, info):
 	if method == 'email':
@@ -1077,6 +1078,22 @@ def send_otp(request, method, info):
 
 	#elif method == 'sms':
 	#elif method == 'auth_app':
+
+@csrf_exempt
+def toogle2fa(request, user_id):
+	if request.method == 'POST':
+		try:
+			data = json.loads(request.body) 
+			enabled = data.get('enabled')
+
+		except json.JSONDecodeError:
+			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
+		ic(enabled)
+		user = Users.objects.get(pk=user_id)
+		user.two_factor = enabled
+		user.save()
+		return JsonResponse({'message': 'User enable/disable two factor authentication.'}, status=200)
+	return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
 
 
 #! --------------------------------------- Pages ---------------------------------------

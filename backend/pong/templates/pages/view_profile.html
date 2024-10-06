@@ -204,11 +204,14 @@
                         </h5>
                         <h5 class="text-block d-flex">{{ joined_date }}</h5>
                     </div>
-                    <label class="switch">
-                        <input id="enable" type="checkbox" onclick="toggle2FA()" data-user-id="{{ user_id }}">
-                        <span class="slider round"></span>
-                        <p id="message">Enable 2FA</p>
-                    </label>
+                    {% if is_own_profile %}
+                        <label class="switch">
+                            <input id="enable" type="checkbox" onclick="toggle2FA()" data-user-id="{{ user_id }}" 
+                                {% if user_view.two_factor %} checked {% endif %}>
+                            <span class="slider round"></span>
+                            <p id="message">{% if user_view.two_factor %}Disable 2FA{% else %}Enable 2FA{% endif %}</p> 
+                        </label>
+                    {% endif %}
                 </div>
             </div>
         </div>

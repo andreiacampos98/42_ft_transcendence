@@ -21,11 +21,11 @@ async function toggle2FA() {
     console.log(isChecked)
     try {
         const userId = document.getElementById('enable').getAttribute('data-user-id');
-        const response = await fetch('/toggle-2fa/${userId}', {
+        console.log(userId)
+        const response = await fetch(`/toggle-2fa/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken'),
             },
             body: JSON.stringify({ enabled: isChecked })
         });

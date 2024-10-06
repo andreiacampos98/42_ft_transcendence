@@ -100,6 +100,9 @@ urlpatterns = [
     path('userinfo', views.get_user_info, name='user-info'),
     path('signin42', views.signin42, name='signin42'),
     path('home42/', views.login42, name='login42'),
+
+    #! 2FA
+    path('toggle-2fa/<int:user_id>', views.toogle2fa, name='toogle-2fa'),
     
     #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
