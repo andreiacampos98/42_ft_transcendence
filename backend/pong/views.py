@@ -1106,6 +1106,7 @@ def loginview(request):
 			user.status = "Online"
 			user.save()
 			if user.two_factor:
+				request.session['username'] = username
 				return JsonResponse({'message': 'You have successufly logged in.', 'data': {'otp': True }}, status=201)
 			
 			login(request, user)
@@ -1137,6 +1138,7 @@ def otp_method(request):
 def otp_view(request):
 	if request.method=='POST':
 		otp = request.POST['otp']
+		
 		username = request.session['username']
 
 		otp_secret_key = request.session['otp_secret_key']

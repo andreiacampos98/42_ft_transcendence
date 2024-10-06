@@ -5,7 +5,9 @@
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 <link rel="stylesheet" href="{% static 'css/match-block.css' %}">
+<link rel="stylesheet" href="{% static 'css/toogle.css' %}">
 <script defer src="{% static 'js/edit-profile.js' %}"></script>
+<script defer src="{% static 'js/enable2factor.js' %}"></script>
 <script defer src="{% static 'js/change-password.js' %}"></script>
 <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
 <script defer src="{% static 'js/notifications.js' %}"></script>
@@ -202,6 +204,11 @@
                         </h5>
                         <h5 class="text-block d-flex">{{ joined_date }}</h5>
                     </div>
+                    <label class="switch">
+                        <input id="enable" type="checkbox" onclick="toggle2FA()" data-user-id="{{ user_id }}">
+                        <span class="slider round"></span>
+                        <p id="message">Enable 2FA</p>
+                    </label>
                 </div>
             </div>
         </div>
