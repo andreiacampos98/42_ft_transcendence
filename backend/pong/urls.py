@@ -103,7 +103,7 @@ urlpatterns = [
 
     #! 2FA
     path('toggle-2fa/<int:user_id>', views.toogle2fa, name='toogle-2fa'),
-    
+    path('opt/', views.otp_view, name='opt'),
     #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
     path('debug/games/<int:game_id>', views.get_game, name='debug-get-game'),

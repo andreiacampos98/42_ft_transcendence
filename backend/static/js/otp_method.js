@@ -52,7 +52,8 @@ document.getElementById('submit-auth').addEventListener('click', function() {
     .then(data => {
         console.log(data);
         if (JSON.stringify(data.data) === '{}') {
-            alert(data.message);
+            errorMessage.textContent = data.message;
+            errorMessage.style.display = 'block';
         } else {
             history.pushState(null, '', `/otp/`);
             htmx.ajax('GET', `/otp/`, {

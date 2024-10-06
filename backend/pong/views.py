@@ -1139,8 +1139,12 @@ def otp_method(request):
 	if(request.method == 'POST'):
 		try:
 			data = json.loads(request.body) 
-			info = data.get('info')
-			method = data.get('method')
+			info = data.get('info', '')
+			method = data.get('method', '')
+			if not method:
+				return JsonResponse({'message': 'Please choose a method', 'data': {}}, status=400)
+			if not info:
+				return JsonResponse({'message': 'There is no value', 'data': {}}, status=400)
 			ic(method)
 			ic(info)
 		except json.JSONDecodeError:

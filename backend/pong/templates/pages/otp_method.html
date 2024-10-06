@@ -3,7 +3,6 @@
 
 {% block body %}
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-    <script defer src="{% static 'js/login.js' %}"></script>
     <script defer src="{% static 'js/otp_method.js' %}"></script>
     <div class="login-container">
         <div class="login-container2">
@@ -22,10 +21,13 @@
             <div id="auth-method-form" class="auth-method-form">
                 <!-- This form will change dynamically based on the user's choice -->
             </div>
+            <p id="errorMessage" class="error-message"></p>
 
             <!-- Submit button -->
             <button type="submit" id="submit-auth" class="submit-auth">Submit</button>
-            
+            <br>
+            <h6>© 42 Porto 2024</h6>
+            </div>
         </div>
     </div>
     {% comment %} <script defer src="{% static 'js/script.js' %}"></script> {% endcomment %}
