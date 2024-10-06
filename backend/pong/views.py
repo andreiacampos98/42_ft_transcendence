@@ -1156,33 +1156,36 @@ def otp_method(request):
 
 @csrf_exempt
 def otp_view(request):
-    if request.method == 'POST':
-        otp = request.POST.get('otp')
-        
-        username = request.session.get('username')
-        otp_secret_key = request.session.get('otp_secret_key')
-        otp_valid_date = request.session.get('otp_valid_date')
+	if request.method == 'POST':
+		otp = request.POST.get('otp')
+		ic(otp)
+		
+		username = request.session.get('username')
+		otp_secret_key = request.session.get('otp_secret_key')
+		otp_valid_date = request.session.get('otp_valid_date')
 
-        if otp_secret_key and otp_valid_date is not None:
-            valid_date = datetime.fromisoformat(otp_valid_date)
-            if valid_date > datetime.now():
-                totp = pyotp.TOTP(otp_secret_key, interval=60)
-                if totp.verify(otp):
-                    user = get_object_or_404(Users, username=username)
-                    login(request, user)
+		if otp_secret_key and otp_valid_date is not None:
+			valid_date = datetime.fromisoformat(otp_valid_date)
+			if valid_date > datetime.now():
+				totp = pyotp.TOTP(otp_secret_key, interval=120)
+				ic(totp)
+				ic(totp.verify(otp))
+				if totp.verify(otp):
+					user = get_object_or_404(Users, username=username)
+					login(request, user)
 
-                    del request.session['otp_secret_key']
-                    del request.session['otp_valid_date']
+					del request.session['otp_secret_key']
+					del request.session['otp_valid_date']
 
-                    return JsonResponse({'redirect': True}, status=200)
-                else:
-                    return JsonResponse({'error': 'Invalid one-time password'}, status=400)
-            else:
-                return JsonResponse({'error': 'One-time password has expired'}, status=400)
-        else:
-            return JsonResponse({'error': 'Ups, something went wrong'}, status=400)
+					return JsonResponse({'redirect': True}, status=200)
+				else:
+					return JsonResponse({'error': 'Invalid one-time password'}, status=400)
+			else:
+				return JsonResponse({'error': 'One-time password has expired'}, status=400)
+		else:
+			return JsonResponse({'error': 'Ups, something went wrong'}, status=400)
 
-    return render(request, 'pages/otp.html')
+	return render(request, 'pages/otp.html')
 
 
 def resetpassword(request):
