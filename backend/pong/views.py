@@ -1061,10 +1061,10 @@ def login42(request):
 
 def send_otp(request, method, info):
 	if method == 'email':
-		totp=pyotp.TOTP(pyotp.random_base32(), interval=60)
+		totp=pyotp.TOTP(pyotp.random_base32(), interval=120) #a password e valida durante 120 segundos
 		otp = totp.now()
 		request.session['otp_secret_key'] = totp.secret
-		valid_date = datetime.now() + timedelta(minutes=1)
+		valid_date = datetime.now() + timedelta(minutes=2) # data ate quando o codigo e valido
 		request.session['otp_valid_date'] = str(valid_date) 
 		ic(otp)
 		send_mail(
@@ -1113,7 +1113,6 @@ def loginview(request):
 			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
 
 		user42 = Users.objects.filter(username=username).first()
-		ic(user42.user_42)
 		if user42.user_42 is not None:
 			return JsonResponse({'message': 'User 42 detected. Please sign in with 42.', 'data': {}}, status=400)
 
@@ -1157,34 +1156,34 @@ def otp_method(request):
 
 @csrf_exempt
 def otp_view(request):
-	if request.method=='POST':
-		otp = request.POST['otp']
-		
-		username = request.session['username']
+    if request.method == 'POST':
+        otp = request.POST.get('otp')
+        
+        username = request.session.get('username')
+        otp_secret_key = request.session.get('otp_secret_key')
+        otp_valid_date = request.session.get('otp_valid_date')
 
-		otp_secret_key = request.session['otp_secret_key']
-		otp_valid_date = request.session['otp_valid_date']
+        if otp_secret_key and otp_valid_date is not None:
+            valid_date = datetime.fromisoformat(otp_valid_date)
+            if valid_date > datetime.now():
+                totp = pyotp.TOTP(otp_secret_key, interval=60)
+                if totp.verify(otp):
+                    user = get_object_or_404(Users, username=username)
+                    login(request, user)
 
-		if otp_secret_key and otp_valid_date is not None:
-			valid_date = datetime.fromisoformat(otp_valid_date)
-			if valid_date > datetime.now():
-				totp = pyotp.TOTP(otp_secret_key, interval=60)
-				if totp.verify(otp):
-					user = get_object_or_404(Users, username=username)
-					login(request, user)
+                    del request.session['otp_secret_key']
+                    del request.session['otp_valid_date']
 
-					del request.session['otp_secret_key']
-					del request.session['otp_valid_date']
+                    return JsonResponse({'redirect': True}, status=200)
+                else:
+                    return JsonResponse({'error': 'Invalid one-time password'}, status=400)
+            else:
+                return JsonResponse({'error': 'One-time password has expired'}, status=400)
+        else:
+            return JsonResponse({'error': 'Ups, something went wrong'}, status=400)
 
-					return redirect('home')
-				else:
-					return JsonResponse({'message': 'Invalid one time password', 'data': {}}, status=400)
-			else:
-				return JsonResponse({'message': 'One time password has expired', 'data': {}}, status=400)
-		else:
-			return JsonResponse({'message': 'Ups, something went wrong', 'data': {}}, status=400)
-				
-	return render(request, 'pages/otp.html', {})
+    return render(request, 'pages/otp.html')
+
 
 def resetpassword(request):
 	return render(request, 'pages/password_reset.html')

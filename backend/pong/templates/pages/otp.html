@@ -4,21 +4,27 @@
 {% block body %}
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
     <script defer src="{% static 'js/login.js' %}"></script>
+    <script defer src="{% static 'js/opt.js' %}"></script>
     <div class="login-container">
         <div class="login-container2">
-            <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
-            <form id="otpForm" method="POST">
+            <h4 class="title"><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
+            <form id="otpForm" method="POST" onsubmit="return submitOtp(event);">
                 {% csrf_token %}
                 <div class="input-group">
                     <label for="otp">Otp</label>
-                    <input type="text" id="username" name="otp" placeholder="Code" required>
+                    <input type="text" id="otp" name="otp" placeholder="Code" required>
                 </div>
-                <button type="submit"> Confirm </button>
+                <p id="errorMessage" class="error-message"></p>
+                <p>If you didn't receive your code or want to change the method 
+                    <a hx-get="{% url 'otp-method' %}"
+                        hx-trigger="click"
+                        hx-target="#main"
+                        hx-push-url="true">click here</a>
+                </p>
+                <button type="submit">Confirm</button>
             </form>
             <br>
             <h6>© 42 Porto 2024</h6>
         </div>
     </div>
-    {% comment %} <script defer src="{% static 'js/script.js' %}"></script> {% endcomment %}
 {% endblock %}
-    
