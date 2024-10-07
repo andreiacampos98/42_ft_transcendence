@@ -1101,7 +1101,8 @@ def ongoingtournaments(request, tournament_id):
 @login_required
 def tournamentstats(request, tournament_id):
 	context = {
-		'tournament_id': tournament_id
+		'tournament_id': tournament_id,
+		'tournament_size': 8
 	}
 	return render(request,'pages/tournament_overview.html', context)
 

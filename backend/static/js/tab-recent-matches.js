@@ -53,7 +53,6 @@ function convertDateInDiv1(div_class) {
 }
 
 function formatTimestamp_second(timestamp) {
-    console.log(timestamp)
     const date = new Date(timestamp);
 
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -99,7 +98,6 @@ function placement_func(placement) {
     } else {
         return `${p}th PLACE`
     }
-    
 }
 
 function convertPlacement() {

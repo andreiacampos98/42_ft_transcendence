@@ -89,3 +89,7 @@
 .match-block .details .type {
     font-weight: bold;
 }
+
+a:hover {
+    cursor: pointer;
+}
