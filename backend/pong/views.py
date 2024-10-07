@@ -1102,7 +1102,7 @@ def ongoingtournaments(request, tournament_id):
 def tournamentstats(request, tournament_id):
 	context = {
 		'tournament_id': tournament_id,
-		'tournament_size': 8
+		'tournament_size': 4
 	}
 	return render(request,'pages/tournament_overview.html', context)
 

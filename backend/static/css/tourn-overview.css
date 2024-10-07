@@ -6,6 +6,53 @@
 
 }
 
+.leaderboard {
+    color: white;
+    /*position: relative;*/
+    width: 400px;
+    text-align: left;
+    margin: 50px;
+    align-self: normal;
+
+}
+
+.header .title {
+    color: #f2f2f269;
+    width: 33%;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 30px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+}
+
+.details {
+    border-radius: 8px;
+    flex: 1;
+    height: 64px;
+    z-index: 100;
+    background-color: #28313a;
+    color: #FFF;
+    border: 1px solid #ffffff2a;
+    margin-bottom: 8px;
+}
+
+.details .content {
+    width: 33%;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 40px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
 .tourn-info {
 	position: absolute;
   	left: 50%;

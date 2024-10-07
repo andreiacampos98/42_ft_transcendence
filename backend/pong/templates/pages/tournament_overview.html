@@ -5,28 +5,57 @@
     <link rel="stylesheet" href="{% static 'css/tourn-overview.css' %}">
     <script defer src="{% static 'js/tourn-overview.js' %}"></script>
     <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
-		<div class="main d-flex justify-content-center">
+		<div class="main d-flex flex-column">
 			<div class="tourn-header d-flex align-items-center">
 				<div class="tourn-info d-flex flex-column">
 					<h1 class="tourn-title">{{ tournament_name }} Name</h1>
 					<h3 class="tourn-status">This tournament is over.</h3>
 				</div>
-				<button style="margin-bottom: 10px; border: none; background: none; margin-left: auto;" class="change modal-button" id="leave-tournament" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
-					<img src="{% static 'assets/icons/leave-tournament.png' %}" alt="Leave Tournament">
-				</button>
 			</div>
-            <div class="leaderboard-groups d-flex align-items-center justify-content-between">
+            <div class="leaderboard-groups d-flex align-items-center" style="height: 100px;">
                 <div class=" leaderboard">
+					<h2 class="tourn-title" style="font-size: larger; padding-bottom: 20px;">Leaderboard</h2>
                     <div class="header d-flex align-items-center justify-content-evenly">
                         <span class="title">Placement</span>
                         <span class="title">User</span>
-                        <span class="title">Score</span>
+                        <span class="title" style="padding-left: 30px;">Score</span>
                     </div>
-                    {% for id in user_id %}
+                    <!--{% for id in user_id %}-->
+                    <!--{% endfor %}-->
+                        <div class="details d-flex align-items-center justify-content-evenly">
+                            <span class="content placement" style="padding-left: 20px;">  1st </span>
+                            <span class="content user-leaderboard">
+
+                                <a  hx-get=""
+                                    hx-trigger="click"
+                                    hx-target="#main"
+                                    hx-push-url="true">
+                                        <img class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                                    <span> username</span>
+                                </a>
+                            </span>
+                            <span class="content"  style="padding-left: 30px;"> 270</span>
+                        </div>
+                        <div class="details d-flex align-items-center justify-content-evenly">
+                            <span class="content placement" style="padding-left: 20px;">  1st </span>
+                            <span class="content user-leaderboard">
+
+                                <a  hx-get=""
+                                    hx-trigger="click"
+                                    hx-target="#main"
+                                    hx-push-url="true">
+                                        <img class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                                    <span> username</span>
+                                </a>
+                            </span>
+                            <span class="content"  style="padding-left: 30px;"> 270</span>
+                        </div>
+
+
 
                 </div>
 				{% if tournament_size == 4 %}
-					<div class="all-groups d-flex align-items-center  justify-content-between">
+					<div class="all-groups d-flex align-items-center  justify-content-between" style="left: 600px;">
             			<div class="round d-flex align-items-center justify-content-between round-1">
             			    <div class="matchup d-flex align-items-start justify-content-between">
             			        <h1 class="group">Group A</h1>
@@ -136,7 +165,7 @@
 					
 				{% elif tournament_size == 8 %}
 				<div>
-				<div class="all-groups d-flex align-items-center  justify-content-between" style="transform: scale(0.65); transform-origin: center; top: 3%;  left: 136px;">
+				<div class="all-groups d-flex align-items-center  justify-content-between" style="transform: scale(0.65); transform-origin: center; top: 7%;  left: 404px;">
 					<div class="round d-flex align-items-center justify-content-between round-1">
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<h1 class="group">Group A</h1>
@@ -263,7 +292,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="all-groups d-flex align-items-center  justify-content-between" style="transform: scale(0.65); transform-origin: center; top: 41%;  left: 136px; ">
+				<div class="all-groups d-flex align-items-center  justify-content-between" style="transform: scale(0.65); transform-origin: center; top: 45%;  left: 404px; ">
 					<div class="round d-flex align-items-center justify-content-between round-1">
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<h1 class="group">Group C</h1>
