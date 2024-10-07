@@ -4,6 +4,7 @@
 
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/game-stats.css' %}">
+<script defer src="{% static 'js/game-stats.js' %}"></script>
 <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
     <div class="main d-flex" id="main-wrapper">
         <div class="main d-flex flex-column" id="profile-main">
@@ -27,50 +28,124 @@
                     <h6 class="graph-value">Ainda nao tenho isto</h6>
                 </div>
                 <div class="averages d-flex flex-column justify-content-around">
-                    <div class="records d-flex numbers-stat" style="margin-top: 0;">
-                        <h6 class="record-tit">Maximum Ball Speed</h6>
-                        <div class="record-info d-flex justify-content-between align-items-center">
-                            <div class="img-tit d-flex">
-                                <img src="{% static 'assets/icons/speed.png' %}" alt="Max Speed">
-                                <div class="record-info-tit">
-                                    
-                                    <h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
-                                </div>
+                    <div class="records d-flex flex-column align-items-center justify-content-center" style="margin-top: 0;">
+                        <h6 class="records-title">Rally Length per Goal</h6>
+                        <div class="squares d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">40</div>
+                                <span>1</span>
                             </div>
-                            <h6 class="winr"> {{ stats.max_ball_speed }} </h6>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">20</div>
+                                <span>2</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">5</div>
+                                <span>3</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">44</div>
+                                <span>4</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">57</div>
+                                <span>5</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">11</div>
+                                <span>6</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">64</div>
+                                <span>7</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">90</div>
+                                <span>8</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">0</div>
+                                <span>9</span>
+                            </div>
                         </div>
-                        <div class="record-info d-flex justify-content-between align-items-center">
-                            <div class="img-tit d-flex">
-                                <img src="{% static 'assets/icons/rally.png' %}" alt="Max Speed">
-                                <div class="record-info-tit">
-                                    <h6 class="record-tit">Maximum Rally Length</h6>
-                                    <h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
-                                </div>
+                        <div class="rally-len d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img src="{% static 'assets/icons/rally-len.png' %}">
+                                <div class="grey-line"></div>
                             </div>
-                            <h6 class="winr"> {{ stats.max_rally_length }} </h6>
+                            <div class="minutes">
+                                <h6 class="winr">5</h6>
+                                <span> Min</span>
+                            </div>
+                            <div class="average">
+                                <h6 class="winr">43</h6>
+                                <span> Average</span>
+                            </div>
+                            <div class="max">
+                                <h6 class="winr">90</h6>
+                                <span>Max</span>
+                            </div>
+                            
                         </div>
                     </div>
-                    <div class="records d-flex numbers-stat"  style="margin-bottom: 0;">
-                        <h6 class="record-tit">Maximum Ball Speed</h6>
-                        <div class="record-info d-flex justify-content-between align-items-center">
-                            <div class="img-tit d-flex">
-                                <img src="{% static 'assets/icons/speed.png' %}" alt="Max Speed">
-                                <div class="record-info-tit">
-
-                                    <h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
-                                </div>
+                    <div class="records d-flex flex-column align-items-center justify-content-center"  style="margin-bottom: 0;">
+                        <h6 class="records-title">Ball Speed per Goal</h6>
+                        <div class="squares d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">40</div>
+                                <span>1</span>
                             </div>
-                            <h6 class="winr"> {{ stats.max_ball_speed }} </h6>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">20</div>
+                                <span>2</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">5</div>
+                                <span>3</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">44</div>
+                                <span>4</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">57</div>
+                                <span>5</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">11</div>
+                                <span>6</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">64</div>
+                                <span>7</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">90</div>
+                                <span>8</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">0</div>
+                                <span>9</span>
+                            </div>
                         </div>
-                        <div class="record-info d-flex justify-content-between align-items-center">
-                            <div class="img-tit d-flex">
-                                <img src="{% static 'assets/icons/rally.png' %}" alt="Max Speed">
-                                <div class="record-info-tit">
-                                    <h6 class="record-tit">Maximum Rally Length</h6>
-                                    <h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
-                                </div>
+                        <div class="ball-speed d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img src="{% static 'assets/icons/ball-speed.png' %}">
+                                <div class="grey-line"></div>
                             </div>
-                            <h6 class="winr"> {{ stats.max_rally_length }} </h6>
+                            <div class="minutes">
+                                <h6 class="winr">5</h6>
+                                <span> Min</span>
+                            </div>
+                            <div class="average">
+                                <h6 class="winr">43</h6>
+                                <span> Average</span>
+                            </div>
+                            <div class="max">
+                                <h6 class="winr">90</h6>
+                                <span>Max</span>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>

@@ -20,37 +20,6 @@
     margin-bottom: 20px;
 }
 
-.stats-head {
-    flex-direction: column;
-    width: 50%;
-    height: 100%;
-    margin: 5px;
-
-}
-
-.two-joined {
-    height: 50%;
-}
-.stat {
-    text-align: center;
-    padding: 10px;
-    width: 49%;
-    border-radius: 8px;
-    background-color: #ffffff0C;
-    border: 1px solid #ffffff2a;
-    
-}
-
-.donut {
-    border-radius: 8px;
-    background-color: #ffffff0C;
-    border: 1px solid #ffffff2a;
-    flex-direction: column;
-    width: 50%;
-    height: 100%;
-    margin: 5px;
-
-}
 
 .profile-foot {
     width: 100%;
@@ -124,9 +93,8 @@
 }
 
 .graph-title {
-    align-self: flex-start;
-    padding: 20px;
     font-size: x-large;
+    color: #fff;
 }
 
 .winr, .graph-value {
@@ -150,9 +118,67 @@
 .averages {
     width: 28%;
     height: 100%;
+    min-width: 320px;
 }
 
 .performance {
     width: 16%;
     height: 100%;
+}
+
+.records-title {
+    font-size: large;
+    color: #fff;
+}
+
+.rally-len, .ball-speed  {
+    /*background: url('../assets/images/rally-len.png') no-repeat;*/
+    background: linear-gradient(to right, #ffffff00, #f8d18218);
+    background-size: cover; /* Make the image cover the entire div */
+    width: 90%;
+    border-radius: 8px;
+    border: 1px solid #ffffff2a;
+}
+
+.grey-line {
+    width: 2px;
+    height: 50px;
+    background-color: #ffffff5d;
+    border-radius: 8px;
+}
+
+.rally-len div, .ball-speed div {
+    width: 88px;
+    color: #FFFFFF;
+}
+
+.rally-len div  h6, .ball-speed div  h6 {
+    margin-bottom: 0;
+    font-size: x-large;
+}
+
+.rally-len div  span, .ball-speed div  span {
+    font-size: smaller;
+}
+
+.squares {
+    color: #FFFFFF;
+    width: 65%;
+    min-width: 270px;
+    padding-bottom: 20px;
+}
+
+.square-length, .square-speed {
+    width: 25px;
+    height: 25px;
+    background-color: #FFFFFF;
+    border-radius: 3px;
+    color: #836938;
+    font-weight: bold;
+    margin-bottom: 3px;
+
+}
+
+.squares span {
+    font-size: smaller;
 }
