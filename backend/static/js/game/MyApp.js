@@ -34,10 +34,11 @@ export class MyApp  {
 
 		this.canvas = document.querySelector('#canvas-container');
     }
+
     /**
      * initializes the application
      */
-    init({playerData, enemyData, socket=null, gameType}) {
+    init({playerData, enemyData, socket=null, gameType, ballDirection}) {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
@@ -47,7 +48,8 @@ export class MyApp  {
 			playerData: playerData, 
 			enemyData: enemyData,
 			socket: socket, 
-			gameType: gameType, 
+			gameType: gameType,
+			ballDirection: ballDirection
 		});
 		this.scene.add(this.gameController);
 
@@ -63,7 +65,7 @@ export class MyApp  {
 		document.getElementById('main-content').appendChild(this.gui.domElement);
 
 		this.stats = new Stats();
-        this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+        this.stats.showPanel(0);
         document.body.appendChild(this.stats.dom);
 		
 		const lightFolder = this.gui.addFolder('Light')
@@ -77,8 +79,8 @@ export class MyApp  {
         this.renderer.setPixelRatio( this.canvas.clientWidth / this.canvas.clientHeight );
         this.renderer.setClearColor("#000000");
         this.renderer.setSize( this.canvas.clientWidth, this.canvas.clientHeight );
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // search for other alternatives
+        // this.renderer.shadowMap.enabled = true;
+        // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // search for other alternatives
 
         this.initCameras();
         this.setActiveCamera('Perspective')
@@ -167,12 +169,7 @@ export class MyApp  {
     }
 }
 
-window.addEventListener('popstate', function(event) {
-    var r = confirm("You're about to leave the game! Are you sure?!");
-	
-    if (r == true) {
-		document.getElementById('game-engine').remove();
+window.addEventListener('popstate', function(event) {	
+    if (confirm("You're about to leave the game! Are you sure?!"))
 		this.window.cancelAnimationFrame(frameID);
-    }
-
-}, false);
+});

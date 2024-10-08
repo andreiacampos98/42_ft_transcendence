@@ -1,7 +1,14 @@
 export const HELLO = "Hello";
-export const BALL_START_SPEED = {'x': -0.3, 'y': 0.3};
-export const BALL_SPEED_FACTOR = 0.02;
+export const BALL_START_SPEED = 0.3;
+export const BALL_SPEEDUP_FACTOR = 0.02;
 export const BALL_RADIUS = 1.25;
+
+export const DIRECTION = Object.freeze({
+	UP: 1,
+	DOWN: -1,
+	LEFT: -1,
+	RIGHT: 1,
+});
 
 export const PADDLE_SEMI_LENGTH = 0.25;
 export const PADDLE_SEMI_HEIGHT = 3.75;

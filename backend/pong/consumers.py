@@ -99,7 +99,10 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 				"message": json.dumps({
 					'player1': curr_player,
 					'player2': host_player,
-					'direction': 1 if random.randint(0, 1) == 1 else -1
+					'direction': {
+						'x': 1 if random.randint(0, 1) == 1 else -1,
+						'y': 1 if random.randint(0, 1) == 1 else -1
+					}
 				})
 			}
 		)

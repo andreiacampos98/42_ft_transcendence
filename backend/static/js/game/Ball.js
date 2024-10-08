@@ -1,13 +1,14 @@
 import * as THREE from 'three';
-import { BALL_SPEED_FACTOR, BALL_START_SPEED, BALL_RADIUS,
-	PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH } from './macros.js';
+import { BALL_SPEEDUP_FACTOR, BALL_START_SPEED, BALL_RADIUS,
+	PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, DIRECTION } from './macros.js';
 
 export class Ball extends THREE.Object3D { 
-	constructor ({ radius, color, speed }) {
+	constructor ({ radius, color, speed, direction }) {
 		super();
 
 		this.radius = radius || BALL_RADIUS;
-		this.speed = speed || {'x': BALL_START_SPEED.x, 'y': BALL_START_SPEED.y};
+		this.speed = { 'x': BALL_START_SPEED, 'y': BALL_START_SPEED };
+		this.direction = direction || { 'x': DIRECTION.LEFT, 'y': DIRECTION.UP }
 		this.rally = 0;
 		this.ball = null;
 		this.build();
@@ -26,8 +27,8 @@ export class Ball extends THREE.Object3D {
 	move(arcade) {
 		const { arena, player, enemy } = arcade;
 
-		this.position.x += this.speed.x;
-		this.position.y += this.speed.y;
+		this.position.x += this.direction.x * this.speed.x;
+		this.position.y += this.direction.y * this.speed.y;
 		
 		this.collideWithVerticalBounds(arena);
 		this.collideWithPaddle(player.paddle, true);
@@ -49,9 +50,9 @@ export class Ball extends THREE.Object3D {
 		const { upperBoundary, lowerBoundary } = arena;
 				
 		if (this.position.y + this.radius >= upperBoundary.position.y)
-			this.speed.y = -Math.abs(this.speed.y);
+			this.direction.y = DIRECTION.DOWN;
 		else if (this.position.y - this.radius <= lowerBoundary.position.y)
-			this.speed.y = Math.abs(this.speed.y);
+			this.direction.y = DIRECTION.UP;
 	}
 
 	collideWithPaddle(paddle, isPlayer){
@@ -87,11 +88,13 @@ export class Ball extends THREE.Object3D {
 		//! - Change ball speed according to the speed of the paddle at the time
 		if (isPlayer) {
 			this.position.x = paddle.position.x + PADDLE_SEMI_LENGTH + this.radius;
-			this.speed.x = Math.abs(this.speed.x) + BALL_SPEED_FACTOR;
+			this.speed.x += BALL_SPEEDUP_FACTOR;
+			this.direction.x = DIRECTION.RIGHT;
 		}
 		else {
 			this.position.x = paddle.position.x - PADDLE_SEMI_LENGTH - this.radius;
-			this.speed.x = -(Math.abs(this.speed.x) + BALL_SPEED_FACTOR);
+			this.speed.x += BALL_SPEEDUP_FACTOR;
+			this.direction.x = DIRECTION.LEFT;
 		}	
 
 		this.rally += 1;
@@ -99,8 +102,8 @@ export class Ball extends THREE.Object3D {
 
 	reset() {
 		this.rally = 0;
-		this.speed.x = BALL_START_SPEED.x;
-		this.speed.y = BALL_START_SPEED.y;
+		this.speed.x = BALL_START_SPEED;
+		this.speed.y = BALL_START_SPEED;
 		this.position.set(0, 0, 0);
 	}
 

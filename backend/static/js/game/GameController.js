@@ -7,7 +7,7 @@ import { RemotePlayer } from './RemotePlayer.js';
 
 
 export class GameController extends THREE.Group {
-	constructor({ playerData, enemyData, gameType, socket }) {
+	constructor({ playerData, enemyData, gameType, socket, ballDirection }) {
 		super();
 
 		this.gameType = gameType;
@@ -21,7 +21,7 @@ export class GameController extends THREE.Group {
 		this.createPlayers(playerData, enemyData, socket);
 		this.createGameInstance();
 		this.registerKeybinds();
-		this.build();
+		this.build(ballDirection);
 	}
 
 	createPlayers(playerData, enemyData, socket) {
@@ -40,14 +40,13 @@ export class GameController extends THREE.Group {
 			this.player = new RemotePlayer({ id: playerID, username: playerUsername, 
 				position: [-25, 0, 0], socket: socket, keybinds: {'up': 'w', 'down': 's'}
 			});
-			console.log(this.player);
+			// console.log(this.player);
 			this.enemy = new RemotePlayer({ id: enemyID, username: enemyUsername, 
 				position: [25, 0, 0], socket: socket, isEnemy: true
 			});
-			console.log(this.enemy );
+			// console.log(this.enemy );
 		}
-		this.arena = new Arena({});
-		this.ball = new Ball({});
+
 		this.stats = new GameStats(this.player, this.enemy);
 	}
 
@@ -58,7 +57,7 @@ export class GameController extends THREE.Group {
 		    "type": this.gameType
 		}
 
-		console.log(formData);
+		// console.log(formData);
 
 		const response = await fetch(`/games/create`, {
 			method: 'POST',
@@ -70,7 +69,7 @@ export class GameController extends THREE.Group {
 
 		const gameData = await response.json();
 		this.stats.gameId = gameData.id;
-		console.log(gameData);
+		// console.log(gameData);
 	}
 
 	registerKeybinds() {
@@ -89,7 +88,10 @@ export class GameController extends THREE.Group {
 		});
 	}
 
-	build() {
+	build(ballDirection) {
+		this.arena = new Arena({});
+		this.ball = new Ball({ direction: ballDirection });
+
 		this.add(this.arena);
 		this.add(this.player.paddle);
 		this.add(this.enemy.paddle);
