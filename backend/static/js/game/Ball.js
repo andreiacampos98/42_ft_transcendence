@@ -3,11 +3,11 @@ import { BALL_SPEEDUP_FACTOR, BALL_START_SPEED, BALL_RADIUS,
 	PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, DIRECTION } from './macros.js';
 
 export class Ball extends THREE.Object3D { 
-	constructor ({ radius, color, speed, direction }) {
+	constructor ({ radius, speed, direction }) {
 		super();
 
 		this.radius = radius || BALL_RADIUS;
-		this.speed = { 'x': BALL_START_SPEED, 'y': BALL_START_SPEED };
+		this.speed = speed || { 'x': BALL_START_SPEED, 'y': BALL_START_SPEED };
 		this.direction = direction || { 'x': DIRECTION.LEFT, 'y': DIRECTION.UP }
 		this.rally = 0;
 		this.ball = null;
