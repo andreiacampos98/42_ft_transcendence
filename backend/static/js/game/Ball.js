@@ -24,8 +24,8 @@ export class Ball extends THREE.Object3D {
 		this.add(this.ball);
 	}
 
-	move(arcade) {
-		const { arena, player, enemy } = arcade;
+	move(controller) {
+		const { arena, player, enemy } = controller;
 
 		this.position.x += this.direction.x * this.speed.x;
 		this.position.y += this.direction.y * this.speed.y;
