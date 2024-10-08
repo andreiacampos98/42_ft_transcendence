@@ -13,6 +13,9 @@ export const ARENA_SEMI_DEPTH = 0.25;
 
 export const MAX_GOALS = 5;
 
+export const FPS = 75;
+export const REFRESH_RATE = 1000 / FPS;
+
 //! DEPENDENCY INJECTION TESTING
 
 export var TEST_GOALS = [

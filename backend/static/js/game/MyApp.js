@@ -5,9 +5,11 @@ import  Stats  from 'three/addons/libs/stats.module.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Axis } from './Axis.js';
 import { GameController } from './GameController.js';
+import { REFRESH_RATE } from './macros.js';
 
 
 var frameID;
+var timeoutID;
 /**
  * This class contains the application object
  */
@@ -147,23 +149,23 @@ export class MyApp  {
     * the main render function. Called in a requestAnimationFrame loop
     */
     render () {
-		this.stats.begin();
-        this.updateCameraIfRequired()
-		
-        this.controls.update();
-		this.gameController.update();
-        this.renderer.render(this.scene, this.activeCamera);
-		
-        frameID = requestAnimationFrame( this.render.bind(this) );
-		
-        this.lastCameraName = this.activeCameraName
-		this.stats.end();
+		const updateCallback = (() => {
+			this.stats.begin();
+			this.updateCameraIfRequired();
+			
+			this.controls.update();
+			this.gameController.update();
+			this.renderer.render(this.scene, this.activeCamera);
+			
+			frameID = requestAnimationFrame( this.render.bind(this) );
+			
+			this.lastCameraName = this.activeCameraName;
+			this.stats.end();
+		}).bind(this);
+
+		timeoutID = setTimeout(updateCallback, REFRESH_RATE);
     }
 }
-
-window.addEventListener('beforeunload', () => {
-	cancelAnimationFrame(frameID);
-  });
 
 window.addEventListener('popstate', function(event) {
     var r = confirm("You're about to leave the game! Are you sure?!");
