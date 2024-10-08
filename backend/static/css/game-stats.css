@@ -42,12 +42,15 @@
     background-color: #ffffff0C;
     border: 1px solid #ffffff2a;
     height: 100%;
+    padding: 20px;
 
 }
 
 .record-info {
     width: 100%;
     padding: 20px;
+    padding: 0;
+    padding-top: 20px;
     padding-bottom: 5px;
 }
 
@@ -63,15 +66,22 @@
 }
 
 .img-tit img {
-    width: 25px;
-    height: 25px;
+    width: 40px;
+    height: 40px;
 }
 
-.record-tit {
+.record-title {
     color: #FFFFFF;
-    font-size: small;
+    font-size: large;
     margin-bottom: 0;
 }
+
+.record-sub {
+    color: #FFFFFF;
+    font-size: x-small;
+    margin-bottom: 0;
+}
+
 
 .record-date {
     color: #ffffff83;
@@ -124,6 +134,8 @@
 .performance {
     width: 16%;
     height: 100%;
+    text-align: left;
+    white-space: nowrap;
 }
 
 .records-title {
@@ -181,4 +193,22 @@
 
 .squares span {
     font-size: smaller;
+}
+
+.record-info .name {
+    padding-left: 10px;
+    color: #FFFFFF;
+    margin-bottom: 0;
+    font-size: large;
+}
+
+.record-info .winr {
+    font-size: xx-large;
+    margin-bottom: 0;
+}
+
+
+.records .record-title {
+    padding-bottom: 10px;
+    
 }

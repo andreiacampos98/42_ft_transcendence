@@ -1094,7 +1094,7 @@ def ongoingtournaments(request, tournament_id):
 	context = {
 		'user_id': user_id,
 		'tournament_id': tournament_id,
-		'tournament_size': 8
+		'tournament_size': 4
 	}
 	return render(request,'pages/ongoing-tourn.html', context)
 
