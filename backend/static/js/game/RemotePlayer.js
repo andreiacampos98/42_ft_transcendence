@@ -1,24 +1,16 @@
+import * as THREE from 'three';
 import { Player } from './Player.js';
 import { PADDLE_SEMI_HEIGHT, ARENA_SEMI_HEIGHT, PADDLE_SPEED } from './macros.js';
 
 export class RemotePlayer extends Player {
-	constructor ({ id, username, position, keybinds=null, socket, isEnemy=false }) {
+	constructor ({ id, username, position, keybinds=null, onUpdate, isEnemy=false }) {
 		super(id, username, position, keybinds);
-		this.socket = socket;
+		this.onUpdate = onUpdate;
 		this.isEnemy = isEnemy;
-		if (isEnemy)
-			this.socket.onmessage = (event) => {
-				console.log(event);
-				const newY = JSON.parse(event.data).paddle.position.y;
-				this.paddle.position.y = newY;
-			}
-
-		this.socket.onerror = (event) => {
-			console.log(event);
-		}
 	}
 
 	update(pressedKeys) {
+		//! REPOR COM KEYBINDS == NULL
 		if (this.isEnemy)
 			return ;
 
@@ -39,18 +31,18 @@ export class RemotePlayer extends Player {
 			);
 		}
 
-		if (pressedKeys[upKey] || pressedKeys[downKey]) {
-			this.paddle.position.lerp(targetPos, 0.5);
-			this.socket.send(JSON.stringify({
-				'id': this.id,
-				'paddle': {
-					'position': {
-						'y': targetPos.y
-					}
-				}
-			}));
-		}
+		if (pressedKeys[upKey] || pressedKeys[downKey])
+			this.onUpdate(this.id, this.username, targetPos.y);
 	}
+
+	move(targetY) {
+		const target = new THREE.Vector3(...this.paddle.position);
+
+		target.y = targetY;
+		this.paddle.position.lerp(target, 0.5);
+	}
+
+
 
 
 }

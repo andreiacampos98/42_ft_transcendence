@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { BALL_SPEEDUP_FACTOR, BALL_START_SPEED, BALL_RADIUS,
-	PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, DIRECTION } from './macros.js';
+	PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, DIRECTION, 
+	ARENA_SEMI_DEPTH } from './macros.js';
 
 export class Ball extends THREE.Object3D { 
 	constructor ({ radius, speed, direction }) {
@@ -39,9 +40,9 @@ export class Ball extends THREE.Object3D {
 	collidedWithGoals(arena, player, enemy) {
 		const { rightBoundary, leftBoundary } = arena;
 
-		if (this.position.x - this.radius <= leftBoundary.position.x)
+		if (this.position.x - this.radius <= leftBoundary.position.x + ARENA_SEMI_DEPTH)
 			return enemy;
-		else if (this.position.x + this.radius >= rightBoundary.position.x)
+		else if (this.position.x + this.radius >= rightBoundary.position.x - ARENA_SEMI_DEPTH)
 			return player;
 		return null;
 	}
@@ -49,9 +50,9 @@ export class Ball extends THREE.Object3D {
 	collideWithVerticalBounds(arena) {
 		const { upperBoundary, lowerBoundary } = arena;
 				
-		if (this.position.y + this.radius >= upperBoundary.position.y)
+		if (this.position.y + this.radius >= upperBoundary.position.y - ARENA_SEMI_DEPTH)
 			this.direction.y = DIRECTION.DOWN;
-		else if (this.position.y - this.radius <= lowerBoundary.position.y)
+		else if (this.position.y - this.radius <= lowerBoundary.position.y + ARENA_SEMI_DEPTH)
 			this.direction.y = DIRECTION.UP;
 	}
 

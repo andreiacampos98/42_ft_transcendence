@@ -53,6 +53,15 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		self.user = self.scope['user']
 		self.room_name = ''
 
+		# if the queue is empty: (no room available)
+		#	- create a new channel_name and add it to the object
+		# 	- push the new object alongside the channel name to the queue
+		# else: (available rooms)
+		# 	- Pop the first available room in the queue
+		#	- Add the client to the room
+		# 	- Broadcast a message to the channel with a starting command
+
+
 		if len(self.queue) == 0:
 			ic('adding player to queue')
 			self.add_player_to_queue()
@@ -109,13 +118,21 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		del self.queue[host_id]
 
 	def disconnect(self, code):
-		del self.queue[self.user.id]
+		if self.user.id in self.queue:
+			del self.queue[self.user.id]
 		return super().disconnect(code)
 	
 	def receive(self, text_data=None):
+		handler = ''
+		data = json.loads(text_data)
+		if data['event'] == 'UPDATE':
+			handler = "send.update.paddle.message"
+		elif data['event'] == 'GOAL':
+			handler = "send.reset.ball.message"
+
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_name, {
-				"type": "send.update.paddle.message", 
+				"type": handler, 
 				"message": text_data
 			}
 		)
@@ -125,26 +142,15 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		
 	def send_update_paddle_message(self, event):
 		data = json.loads(event['message'])
-		ic(data)
-		if data['id'] != self.user.id:
-			self.send(event['message'])
-
+		data['event'] = 'MOVE'
+		self.send(json.dumps(data))
 	
-
-			
-
-
-# if the queue is empty: (no room available)
-#	- create a new channel_name and add it to the object
-# 	- push the new object alongside the channel name to the queue
-# else: (available rooms)
-# 	- Pop the first available room in the queue
-#	- Add the client to the room
-# 	- Broadcast a message to the channel with a starting command
-
-# If receive() function is triggered:
-#	- Create a new object with the position of the paddle of the player who sent it
-#	- Send position to the other player
-
-
-				
+	def send_reset_ball_message(self, event):
+		data = {
+			'event': 'RESET',
+			'ballDirection': {
+				'x': 1 if random.randint(0, 1) == 1 else -1,
+				'y': 1 if random.randint(0, 1) == 1 else -1
+			} 
+		}
+		self.send(json.dumps(data))

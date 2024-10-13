@@ -4,8 +4,9 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import  Stats  from 'three/addons/libs/stats.module.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Axis } from './Axis.js';
-import { GameController } from './GameController.js';
+import { LocalGameController } from './LocalGameController.js';
 import { REFRESH_RATE } from './macros.js';
+import { RemoteGameController } from './RemoteGameController.js';
 
 
 var frameID;
@@ -44,13 +45,20 @@ export class MyApp  {
         this.scene.background = new THREE.Color( 0x101010 );
 		this.scene.add(new Axis(this));
 
-		this.gameController = new GameController({ 
-			playerData: playerData, 
-			enemyData: enemyData,
-			socket: socket, 
-			gameType: gameType,
-			ballDirection: ballDirection
-		});
+		if (gameType == "Remote"){
+			this.gameController = new RemoteGameController({ 
+				playerData: playerData, 
+				enemyData: enemyData,
+				socket: socket, 
+				ballDirection: ballDirection
+			});
+		} else {
+			this.gameController = new LocalGameController({ 
+				playerData: playerData, 
+				enemyData: enemyData,
+				ballDirection: ballDirection
+			});
+		}
 		this.scene.add(this.gameController);
 
 		this.light = new THREE.PointLight('#FFFFFF', 100);

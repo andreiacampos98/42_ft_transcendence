@@ -2,62 +2,61 @@ import * as THREE from 'three';
 import { Ball } from './Ball.js';
 import { Arena } from './Arena.js';
 import { GameStats } from './GameStats.js';
-import { LocalPlayer } from './LocalPlayer.js';
 import { RemotePlayer } from './RemotePlayer.js';
 
 
-export class GameController extends THREE.Group {
-	constructor({ playerData, enemyData, gameType, socket, ballDirection }) {
+export class RemoteGameController extends THREE.Group {
+	constructor({ playerData, enemyData, socket, ballDirection }) {
 		super();
 
-		this.gameType = gameType;
 		this.keybinds = null;
 		this.arena = null;
 		this.ball = null;
 		this.player = null;
 		this.enemy = null;
+		this.socket = socket;
 		this.stats = null;
 		
-		this.createPlayers(playerData, enemyData, socket);
-		this.createGameInstance();
 		this.registerKeybinds();
+		this.registerSocketEvents();
+		this.createPlayers(playerData, enemyData);
+		this.createGameInstance();
 		this.build(ballDirection);
 	}
 
-	createPlayers(playerData, enemyData, socket) {
+	createPlayers(playerData, enemyData) {
 		const { id: playerID, username: playerUsername } = playerData;
 		const { id: enemyID, username: enemyUsername } = enemyData;
-		
-		if (this.gameType == "Local") {
-			this.player = new LocalPlayer({ id: playerID, username: playerUsername, 
-				position: [-25, 0, 0], keybinds: {'up': 'w', 'down': 's'}
-			});
-			this.enemy = new LocalPlayer({
-				position: [25, 0, 0], keybinds: {'up': 'ArrowUp', 'down': 'ArrowDown'}
-			});
-		}
-		else if (this.gameType == "Remote") {
-			this.player = new RemotePlayer({ id: playerID, username: playerUsername, 
-				position: [-25, 0, 0], socket: socket, keybinds: {'up': 'w', 'down': 's'}
-			});
-			// console.log(this.player);
-			this.enemy = new RemotePlayer({ id: enemyID, username: enemyUsername, 
-				position: [25, 0, 0], socket: socket, isEnemy: true
-			});
-			// console.log(this.enemy );
+		const onUpdate = (id, username, targetY) => {
+			this.socket.send(JSON.stringify({
+				'event': 'UPDATE',
+				'data': {
+					'id': id,
+					'username': username,
+					'y': targetY
+				}
+			}));
 		}
 
+		this.player = new RemotePlayer({ id: playerID, username: playerUsername, 
+			position: [-25, 0, 0], onUpdate: onUpdate, keybinds: {'up': 'w', 'down': 's'}
+		});
+		this.enemy = new RemotePlayer({ id: enemyID, username: enemyUsername, 
+			position: [25, 0, 0], isEnemy: true
+		});
 		this.stats = new GameStats(this.player, this.enemy);
+
+		console.log(this.player);
+		console.log(this.enemy);
+
 	}
 
 	async createGameInstance() {
 		const formData = {
 		    "user1_id": this.player.id,
 		    "user2_id": this.enemy.id,
-		    "type": this.gameType
+		    "type": "Remote"
 		}
-
-		// console.log(formData);
 
 		const response = await fetch(`/games/create`, {
 			method: 'POST',
@@ -69,13 +68,11 @@ export class GameController extends THREE.Group {
 
 		const gameData = await response.json();
 		this.stats.gameId = gameData.id;
-		// console.log(gameData);
 	}
 
 	registerKeybinds() {
 		this.keybinds = {
 			'w': false, 's': false,
-			'ArrowUp': false, 'ArrowDown': false
 		};
 
 		document.addEventListener('keydown', (event) => {
@@ -86,6 +83,26 @@ export class GameController extends THREE.Group {
 			if (event.key in this.keybinds) 
 				this.keybinds[event.key] = false;
 		});
+	}
+
+	registerSocketEvents(){
+		this.socket.onmessage = (event) => {
+			const data = JSON.parse(event.data);
+			console.log(data.event);
+			// console.log(`player = ${this.player.username}, enemy = ${this.enemy.username}, data.username = ${data.username}`);
+			if (data.event == 'MOVE') {
+				if (data.data.id == this.player.id)
+					this.player.move(data.data.y);
+				else
+					this.enemy.move(data.data.y);
+			}
+			else if (data.event == 'RESET')
+				this.ball.reset();
+		}
+
+		this.socket.onerror = (event) => {
+			console.log(event);
+		}
 	}
 
 	build(ballDirection) {
