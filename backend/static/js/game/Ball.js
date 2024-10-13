@@ -40,9 +40,9 @@ export class Ball extends THREE.Object3D {
 		const { rightBoundary, leftBoundary } = arena;
 
 		if (this.position.x - this.radius <= leftBoundary.position.x)
-			return player;
-		else if (this.position.x + this.radius >= rightBoundary.position.x)
 			return enemy;
+		else if (this.position.x + this.radius >= rightBoundary.position.x)
+			return player;
 		return null;
 	}
 
