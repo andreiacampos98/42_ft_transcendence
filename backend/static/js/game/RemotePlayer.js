@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { Player } from './Player.js';
+import { AbstractPlayer } from './AbstractPlayer.js';
 import { PADDLE_SEMI_HEIGHT, ARENA_SEMI_HEIGHT, PADDLE_SPEED } from './macros.js';
 
-export class RemotePlayer extends Player {
+export class RemotePlayer extends AbstractPlayer {
 	constructor ({ id, username, x, keybinds=null, onUpdate }) {
 		super({
 			id: id, 

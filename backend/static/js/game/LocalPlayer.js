@@ -1,9 +1,14 @@
-import { Player } from './Player.js';
+import { AbstractPlayer } from './AbstractPlayer.js';
 import { PADDLE_SEMI_HEIGHT, PADDLE_SPEED, ARENA_SEMI_HEIGHT } from './macros.js';
 
-export class LocalPlayer extends Player {
-	constructor ({id=null, username='Local Player', position, keybinds}) {
-		super(id, username, position, keybinds);
+export class LocalPlayer extends AbstractPlayer {
+	constructor ({id=null, username='Local Player', x, keybinds}) {
+		super({
+			id: id,
+			username: username,
+			x: x,
+			keybinds: keybinds
+		});
 	}
 
 	update(pressedKeys) {

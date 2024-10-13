@@ -23,8 +23,8 @@ if (gameType == "Remote") {
 else {
 	let app = new MyApp();
 	app.init({ 
-		playerData: {'id': userID, 'username': username},
-		enemyData: {'id': '', 'username': ''},
+		player1Data: {'id': userID, 'username': username},
+		player2Data: {'id': '', 'username': ''},
 		gameType: gameType 
 	});
 	app.render();

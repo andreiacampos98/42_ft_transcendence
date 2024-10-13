@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { ARENA_SEMI_LENGTH, PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, PADDLE_SPEED } from './macros.js';
-export class Player {
+
+export class AbstractPlayer {
 	constructor ({id, username, x, keybinds}) {
 		this.id = id
 		this.username = username;
@@ -22,5 +23,5 @@ export class Player {
 		);
 	}
 
-	update(pressedKeys) {}
+	update () {}
 }
