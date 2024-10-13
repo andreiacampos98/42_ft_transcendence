@@ -15,7 +15,7 @@ export class AbstractPlayer {
 		const height = 2 * PADDLE_SEMI_HEIGHT;
 		const length = 2 * PADDLE_SEMI_LENGTH;
 		const depth = length;
-		const color = x < 0 ? 0xFF0000 : 0x0000FF;
+		const color = x < 0 ? 0xCC0000 : 0x00FFFF;
 
 		this.paddle = new THREE.Mesh(
 			new THREE.BoxGeometry(length, height, depth),

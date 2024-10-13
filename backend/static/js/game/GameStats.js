@@ -6,7 +6,7 @@
 /*   By: nunomiguel533 <nunomiguel533@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/10/13 20:28:57 by nunomiguel5      ###   ########.fr       */
+/*   Updated: 2024/10/13 20:34:24 by nunomiguel5      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ export class GameStats {
 		this.score[scorer.username] += 1;
 		this.goals.push(goal);
 		this.scoreBoard.textContent = 
-			`${this.score[this.player1.username]} : ${this.score[this.player2.username]}`
+			`${this.score[this.player1.username]} : ${this.score[this.player2.username]}`;
 		
 		console.log(goal);
 

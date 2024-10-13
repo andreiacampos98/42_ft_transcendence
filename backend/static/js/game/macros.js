@@ -1,4 +1,3 @@
-export const HELLO = "Hello";
 export const BALL_START_SPEED = 0.6;
 export const BALL_SPEEDUP_FACTOR = 0.06;
 export const BALL_RADIUS = 1.25;
