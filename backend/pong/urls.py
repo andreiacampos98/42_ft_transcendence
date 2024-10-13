@@ -10,13 +10,14 @@ from . import consumers
 #router.register('users', UsersViewSet)
 
 
-urlpatterns =[
+urlpatterns = [
 
     #! Pages
     path('', views.loginview, name="login"),
     path('home/', views.home, name="home"),
     path('gamelocal/', views.gamelocal, name="gamelocal"),
     path('gameonline/', views.gameonline, name="gameonline"),
+
     path('tournaments/', views.tournaments, name="tournaments"),
     path('tournaments/ongoing/<int:tournament_id>', views.ongoingtournaments, name="ongoingtournaments"),
     path('signup/', views.signup, name='signup'),
@@ -99,8 +100,9 @@ urlpatterns =[
     path('signin42', views.signin42, name='signin42'),
     path('home42/', views.login42, name='login42'),
     
-    #! DEBUG
+    #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
+    path('debug/games/<int:game_id>', views.get_game, name='debug-get-game'),
     
 ] 
 
