@@ -1,8 +1,7 @@
 function onEditButtonClick() {
-	document.querySelector("div.save-cancel.align-items-center.justify-content-around").style.display = "block";
-	document.querySelector("div.save-cancel.align-items-center.justify-content-around").classList.add('d-flex');
-	document.querySelector("div.edit-change.d-flex.align-items-center.justify-content-between").style.display = "none";
-	document.querySelector("div.edit-change.d-flex.align-items-center.justify-content-between").classList.remove("d-flex");
+	document.getElementById("save-cancel").style.display = "flex";
+	document.getElementById("edit-change1").style.display = "none";
+	document.getElementById("edit-change1").classList.remove("d-flex");
     document.getElementById("edit-profile-button").style.display = "none";
     document.getElementById("save-profile-button").style.display = "inline-block";
     document.getElementById("cancel-edit-button").style.display = "inline-block";
@@ -27,10 +26,9 @@ function onEditButtonClick() {
 }
 
 function onCancelButtonClick() {
-	document.querySelector("div.edit-change.align-items-center.justify-content-between").style.display = "block";
-	document.querySelector("div.edit-change.align-items-center.justify-content-between").classList.add('d-flex');
-	document.querySelector("div.save-cancel.d-flex.align-items-center.justify-content-around").style.display = "none";
-	document.querySelector("div.save-cancel.d-flex.align-items-center.justify-content-around").classList.remove("d-flex");
+	document.getElementById("edit-change1").style.display = "flex";
+	document.getElementById("save-cancel").style.display = "none";
+	document.getElementById("save-cancel").classList.remove("d-flex");
     document.getElementById("edit-profile-button").style.display = "flex";
     document.getElementById("save-profile-button").style.display = "none";
     document.getElementById("cancel-edit-button").style.display = "none";
