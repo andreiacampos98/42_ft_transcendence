@@ -20,11 +20,6 @@ export class MyApp  {
      */
     constructor() {
         this.scene = null;
-
-        // camera related attributes
-        this.activeCamera = null;
-        this.activeCameraName = null;
-        this.lastCameraName = null;
         this.cameras = [];
 
         // other attributes
@@ -129,33 +124,18 @@ export class MyApp  {
 			this.controls = null;
 	}
 
-    /**
-     * updates the active camera if required
-     * this function is called in the render loop
-     * when the active camera name changes
-     * it updates the active camera and the controls
-     */
-    updateCameraIfRequired() {
-
-        if (this.lastCameraName !== this.activeCameraName) {
-            this.lastCameraName = this.activeCameraName;
-            this.activeCamera = this.cameras[this.activeCameraName]
-            document.getElementById("camera").innerHTML = this.activeCameraName
-           
-            this.onResize();
-
-			if (!this.activateControls)
-				return ;
-			
-            if (this.controls === null) {
-                this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
-                this.controls.enableZoom = true;
-                this.controls.update();
-            }
-            else {
-                this.controls.object = this.activeCamera
-            }
-        }
+    updateOrbitControls() {
+        if (!this.activateControls)
+			return ;
+		
+		if (this.controls === null) {
+			this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
+			this.controls.enableZoom = true;
+			this.controls.update();
+		}
+		else {
+			this.controls.object = this.activeCamera
+		}
     }
 
     /**
@@ -175,7 +155,7 @@ export class MyApp  {
     render () {
 		const updateCallback = (() => {
 			this.stats.begin();
-			this.updateCameraIfRequired();
+			this.updateOrbitControls();
 			
 			if (this.controls != null)
 				this.controls.update();
