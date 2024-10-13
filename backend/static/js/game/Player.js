@@ -1,14 +1,14 @@
 import * as THREE from 'three';
-import { PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, PADDLE_SPEED } from './macros.js';
+import { ARENA_SEMI_LENGTH, PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, PADDLE_SPEED } from './macros.js';
 export class Player {
-	constructor (id, username, position, keybinds) {
+	constructor ({id, username, x, keybinds}) {
 		this.id = id
 		this.username = username;
 		this.keybinds = keybinds;
 		this.paddle = null;
 
 		this.build();
-		this.paddle.position.set(...position);
+		this.paddle.position.x = x;
 	}
 
 	build() {

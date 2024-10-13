@@ -3,7 +3,7 @@ import { Ball } from './Ball.js';
 import { Arena } from './Arena.js';
 import { GameStats } from './GameStats.js';
 import { RemotePlayer } from './RemotePlayer.js';
-
+import { ARENA_SEMI_LENGTH, PADDLE_OFFSET_X } from './macros.js';
 
 export class RemoteGameController extends THREE.Group {
 	constructor({ player1Data, player2Data, socket, ballDirection }) {
@@ -14,6 +14,7 @@ export class RemoteGameController extends THREE.Group {
 		this.ball = null;
 		this.player1 = null;
 		this.player2 = null;
+		this.players = {};
 		this.socket = socket;
 		this.stats = null;
 		
@@ -42,27 +43,25 @@ export class RemoteGameController extends THREE.Group {
 			}));
 		}
 
-		if (p1ID == currPlayerID) {
-			this.player1 = new RemotePlayer({ id: p1ID, username: p1Username, 
-				position: [-25, 0, 0], onUpdate: onUpdate, keybinds: {'up': 'w', 'down': 's'}
-			});
-			this.player2 = new RemotePlayer({ id: p2ID, username: p2Username, 
-				position: [25, 0, 0], isEnemy: true
-			});
-		}
-		else {
-			this.player1 = new RemotePlayer({ id: p1ID, username: p1Username, 
-				position: [-25, 0, 0], isEnemy: true
-			});
-			this.player2 = new RemotePlayer({ id: p2ID, username: p2Username, 
-				position: [25, 0, 0], onUpdate: onUpdate, keybinds: {'up': 'w', 'down': 's'}
-			});
-		}
+		this.player1 = new RemotePlayer({ 
+			id: p1ID, 
+			username: p1Username,
+			onUpdate: p1ID == currPlayerID ? onUpdate : null,
+			isEnemy: p1ID != currPlayerID,
+			keybinds: p1ID == currPlayerID ? {'up': 'w', 'down': 's'} : null,
+			x: -ARENA_SEMI_LENGTH + PADDLE_OFFSET_X 
+		});
+		this.player2 = new RemotePlayer({ 
+			id: p2ID, 
+			username: p2Username,
+			onUpdate: p2ID == currPlayerID ? onUpdate : null,
+			isEnemy: p2ID != currPlayerID,
+			keybinds: p2ID == currPlayerID ? {'up': 'w', 'down': 's'} : null,
+			x: ARENA_SEMI_LENGTH - PADDLE_OFFSET_X 
+		});
+		this.players[this.player1.id] = this.player1;
+		this.players[this.player2.id] = this.player2;
 		this.stats = new GameStats(this.player1, this.player2);
-
-		console.log(this.player1);
-		console.log(this.player2);
-
 	}
 
 	async createGameInstance() {
@@ -100,24 +99,17 @@ export class RemoteGameController extends THREE.Group {
 	}
 
 	registerSocketEvents(){
-		this.socket.onmessage = (event) => {
-			const data = JSON.parse(event.data);
-			// console.log(`player = ${this.player.username}, enemy = ${this.enemy.username}, data.username = ${data.username}`);
-			if (data.event == 'MOVE') {
-				if (data.data.id == this.player1.id)
-					this.player1.move(data.data.y);
-				else
-					this.player2.move(data.data.y);
-				// console.log(data.data);
-			}
-			else if (data.event == 'RESET')
-				this.ball.reset();
-			else if (data.event == 'SYNC')
-				this.ball.sync(data.data.ball);
+		this.socket.onmessage = (ev) => {
+			const { event, data } = JSON.parse(ev.data);
+			
+			if (event == 'UPDATE')
+				this.players[data.id].move(data.y);
+			else if (event == 'SYNC')
+				this.ball.sync(data.ball);
 		}
 
-		this.socket.onerror = (event) => {
-			console.log(event);
+		this.socket.onerror = (ev) => {
+			console.error(ev);
 		}
 	}
 
@@ -134,8 +126,12 @@ export class RemoteGameController extends THREE.Group {
 				}
 			}));
 		}
+
 		this.arena = new Arena({});
-		this.ball = new Ball({ direction: ballDirection, onPaddleHit: onPaddleHit });
+		this.ball = new Ball({ 
+			direction: ballDirection, 
+			onPaddleHit: onPaddleHit 
+		});
 
 		this.add(this.arena);
 		this.add(this.player1.paddle);
@@ -152,7 +148,7 @@ export class RemoteGameController extends THREE.Group {
 		const scorer = this.ball.move(this);
 		if (scorer != null) {
 			this.stats.registerGoal(scorer, this.ball);
-			this.ball.reset();
+			this.ball.reset({});
 		}
 		if (this.stats.winner != null) {
 			this.remove(this.ball);

@@ -108,9 +108,11 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 				"message": json.dumps({
 					'player1': curr_player,
 					'player2': host_player,
-					'direction': {
-						'x': 1 if random.randint(0, 1) == 1 else -1,
-						'y': 1 if random.randint(0, 1) == 1 else -1
+					'ball': {
+						'direction': {
+							'x': 1 if random.randint(0, 1) == 1 else -1,
+							'y': 1 if random.randint(0, 1) == 1 else -1
+						}
 					}
 				})
 			}
@@ -125,7 +127,6 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 	def receive(self, text_data=None):
 		handlers = {
 			'UPDATE': 'send.update.paddle.message',
-			'GOAL': 'send.reset.ball.message',
 			'SYNC': 'send.ball.sync.message'
 		}
 		data = json.loads(text_data)
@@ -142,20 +143,7 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		self.send(event['message'])
 
 	def send_ball_sync_message(self, event):
-		data = json.loads(event['message'])
 		self.send(event['message'])
 		
 	def send_update_paddle_message(self, event):
-		data = json.loads(event['message'])
-		data['event'] = 'MOVE'
-		self.send(json.dumps(data))
-	
-	def send_reset_ball_message(self, event):
-		data = {
-			'event': 'RESET',
-			'ballDirection': {
-				'x': 1 if random.randint(0, 1) == 1 else -1,
-				'y': 1 if random.randint(0, 1) == 1 else -1
-			} 
-		}
-		self.send(json.dumps(data))
+		self.send(event['message'])

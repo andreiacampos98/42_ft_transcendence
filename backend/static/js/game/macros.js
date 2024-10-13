@@ -12,7 +12,8 @@ export const DIRECTION = Object.freeze({
 
 export const PADDLE_SEMI_LENGTH = 0.25;
 export const PADDLE_SEMI_HEIGHT = 3.75;
-export const PADDLE_SPEED = 2.6;
+export const PADDLE_SPEED = 3.5;
+export const PADDLE_OFFSET_X = 7;
 
 export const ARENA_SEMI_HEIGHT = 20;
 export const ARENA_SEMI_LENGTH = 30;

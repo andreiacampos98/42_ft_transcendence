@@ -14,7 +14,7 @@ export class Ball extends THREE.Object3D {
 		this.ball = null;
 		this.onPaddleHit = onPaddleHit;
 		this.build();
-		this.reset();
+		this.reset({});
 	}
 
 	build() {
@@ -104,10 +104,12 @@ export class Ball extends THREE.Object3D {
 		this.rally += 1;
 	}
 
-	reset() {
+	reset({ direction }) {
 		this.rally = 0;
 		this.speed.x = BALL_START_SPEED;
 		this.speed.y = BALL_START_SPEED;
+		if (direction)
+			this.direction = direction;
 		this.position.set(0, 0, 0);
 	}
 

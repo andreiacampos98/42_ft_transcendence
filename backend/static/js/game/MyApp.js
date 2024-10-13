@@ -144,10 +144,8 @@ export class MyApp  {
            
             this.onResize();
 
-			console.log(this.activateControls);
 			if (!this.activateControls)
 				return ;
-			console.log(this.controls);
 			
             if (this.controls === null) {
                 this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );

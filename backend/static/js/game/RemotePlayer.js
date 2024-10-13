@@ -3,15 +3,19 @@ import { Player } from './Player.js';
 import { PADDLE_SEMI_HEIGHT, ARENA_SEMI_HEIGHT, PADDLE_SPEED } from './macros.js';
 
 export class RemotePlayer extends Player {
-	constructor ({ id, username, position, keybinds=null, onUpdate, isEnemy=false }) {
-		super(id, username, position, keybinds);
+	constructor ({ id, username, x, keybinds=null, onUpdate }) {
+		super({
+			id: id, 
+			username: username, 
+			keybinds:keybinds,
+			x: x
+		});
 		this.onUpdate = onUpdate;
-		this.isEnemy = isEnemy;
 	}
 
 	update(pressedKeys) {
 		//! REPOR COM KEYBINDS == NULL
-		if (this.isEnemy)
+		if (this.keybinds == null)
 			return ;
 
 		const targetPos = this.paddle.position.clone();
@@ -41,8 +45,4 @@ export class RemotePlayer extends Player {
 		target.y = targetY;
 		this.paddle.position.lerp(target, 0.5);
 	}
-
-
-
-
 }
