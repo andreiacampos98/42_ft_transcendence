@@ -8,19 +8,22 @@ export class AbstractPlayer {
 		this.keybinds = keybinds;
 		this.paddle = null;
 
-		this.build();
-		this.paddle.position.x = x;
+		this.build(x);
 	}
 
-	build() {
+	build(x) {
 		const height = 2 * PADDLE_SEMI_HEIGHT;
 		const length = 2 * PADDLE_SEMI_LENGTH;
 		const depth = length;
+		const color = x < 0 ? 0xFF0000 : 0x0000FF;
 
 		this.paddle = new THREE.Mesh(
 			new THREE.BoxGeometry(length, height, depth),
-			new THREE.MeshNormalMaterial()
+			new THREE.MeshPhongMaterial({
+				color: color
+			})
 		);
+		this.paddle.position.x = x;
 	}
 
 	update () {}

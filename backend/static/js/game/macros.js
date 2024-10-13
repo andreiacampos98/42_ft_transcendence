@@ -24,6 +24,17 @@ export const MAX_GOALS = 5;
 export const FPS = 30;
 export const REFRESH_RATE = 1000 / FPS;
 
+export const STANDARD_KEYBINDS = {
+	'up': 'w', 
+	'down': 's'
+};
+
+export const ALTERNATE_KEYBINDS = {
+	'up': 'ArrowUp', 
+	'down': 'ArrowDown'
+};
+
+
 //! DEPENDENCY INJECTION TESTING
 
 export var TEST_GOALS = [

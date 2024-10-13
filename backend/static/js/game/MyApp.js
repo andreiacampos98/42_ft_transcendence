@@ -44,7 +44,7 @@ export class MyApp  {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
-		this.scene.add(new Axis(this));
+		// this.scene.add(new Axis(this));
 
 		if (gameType == "Remote"){
 			this.gameController = new RemoteGameController({ 
@@ -62,12 +62,12 @@ export class MyApp  {
 		}
 		this.scene.add(this.gameController);
 
-		this.light = new THREE.PointLight('#FFFFFF', 100);
+		this.light = new THREE.PointLight('#FFFFFF', 1000);
 		this.light.position.set(0, 0, 5);
 		this.scene.add(this.light);
 
 		this.pointLightHelper = new THREE.PointLightHelper(this.light);
-		this.scene.add(this.pointLightHelper);	
+		// this.scene.add(this.pointLightHelper);	
 
 		this.gui = new GUI({ autoPlace: false });
 		this.gui.domElement.id = 'gui';

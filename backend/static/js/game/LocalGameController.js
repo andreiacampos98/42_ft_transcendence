@@ -1,7 +1,7 @@
 import { GameStats } from './GameStats.js';
 import { LocalPlayer } from './LocalPlayer.js';
 import { AbstractGameController } from './AbstractGameController.js';
-import { PADDLE_OFFSET_X, ARENA_SEMI_LENGTH } from './macros.js';
+import { PADDLE_OFFSET_X, ARENA_SEMI_LENGTH, STANDARD_KEYBINDS, ALTERNATE_KEYBINDS } from './macros.js';
 
 export class LocalGameController extends AbstractGameController {
 	constructor({ player1Data, player2Data, ballDirection }) {
@@ -21,11 +21,11 @@ export class LocalGameController extends AbstractGameController {
 			id: p1ID, 
 			username: p1Username, 
 			x: -ARENA_SEMI_LENGTH + PADDLE_OFFSET_X,
-			keybinds: {'up': 'w', 'down': 's'}
+			keybinds: STANDARD_KEYBINDS
 		});
 		this.player2 = new LocalPlayer({
 			x: ARENA_SEMI_LENGTH - PADDLE_OFFSET_X,
-			keybinds: {'up': 'ArrowUp', 'down': 'ArrowDown'}
+			keybinds: ALTERNATE_KEYBINDS
 		});
 
 		this.stats = new GameStats(this.player1, this.player2);
