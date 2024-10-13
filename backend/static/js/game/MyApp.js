@@ -86,14 +86,11 @@ export class MyApp  {
 		const orbitFolder = this.gui.addFolder('Mouse Controls');
         orbitFolder.add(this, 'activateControls', false).name("Active")
 			.onChange((value) => this.setActivateControls(value));
-		orbitFolder.open();
 		
         this.renderer = new THREE.WebGLRenderer({antialias:true});
         this.renderer.setPixelRatio( this.canvas.clientWidth / this.canvas.clientHeight );
         this.renderer.setClearColor("#000000");
         this.renderer.setSize( this.canvas.clientWidth, this.canvas.clientHeight );
-        // this.renderer.shadowMap.enabled = true;
-        // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // search for other alternatives
 
         this.initCameras();
         this.setActiveCamera('Perspective')

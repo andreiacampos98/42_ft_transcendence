@@ -4,7 +4,7 @@ import { BALL_SPEEDUP_FACTOR, BALL_START_SPEED, BALL_RADIUS,
 	ARENA_SEMI_DEPTH } from './macros.js';
 
 export class Ball extends THREE.Object3D { 
-	constructor ({ radius, speed, direction }) {
+	constructor ({ radius, speed, direction, onPaddleHit=null }) {
 		super();
 
 		this.radius = radius || BALL_RADIUS;
@@ -12,6 +12,7 @@ export class Ball extends THREE.Object3D {
 		this.direction = direction || { 'x': DIRECTION.LEFT, 'y': DIRECTION.UP }
 		this.rally = 0;
 		this.ball = null;
+		this.onPaddleHit = onPaddleHit;
 		this.build();
 		this.reset();
 	}
@@ -98,6 +99,8 @@ export class Ball extends THREE.Object3D {
 			this.direction.x = DIRECTION.LEFT;
 		}	
 
+		if (this.onPaddleHit != null)
+			this.onPaddleHit();
 		this.rally += 1;
 	}
 
@@ -106,6 +109,13 @@ export class Ball extends THREE.Object3D {
 		this.speed.x = BALL_START_SPEED;
 		this.speed.y = BALL_START_SPEED;
 		this.position.set(0, 0, 0);
+	}
+
+	sync({position, speed, direction}) {
+		this.position.set(...position);
+		this.speed.x = speed.x;
+		this.speed.y = speed.y;
+		this.direction = direction;
 	}
 
 	dispose() {

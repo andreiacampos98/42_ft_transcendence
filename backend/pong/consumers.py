@@ -123,21 +123,26 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		return super().disconnect(code)
 	
 	def receive(self, text_data=None):
-		handler = ''
+		handlers = {
+			'UPDATE': 'send.update.paddle.message',
+			'GOAL': 'send.reset.ball.message',
+			'SYNC': 'send.ball.sync.message'
+		}
 		data = json.loads(text_data)
-		if data['event'] == 'UPDATE':
-			handler = "send.update.paddle.message"
-		elif data['event'] == 'GOAL':
-			handler = "send.reset.ball.message"
+		event = data['event']
 
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_name, {
-				"type": handler, 
+				"type": handlers[event], 
 				"message": text_data
 			}
 		)
 
 	def send_start_game_message(self, event):
+		self.send(event['message'])
+
+	def send_ball_sync_message(self, event):
+		data = json.loads(event['message'])
 		self.send(event['message'])
 		
 	def send_update_paddle_message(self, event):

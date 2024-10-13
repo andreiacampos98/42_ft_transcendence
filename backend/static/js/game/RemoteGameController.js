@@ -34,7 +34,10 @@ export class RemoteGameController extends THREE.Group {
 				'data': {
 					'id': id,
 					'username': username,
-					'y': targetY
+					'y': targetY,
+					'ball': {
+						'position': [...this.ball.position]
+					}
 				}
 			}));
 		}
@@ -99,16 +102,18 @@ export class RemoteGameController extends THREE.Group {
 	registerSocketEvents(){
 		this.socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
-			console.log(data.event);
 			// console.log(`player = ${this.player.username}, enemy = ${this.enemy.username}, data.username = ${data.username}`);
 			if (data.event == 'MOVE') {
 				if (data.data.id == this.player1.id)
 					this.player1.move(data.data.y);
 				else
 					this.player2.move(data.data.y);
+				// console.log(data.data);
 			}
 			else if (data.event == 'RESET')
 				this.ball.reset();
+			else if (data.event == 'SYNC')
+				this.ball.sync(data.data.ball);
 		}
 
 		this.socket.onerror = (event) => {
@@ -117,8 +122,20 @@ export class RemoteGameController extends THREE.Group {
 	}
 
 	build(ballDirection) {
+		const onPaddleHit = () => {
+			this.socket.send(JSON.stringify({
+				'event': 'SYNC',
+				'data': {
+					'ball': {
+						'position': [...this.ball.position],
+						'direction': this.ball.direction,
+						'speed': this.ball.speed
+					}
+				}
+			}));
+		}
 		this.arena = new Arena({});
-		this.ball = new Ball({ direction: ballDirection });
+		this.ball = new Ball({ direction: ballDirection, onPaddleHit: onPaddleHit });
 
 		this.add(this.arena);
 		this.add(this.player1.paddle);

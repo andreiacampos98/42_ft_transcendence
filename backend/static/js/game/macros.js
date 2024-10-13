@@ -1,6 +1,6 @@
 export const HELLO = "Hello";
-export const BALL_START_SPEED = 0.3;
-export const BALL_SPEEDUP_FACTOR = 0.02;
+export const BALL_START_SPEED = 0.6;
+export const BALL_SPEEDUP_FACTOR = 0.06;
 export const BALL_RADIUS = 1.25;
 
 export const DIRECTION = Object.freeze({
@@ -12,7 +12,7 @@ export const DIRECTION = Object.freeze({
 
 export const PADDLE_SEMI_LENGTH = 0.25;
 export const PADDLE_SEMI_HEIGHT = 3.75;
-export const PADDLE_SPEED = 2;
+export const PADDLE_SPEED = 2.6;
 
 export const ARENA_SEMI_HEIGHT = 20;
 export const ARENA_SEMI_LENGTH = 30;
@@ -20,7 +20,7 @@ export const ARENA_SEMI_DEPTH = 0.25;
 
 export const MAX_GOALS = 5;
 
-export const FPS = 75;
+export const FPS = 30;
 export const REFRESH_RATE = 1000 / FPS;
 
 //! DEPENDENCY INJECTION TESTING
