@@ -32,6 +32,7 @@ export class MyApp  {
         this.controls = null;
 		this.gui = null;
 		this.gameController = null;
+		this.activateControls = false;
 
 		this.canvas = document.querySelector('#canvas-container');
     }
@@ -39,7 +40,7 @@ export class MyApp  {
     /**
      * initializes the application
      */
-    init({playerData, enemyData, socket=null, gameType, ballDirection}) {
+    init({player1Data, player2Data, socket=null, gameType, ballDirection}) {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
@@ -47,15 +48,15 @@ export class MyApp  {
 
 		if (gameType == "Remote"){
 			this.gameController = new RemoteGameController({ 
-				playerData: playerData, 
-				enemyData: enemyData,
+				player1Data: player1Data, 
+				player2Data: player2Data,
 				socket: socket, 
 				ballDirection: ballDirection
 			});
 		} else {
 			this.gameController = new LocalGameController({ 
-				playerData: playerData, 
-				enemyData: enemyData,
+				player1Data: player1Data, 
+				player2Data: player2Data,
 				ballDirection: ballDirection
 			});
 		}
@@ -76,13 +77,17 @@ export class MyApp  {
         this.stats.showPanel(0);
         document.body.appendChild(this.stats.dom);
 		
-		const lightFolder = this.gui.addFolder('Light')
-        lightFolder.add(this.light, 'intensity', 0, 100).name("Intensity")
-        lightFolder.add(this.light.position, 'x', -30, 30).name("X")
-        lightFolder.add(this.light.position, 'y', -30, 30).name("Y")
-        lightFolder.add(this.light.position, 'z', -30, 30).name("Z")
-        lightFolder.open();
+		const lightFolder = this.gui.addFolder('Light');
+        lightFolder.add(this.light, 'intensity', 0, 1000).name("Intensity");
+        lightFolder.add(this.light.position, 'x', -30, 30).name("X");
+        lightFolder.add(this.light.position, 'y', -30, 30).name("Y");
+        lightFolder.add(this.light.position, 'z', -30, 30).name("Z");
 
+		const orbitFolder = this.gui.addFolder('Mouse Controls');
+        orbitFolder.add(this, 'activateControls', false).name("Active")
+			.onChange((value) => this.setActivateControls(value));
+		orbitFolder.open();
+		
         this.renderer = new THREE.WebGLRenderer({antialias:true});
         this.renderer.setPixelRatio( this.canvas.clientWidth / this.canvas.clientHeight );
         this.renderer.setClearColor("#000000");
@@ -118,6 +123,15 @@ export class MyApp  {
         this.activeCamera = this.cameras[this.activeCameraName]
     }
 
+	setActivateControls(value) {
+		this.activateControls = value;
+
+		if (this.activateControls)
+			this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
+		else 
+			this.controls = null;
+	}
+
     /**
      * updates the active camera if required
      * this function is called in the render loop
@@ -131,8 +145,13 @@ export class MyApp  {
             this.activeCamera = this.cameras[this.activeCameraName]
             document.getElementById("camera").innerHTML = this.activeCameraName
            
-            this.onResize()
+            this.onResize();
 
+			console.log(this.activateControls);
+			if (!this.activateControls)
+				return ;
+			console.log(this.controls);
+			
             if (this.controls === null) {
                 this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
                 this.controls.enableZoom = true;
@@ -163,7 +182,8 @@ export class MyApp  {
 			this.stats.begin();
 			this.updateCameraIfRequired();
 			
-			this.controls.update();
+			if (this.controls != null)
+				this.controls.update();
 			this.gameController.update();
 			this.renderer.render(this.scene, this.activeCamera);
 			

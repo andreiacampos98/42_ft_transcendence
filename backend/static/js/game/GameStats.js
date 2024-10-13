@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   GameStats.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: crypted <crypted@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nunomiguel533 <nunomiguel533@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/10/01 21:41:00 by crypted          ###   ########.fr       */
+/*   Updated: 2024/10/13 16:53:42 by nunomiguel5      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { MAX_GOALS, TEST_GOALS } from "./macros.js";
 
 export class GameStats {
-	constructor(player, enemy) {
-		this.player = player;
-		this.enemy = enemy;
+	constructor(player1, player2) {
+		this.player1 = player1;
+		this.player2 = player2;
 		this.score = {};
 		this.goals = [];
 		this.loser = null;
@@ -29,8 +29,8 @@ export class GameStats {
 
 	init() {
 		this.startTime = new Date().getTime();
-		this.score[this.player.username] = 0;
-		this.score[this.enemy.username] = 0;
+		this.score[this.player1.username] = 0;
+		this.score[this.player2.username] = 0;
 
 		//! Testing
 		// this.goals = TEST_GOALS;
@@ -71,7 +71,7 @@ export class GameStats {
 	}
 
 	calculateAdvancedStats() {
-		let stats = {}, p1 = this.player.id, p2 = this.enemy.id;
+		let stats = {}, p1 = this.player1.id, p2 = this.player2.id;
 		stats[p1] = { "score": 0, "canOvercome": false, "maxOvercome": 0, "overcome": 0,
 			"maxLead": 0, "lead": 0, "maxConsecutive": 0, "consecutive": 0 };
 		stats[p2] = { "score": 0, "canOvercome": false, "maxOvercome": 0, "overcome": 0,
@@ -123,21 +123,21 @@ export class GameStats {
 		const now = new Date().getTime();
 		const formData = {
 			"duration": Math.round((now - this.startTime) / 1000),
-			"nb_goals_user1": this.score[this.player.username],
-			"nb_goals_user2": this.score[this.enemy.username],
+			"nb_goals_user1": this.score[this.player1.username],
+			"nb_goals_user2": this.score[this.player2.username],
 			"game_stats": this.gameStats,
 			"user1_stats": {
-				"scored_first": this.goals[0].user == this.player.id
+				"scored_first": this.goals[0].user == this.player1.id
 			},
 			"user2_stats": {
-				"scored_first": this.goals[0].user == this.enemy.id
+				"scored_first": this.goals[0].user == this.player2.id
 			},
 			"goals": this.goals
 		};
 		console.log(formData);
 
-		this.winner = this.score[this.player.username] == MAX_GOALS ? this.player : this.enemy;
-		this.loser = this.winner == this.player ? this.enemy : this.player;
+		this.winner = this.score[this.player1.username] == MAX_GOALS ? this.player1 : this.player2;
+		this.loser = this.winner == this.player1 ? this.player2 : this.player1;
 
 		const response = await fetch(`/games/update/${this.gameId}`, {
 			method: 'POST',

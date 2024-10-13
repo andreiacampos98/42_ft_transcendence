@@ -26,24 +26,24 @@ export class Ball extends THREE.Object3D {
 	}
 
 	move(controller) {
-		const { arena, player, enemy } = controller;
+		const { arena, player1, player2 } = controller;
 
 		this.position.x += this.direction.x * this.speed.x;
 		this.position.y += this.direction.y * this.speed.y;
 		
 		this.collideWithVerticalBounds(arena);
-		this.collideWithPaddle(player.paddle, true);
-		this.collideWithPaddle(enemy.paddle, false);
-		return this.collidedWithGoals(arena, player, enemy);
+		this.collideWithPaddle(player1.paddle, true);
+		this.collideWithPaddle(player2.paddle, false);
+		return this.collidedWithGoals(arena, player1, player2);
 	}
 
-	collidedWithGoals(arena, player, enemy) {
+	collidedWithGoals(arena, player1, player2) {
 		const { rightBoundary, leftBoundary } = arena;
 
 		if (this.position.x - this.radius <= leftBoundary.position.x + ARENA_SEMI_DEPTH)
-			return enemy;
+			return player2;
 		else if (this.position.x + this.radius >= rightBoundary.position.x - ARENA_SEMI_DEPTH)
-			return player;
+			return player1;
 		return null;
 	}
 

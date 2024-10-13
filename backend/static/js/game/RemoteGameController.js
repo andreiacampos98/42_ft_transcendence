@@ -6,27 +6,28 @@ import { RemotePlayer } from './RemotePlayer.js';
 
 
 export class RemoteGameController extends THREE.Group {
-	constructor({ playerData, enemyData, socket, ballDirection }) {
+	constructor({ player1Data, player2Data, socket, ballDirection }) {
 		super();
 
 		this.keybinds = null;
 		this.arena = null;
 		this.ball = null;
-		this.player = null;
-		this.enemy = null;
+		this.player1 = null;
+		this.player2 = null;
 		this.socket = socket;
 		this.stats = null;
 		
 		this.registerKeybinds();
 		this.registerSocketEvents();
-		this.createPlayers(playerData, enemyData);
+		this.createPlayers(player1Data, player2Data);
 		this.createGameInstance();
 		this.build(ballDirection);
 	}
 
-	createPlayers(playerData, enemyData) {
-		const { id: playerID, username: playerUsername } = playerData;
-		const { id: enemyID, username: enemyUsername } = enemyData;
+	createPlayers(player1Data, player2Data) {
+		const { id: p1ID, username: p1Username } = player1Data;
+		const { id: p2ID, username: p2Username } = player2Data;
+		const currPlayerID = document.getElementById('game-engine').getAttribute('data-user-id');
 		const onUpdate = (id, username, targetY) => {
 			this.socket.send(JSON.stringify({
 				'event': 'UPDATE',
@@ -38,23 +39,33 @@ export class RemoteGameController extends THREE.Group {
 			}));
 		}
 
-		this.player = new RemotePlayer({ id: playerID, username: playerUsername, 
-			position: [-25, 0, 0], onUpdate: onUpdate, keybinds: {'up': 'w', 'down': 's'}
-		});
-		this.enemy = new RemotePlayer({ id: enemyID, username: enemyUsername, 
-			position: [25, 0, 0], isEnemy: true
-		});
-		this.stats = new GameStats(this.player, this.enemy);
+		if (p1ID == currPlayerID) {
+			this.player1 = new RemotePlayer({ id: p1ID, username: p1Username, 
+				position: [-25, 0, 0], onUpdate: onUpdate, keybinds: {'up': 'w', 'down': 's'}
+			});
+			this.player2 = new RemotePlayer({ id: p2ID, username: p2Username, 
+				position: [25, 0, 0], isEnemy: true
+			});
+		}
+		else {
+			this.player1 = new RemotePlayer({ id: p1ID, username: p1Username, 
+				position: [-25, 0, 0], isEnemy: true
+			});
+			this.player2 = new RemotePlayer({ id: p2ID, username: p2Username, 
+				position: [25, 0, 0], onUpdate: onUpdate, keybinds: {'up': 'w', 'down': 's'}
+			});
+		}
+		this.stats = new GameStats(this.player1, this.player2);
 
-		console.log(this.player);
-		console.log(this.enemy);
+		console.log(this.player1);
+		console.log(this.player2);
 
 	}
 
 	async createGameInstance() {
 		const formData = {
-		    "user1_id": this.player.id,
-		    "user2_id": this.enemy.id,
+		    "user1_id": this.player1.id,
+		    "user2_id": this.player2.id,
 		    "type": "Remote"
 		}
 
@@ -91,10 +102,10 @@ export class RemoteGameController extends THREE.Group {
 			console.log(data.event);
 			// console.log(`player = ${this.player.username}, enemy = ${this.enemy.username}, data.username = ${data.username}`);
 			if (data.event == 'MOVE') {
-				if (data.data.id == this.player.id)
-					this.player.move(data.data.y);
+				if (data.data.id == this.player1.id)
+					this.player1.move(data.data.y);
 				else
-					this.enemy.move(data.data.y);
+					this.player2.move(data.data.y);
 			}
 			else if (data.event == 'RESET')
 				this.ball.reset();
@@ -110,14 +121,14 @@ export class RemoteGameController extends THREE.Group {
 		this.ball = new Ball({ direction: ballDirection });
 
 		this.add(this.arena);
-		this.add(this.player.paddle);
-		this.add(this.enemy.paddle);
+		this.add(this.player1.paddle);
+		this.add(this.player2.paddle);
 		this.add(this.ball);
 	}
 
 	update() {
-		this.player.update(this.keybinds);
-		this.enemy.update(this.keybinds);
+		this.player1.update(this.keybinds);
+		this.player2.update(this.keybinds);
 		if (this.ball == null)
 			return ;
 
