@@ -25,3 +25,14 @@
     top: 0px;
     right: 100px;
 }
+
+#score {
+	color: white;
+	font-size: 32px;
+	font-weight: bold;
+    height: 100px;
+	left: calc(50% - 50px); 
+	position: absolute;
+    top: 36px; 
+    width: 100px; 
+}
