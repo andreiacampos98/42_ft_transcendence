@@ -4,6 +4,7 @@
     margin: 10px;
     border-radius: 8px;
     background-color: #1A3141;
+    margin-bottom: 0;
 }
 
 .header {
@@ -99,4 +100,57 @@ a:hover {
     background: none;
     padding: 0;
     margin: 0;
+}
+
+.last a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.last img {
+    margin-right: 10px;
+}
+
+.match-container{
+    border-radius: 8px;
+    flex: 1;
+    height: 64px;
+    z-index: 100;
+    background-color: #28313a;
+    color: #FFF;
+    padding-left: 40px;
+}
+
+.match-block2 {
+    background-color: #1A3141;
+    margin-bottom: 1px;
+}
+
+.header2 {
+    margin-bottom: 1px;
+
+}
+
+.header2 .title {
+    color: #f2f2f269;
+    background-color: #28313a;
+    width: 20%;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 64px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.enlarged {
+    background: none !important;
+}
+
+.enlarged2 {
+    border-bottom-left-radius: 0 ;
+    border-bottom-right-radius: 0 ;
+    margin-bottom: 1px;
 }

@@ -4,6 +4,12 @@
     gap: 20px; 
 }
 
+.scoreboard {
+    font-size: x-large;
+    font-weight: bold;
+    width: 130px;
+}
+
 .profile-head {
     color: #FFFFFF;
     height: 20%;
