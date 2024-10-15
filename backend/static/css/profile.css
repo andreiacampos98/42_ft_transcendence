@@ -366,9 +366,16 @@ textarea, #username-input, #email-input {
 }
 
 #games, #tournaments{
-    max-height: 80%;
-    overflow-y: auto;
+    height: 750px;
+	overflow-y: auto;
     overflow-x: hidden;
+}
+
+.match-history-list {
+	
+	overflow-y: auto;
+    width: 100%;
+
 }
 
 
