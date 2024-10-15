@@ -163,8 +163,18 @@ async function loadBarLineChart() {
 	const stats = await response.json();
 	console.log(stats);
 
-	const winRates = stats.map((x) => x.win_rate);
-	const totalGames = stats.map((x) => x.total_games);
+	const tempRates = stats.map((x) => x.win_rate);
+	const tempTotalGames = stats.map((x) => x.total_games);
+	const winRates = new Array(7).fill(0);
+	const totalGames = new Array(7).fill(0);
+
+	console.log(tempRates);
+	console.log(tempTotalGames);
+	tempRates.forEach((rate, i) => {
+		winRates[i] = rate});
+	tempTotalGames.forEach((games, i) => totalGames[i] = games);
+
+	console.log(winRates, totalGames);
 
 	var options = {
 		chart: {
