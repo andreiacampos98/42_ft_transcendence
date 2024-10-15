@@ -104,9 +104,9 @@ function detailTournamentGames(button) {
                         <div class="details d-flex align-items-center justify-content-evenly">
                             <span class="content result" style="margin-left: 50px;" >${game.phase}</span>
                             <span class="content date">${game.game.duration}</span>
-                            <span class="content last">${user1Link.outerHTML}</span>
-                            <span class="content last" style="font-weight: bold;">${game.game.nb_goals_user1} - ${game.game.nb_goals_user2}</span>
-                            <span class="content last">${user2Link.outerHTML}</span>
+                            <span class="content last" style="font-size: inherit; padding-right: 0;">${user1Link.outerHTML}</span>
+                            <span class="content last" style="font-weight: bold; padding-right: 0;">${game.game.nb_goals_user1} - ${game.game.nb_goals_user2}</span>
+                            <span class="content last" style="font-size: inherit; padding-right: 0;">${user2Link.outerHTML}</span>
                         </div>
                     </div>
                 `;

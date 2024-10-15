@@ -5,6 +5,7 @@
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 <link rel="stylesheet" href="{% static 'css/match-block.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script defer src="{% static 'js/edit-profile.js' %}"></script>
 <script defer src="{% static 'js/change-password.js' %}"></script>
 <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
@@ -203,6 +204,19 @@
                         </h5>
                         <h5 class="text-block d-flex">{{ joined_date }}</h5>
                     </div>
+                    <div class="two-factor d-flex justify-content-between align-items-center" style="padding-top: 10px;">
+                        <h5 class="text-block d-flex" style="font-weight: bolder; font-size: medium;"> 
+                            Enable 2FA (2-Factor Authentication)
+                        </h5>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                          </label>
+                    </div>
+                    <h5 class="text-block d-flex" style="text-align: left;padding-top: 5px; color: #f2f2f2; font-weight: normal;">
+                        We'll ask for a code anytime you login again. This will take effect once you logout.
+                    </h5>
+
                 </div>
             </div>
         </div>
@@ -251,7 +265,7 @@
                                 <div class="stat d-flex justify-content-between align-items-center">
                                     <div class="d-flex flex-column align-items-baseline">
                                         <h4 class="stats-title">Goals Scored / Goals Suffered Ratio</h4>
-                                        <h6 class="winr"> {{ goals_sored_suffered_ratio }} </h6>
+                                        <h6 class="winr"> {{ goals_scored_suffered_ratio }} </h6>
                                     </div>
                                     <img class="icon-stat" src="{% static 'assets/icons/pie.png' %}" alt="">
                                 </div>
@@ -259,16 +273,15 @@
                         </div>
                         <div class="donut d-flex justify-content-around">
                             <h6 class="graph-title" style="color:#fff">Time Spent per Mode</h6>
-                            <h6 class="graph-value">Remote Game: {{ stats.remote_time_played }}</h6>
-                            <h6 class="graph-value">AI Game: {{ stats.ai_time_played }}</h6>
-                            <h6 class="graph-value">Local Game: {{ stats.local_time_played }}</h6>
-                            <h6 class="graph-value">Tournaments Game: {{ stats.tournament_time_played }}</h6>
+                            <div id="chart1">
+                            </div>
                         </div>
                     </div>
                     <div class="profile-foot d-flex align-items-center">
-                        <div class="bar-graphs d-flex justify-content-around align-items-center">
+                        <div class="bar-graphs d-flex flex-column align-items-center">
                             <h6 class="graph-title" style="color:#fff">Win Rate and Games Played / Day </h6>
-                            <h6 class="graph-value">Ainda nao tenho isto</h6>
+                            <div id="chart2">
+                            </div>
                         </div>
                         <div class="records d-flex numbers-stat">
                             <h6 class="graph-title" style="color:#fff">Records</h6>

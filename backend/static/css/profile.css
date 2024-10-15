@@ -64,9 +64,9 @@ textarea, #username-input, #email-input {
 	overflow-y: scroll;
 	text-overflow: ellipsis;
 	max-height: 200px;
-	text-align: justify;
+	text-align: center;
     overflow-x: hidden;
-
+    width: 100%;
 }
 
 .text-block{
@@ -222,7 +222,9 @@ textarea, #username-input, #email-input {
 
 .profile-head {
     height: 40%;
+    min-height: 266px;
 }
+
 .percentages {
     margin-bottom: 20px;
 }
@@ -256,6 +258,7 @@ textarea, #username-input, #email-input {
     width: 50%;
     height: 100%;
     margin: 5px;
+    
 
 }
 
@@ -331,9 +334,6 @@ textarea, #username-input, #email-input {
     font-size: x-small;
 }
 
-.stat .winr {
-    font-size: larger !important;
-}
 .icon-stat {
     height: 30px;
     width: 30px;
@@ -343,11 +343,13 @@ textarea, #username-input, #email-input {
     align-self: flex-start;
     padding: 20px;
     font-size: x-large;
+    padding-bottom: 5px;
 }
 
 .winr, .graph-value {
     font-weight: bold;
     color: #F8D082;
+    font-size: x-large;
 }
 
 .numbers-stat{
@@ -393,3 +395,85 @@ textarea, #username-input, #email-input {
     overflow-y: scroll;
 }
 
+.apexcharts-legend-text {
+    font-family: inherit;
+    padding-left: 25px;
+}
+
+#chart1 {
+    display: flex;
+    align-items: center;
+}
+
+.apexcharts-datalabel-label, 
+.apexcharts-datalabel-value {
+    fill: #fff !important;
+}
+
+#chart2 {
+    width: 100%;
+}
+
+
+ /* The switch - the box around the slider */
+ .switch {
+    position: relative;
+    display: inline-block;
+    width: 43px;
+    height: 20px;
+
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid #cccccc4d;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 1px;
+    bottom: 0px;
+    background-color: #ffffffd3;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #F8D082;
+  }
+  
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+    height: 20px;
+    width: 42px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  } 
