@@ -41,3 +41,81 @@ function applyGradientToSquares() {
 
 // Call the function to apply the background gradient on page load
 applyGradientToSquares();
+
+var options = {
+    chart: {
+      type: 'line'
+    },
+    stroke: {
+        curve: 'straight',
+    },
+    markers: {
+        size: 1,
+    },
+    series: [{
+      name: 'Player 1',
+      data: [1,2,2,2,3,4,4,5,5]
+    },
+    {
+        name: 'Player 2',
+        data: [0,0,1,2,2,2,3,4,5]
+      }],
+
+    xaxis: {
+        categories: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        labels: {
+            style: {
+                colors: '#c3c3c3bb',  // Color of x-axis labels
+                fontSize: '14px',   // Font size of x-axis labels
+                fontWeight: 600     // Font weight (boldness)
+            }
+        },
+        axisTicks: {
+            show: true,
+            color: '#333',         // Color of the x-axis ticks
+            height: 6              // Length of the ticks
+        }
+    },
+    yaxis: {
+        labels: {
+            style: {
+                colors: '#c3c3c3bb',  // Color of y-axis labels
+                fontSize: '12px',   // Font size of y-axis labels
+                fontWeight: 500
+            }
+        },
+        axisTicks: {
+            show: true,
+            color: '#333',         // Color of the y-axis ticks
+            width: 5               // Length of the ticks
+        }
+    },
+    grid: {
+        show: true,
+        borderColor: '#c3c3c3bb',    // Color of the grid lines
+        xaxis: {
+            lines: {
+                show: true         // Show/hide grid lines on the x-axis
+            }
+        },
+        yaxis: {
+            lines: {
+                show: true         // Show/hide grid lines on the y-axis
+            }
+        }
+    },
+    legend: {
+        show: true,
+        horizontalAlign: 'center', // Align legend text: 'center', 'left', 'right'
+        fontSize: '16px',          // Font size for legend text
+        fontWeight: 600,           // Font weight for legend text
+        labels: {
+            colors: ['#c3c3c3bb', '#c3c3c3bb'],  // Array to set colors for each series
+        },
+    },
+    colors: ['#F8D082', '#336181'],
+  };
+  
+  var chart = new ApexCharts(document.querySelector("#chart"), options);
+  
+  chart.render();
