@@ -87,16 +87,12 @@ window.onclick = function(event) {
   }
 }
 
-async function getUserStats() {
+async function loadDonutChart() {
 	const userID = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
 	const response = await fetch(`/stats/${userID}`, {
 		method: "GET",
-		// headers: {
-		// 	"X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
-		// }
 	});
 	const stats = await response.json();
-	console.log(stats);
 	
 	const remoteTime = Math.round(stats.remote_time_played / 60);
 	const aiTime = Math.round(stats.ai_time_played / 60);
@@ -105,15 +101,15 @@ async function getUserStats() {
 
 	var options = {
 		chart: {
-			type: 'donut',       // Type of chart: Donut
-			height: 200          // Height of the chart
+			type: 'donut',      
+			height: 200         
 		},
-		series: [remoteTime, aiTime, localTime, tournamentTime],  // Data values for the donut chart
-		labels: ['Remote Game', 'AI mode', 'Local Game', 'Tournaments'],  // Labels for each section
-		colors: ['#EC6158', '#46CDBD', '#66DD53', '#FFAD72'],     // Custom colors for each segment
+		series: [remoteTime, aiTime, localTime, tournamentTime], 
+		labels: ['Remote Game', 'AI mode', 'Local Game', 'Tournaments'], 
+		colors: ['#EC6158', '#46CDBD', '#66DD53', '#FFAD72'],    
 		legend: {
-			position: 'right',    // Legend position to the right
-			offsetY: 25,           // Center the legend vertically
+			position: 'right',   
+			offsetY: 25,          
 			offsetX: 100,
 			markers: {
 				width: 12,
@@ -122,28 +118,27 @@ async function getUserStats() {
 			fontSize: '14px',
 			fontWeight: 'bold',
 			labels: {
-				colors: ['#fff','#fff','#fff','#fff']   // Change the legend text color to white
+				colors: ['#fff','#fff','#fff','#fff']  
 			}
 		},
 		plotOptions: {
 			pie: {
 				donut: {
-					size: '70%',  // Size of the donut hole (70% of the total width)
+					size: '70%', 
 					labels: {
 						show: true,
 						total: {
 							show: true,
 							label: 'Min',
 							color: '#fff',
-							style: {
-								fontSize: '20px', // Font size of the number
-								fontWeight: 'bold',
-								color: '#fff'      // Color of the number
-							}
+						},
+						value: {
+							fontSize: "28px",
+							fontWeight: "bold"
 						}
 					}
 				},
-				expandOnClick: false  // Prevent the slices from expanding when clicked
+				expandOnClick: false 
 			},
 		   
 		},
@@ -152,72 +147,86 @@ async function getUserStats() {
 		
 		},
 		dataLabels: {
-			enabled: false         // Disable labels inside the slices
+			enabled: false        
 		}
 	};
-	// Render the Donut Chart
-	var donut = new ApexCharts(document.querySelector("#chart1"), options);
-	donut.render();
+
+	var chart = new ApexCharts(document.querySelector("#chart1"), options);
+	chart.render();
 }
 
-getUserStats();
+async function loadBarLineChart() {
+	const userID = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
+	const response = await fetch(`/graph/${userID}`, {
+		method: "GET",
+	});
+	const stats = await response.json();
+	console.log(stats);
 
-var options = {
-	chart: {
-		type: 'line', // We will use 'line' type to draw the connecting line
-		height: 350,
-		stacked: false, // Do not stack bars
-		toolbar: {
-			show: false // Hide the toolbar
+	const winRates = stats.map((x) => x.win_rate);
+	const totalGames = stats.map((x) => x.total_games);
+
+	var options = {
+		chart: {
+			type: 'line',
+			height: 350,
+			stacked: false,
+			toolbar: {
+				show: false
+			},
+			width: '100%',
 		},
-		width: '100%',
-	},
-	series: [{
-		name: 'Win Rate', // Added name for clarity
-		type: 'column', // Column series for bars
-		data: [7.0, 8.0, 9.0, 6.0, 8.5, 7.5, 9.5] // Sample win rates for each day
-	}, {
-		name: 'Win Rate Line', // Added name for clarity
-		type: 'line', // Line series to connect the bars
-		data: [7.0, 8.0, 9.0, 6.0, 8.5, 7.5, 9.5], // Same data to connect the tops
-		stroke: {
-			width: 2,
-		},
-	}],
-	xaxis: {
-		categories: ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'], // Days of the week
-		labels: {
-			rotate: 0, // Set labels to horizontal
-			style: {
-				colors: '#c3c3c3bb',  // Color of x-axis labels
-				fontSize: '14px',   // Font size of x-axis labels
-				fontWeight: 600     // Font weight (boldness)
+		series: [{
+			name: 'Win Rate',
+			type: 'column',
+			data: totalGames
+		}, {
+			name: 'Win Rate Line',
+			type: 'line',
+			data: winRates,
+			stroke: {
+				width: 2,
+			},
+		}],
+		xaxis: {
+			categories: ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],
+			labels: {
+				rotate: 0,
+				style: {
+					colors: '#c3c3c3bb', 
+					fontSize: '14px',  
+					fontWeight: 600    
+				}
+			},
+			axisBorder: {
+				show: false
+			},
+			axisTicks: {
+				show: false
 			}
 		},
-		axisBorder: {
-			show: false // Hide x-axis border
+		colors: ['#605CFF', '#83E9FF'],
+		yaxis: {
+			show: false
 		},
-		axisTicks: {
-			show: false // Hide ticks on the x-axis
-		}
-	},
-	colors: ['#605CFF', '#83E9FF'], // Colors for the bars and line
-	yaxis: {
-		show: false // Hide the y-axis
-	},
-	grid: {
-		show: false // Hide the grid
-	},
-	tooltip: {
-		enabled: false // Disable tooltips
-	},
-	dataLabels: {
-		enabled: false // Disable data labels
-	},
-	legend: {
-		show: false
-	  }
-};
+		grid: {
+			show: false
+		},
+		tooltip: {
+			enabled: false
+		},
+		dataLabels: {
+			enabled: false
+		},
+		legend: {
+			show: false
+		  }
+	};
+	
+	var chart = new ApexCharts(document.querySelector("#chart2"), options);
+	chart.render();
+}
 
-var columns = new ApexCharts(document.querySelector("#chart2"), options);
-columns.render();
+loadDonutChart();
+loadBarLineChart();
+
