@@ -42,80 +42,109 @@ function applyGradientToSquares() {
 // Call the function to apply the background gradient on page load
 applyGradientToSquares();
 
-var options = {
-    chart: {
-      type: 'line'
-    },
-    stroke: {
-        curve: 'straight',
-    },
-    markers: {
-        size: 1,
-    },
-    series: [{
-      name: 'Player 1',
-      data: [1,2,2,2,3,4,4,5,5]
-    },
-    {
-        name: 'Player 2',
-        data: [0,0,1,2,2,2,3,4,5]
-      }],
+async function loadDoubleLineChart() {
+	const gameID = document.getElementById('game-id').getAttribute('data-game-id');
+	const response = await fetch(`/games/${gameID}/goals`, {
+		method: "GET",
+	});
+	const goals = await response.json();
+	console.log(goals);
+	
+	const user1ID = document.getElementById('game-id').getAttribute('data-user-1');
+	const user2ID = document.getElementById('game-id').getAttribute('data-user-2');
+	const username1 = document.getElementById('game-id').getAttribute('data-user-1-name');
+	const username2 = document.getElementById('game-id').getAttribute('data-user-2-name');
 
-    xaxis: {
-        categories: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-        labels: {
-            style: {
-                colors: '#c3c3c3bb',  // Color of x-axis labels
-                fontSize: '14px',   // Font size of x-axis labels
-                fontWeight: 600     // Font weight (boldness)
-            }
-        },
-        axisTicks: {
-            show: true,
-            color: '#333',         // Color of the x-axis ticks
-            height: 6              // Length of the ticks
-        }
-    },
-    yaxis: {
-        labels: {
-            style: {
-                colors: '#c3c3c3bb',  // Color of y-axis labels
-                fontSize: '12px',   // Font size of y-axis labels
-                fontWeight: 500
-            }
-        },
-        axisTicks: {
-            show: true,
-            color: '#333',         // Color of the y-axis ticks
-            width: 5               // Length of the ticks
-        }
-    },
-    grid: {
-        show: true,
-        borderColor: '#c3c3c3bb',    // Color of the grid lines
-        xaxis: {
-            lines: {
-                show: true         // Show/hide grid lines on the x-axis
-            }
-        },
-        yaxis: {
-            lines: {
-                show: true         // Show/hide grid lines on the y-axis
-            }
-        }
-    },
-    legend: {
-        show: true,
-        horizontalAlign: 'center', // Align legend text: 'center', 'left', 'right'
-        fontSize: '16px',          // Font size for legend text
-        fontWeight: 600,           // Font weight for legend text
-        labels: {
-            colors: ['#c3c3c3bb', '#c3c3c3bb'],  // Array to set colors for each series
-        },
-    },
-    colors: ['#F8D082', '#336181'],
-  };
-  
-  var chart = new ApexCharts(document.querySelector("#chart"), options);
-  
-  chart.render();
+	const gameState = {};
+	gameState[user1ID] = {'score': 0, 'state': []};
+	gameState[user2ID] = {'score': 0, 'state': []};
+
+	goals.forEach((goal) => {
+		gameState[goal.user].score++;
+		gameState[user1ID].state.push(gameState[user1ID].score);
+		gameState[user2ID].state.push(gameState[user2ID].score);
+	});
+
+	console.log(gameState);
+
+	var options = {
+		chart: {
+		  type: 'line'
+		},
+		stroke: {
+			curve: 'straight',
+		},
+		markers: {
+			size: 1,
+		},
+		series: [{
+		  name: username1,
+		  data: gameState[user1ID].state
+		},
+		{
+			name: username2,
+			data: gameState[user2ID].state
+		  }],
+	
+		xaxis: {
+			categories: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+			labels: {
+				style: {
+					colors: '#c3c3c3bb',  
+					fontSize: '14px',   
+					fontWeight: 600     
+				}
+			},
+			axisTicks: {
+				show: true,
+				color: '#333',         
+				height: 6              
+			}
+		},
+		yaxis: {
+			labels: {
+				style: {
+					colors: '#c3c3c3bb',  
+					fontSize: '12px',   
+					fontWeight: 500
+				}
+			},
+			axisTicks: {
+				show: true,
+				color: '#333',         
+				width: 5               
+			}
+		},
+		grid: {
+			show: true,
+			borderColor: '#c3c3c3bb',    
+			xaxis: {
+				lines: {
+					show: true         
+				}
+			},
+			yaxis: {
+				lines: {
+					show: true         
+				}
+			}
+		},
+		legend: {
+			show: true,
+			horizontalAlign: 'center', 
+			fontSize: '16px',          
+			fontWeight: 600,           
+			labels: {
+				colors: ['#c3c3c3bb', '#c3c3c3bb'],  
+			},
+		},
+		colors: ['#F8D082', '#336181'],
+	  };
+	  
+	var chart = new ApexCharts(document.querySelector("#chart"), options);
+	chart.render();
+}
+
+loadDoubleLineChart();
+
+

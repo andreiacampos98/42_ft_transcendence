@@ -9,22 +9,27 @@
 <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
     <div class="main d-flex" id="main-wrapper">
         <div class="main d-flex flex-column" id="profile-main">
+			<div id="game-id" data-game-id="{{game.id}}" data-user-1="{{game.user1_id.id}}" data-user-2="{{game.user2_id.id}}"
+				data-user-1-name="{{game.user1_id.username}}" data-user-2-name="{{game.user2_id.username}}"></div>
             <div class="profile-head d-flex align-items-center justify-content-center">
                 <div class="d-flex align-items-center justify-content-center flex-column">
-                    <img src="{% static 'assets/icons/avatar.png' %}">
-                    <span style="margin-top: 5px;"> Username</span>
+                    <img class="profile-medium" src="{{ game.user1_id.picture }}">
+                    <span style="margin-top: 5px;">{{game.user1_id.username}}</span>
                 </div>
                 <div class="scoreboard d-flex align-items-center justify-content-center flex-column">
                     <!--{% if xxxx == VICTORY %}
                         <span class="winr">VICTORY</span>
                     {% else %}-->
                     <!--{% endif %}-->
-                    <span>DEFEAT</span>
-                    <span>7 - 3</span>
+					{% if user.id == game.user1_id.id or user.id == game.user2_id.id %}
+                    	<span>DEFEAT</span>
+					{% endif %}
+					<!-- <span>{{user.id}}-{{game.user1_id.id}}-{{game.user2_id.id}}</span> -->
+                    <span>{{game.nb_goals_user1}}&nbsp;-&nbsp;{{game.nb_goals_user2}}</span>
                 </div>
                 <div class="d-flex align-items-center justify-content-center flex-column">
-                    <img src="{% static 'assets/icons/avatar.png' %}">
-                    <span style="margin-top: 5px;"> Username</span>
+                    <img class="profile-medium" src="{{ game.user2_id.picture }}">
+                    <span style="margin-top: 5px;">{{game.user2_id.username}}</span>
                 </div>
             </div>
             <div class="profile-foot d-flex align-items-center">
@@ -79,15 +84,15 @@
                                 <div class="grey-line"></div>
                             </div>
                             <div class="minutes">
-                                <h6 class="winr">5</h6>
+                                <h6 class="winr">{{stats.shorter_rally}}</h6>
                                 <span> Min</span>
                             </div>
                             <div class="average">
-                                <h6 class="winr">43</h6>
+                                <h6 class="winr">{{stats.average_rally}}</h6>
                                 <span> Average</span>
                             </div>
                             <div class="max">
-                                <h6 class="winr">90</h6>
+                                <h6 class="winr">{{stats.longer_rally}}</h6>
                                 <span>Max</span>
                             </div>
                             
@@ -125,7 +130,7 @@
                                 <span>7</span>
                             </div>
                             <div class="d-flex align-items-center flex-column">
-                                <div class="square-speed">90</div>
+                                <div class="square-speed">10</div>
                                 <span>8</span>
                             </div>
                             <div class="d-flex align-items-center flex-column">
@@ -139,15 +144,15 @@
                                 <div class="grey-line"></div>
                             </div>
                             <div class="minutes">
-                                <h6 class="winr">5</h6>
+                                <h6 class="winr">{{stats.min_ball_speed}}</h6>
                                 <span> Min</span>
                             </div>
                             <div class="average">
-                                <h6 class="winr">43</h6>
+                                <h6 class="winr">{{stats.average_ball_speed}}</h6>
                                 <span> Average</span>
                             </div>
                             <div class="max">
-                                <h6 class="winr">90</h6>
+                                <h6 class="winr">{{stats.max_ball_speed}}</h6>
                                 <span>Max</span>
                             </div>
                             
@@ -160,10 +165,10 @@
                         <h6 class="record-sub">Who bounced back the most goals.</h6>
                         <div class="record-info d-flex justify-content-between align-items-center">
                             <div class="img-tit d-flex align-items-center">
-                                <img src="{% static 'assets/icons/avatar.png' %}" alt="The one">
-                                <h6 class="name">Username</h6>
+                                <img class="profile-medium" src="{{stats.gdo_user.picture}}" alt="The one">
+                                <h6 class="name">{{stats.gdo_user.username}}</h6>
                             </div>
-                            <h6 class="winr"> 3 </h6>
+                            <h6 class="winr"> {{stats.greatest_deficit_overcome}} </h6>
                         </div>
                     </div>
                     <div class="records d-flex numbers-stat justify-content-center">
@@ -171,10 +176,10 @@
                         <h6 class="record-sub">Who scored more goals in a row.</h6>
                         <div class="record-info d-flex justify-content-between align-items-center">
                             <div class="img-tit d-flex align-items-center">
-                                <img src="{% static 'assets/icons/avatar.png' %}" alt="The one">
-                                <h6 class="name">Username</h6>
+                                <img class="profile-medium" src="{{stats.mcg_user.picture}}" alt="The one">
+                                <h6 class="name">{{stats.mcg_user.username}}</h6>
                             </div>
-                            <h6 class="winr"> 3 </h6>
+                            <h6 class="winr"> {{stats.most_consecutive_goals}} </h6>
                         </div>
                     </div>
                     <div class="records d-flex numbers-stat justify-content-center"  style="margin-bottom: 0;">
@@ -182,10 +187,10 @@
                         <h6 class="record-sub">Who had the biggest goal lead.</h6>
                         <div class="record-info d-flex justify-content-between align-items-center">
                             <div class="img-tit d-flex align-items-center">
-                                <img src="{% static 'assets/icons/avatar.png' %}" alt="The one">
-                                <h6 class="name">Username</h6>
+                                <img class="profile-medium" src="{{stats.bg_user.picture}}" alt="The one">
+                                <h6 class="name">{{stats.bg_user.username}}</h6>
                             </div>
-                            <h6 class="winr"> 3 </h6>
+                            <h6 class="winr"> {{stats.biggest_lead}} </h6>
                         </div>
                     </div>
                 </div>

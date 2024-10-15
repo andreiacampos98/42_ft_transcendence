@@ -462,7 +462,7 @@ def game_stats(request, game_id):
 			stats = GamesStats.objects.get(game=game_id)
 			serializer = GamesStatsSerializer(stats)
 			data = serializer.data
-			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
+			return JsonResponse(data, safe=False, status=200)
 		except GamesStats.DoesNotExist:
 			return JsonResponse({'message': 'GamesStats not found.'}, status=404)
 
@@ -502,7 +502,7 @@ def game_goals(request, game_id):
 			stats = Goals.objects.filter(game=game_id)
 			serializer = GoalsSerializer(stats, many=True)
 			data = serializer.data
-			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
+			return JsonResponse(data, safe=False, status=200)
 		except Goals.DoesNotExist:
 			return JsonResponse({'message': 'Goals not found.'}, status=404)
 
@@ -595,13 +595,15 @@ def game_update(request, game_id):
 def get_game(request, game_id):
 	if request.method !='GET':
 		return JsonResponse({'message': 'Method not allowed'}, status=405)
-	if request.method == 'GET':
-		try:
-			game = Games.objects.get(id=game_id)
-			serializer = GamesSerializer(game)
-			return JsonResponse({'message': 'Game Info', 'data': serializer.data}, status=200)
-		except Games.DoesNotExist:
-			return JsonResponse({'message': 'Game not found.'}, status=404)
+	try:
+		game = Games.objects.get(id=game_id)
+		serializer = GamesSerializer(game)
+		data = serializer.data
+		data['user1_id'] = UsersSerializer(game.user1_id).data	
+		data['user2_id'] = UsersSerializer(game.user2_id).data	
+		return JsonResponse({'message': 'Game Info', 'data': data}, status=200)
+	except Games.DoesNotExist:
+		return JsonResponse({'message': 'Game not found.'}, status=404)
 
 
 #! --------------------------------------- Tournaments ---------------------------------------
@@ -1187,12 +1189,14 @@ def gamestats(request, game_id):
 	data_stats = json.loads(stats.content)
 	goals = game_goals(request, game_id)
 	data_goals = json.loads(goals.content)
-	ic(data_goals)
+	game = json.loads(get_game(request, game_id).content)['data']
 	context = {
+		'game': game,
 		'game_id': game_id,
 		'stats': data_stats,
 		'goals': data_goals
 	}
+	ic(context)
 	return render(request,'pages/game_stats.html', context)
 
 @login_required
