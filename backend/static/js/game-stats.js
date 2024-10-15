@@ -13,7 +13,7 @@ function rgbToHex(rgb) {
 }
 
 // Main function to apply the background color to all divs with class 'square'
-function applyGradientToSquares() {
+function applyGradientToHeatmap() {
     const squares1 = document.querySelectorAll('.square-length'); // Select all divs with class 'square'
     const squares2 = document.querySelectorAll('.square-speed'); // Select all divs with class 'square'
     const startColor = [255, 255, 255]; // RGB for #FFFFFF (white)
@@ -39,16 +39,33 @@ function applyGradientToSquares() {
     });
 }
 
-// Call the function to apply the background gradient on page load
-applyGradientToSquares();
+function fillHeatmap(rallyLengths, ballSpeeds){
+	const rallyLengthLabels = document.querySelectorAll('.square-length');
+	const ballSpeedLabels = document.querySelectorAll('.square-speed');
 
-async function loadDoubleLineChart() {
+	console.log(rallyLengths, ballSpeeds);
+
+	rallyLengths.forEach((rally, i) => rallyLengthLabels[i].textContent = rally);
+	ballSpeeds.forEach((speed, i) => ballSpeedLabels[i].textContent = speed);
+	
+}
+
+// Call the function to apply the background gradient on page load
+
+
+async function loadCharts() {
 	const gameID = document.getElementById('game-id').getAttribute('data-game-id');
 	const response = await fetch(`/games/${gameID}/goals`, {
 		method: "GET",
 	});
 	const goals = await response.json();
 	console.log(goals);
+
+	const rallyLengths = goals.map((goal) => goal.rally_length);
+	const ballSpeeds = goals.map((goal) => goal.ball_speed);
+
+	fillHeatmap(rallyLengths, ballSpeeds);
+	applyGradientToHeatmap();
 	
 	const user1ID = document.getElementById('game-id').getAttribute('data-user-1');
 	const user2ID = document.getElementById('game-id').getAttribute('data-user-2');
@@ -145,6 +162,6 @@ async function loadDoubleLineChart() {
 	chart.render();
 }
 
-loadDoubleLineChart();
+loadCharts();
 
 
