@@ -370,8 +370,8 @@
 										<span class="content score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
 									{% endif %}
 									<div class="content last opponent">
-										{% if game.type is not "Local" %}
-											{% if user_view == game.user2_id %}
+										{% if user_view == game.user2_id %}
+											{% if game.user1_id != NULL %}
 												<a  hx-get="{% url 'user-profile' game.user1_id.id %}"
 													hx-trigger="click"
 													hx-target="#main"
@@ -384,6 +384,11 @@
 													<span class="score">{{ game.user1_id.username }}</span>
 												</a>
 											{% else %}
+												<img class="profile-pic" src="{% static 'assets/icons/profile.png' %}" alt="Profile">
+												<span class="score">Anonymous</span>
+											{% endif %}
+										{% else %}
+											{% if game.user2_id != NULL %}
 												<a  hx-get="{% url 'user-profile' game.user2_id.id %}"
 												hx-trigger="click"
 												hx-target="#main"
@@ -395,8 +400,12 @@
 												{% endif %}
 													<span class="score">{{ game.user2_id.username }}</span>
 												</a>
+											{% else %}
+												<img class="profile-pic" src="{% static 'assets/icons/profile.png' %}" alt="Profile">
+												<span class="score">Anonymous</span>
 											{% endif %}
 										{% endif %}
+											
 									</div>
 								</div>
 							</div>
