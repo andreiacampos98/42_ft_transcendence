@@ -19,8 +19,11 @@
 <div class="main-content non_compressed" id="main-content">
 	<div id="canvas-container"></div>
 	<div id="camera"></div>
+	<div id="score">
+		0&nbsp;:&nbsp;0
+	</div>
 </div>
 
 <script id="game-engine" type="module" src="{% static 'js/game/main.js' %}" 
-	data-user-id="{{ user.id }}" game-type="Local"></script>
+	data-user-id="{{ user.id }}" data-username="{{ user.username }}" game-type="Local"></script>
 {% endblock %}

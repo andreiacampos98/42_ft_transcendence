@@ -370,30 +370,32 @@
 										<span class="content score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
 									{% endif %}
 									<div class="content last opponent">
-										{% if user_view == game.user2_id %}
-											<a  hx-get="{% url 'user-profile' game.user1_id.id %}"
+										{% if game.type is not "Local" %}
+											{% if user_view == game.user2_id %}
+												<a  hx-get="{% url 'user-profile' game.user1_id.id %}"
+													hx-trigger="click"
+													hx-target="#main"
+													hx-push-url="true">
+													{% if "http" in game.user1_id.picture.url %}
+														<img class="profile-pic" src="{{ game.user1_id.picture }}" alt="Profile">
+													{% else %}
+														<img class="profile-pic" src="{{ game.user1_id.picture.url }}" alt="Profile">
+													{% endif %}
+													<span class="score">{{ game.user1_id.username }}</span>
+												</a>
+											{% else %}
+												<a  hx-get="{% url 'user-profile' game.user2_id.id %}"
 												hx-trigger="click"
 												hx-target="#main"
 												hx-push-url="true">
-												{% if "http" in game.user1_id.picture.url %}
-													<img class="profile-pic" src="{{ game.user1_id.picture }}" alt="Profile">
+												{% if "http" in game.user2_id.picture.url %}
+													<img class="profile-pic" src="{{ game.user2_id.picture }}" alt="Profile">
 												{% else %}
-													<img class="profile-pic" src="{{ game.user1_id.picture.url }}" alt="Profile">
+													<img class="profile-pic" src="{{ game.user2_id.picture.url }}" alt="Profile">
 												{% endif %}
-												<span class="score">{{ game.user1_id.username }}</span>
-											</a>
-										{% else %}
-											<a  hx-get="{% url 'user-profile' game.user2_id.id %}"
-											hx-trigger="click"
-											hx-target="#main"
-											hx-push-url="true">
-											{% if "http" in game.user2_id.picture.url %}
-												<img class="profile-pic" src="{{ game.user2_id.picture }}" alt="Profile">
-											{% else %}
-												<img class="profile-pic" src="{{ game.user2_id.picture.url }}" alt="Profile">
+													<span class="score">{{ game.user2_id.username }}</span>
+												</a>
 											{% endif %}
-												<span class="score">{{ game.user2_id.username }}</span>
-											</a>
 										{% endif %}
 									</div>
 								</div>

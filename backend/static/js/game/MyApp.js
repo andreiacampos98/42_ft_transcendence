@@ -4,8 +4,13 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import  Stats  from 'three/addons/libs/stats.module.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Axis } from './Axis.js';
-import { GameController } from './GameController.js';
+import { LocalGameController } from './LocalGameController.js';
+import { REFRESH_RATE } from './macros.js';
+import { RemoteGameController } from './RemoteGameController.js';
 
+
+var frameID;
+var timeoutID;
 /**
  * This class contains the application object
  */
@@ -15,62 +20,73 @@ export class MyApp  {
      */
     constructor() {
         this.scene = null;
-
-        // camera related attributes
-        this.activeCamera = null;
-        this.activeCameraName = null;
-        this.lastCameraName = null;
         this.cameras = [];
 
         // other attributes
         this.renderer = null;
         this.controls = null;
 		this.gui = null;
-		this.arcade = null;
+		this.gameController = null;
+		this.activateControls = false;
 
 		this.canvas = document.querySelector('#canvas-container');
-		this.gameType = document.getElementById('game-engine').getAttribute('game-type');
     }
+
     /**
      * initializes the application
      */
-    init() {
+    init({player1Data, player2Data, socket=null, gameType, gameID=null, ballDirection}) {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
-		this.scene.add(new Axis(this));
+		// this.scene.add(new Axis(this));
 
-		this.arcade = new GameController(this.gameType);
-		this.scene.add(this.arcade);
+		if (gameType == "Remote"){
+			this.gameController = new RemoteGameController({ 
+				player1Data: player1Data, 
+				player2Data: player2Data,
+				socket: socket, 
+				gameID: gameID,
+				ballDirection: ballDirection
+			});
+		} else {
+			this.gameController = new LocalGameController({ 
+				player1Data: player1Data, 
+				player2Data: player2Data,
+				ballDirection: ballDirection
+			});
+		}
+		this.scene.add(this.gameController);
 
-		this.light = new THREE.PointLight('#FFFFFF', 100);
+		this.light = new THREE.PointLight('#FFFFFF', 1000);
 		this.light.position.set(0, 0, 5);
 		this.scene.add(this.light);
 
 		this.pointLightHelper = new THREE.PointLightHelper(this.light);
-		this.scene.add(this.pointLightHelper);	
+		// this.scene.add(this.pointLightHelper);	
 
 		this.gui = new GUI({ autoPlace: false });
 		this.gui.domElement.id = 'gui';
 		document.getElementById('main-content').appendChild(this.gui.domElement);
 
 		this.stats = new Stats();
-        this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+        this.stats.showPanel(0);
         document.body.appendChild(this.stats.dom);
 		
-		const lightFolder = this.gui.addFolder('Light')
-        lightFolder.add(this.light, 'intensity', 0, 100).name("Intensity")
-        lightFolder.add(this.light.position, 'x', -30, 30).name("X")
-        lightFolder.add(this.light.position, 'y', -30, 30).name("Y")
-        lightFolder.add(this.light.position, 'z', -30, 30).name("Z")
-        lightFolder.open();
+		const lightFolder = this.gui.addFolder('Light');
+        lightFolder.add(this.light, 'intensity', 0, 1000).name("Intensity");
+        lightFolder.add(this.light.position, 'x', -30, 30).name("X");
+        lightFolder.add(this.light.position, 'y', -30, 30).name("Y");
+        lightFolder.add(this.light.position, 'z', -30, 30).name("Z");
 
+		const orbitFolder = this.gui.addFolder('Mouse Controls');
+        orbitFolder.add(this, 'activateControls', false).name("Active")
+			.onChange((value) => this.setActivateControls(value));
+		
         this.renderer = new THREE.WebGLRenderer({antialias:true});
         this.renderer.setPixelRatio( this.canvas.clientWidth / this.canvas.clientHeight );
         this.renderer.setClearColor("#000000");
         this.renderer.setSize( this.canvas.clientWidth, this.canvas.clientHeight );
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // search for other alternatives
 
         this.initCameras();
         this.setActiveCamera('Perspective')
@@ -86,7 +102,7 @@ export class MyApp  {
     initCameras() {
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
-        const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 )
+        const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 50 )
         perspective1.position.set(0, 0, 35);
         this.cameras['Perspective'] = perspective1;
     }
@@ -100,30 +116,27 @@ export class MyApp  {
         this.activeCamera = this.cameras[this.activeCameraName]
     }
 
-    /**
-     * updates the active camera if required
-     * this function is called in the render loop
-     * when the active camera name changes
-     * it updates the active camera and the controls
-     */
-    updateCameraIfRequired() {
+	setActivateControls(value) {
+		this.activateControls = value;
 
-        if (this.lastCameraName !== this.activeCameraName) {
-            this.lastCameraName = this.activeCameraName;
-            this.activeCamera = this.cameras[this.activeCameraName]
-            document.getElementById("camera").innerHTML = this.activeCameraName
-           
-            this.onResize()
+		if (this.activateControls)
+			this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
+		else 
+			this.controls = null;
+	}
 
-            if (this.controls === null) {
-                this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
-                this.controls.enableZoom = true;
-                this.controls.update();
-            }
-            else {
-                this.controls.object = this.activeCamera
-            }
-        }
+    updateOrbitControls() {
+        if (!this.activateControls)
+			return ;
+		
+		if (this.controls === null) {
+			this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
+			this.controls.enableZoom = true;
+			this.controls.update();
+		}
+		else {
+			this.controls.object = this.activeCamera
+		}
     }
 
     /**
@@ -141,16 +154,26 @@ export class MyApp  {
     * the main render function. Called in a requestAnimationFrame loop
     */
     render () {
-		this.stats.begin();
-        this.updateCameraIfRequired()
-		
-        this.controls.update();
-		this.arcade.update();
-        this.renderer.render(this.scene, this.activeCamera);
-		
-        requestAnimationFrame( this.render.bind(this) );
-		
-        this.lastCameraName = this.activeCameraName
-		this.stats.end();
+		const updateCallback = (() => {
+			this.stats.begin();
+			this.updateOrbitControls();
+			
+			if (this.controls != null)
+				this.controls.update();
+			this.gameController.update();
+			this.renderer.render(this.scene, this.activeCamera);
+			
+			frameID = requestAnimationFrame( this.render.bind(this) );
+			
+			this.lastCameraName = this.activeCameraName;
+			this.stats.end();
+		}).bind(this);
+
+		timeoutID = setTimeout(updateCallback, REFRESH_RATE);
     }
 }
+
+window.addEventListener('popstate', function(event) {	
+    if (confirm("You're about to leave the game! Are you sure?!"))
+		this.window.cancelAnimationFrame(frameID);
+});

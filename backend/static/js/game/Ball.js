@@ -1,17 +1,20 @@
 import * as THREE from 'three';
-import { BALL_SPEED_FACTOR, BALL_START_SPEED, BALL_RADIUS,
-	PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH } from './macros.js';
+import { BALL_SPEEDUP_FACTOR, BALL_START_SPEED, BALL_RADIUS,
+	PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, DIRECTION, 
+	ARENA_SEMI_DEPTH } from './macros.js';
 
 export class Ball extends THREE.Object3D { 
-	constructor ({ radius, color, speed }) {
+	constructor ({ radius, speed, direction, onPaddleHit=null }) {
 		super();
 
 		this.radius = radius || BALL_RADIUS;
-		this.speed = speed || {'x': BALL_START_SPEED.x, 'y': BALL_START_SPEED.y};
+		this.speed = speed || { 'x': BALL_START_SPEED, 'y': BALL_START_SPEED };
+		this.direction = direction || { 'x': DIRECTION.LEFT, 'y': DIRECTION.UP }
 		this.rally = 0;
 		this.ball = null;
+		this.onPaddleHit = onPaddleHit;
 		this.build();
-		this.reset();
+		this.reset({});
 	}
 
 	build() {
@@ -23,35 +26,35 @@ export class Ball extends THREE.Object3D {
 		this.add(this.ball);
 	}
 
-	move(arcade) {
-		const { arena, player, enemy } = arcade;
+	move(controller) {
+		const { arena, player1, player2 } = controller;
 
-		this.position.x += this.speed.x;
-		this.position.y += this.speed.y;
+		this.position.x += this.direction.x * this.speed.x;
+		this.position.y += this.direction.y * this.speed.y;
 		
 		this.collideWithVerticalBounds(arena);
-		this.collideWithPaddle(player.paddle, true);
-		this.collideWithPaddle(enemy.paddle, false);
-		return this.collidedWithGoals(arena, player, enemy);
+		this.collideWithPaddle(player1.paddle, true);
+		this.collideWithPaddle(player2.paddle, false);
+		return this.collidedWithGoals(arena, player1, player2);
 	}
 
-	collidedWithGoals(arena, player, enemy) {
+	collidedWithGoals(arena, player1, player2) {
 		const { rightBoundary, leftBoundary } = arena;
 
-		if (this.position.x - this.radius <= leftBoundary.position.x)
-			return player;
-		else if (this.position.x + this.radius >= rightBoundary.position.x)
-			return enemy;
+		if (this.position.x - this.radius <= leftBoundary.position.x + ARENA_SEMI_DEPTH)
+			return player2;
+		else if (this.position.x + this.radius >= rightBoundary.position.x - ARENA_SEMI_DEPTH)
+			return player1;
 		return null;
 	}
 
 	collideWithVerticalBounds(arena) {
 		const { upperBoundary, lowerBoundary } = arena;
 				
-		if (this.position.y + this.radius >= upperBoundary.position.y)
-			this.speed.y = -Math.abs(this.speed.y);
-		else if (this.position.y - this.radius <= lowerBoundary.position.y)
-			this.speed.y = Math.abs(this.speed.y);
+		if (this.position.y + this.radius >= upperBoundary.position.y - ARENA_SEMI_DEPTH)
+			this.direction.y = DIRECTION.DOWN;
+		else if (this.position.y - this.radius <= lowerBoundary.position.y + ARENA_SEMI_DEPTH)
+			this.direction.y = DIRECTION.UP;
 	}
 
 	collideWithPaddle(paddle, isPlayer){
@@ -87,21 +90,34 @@ export class Ball extends THREE.Object3D {
 		//! - Change ball speed according to the speed of the paddle at the time
 		if (isPlayer) {
 			this.position.x = paddle.position.x + PADDLE_SEMI_LENGTH + this.radius;
-			this.speed.x = Math.abs(this.speed.x) + BALL_SPEED_FACTOR;
+			this.speed.x += BALL_SPEEDUP_FACTOR;
+			this.direction.x = DIRECTION.RIGHT;
 		}
 		else {
 			this.position.x = paddle.position.x - PADDLE_SEMI_LENGTH - this.radius;
-			this.speed.x = -(Math.abs(this.speed.x) + BALL_SPEED_FACTOR);
+			this.speed.x += BALL_SPEEDUP_FACTOR;
+			this.direction.x = DIRECTION.LEFT;
 		}	
 
+		if (this.onPaddleHit != null)
+			this.onPaddleHit();
 		this.rally += 1;
 	}
 
-	reset() {
+	reset({ direction }) {
 		this.rally = 0;
-		this.speed.x = BALL_START_SPEED.x;
-		this.speed.y = BALL_START_SPEED.y;
+		this.speed.x = BALL_START_SPEED;
+		this.speed.y = BALL_START_SPEED;
+		if (direction)
+			this.direction = direction;
 		this.position.set(0, 0, 0);
+	}
+
+	sync({position, speed, direction}) {
+		this.position.set(...position);
+		this.speed.x = speed.x;
+		this.speed.y = speed.y;
+		this.direction = direction;
 	}
 
 	dispose() {
