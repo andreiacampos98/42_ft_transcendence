@@ -197,12 +197,16 @@ def search_suggestions(request):
 
 @csrf_exempt
 def search_users(request):
+	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	term = request.GET.get('searched', '')
 	userss = Users.objects.filter(username__icontains=term)
 	return render(request, 'pages/search_users.html', {
 		'searched': term,
 		'userss': userss,
 		'numbers': userss.count(),
+		'friends': friends,
+		'user_id': user_id
 	})
 
 #! --------------------------------------- Friends ---------------------------------------
@@ -1198,7 +1202,8 @@ def tournamentstats(request, tournament_id):
 		'tournament_size': tournament.capacity,
 		'tournament_name': tournament.name,
 		'tour_users': tour_users,
-		'tour_games': tour_games
+		'tour_games': tour_games,
+		'user_id': user_id
 	}
 	ic(context)
 	return render(request,'pages/tournament_overview.html', context)
@@ -1217,7 +1222,8 @@ def gamestats(request, game_id):
 		'game': game,
 		'game_id': game_id,
 		'stats': data_stats,
-		'goals': data_goals
+		'goals': data_goals,
+		'user_id': user_id
 	}
 	ic(context)
 	return render(request,'pages/game_stats.html', context)
@@ -1253,9 +1259,9 @@ def profile(request, id):
 	stats_response = user_stats(request, user_profile.id)
 	stats = json.loads(stats_response.content)
 	if stats['nb_goals_suffered'] != 0:
-		goals_sored_suffered_ratio = stats['nb_goals_scored'] / stats['nb_goals_suffered']
+		goals_scored_suffered_ratio = stats['nb_goals_scored'] / stats['nb_goals_suffered']
 	else:
-		goals_sored_suffered_ratio = 0
+		goals_scored_suffered_ratio = 0
 	graph = win_rate_nb_games_day(request, user_profile.id)
 	graph_send = json.loads(graph.content)
 	context = {
@@ -1271,7 +1277,7 @@ def profile(request, id):
 		'games': games,
 		'tours': user_tournaments,
 		'stats': stats,
-		'goals_scored_suffered_ratio': goals_sored_suffered_ratio,
+		'goals_scored_suffered_ratio': goals_scored_suffered_ratio,
 		'graph': graph_send,
 		'page': 'profile' if is_own_profile else 'else'
 	}
