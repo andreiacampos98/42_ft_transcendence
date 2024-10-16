@@ -88,7 +88,7 @@ window.onclick = function(event) {
 }
 
 async function loadDonutChart() {
-	const userID = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
+	const userID = document.getElementById('main-content').getAttribute('data-user-view-id');
 	const response = await fetch(`/stats/${userID}`, {
 		method: "GET",
 	});
@@ -156,7 +156,7 @@ async function loadDonutChart() {
 }
 
 async function loadBarLineChart() {
-	const userID = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
+	const userID = document.getElementById('main-content').getAttribute('data-user-view-id');
 	const response = await fetch(`/graph/${userID}`, {
 		method: "GET",
 	});

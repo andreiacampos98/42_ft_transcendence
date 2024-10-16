@@ -604,11 +604,11 @@ def game_update(request, game_id):
 	ic(data)
 
 	if game.type != "Local":
-		user_stats_update(player1.id, game_id, data)
 		user_stats_update(player2.id, game_id, data)
 		game_stats_create(game_id, data)
 		game_goals_create(game_id, data)
 
+	user_stats_update(player1.id, game_id, data)
 	data = GamesSerializer(game).data
 	return JsonResponse(data, status=200)
 

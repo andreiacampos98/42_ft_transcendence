@@ -12,7 +12,7 @@
 <script defer src="{% static 'js/notifications.js' %}"></script>
 <script defer src="{% static 'js/tab-recent-matches.js' %}"></script>
 <script defer src="{% static 'js/view-details-tournaments.js' %}"></script>
-<div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
+<div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content" data-user-view-id="{{ user_view.id }}">
 	<div class="main d-flex" id="main-wrapper">
 		<div class="main d-flex" id="profile-main">
 			<div id="modal" class="m">
@@ -60,7 +60,7 @@
 					<div style="width: 100%;" class="bottom-buttons d-flex justify-content-between">
 						<form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
 							{% csrf_token %}
-							<button class="change modal-button" id="leaver" onclick="leaveTournament()" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
+							<button class="change modal-button" id="leaver" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
 								<span class="change-b" id="change">Yes, I am.</span>
 							</button>
 						</form>
