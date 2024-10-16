@@ -4,7 +4,7 @@ import { ARENA_SEMI_LENGTH, PADDLE_OFFSET_X, STANDARD_KEYBINDS } from './macros.
 import { AbstractGameController } from './AbstractGameController.js';
 
 export class RemoteGameController extends AbstractGameController {
-	constructor({ player1Data, player2Data, socket, ballDirection }) {
+	constructor({ player1Data, player2Data, gameID, socket, ballDirection }) {
 		super();
 
 		this.players = {};
@@ -12,12 +12,11 @@ export class RemoteGameController extends AbstractGameController {
 		
 		this.registerKeybinds();
 		this.registerSocketEvents();
-		this.createPlayers(player1Data, player2Data);
-		this.createGameInstance();
+		this.createPlayers(player1Data, player2Data, gameID);
 		this.build(ballDirection);
 	}
 
-	createPlayers(player1Data, player2Data) {
+	createPlayers(player1Data, player2Data, gameID) {
 		const { id: p1ID, username: p1Username } = player1Data;
 		const { id: p2ID, username: p2Username } = player2Data;
 		const currPlayerID = document.getElementById('game-engine').getAttribute('data-user-id');
@@ -54,25 +53,8 @@ export class RemoteGameController extends AbstractGameController {
 		this.players[this.player1.id] = this.player1;
 		this.players[this.player2.id] = this.player2;
 		this.stats = new GameStats(this.player1, this.player2);
-	}
-
-	async createGameInstance() {
-		const formData = {
-		    "user1_id": this.player1.id,
-		    "user2_id": this.player2.id,
-		    "type": "Remote"
-		}
-
-		const response = await fetch(`/games/create`, {
-			method: 'POST',
-			body: JSON.stringify(formData),
-			headers: {
-				'Content-Type': 'application/json',
-			} 
-		});
-
-		const gameData = await response.json();
-		this.stats.gameId = gameData.id;
+		this.stats.gameID = gameID;
+		console.log(this.stats.gameID);
 	}
 
 	registerSocketEvents(){

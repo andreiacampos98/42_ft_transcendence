@@ -7,7 +7,7 @@ const username = document.getElementById('game-engine').getAttribute('data-usern
 if (gameType == "Remote") {
 	let socket = new WebSocket(`ws://${window.location.host}/ws/games/remote/queue`);
 	socket.onmessage = (event) => {
-		const { player1, player2, ball } = JSON.parse(event.data);
+		const { player1, player2, ball, gameID } = JSON.parse(event.data);
 		
 		let app = new MyApp();
 		app.init({ 
@@ -15,6 +15,7 @@ if (gameType == "Remote") {
 			player2Data: player2,
 			socket: socket, 
 			gameType: gameType,
+			gameID: gameID,
 			ballDirection: ball.direction,
 		});
 		app.render();

@@ -479,33 +479,47 @@ def user_stats_all(request):
 
 #! --------------------------------------- Games ---------------------------------------
 
+def game_create_helper(data: dict):
+	serializer = GamesSerializer(data=data)
+	data['start_date'] = datetime.now().isoformat()
+
+	if not serializer.is_valid():
+		return JsonResponse(serializer.errors, status=400)
+
+	serializer.save()
+	user1_id = data.get('user1_id')
+	user2_id = data.get('user2_id')
+
+	if user1_id:
+		user1 = Users.objects.get(id=user1_id)
+		user1.status = "Playing"
+		user1.save()
+
+	if user2_id:
+		user2 = Users.objects.get(id=user2_id)
+		user2.status = "Playing"
+		user2.save()
+
+	return JsonResponse(serializer.data, status=201)
+
+
 @csrf_exempt
-def game_create(request):
+def game_create(request=None):
+	if request.method != 'POST':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	if request.content_type != 'application/json':
+		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
+
+	data = {}
+
 	try:
 		data = json.loads(request.body.decode('utf-8'))
-		serializer = GamesSerializer(data=data)
-		data['start_date'] = datetime.now().isoformat()
-		if serializer.is_valid():
-			serializer.save()
-			user1_id = data.get('user1_id')
-			user2_id = data.get('user2_id')
-
-			if user1_id:
-				user1 = Users.objects.get(id=user1_id)
-				user1.status = "Playing"
-				user1.save()
-
-			if user2_id:
-				user2 = Users.objects.get(id=user2_id)
-				user2.status = "Playing"
-				user2.save()
-
-			return JsonResponse(serializer.data, status=201)
-		return JsonResponse(serializer.errors, status=400)
 	except json.JSONDecodeError:
 		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+
+	return game_create_helper(data)
 	
 @csrf_exempt
 def game_update(request, game_id):
@@ -543,9 +557,6 @@ def game_update(request, game_id):
 	elif data['nb_goals_user1'] > data['nb_goals_user2'] and game.type != "Local":
 		game.winner_id = player2
 	game.save()
-
-	gameStats = GamesStats.objects.create()
-	
 
 	data = GamesSerializer(game).data
 	return JsonResponse(data, status=200)

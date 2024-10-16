@@ -35,7 +35,7 @@ export class MyApp  {
     /**
      * initializes the application
      */
-    init({player1Data, player2Data, socket=null, gameType, ballDirection}) {
+    init({player1Data, player2Data, socket=null, gameType, gameID=null, ballDirection}) {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
@@ -46,6 +46,7 @@ export class MyApp  {
 				player1Data: player1Data, 
 				player2Data: player2Data,
 				socket: socket, 
+				gameID: gameID,
 				ballDirection: ballDirection
 			});
 		} else {
@@ -101,7 +102,7 @@ export class MyApp  {
     initCameras() {
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
-        const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 )
+        const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 50 )
         perspective1.position.set(0, 0, 35);
         this.cameras['Perspective'] = perspective1;
     }

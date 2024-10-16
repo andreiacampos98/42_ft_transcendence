@@ -1,4 +1,5 @@
 import json
+from .views import game_create_helper
 from .models import TournamentsUsers, Users
 from .serializers import TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
@@ -60,7 +61,8 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		# 	- Pop the first available room in the queue
 		#	- Add the client to the room
 		# 	- Broadcast a message to the channel with a starting command
-
+		if self.user.id in list(self.queue.keys()):
+			return
 
 		if len(self.queue) == 0:
 			ic('adding player to queue')
@@ -100,12 +102,22 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 			'username': self.scope['user'].username,
 			'room_name': self.room_name
 		}
-		
+
+		new_game_data = {
+		    "user1_id": host_id,
+		    "user2_id": self.user.id,
+		    "type": "Remote"
+		}
+
+		new_game = json.loads(game_create_helper(new_game_data).content)
+		ic(new_game)
+
 		async_to_sync(self.channel_layer.group_add)(host_player['room_name'], self.channel_name)
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_name, {
 				"type": "send.start.game.message", 
 				"message": json.dumps({
+					'gameID': new_game['id'],
 					'player1': curr_player,
 					'player2': host_player,
 					'ball': {

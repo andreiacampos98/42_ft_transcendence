@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GameStats.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nunomiguel533 <nunomiguel533@student.42    +#+  +:+       +#+        */
+/*   By: ncarvalh <ncarvalh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/10/13 20:34:24 by nunomiguel5      ###   ########.fr       */
+/*   Updated: 2024/10/16 18:54:33 by ncarvalh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ export class GameStats {
 		this.goals = [];
 		this.loser = null;
 		this.winner = null;
-		this.gameId = 0;
+		this.gameID = 0;
 		this.gameStats = {};
 		this.scoredFirst = null;
 		this.startTime = null
@@ -144,7 +144,7 @@ export class GameStats {
 		this.winner = this.score[this.player1.username] == MAX_GOALS ? this.player1 : this.player2;
 		this.loser = this.winner == this.player1 ? this.player2 : this.player1;
 
-		const response = await fetch(`/games/update/${this.gameId}`, {
+		const response = await fetch(`/games/update/${this.gameID}`, {
 			method: 'POST',
 			body: JSON.stringify(formData),
 			headers: {
