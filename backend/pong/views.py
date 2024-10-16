@@ -1119,7 +1119,10 @@ def home(request):
 @login_required
 def gamelocal(request):
 	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	user_id = request.user.id
 	context = {
+		'friends': friends,
 		'user_id': user_id,
 	}
 	return render(request,'pages/gamelocal.html', context)
@@ -1127,8 +1130,11 @@ def gamelocal(request):
 @login_required
 def gameonline(request):
 	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	user_id = request.user.id
 	context = {
 		'user_id': user_id,
+		'friends': friends,
 	}
 	return render(request,'pages/gameonline.html', context)
 
@@ -1167,10 +1173,12 @@ def tournaments(request):
 
 @login_required
 def ongoingtournaments(request, tournament_id):
-	tournament = Tournaments.objects.get(pk=tournament_id)
 	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	tournament = Tournaments.objects.get(pk=tournament_id)
 	context = {
 		'user_id': user_id,
+		'friends': friends,
 		'tournament_id': tournament_id,
 		'tournament_size': tournament.capacity,
 		'tournament_name': tournament.name
@@ -1179,21 +1187,33 @@ def ongoingtournaments(request, tournament_id):
 
 @login_required
 def tournamentstats(request, tournament_id):
+	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	tournament = Tournaments.objects.get(pk=tournament_id)
+	tour_users = TournamentsUsers.objects.filter(tournament_id=tournament_id).order_by('placement')
+	tour_games = TournamentsGames.objects.filter(tournament_id=tournament_id).order_by('pk')
 	context = {
+		'friends': friends,
 		'tournament_id': tournament_id,
-		'tournament_size': tournament.capacity
+		'tournament_size': tournament.capacity,
+		'tournament_name': tournament.name,
+		'tour_users': tour_users,
+		'tour_games': tour_games
 	}
+	ic(context)
 	return render(request,'pages/tournament_overview.html', context)
 
 @login_required
 def gamestats(request, game_id):
+	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	stats = game_stats(request, game_id)
 	data_stats = json.loads(stats.content)
 	goals = game_goals(request, game_id)
 	data_goals = json.loads(goals.content)
 	game = json.loads(get_game(request, game_id).content)['data']
 	context = {
+		'friends': friends,
 		'game': game,
 		'game_id': game_id,
 		'stats': data_stats,

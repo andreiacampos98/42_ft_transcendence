@@ -1,5 +1,6 @@
 {% extends 'navs.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block main_content %}
     <link rel="stylesheet" href="{% static 'css/tourn-overview.css' %}">
@@ -8,7 +9,7 @@
 		<div class="main d-flex flex-column">
 			<div class="tourn-header d-flex align-items-center">
 				<div class="tourn-info d-flex flex-column">
-					<h1 class="tourn-title">{{ tournament_name }} Name</h1>
+					<h1 class="tourn-title">{{ tournament_name }}</h1>
 					<h3 class="tourn-status">This tournament is over.</h3>
 				</div>
 			</div>
@@ -20,38 +21,26 @@
                         <span class="title">User</span>
                         <span class="title" style="padding-left: 30px;">Score</span>
                     </div>
-                    <!--{% for id in user_id %}-->
-                    <!--{% endfor %}-->
-                        <div class="details d-flex align-items-center justify-content-evenly">
-                            <span class="content placement" style="padding-left: 20px;">  1st </span>
-                            <span class="content user-leaderboard">
+                    {% for tour_user in tour_users %}
+						<div class="details d-flex align-items-center justify-content-evenly">
+							<span class="content placement" style="padding-left: 20px;">  {{ tour_user.placement }} </span>
+							<span class="content user-leaderboard">
 
-                                <a  hx-get=""
-                                    hx-trigger="click"
-                                    hx-target="#main"
-                                    hx-push-url="true">
-                                        <img class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
-                                    <span> username</span>
-                                </a>
-                            </span>
-                            <span class="content"  style="padding-left: 30px;"> 270</span>
-                        </div>
-                        <div class="details d-flex align-items-center justify-content-evenly">
-                            <span class="content placement" style="padding-left: 20px;">  1st </span>
-                            <span class="content user-leaderboard">
-
-                                <a  hx-get=""
-                                    hx-trigger="click"
-                                    hx-target="#main"
-                                    hx-push-url="true">
-                                        <img class="profile-pic" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
-                                    <span> username</span>
-                                </a>
-                            </span>
-                            <span class="content"  style="padding-left: 30px;"> 270</span>
-                        </div>
-
-
+								<a  hx-get="{% url 'user-profile' tour_user.user_id.id %}"
+									hx-trigger="click"
+									hx-target="#main"
+									hx-push-url="true">
+									{% if "http" in tour_user.user_id.picture.url %}
+										<img src="{{ tour_user.user_id.picture  }}" alt="Player 3" class="icon">
+									{% else %}
+										<img src="{{ tour_user.user_id.picture.url }}" alt="Player 3" class="icon">
+									{% endif %}
+									<span> {{ tour_user.user_id.username }}</span>
+								</a>
+							</span>
+							<span class="content"  style="padding-left: 30px;"> {{ tour_user.score }}</span>
+						</div>
+                    {% endfor %}
 
                 </div>
 				{% if tournament_size == 4 %}
@@ -61,11 +50,15 @@
             			        <h1 class="group">Group A</h1>
             			        <div class="player  d-flex align-items-center" id="player1">
 									<div class="main-core d-flex align-items-center">
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 1" class="icon">
-										<span class="name">Player 1</span>
+										{% if "http" in tour_games.0.game_id.user1_id.picture.url %}
+											<img src="{{ tour_games.0.game_id.user1_id.picture }}" alt="Player 1" class="icon">
+										{% else %}
+											<img src="{{ tour_games.0.game_id.user1_id.picture.url }}" alt="Player 1" class="icon">
+										{% endif %}
+										<span class="name">{{ tour_games.0.game_id.user1_id.username }}</span>
 									</div>
 									<div class="score2">
-										<span class="score">0</span>
+										<span class="score">{{ tour_games.0.game_id.nb_goals_user1 }}</span>
 									</div>
             			        </div>
             			        <div class="line-h"></div>
@@ -74,11 +67,15 @@
 								<div class="line-h2"></div>
             			        <div class="player  d-flex align-items-center" id="player2">
 									<div class="main-core d-flex align-items-center"> 
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 2" class="icon">
-										<span class="name">Player 2</span>
+										{% if "http" in tour_games.0.game_id.user2_id.picture.url %}
+											<img src="{{ tour_games.0.game_id.user2_id.picture }}" alt="Player 2" class="icon">
+										{% else %}
+											<img src="{{ tour_games.0.game_id.user2_id.picture.url }}" alt="Player 2" class="icon">
+										{% endif %}
+										<span class="name">{{ tour_games.0.game_id.user2_id.username }}</span>
             			            </div>
 									<div class="score2">
-										<span class="score">0</span>
+										<span class="score">{{ tour_games.0.game_id.nb_goals_user2 }}</span>
 									</div>
             			        </div>
             			        <div class="line-h"></div>
@@ -87,11 +84,15 @@
             			        <h1 class="group">Group B</h1>
             			        <div class="player  d-flex align-items-center" id="player3">
 									<div class="main-core d-flex align-items-center">
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 3" class="icon">
-										<span class="name">Player 3</span>
+										{% if "http" in tour_games.1.game_id.user1_id.picture.url %}
+											<img src="{{ tour_games.1.game_id.user1_id.picture }}" alt="Player 3" class="icon">
+										{% else %}
+											<img src="{{ tour_games.1.game_id.user1_id.picture.url }}" alt="Player 3" class="icon">
+										{% endif %}
+										<span class="name">{{ tour_games.1.game_id.user1_id.username }}</span>
 									</div>
 									<div class="score2">
-										<span class="score">0</span>
+										<span class="score">{{ tour_games.1.game_id.nb_goals_user1 }}</span>
 									</div>
             			        </div>
             			        <div class="line-h"></div>
@@ -100,12 +101,15 @@
 								<div class="line-h2"></div>
             			        <div class="player  d-flex align-items-center" id="player4">
 									<div class="main-core d-flex align-items-center">
-
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 4" class="icon">
-										<span class="name">Player 4</span>
+										{% if "http" in tour_games.1.game_id.user2_id.picture.url %}
+											<img src="{{ tour_games.1.game_id.user2_id.picture }}" alt="Player 4" class="icon">
+										{% else %}
+											<img src="{{ tour_games.1.game_id.user2_id.picture.url }}" alt="Player 4" class="icon">
+										{% endif %}
+										<span class="name">{{ tour_games.1.game_id.user2_id.username }}</span>
 									</div>
 									<div class="score2">
-										<span class="score">0</span>
+										<span class="score">{{ tour_games.1.game_id.nb_goals_user2 }}</span>
 									</div>
             			        </div>
             			        <div class="line-h"></div>
@@ -115,14 +119,15 @@
             			    <div class="matchup d-flex align-items-start justify-content-between">
             			        <div class="player  d-flex align-items-center" id="semi1">
 									<div class="main-core d-flex align-items-center">
-										<!--{% if name is None %} -->
-										<!--{% else %} -->
-											<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 1" class="icon">
-										<!--{% endif %} -->
-										<span class="name">Group A Winner</span>
+										{% if "http" in tour_games.2.game_id.user1_id.picture.url %}
+											<img src="{{ tour_games.2.game_id.user1_id.picture }}" alt="Semi 1" class="icon">
+										{% else %}
+											<img src="{{ tour_games.2.game_id.user1_id.picture.url }}" alt="Semi 1" class="icon">
+										{% endif %}
+										<span class="name">{{ tour_games.2.game_id.user1_id.username }}</span>
 									</div>
 									<div class="score2">
-										<span class="score">0</span>
+										<span class="score">{{ tour_games.2.game_id.nb_goals_user1 }}</span>
 									</div>
             			        </div>
             			        <div class="line-h" style="top: -128px;"></div>
@@ -131,14 +136,15 @@
 								<div class="line-h2"  style="top: -57px;"></div>
             			        <div class="player  d-flex align-items-center" id="semi2">
 									<div class="main-core d-flex align-items-center">
-										<!--{% if name is None %} -->
-										<!--{% else %} -->
-											<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 2" class="icon">
-										<!--{% endif %} -->
-										<span class="name">Group B Winner</span>
+										{% if "http" in tour_games.2.game_id.user2_id.picture.url %}
+											<img src="{{ tour_games.2.game_id.user2_id.picture }}" alt="Semi 2" class="icon">
+										{% else %}
+											<img src="{{ tour_games.2.game_id.user2_id.picture.url }}" alt="Semi 2" class="icon">
+										{% endif %}
+										<span class="name">{{ tour_games.2.game_id.user2_id.username }}</span>
 									</div>
 									<div class="score2">
-										<span class="score">0</span>
+										<span class="score">{{ tour_games.2.game_id.nb_goals_user2 }}</span>
 									</div>
             			        </div>
             			        <div class="line-h" style="top: -128px;"></div>
@@ -148,11 +154,12 @@
             			    <div class="matchup d-flex align-items-start justify-content-between">
             			        <div class="player  d-flex align-items-center" id="final">
 									<div class="main-core d-flex align-items-center">
-										<!--{% if name is None %} -->
-										<!--{% else %} -->
-											<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
-										<!--{% endif %} -->
-										<span class="name">Tournament Winner</span>
+										{% if "http" in tour_games.2.game_id.winner_id.picture.url %}
+											<img src="{{ tour_games.2.game_id.winner_id.picture }}" alt="Final Winner" class="icon">
+										{% else %}
+											<img src="{{ tour_games.2.game_id.winner_id.picture.url }}" alt="Final Winner" class="icon">
+										{% endif %}
+										<span class="name">{{ tour_games.2.game_id.winner_id.username }}</span>
 									</div>
 									<div class="score2">
 										<img src="{% static 'assets/icons/trophy.png' %}" style="width: 20px; height: 20px; margin: 0;" alt="Final Winner" class="icon">
@@ -171,11 +178,15 @@
 							<h1 class="group">Group A</h1>
 							<div class="player  d-flex align-items-center" id="player1">
 								<div class="main-core d-flex align-items-center">
-									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 1" class="icon">
-									<span class="name">Player 1</span>
+									{% if "http" in tour_games.0.game_id.user1_id.picture.url %}
+										<img src="{{ tour_games.0.game_id.user1_id.picture }}" alt="Player 1" class="icon">
+									{% else %}
+										<img src="{{ tour_games.0.game_id.user1_id.picture.url }}" alt="Player 1" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.0.game_id.user1_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.0.game_id.nb_goals_user1 }}</span>
 								</div>
 							</div>
 							<div class="line-h"></div>
@@ -184,11 +195,15 @@
 							<div class="line-h2"></div>
 							<div class="player  d-flex align-items-center" id="player2">
 								<div class="main-core d-flex align-items-center"> 
-									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 2" class="icon">
-									<span class="name">Player 2</span>
+									{% if "http" in tour_games.0.game_id.user2_id.picture.url %}
+										<img src="{{ tour_games.0.game_id.user2_id.picture }}" alt="Player 2" class="icon">
+									{% else %}
+										<img src="{{ tour_games.0.game_id.user2_id.picture.url }}" alt="Player 2" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.0.game_id.user2_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.0.game_id.nb_goals_user2 }}</span>
 								</div>
 							</div>
 							<div class="line-h"></div>
@@ -197,11 +212,15 @@
 							<h1 class="group">Group B</h1>
 							<div class="player  d-flex align-items-center" id="player3">
 								<div class="main-core d-flex align-items-center">
-									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 3" class="icon">
-									<span class="name">Player 3</span>
+									{% if "http" in tour_games.1.game_id.user1_id.picture.url %}
+										<img src="{{ tour_games.1.game_id.user1_id.picture }}" alt="Player 3" class="icon">
+									{% else %}
+										<img src="{{ tour_games.1.game_id.user1_id.picture.url }}" alt="Player 3" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.1.game_id.user1_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.1.game_id.nb_goals_user1 }}</span>
 								</div>
 							</div>
 							<div class="line-h"></div>
@@ -210,12 +229,15 @@
 							<div class="line-h2"></div>
 							<div class="player  d-flex align-items-center" id="player4">
 								<div class="main-core d-flex align-items-center">
-
-									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 4" class="icon">
-									<span class="name">Player 4</span>
+									{% if "http" in tour_games.1.game_id.user2_id.picture.url %}
+										<img src="{{ tour_games.1.game_id.user2_id.picture }}" alt="Player 4" class="icon">
+									{% else %}
+										<img src="{{ tour_games.1.game_id.user2_id.picture.url }}" alt="Player 4" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.1.game_id.user2_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.1.game_id.nb_goals_user2 }}</span>
 								</div>
 							</div>
 							<div class="line-h"></div>
@@ -225,14 +247,15 @@
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<div class="player  d-flex align-items-center" id="semi1">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 1" class="icon">
-									<!--{% endif %} -->
-									<span class="name">Group A Winner</span>
+									{% if "http" in tour_games.4.game_id.user1_id.picture.url %}
+										<img src="{{ tour_games.4.game_id.user1_id.picture }}" alt="Semi 1" class="icon">
+									{% else %}
+										<img src="{{ tour_games.4.game_id.user1_id.picture.url }}" alt="Semi 1" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.4.game_id.user1_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.4.game_id.nb_goals_user1 }}</span>
 								</div>
 							</div>
 							<div class="line-h" style="top: -128px;"></div>
@@ -241,14 +264,15 @@
 							<div class="line-h2"  style="top: -63px;"></div>
 							<div class="player  d-flex align-items-center" id="semi2">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 2" class="icon">
-									<!--{% endif %} -->
-									<span class="name">Group B Winner</span>
+									{% if "http" in tour_games.4.game_id.user2_id.picture.url %}
+										<img src="{{ tour_games.4.game_id.user2_id.picture }}" alt="Semi 2" class="icon">
+									{% else %}
+										<img src="{{ tour_games.4.game_id.user2_id.picture.url }}" alt="Semi 2" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.4.game_id.user2_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.4.game_id.nb_goals_user2 }}</span>
 								</div>
 							</div>
 							<div class="line-h" style="top: -128px;"></div>
@@ -258,14 +282,15 @@
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<div class="player  d-flex align-items-center" id="final">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
-									<!--{% endif %} -->
-									<span class="name">Semi Finals Winner</span>
+									{% if "http" in tour_games.6.game_id.user1_id.picture.url %}
+										<img src="{{ tour_games.6.game_id.user1_id.picture }}" alt="Player 6" class="icon">
+									{% else %}
+										<img src="{{ tour_games.6.game_id.user1_id.picture.url }}" alt="Player 6" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.6.game_id.user1_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.6.game_id.nb_goals_user1 }}</span>
 								</div>
 							</div>
 							<div class="line-h" style="top: -79px;"></div>
@@ -278,11 +303,12 @@
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<div class="player  d-flex align-items-center" id="final">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
-									<!--{% endif %} -->
-									<span class="name">Tournament Winner</span>
+									{% if "http" in tour_games.6.game_id.winner_id.picture.url %}
+										<img src="{{ tour_games.6.game_id.winner_id.picture }}" alt="Player 6" class="icon">
+									{% else %}
+										<img src="{{ tour_games.6.game_id.winner_id.picture.url }}" alt="Player 6" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.6.game_id.winner_id.username }}</span>
 								</div>
 								<div class="score2">
 									<img src="{% static 'assets/icons/trophy.png' %}" style="width: 20px; height: 20px; margin: 0;" alt="Final Winner" class="icon">
@@ -298,11 +324,15 @@
 							<h1 class="group">Group C</h1>
 							<div class="player  d-flex align-items-center" id="player1">
 								<div class="main-core d-flex align-items-center">
-									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 1" class="icon">
-									<span class="name">Player 5</span>
+									{% if "http" in tour_games.2.game_id.user1_id.picture.url %}
+										<img src="{{ tour_games.2.game_id.user1_id.picture }}" alt="Player 5" class="icon">
+									{% else %}
+										<img src="{{ tour_games.2.game_id.user1_id.picture.url }}" alt="Player 5" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.2.game_id.user1_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.2.game_id.nb_goals_user1 }}</span>
 								</div>
 							</div>
 							<div class="line-h"></div>
@@ -310,12 +340,16 @@
 							<div class="line-v-d d" style="top: 113px;"></div>
 							<div class="line-h2"></div>
 							<div class="player  d-flex align-items-center" id="player2">
-								<div class="main-core d-flex align-items-center"> 
-									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 2" class="icon">
-									<span class="name">Player 6</span>
+								<div class="main-core d-flex align-items-center">
+									{% if "http" in tour_games.2.game_id.user2_id.picture.url %}
+										<img src="{{ tour_games.2.game_id.user2_id.picture }}" alt="Player 6" class="icon">
+									{% else %}
+										<img src="{{ tour_games.2.game_id.user2_id.picture.url }}" alt="Player 6" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.2.game_id.user2_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.2.game_id.nb_goals_user2 }}</span>
 								</div>
 							</div>
 							<div class="line-h"></div>
@@ -324,11 +358,15 @@
 							<h1 class="group">Group D</h1>
 							<div class="player  d-flex align-items-center" id="player3">
 								<div class="main-core d-flex align-items-center">
-									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 3" class="icon">
-									<span class="name">Player 7</span>
+									{% if "http" in tour_games.3.game_id.user1_id.picture.url %}
+										<img src="{{ tour_games.3.game_id.user1_id.picture }}" alt="Player 7" class="icon">
+									{% else %}
+										<img src="{{ tour_games.3.game_id.user1_id.picture.url }}" alt="Player 7" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.3.game_id.user1_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.3.game_id.nb_goals_user1 }}</span>
 								</div>
 							</div>
 							<div class="line-h"></div>
@@ -337,12 +375,15 @@
 							<div class="line-h2"></div>
 							<div class="player  d-flex align-items-center" id="player4">
 								<div class="main-core d-flex align-items-center">
-
-									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 4" class="icon">
-									<span class="name">Player 8</span>
+									{% if "http" in tour_games.3.game_id.user2_id.picture.url %}
+										<img src="{{ tour_games.3.game_id.user2_id.picture }}" alt="Player 8" class="icon">
+									{% else %}
+										<img src="{{ tour_games.3.game_id.user2_id.picture.url }}" alt="Player 8" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.3.game_id.user2_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.3.game_id.nb_goals_user2 }}</span>
 								</div>
 							</div>
 							<div class="line-h"></div>
@@ -352,14 +393,15 @@
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<div class="player  d-flex align-items-center" id="semi1">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 1" class="icon">
-									<!--{% endif %} -->
-									<span class="name">Group C Winner</span>
+									{% if "http" in tour_games.5.game_id.user1_id.picture.url %}
+										<img src="{{ tour_games.5.game_id.user1_id.picture }}" alt="Semi 1" class="icon">
+									{% else %}
+										<img src="{{ tour_games.5.game_id.user1_id.picture.url }}" alt="Semi 1" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.5.game_id.user1_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.5.game_id.nb_goals_user1 }}</span>
 								</div>
 							</div>
 							<div class="line-h" style="top: -128px;"></div>
@@ -368,14 +410,15 @@
 							<div class="line-h2"  style="top: -62px;"></div>
 							<div class="player  d-flex align-items-center" id="semi2">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 2" class="icon">
-									<!--{% endif %} -->
-									<span class="name">Group D Winner</span>
+									{% if "http" in tour_games.5.game_id.user2_id.picture.url %}
+										<img src="{{ tour_games.5.game_id.user2_id.picture }}" alt="Semi 2" class="icon">
+									{% else %}
+										<img src="{{ tour_games.5.game_id.user2_id.picture.url }}" alt="Semi 2" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.5.game_id.user2_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.5.game_id.nb_goals_user2 }}</span>
 								</div>
 							</div>
 							<div class="line-h" style="top: -128px;"></div>
@@ -385,14 +428,15 @@
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<div class="player  d-flex align-items-center" id="final">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
-									<!--{% endif %} -->
-									<span class="name">Semi Finals Winner</span>
+									{% if "http" in tour_games.6.game_id.user2_id.picture.url %}
+										<img src="{{ tour_games.6.game_id.user2_id.picture }}" alt="Final 2" class="icon">
+									{% else %}
+										<img src="{{ tour_games.6.game_id.user2_id.picture.url }}" alt="Final 2" class="icon">
+									{% endif %}
+									<span class="name">{{ tour_games.6.game_id.user2_id.username }}</span>
 								</div>
 								<div class="score2">
-									<span class="score">0</span>
+									<span class="score">{{ tour_games.6.game_id.nb_goals_user2 }}</span>
 								</div>
 							</div>
 							<div class="line-h" style="top: -78px;"></div>
