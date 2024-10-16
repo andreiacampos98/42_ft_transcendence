@@ -1167,19 +1167,22 @@ def tournaments(request):
 
 @login_required
 def ongoingtournaments(request, tournament_id):
+	tournament = Tournaments.objects.get(pk=tournament_id)
 	user_id = request.user.id
 	context = {
 		'user_id': user_id,
 		'tournament_id': tournament_id,
-		'tournament_size': 4
+		'tournament_size': tournament.capacity,
+		'tournament_name': tournament.name
 	}
 	return render(request,'pages/ongoing-tourn.html', context)
 
 @login_required
 def tournamentstats(request, tournament_id):
+	tournament = Tournaments.objects.get(pk=tournament_id)
 	context = {
 		'tournament_id': tournament_id,
-		'tournament_size': 4
+		'tournament_size': tournament.capacity
 	}
 	return render(request,'pages/tournament_overview.html', context)
 
