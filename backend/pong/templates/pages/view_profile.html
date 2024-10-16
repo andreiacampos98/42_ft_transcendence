@@ -341,10 +341,20 @@
 					{% for game in games %}
 						<div id="match-container">
 							<div class="match-block d-flex align-items-center pingpong">
-								<a hx-get="{% url 'game-stats' game.id %}"
-									hx-trigger="click"
-									hx-target="#main"
-									hx-push-url="true">
+								{% if game.type != "Local" %}
+									<a hx-get="{% url 'game-stats' game.id %}"
+										hx-trigger="click"
+										hx-target="#main"
+										hx-push-url="true">
+										<div class="icon">
+											{% if game.type == 'AI' %}
+											<img src="{% static 'assets/icons/ai.png' %}" alt="Pingpong Icon">
+											{% else %}
+											<img src="{% static 'assets/icons/pong.png' %}" alt="Pingpong Icon">
+											{% endif %}
+										</div>
+									</a>
+								{% else %}
 									<div class="icon">
 										{% if game.type == 'AI' %}
 										<img src="{% static 'assets/icons/ai.png' %}" alt="Pingpong Icon">
@@ -352,7 +362,7 @@
 										<img src="{% static 'assets/icons/pong.png' %}" alt="Pingpong Icon">
 										{% endif %}
 									</div>
-								</a>
+								{% endif %}
 								<div class="details d-flex align-items-center justify-content-evenly" >
 									<span class="content date d-flex flex-column" style="height: 42px; align-items: baseline"   id="isoDateDiv2">{{ game.created_at }}
 										<div class="date-day">{{ game.created_at }}</div>

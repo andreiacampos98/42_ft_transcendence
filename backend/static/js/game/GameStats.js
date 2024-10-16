@@ -6,7 +6,7 @@
 /*   By: ncarvalh <ncarvalh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/10/16 20:50:40 by ncarvalh         ###   ########.fr       */
+/*   Updated: 2024/10/16 21:19:36 by ncarvalh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ export class GameStats {
 			'timestamp': new Date().toISOString(),
 			'user': scorer.id,
 			'rally_length': ball.rally,
-			'ball_speed': Math.abs(ball.speed.x),
+			'ball_speed': Math.round(ball.speed.x),
 		};
 		this.score[scorer.username] += 1;
 		this.goals.push(goal);

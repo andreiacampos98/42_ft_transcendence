@@ -601,9 +601,11 @@ def game_update(request, game_id):
 		game.winner_id = player2
 	game.save()
 
+	ic(data)
+
 	if game.type != "Local":
-		user_stats_update(player2.id, game_id, data)
 		user_stats_update(player1.id, game_id, data)
+		user_stats_update(player2.id, game_id, data)
 		game_stats_create(game_id, data)
 		game_goals_create(game_id, data)
 

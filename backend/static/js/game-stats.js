@@ -45,7 +45,10 @@ function fillHeatmap(rallyLengths, ballSpeeds){
 
 	console.log(rallyLengths, ballSpeeds);
 
-	rallyLengths.forEach((rally, i) => rallyLengthLabels[i].textContent = rally);
+	rallyLengths.forEach((rally, i) => {
+		console.log(rally, i);
+		rallyLengthLabels[i].textContent = rally
+	});
 	ballSpeeds.forEach((speed, i) => ballSpeedLabels[i].textContent = speed);
 	
 }
