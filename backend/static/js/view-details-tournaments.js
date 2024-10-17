@@ -99,6 +99,10 @@ function detailTournamentGames(button) {
 
                 }
 
+                const gameDetailLink = document.createElement('a');
+                gameDetailLink.href = `/games/${game.game.id}/stats`;
+                gameDetailLink.classList.add('game-link'); 
+
                 gameBlock.innerHTML = `
                     <div class="match-block2 d-flex align-items-center">
                         <div class="details d-flex align-items-center justify-content-evenly">
@@ -111,7 +115,9 @@ function detailTournamentGames(button) {
                     </div>
                 `;
 
-                gameList.appendChild(gameBlock); 
+                gameDetailLink.appendChild(gameBlock);
+    
+                gameList.appendChild(gameDetailLink); 
             });
             detailsDiv.style.display = 'flex';
             imgElement.src = "/static/assets/icons/return.png";
