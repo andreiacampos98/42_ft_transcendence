@@ -399,12 +399,16 @@ def user_stats_update(user_id, game_id, data):
 
 	if data['game_stats']['max_ball_speed'] > stats.max_ball_speed:
 		stats.max_ball_speed = data['game_stats']['max_ball_speed']
+		stats.date_max_ball_speed = game.created_at
 	if data['game_stats']['longer_rally'] > stats.max_rally_length:
 		stats.max_rally_length = data['game_stats']['longer_rally']
+		stats.date_max_rally_length = game.created_at
 	if data['duration'] < stats.quickest_game :
 		stats.quickest_game = data['duration']
+		stats.date_quickest_game = game.created_at
 	if data['duration'] > stats.longest_game:
 		stats.longest_game = data['duration']
+		stats.date_longest_game = game.created_at
 	stats.save()
 	data_stats = UserStatsSerializer(stats)
 	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
@@ -1276,7 +1280,7 @@ def profile(request, id):
 	stats_response = user_stats(request, user_profile.id)
 	stats = json.loads(stats_response.content)
 	if stats['nb_goals_suffered'] != 0:
-		goals_scored_suffered_ratio = stats['nb_goals_scored'] / stats['nb_goals_suffered']
+		goals_scored_suffered_ratio = round(stats['nb_goals_scored'] / stats['nb_goals_suffered'], 2)
 	else:
 		goals_scored_suffered_ratio = 0
 	graph = win_rate_nb_games_day(request, user_profile.id)

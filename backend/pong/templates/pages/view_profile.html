@@ -290,7 +290,7 @@
 									<img src="{% static 'assets/icons/speed.png' %}" alt="Max Speed">
 									<div class="record-info-tit">
 										<h6 class="record-tit">Maximum Ball Speed</h6>
-										<h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
+										<h6 class="record-date">{{ stats.date_max_ball_speed }}</h6> <!--preciso destes dados!-->
 									</div>
 								</div>
 								<h6 class="winr"> {{ stats.max_ball_speed }} </h6>
@@ -300,7 +300,7 @@
 									<img src="{% static 'assets/icons/rally.png' %}" alt="Max Speed">
 									<div class="record-info-tit">
 										<h6 class="record-tit">Maximum Rally Length</h6>
-										<h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
+										<h6 class="record-date">{{ stats.date_max_rally_length }}</h6> <!--preciso destes dados!-->
 									</div>
 								</div>
 								<h6 class="winr"> {{ stats.max_rally_length }} </h6>
@@ -310,7 +310,7 @@
 									<img src="{% static 'assets/icons/longest.png' %}" alt="Max Speed">
 									<div class="record-info-tit">
 										<h6 class="record-tit">Longest Game</h6>
-										<h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
+										<h6 class="record-date">{{ stats.date_longest_game }}</h6> <!--preciso destes dados!-->
 									</div>
 								</div>
 								<h6 class="winr"> {{ stats.longest_game }} </h6>
@@ -320,7 +320,7 @@
 									<img src="{% static 'assets/icons/quickest.png' %}" alt="Max Speed">
 									<div class="record-info-tit">
 										<h6 class="record-tit">Quickest Game</h6>
-										<h6 class="record-date">01/01/1111</h6> <!--preciso destes dados!-->
+										<h6 class="record-date">{{ stats.date_quickest_game }}</h6> <!--preciso destes dados!-->
 									</div>
 								</div>
 								<h6 class="winr"> {{ stats.quickest_game }} </h6>
@@ -364,15 +364,15 @@
 									</div>
 								{% endif %}
 								<div class="details d-flex align-items-center justify-content-evenly" >
-									<span class="content date d-flex flex-column" style="height: 42px; align-items: baseline"   id="isoDateDiv2">{{ game.created_at }}
+									<span class="content date d-flex flex-column" style="height: 42px; align-items: baseline"   id="isoDateDiv2">
 										<div class="date-day">{{ game.created_at }}</div>
 										<div class="date-second">{{ game.created_at }}</div>
 									</span>
 									<span class="content duration"> {{ game.duration }} </span>
 									{% if user_view == game.winner_id %}
-										<span class="content victory" style="font-weight: bold;">Victory</span>
+										<span class="content victory" style="font-weight: bold;">VICTORY</span>
 									{% else %}
-										<span class="content" style="font-weight: bold;">Defeat</span>
+										<span class="content" style="font-weight: bold;">DEFEAT</span>
 									{% endif %}
 									{% if user_view == game.user1_id %}
 										<span class="content score">{{ game.nb_goals_user1 }} - {{ game.nb_goals_user2 }}</span>
