@@ -945,6 +945,8 @@ def tournament_update_game(request, tournament_id, game_id):
 		user_id=tour_game.game_id.user2_id.id,
 		tournament_id=tournament_id
 	)
+	user1 = Users.objects.get(pk=tour_game.game_id.user1_id.id)
+	user2 = Users.objects.get(pk=tour_game.game_id.user2_id.id)
 
 	player1.score += data['nb_goals_user1'] * 100
 	player1.save()
@@ -967,6 +969,7 @@ def tournament_update_game(request, tournament_id, game_id):
 	for match in curr_phase_matches:
 		if match.game_id.winner_id is not None:
 			finished_matches += 1
+	
 
 	if finished_matches == total_phase_matches[curr_phase] and curr_phase != 'Final':
 		return advance_tournament_phase(curr_phase, tournament_id)
@@ -974,8 +977,18 @@ def tournament_update_game(request, tournament_id, game_id):
 		tournament = Tournaments.objects.filter(id=tournament_id).first()
 		tournament.duration = datetime.timestamp(datetime.now())- tournament.created_at.timestamp()
 		tournament.save()
+		user_stats_update(user2.id, game_id, data)
+		user_stats_update(user1.id, game_id, data)
+		game_stats_create(game_id, data)
+		game_goals_create(game_id, data)
 		return calculate_placements(tournament_id)
 	
+
+	user_stats_update(user2.id, game_id, data)
+	user_stats_update(user1.id, game_id, data)
+	game_stats_create(game_id, data)
+	game_goals_create(game_id, data)
+
 	data = TournamentsGamesSerializer(tour_game).data
 	data['game'] = GamesSerializer(tour_game.game_id).data
 
