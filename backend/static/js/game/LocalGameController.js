@@ -5,7 +5,7 @@ import { PADDLE_OFFSET_X, ARENA_SEMI_LENGTH, STANDARD_KEYBINDS, ALTERNATE_KEYBIN
 
 export class LocalGameController extends AbstractGameController {
 	constructor({ player1Data, player2Data, ballDirection }) {
-		super({gameType: "Local"});
+		super({type: "Local"});
 		
 		this.registerKeybinds();
 		this.createPlayers(player1Data, player2Data);
@@ -47,7 +47,23 @@ export class LocalGameController extends AbstractGameController {
 		});
 
 		const gameData = await response.json();
+		console.log(gameData);
 		this.stats.gameID = gameData.id;
+	}
+
+	async sendGameResults() {
+		const results = this.stats.assembleGameResults();
+
+		await fetch(`/games/update/${this.stats.gameID}`, {
+			method: 'POST',
+			body: JSON.stringify({
+				'event': 'FINISH',
+				'data': results
+			}),
+			headers: {
+				'Content-Type': 'application/json',
+			}
+		});
 	}
 
 	build(ballDirection) {

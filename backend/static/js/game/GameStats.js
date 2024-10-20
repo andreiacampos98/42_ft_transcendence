@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GameStats.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncarvalh <ncarvalh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nunomiguel533 <nunomiguel533@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/10/16 21:19:36 by ncarvalh         ###   ########.fr       */
+/*   Updated: 2024/10/20 20:49:04 by nunomiguel5      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,6 @@ export class GameStats {
 			`${this.score[this.player1.username]} : ${this.score[this.player2.username]}`;
 		
 		console.log(goal);
-		if (this.gameHasEnded()) {
-			this.calculateSmallStats();
-			this.calculateAdvancedStats();
-			this.sendGameResults();
-		}
 	}
 
 	calculateSmallStats() {
@@ -111,8 +106,6 @@ export class GameStats {
 			stats[p1].maxConsecutive = Math.max(stats[p1].consecutive, stats[p1].maxConsecutive);
 			stats[p2].maxConsecutive = Math.max(stats[p2].consecutive, stats[p2].maxConsecutive);
 			stats[loser].consecutive = 0;
-
-			console.log(stats[p1], stats[p2]);
 		}
 
 		this.gameStats["greatest_deficit_overcome"] = Math.max(stats[p1].maxOvercome, stats[p2].maxOvercome);
@@ -123,9 +116,13 @@ export class GameStats {
 		this.gameStats["bg_user"] = stats[p1].maxLead >= stats[p2].maxLead ? p1 : p2;
 	}
 
-	async sendGameResults() {
+	assembleGameResults(){
+		this.calculateSmallStats();
+		this.calculateAdvancedStats();
+
 		const now = new Date().getTime();
-		const formData = {
+		return {
+			"id": this.gameID, 
 			"duration": Math.round((now - this.startTime) / 1000),
 			"nb_goals_user1": this.score[this.player1.username],
 			"nb_goals_user2": this.score[this.player2.username],
@@ -136,30 +133,17 @@ export class GameStats {
 			"user2_stats": {
 				"scored_first": this.goals[0].user == this.player2.id
 			},
-			"goals": this.goals
+			"goals": this.goals				
 		};
-		console.log(formData);
+	}
+
+	isGameOver() {
+		if (!Object.values(this.score).includes(MAX_GOALS))
+			return false;
 
 		this.winner = this.score[this.player1.username] == MAX_GOALS ? this.player1 : this.player2;
 		this.loser = this.winner == this.player1 ? this.player2 : this.player1;
 
-		const response = await fetch(`/games/update/${this.gameID}`, {
-			method: 'POST',
-			body: JSON.stringify(formData),
-			headers: {
-				'Content-Type': 'application/json',
-			}
-		});
-
-		const responseData = await response.json();
-		console.log(responseData);
-	}
-
-	gameHasEnded() {
-		return (Object.values(this.score).includes(MAX_GOALS));
-	}
-
-	debug() {
-
+		return true;
 	}
 }

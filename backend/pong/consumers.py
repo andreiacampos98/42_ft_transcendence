@@ -1,5 +1,5 @@
 import json
-from .views import game_create_helper
+from .views import game_create_helper, game_update_helper
 from .models import TournamentsUsers, Users
 from .serializers import TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
@@ -53,6 +53,7 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		self.accept()
 		self.user = self.scope['user']
 		self.room_name = ''
+		self.game_id = 0
 
 		# if the queue is empty: (no room available)
 		#	- create a new channel_name and add it to the object
@@ -61,7 +62,7 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		# 	- Pop the first available room in the queue
 		#	- Add the client to the room
 		# 	- Broadcast a message to the channel with a starting command
-		if self.user.id in list(self.queue.keys()):
+		if self.user.id in self.queue:
 			return
 
 		if len(self.queue) == 0:
@@ -110,7 +111,6 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		}
 
 		new_game = json.loads(game_create_helper(new_game_data).content)
-		ic(new_game)
 
 		async_to_sync(self.channel_layer.group_add)(host_player['room_name'], self.channel_name)
 		async_to_sync(self.channel_layer.group_send)(
@@ -139,7 +139,8 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 	def receive(self, text_data=None):
 		handlers = {
 			'UPDATE': 'send.update.paddle.message',
-			'SYNC': 'send.ball.sync.message'
+			'SYNC': 'send.ball.sync.message',
+			'FINISH': 'send.end.game.message'
 		}
 		data = json.loads(text_data)
 		event = data['event']
@@ -158,4 +159,12 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		self.send(event['message'])
 		
 	def send_update_paddle_message(self, event):
+		self.send(event['message'])
+
+	def send_end_game_message(self, event):
+		game_data = json.loads(event['message'])['data']
+		game_id = game_data['id']
+		del game_data['id']
+		
+		game_update_helper(game_data, game_id)
 		self.send(event['message'])

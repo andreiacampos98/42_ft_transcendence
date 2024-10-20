@@ -2,8 +2,10 @@ import * as THREE from 'three';
 import { Ball } from './Ball.js';
 import { Arena } from './Arena.js';
 
+const CURR_PLAYER_ID = document.getElementById('game-engine').getAttribute('data-user-id');
+
 export class AbstractGameController extends THREE.Group {
-	constructor ({ gameType }) {
+	constructor ({ type }) {
 		super();
 
 		this.keybinds = null;
@@ -12,7 +14,7 @@ export class AbstractGameController extends THREE.Group {
 		this.player1 = null;
 		this.player2 = null;
 		this.stats = null;
-		this.gameType = gameType;
+		this.type = type;
 	}
 
 	registerKeybinds() {
@@ -47,6 +49,7 @@ export class AbstractGameController extends THREE.Group {
 	update() {
 		this.player1.update(this.keybinds);
 		this.player2.update(this.keybinds);
+
 		if (this.ball == null)
 			return ;
 
@@ -54,13 +57,28 @@ export class AbstractGameController extends THREE.Group {
 		if (scorer != null) {
 			this.stats.registerGoal(scorer, this.ball);
 			this.ball.reset({});
+			console.log(this.goals);
 		}
-		if (this.stats.winner != null){				
-			this.remove(this.ball);
-			this.ball.dispose();
-			this.ball = null;
+		if (!this.stats.isGameOver())
+			return ;
+
+		this.cleanArena();
+		
+		if ((this.type == "Remote" && this.stats.winner.id == CURR_PLAYER_ID) || 
+			(this.type != "Remote" && this.stats.isGameOver())){
+			console.log(this.type == "Remote" && this.stats.winner.id == CURR_PLAYER_ID);
+			console.log(this.type != "Remote" && this.stats.isGameOver());
+			console.log(this.type, CURR_PLAYER_ID)
+			this.sendGameResults();
 		}
 	}
 
+	cleanArena() {
+		this.remove(this.ball);
+		this.ball.dispose();
+		this.ball = null;
+	}
+
 	createPlayers() {}
+	sendGameResults() {}
 }

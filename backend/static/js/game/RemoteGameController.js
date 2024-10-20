@@ -3,6 +3,8 @@ import { RemotePlayer } from './RemotePlayer.js';
 import { ARENA_SEMI_LENGTH, PADDLE_OFFSET_X, STANDARD_KEYBINDS } from './macros.js';
 import { AbstractGameController } from './AbstractGameController.js';
 
+
+
 export class RemoteGameController extends AbstractGameController {
 	constructor({ player1Data, player2Data, gameID, socket, ballDirection }) {
 		super({type: "Remote"});
@@ -65,6 +67,9 @@ export class RemoteGameController extends AbstractGameController {
 				this.players[data.id].move(data.y);
 			else if (event == 'SYNC')
 				this.ball.sync(data.ball);
+			else if (event == 'FINISH'){
+				this.socket.close();
+			}
 		}
 
 		this.socket.onerror = (ev) => {
@@ -91,5 +96,16 @@ export class RemoteGameController extends AbstractGameController {
 		};
 
 		super.build(ballData);
+	}
+
+	sendGameResults() {
+		const results = this.stats.assembleGameResults();
+		console.log(`WINNER:`, this.stats.winner, 'SCORE:', this.stats.score);
+		console.log('SENDING DATA TO SERVER...');
+
+		this.socket.send(JSON.stringify({
+			'event': 'FINISH',
+			'data': results
+		}));
 	}
 }

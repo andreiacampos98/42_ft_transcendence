@@ -548,7 +548,6 @@ def game_create_helper(data: dict):
 
 	return JsonResponse(serializer.data, status=201)
 
-
 @csrf_exempt
 def game_create(request=None):
 	if request.method != 'POST':
@@ -566,23 +565,9 @@ def game_create(request=None):
 		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
 
 	return game_create_helper(data)
-	
-@csrf_exempt
-def game_update(request, game_id):
-	if request.method != 'POST':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
-	if request.content_type != 'application/json':
-		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
 
-	data = {}
 
-	try:
-		data = json.loads(request.body.decode('utf-8'))
-	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
-	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
-
+def game_update_helper(data, game_id):
 	game = Games.objects.get(pk=game_id)
 	game.duration = data['duration']
 	game.nb_goals_user1 = data['nb_goals_user1']
@@ -598,23 +583,38 @@ def game_update(request, game_id):
 		player2.status = "Online"
 		player2.save()
 		
-
 	if data['nb_goals_user1'] > data['nb_goals_user2']:
 		game.winner_id = player1
 	elif data['nb_goals_user1'] > data['nb_goals_user2'] and game.type != "Local":
 		game.winner_id = player2
 	game.save()
 
-	ic(data)
-
+	user_stats_update(player1.id, game_id, data)
 	if game.type != "Local":
 		user_stats_update(player2.id, game_id, data)
 		game_stats_create(game_id, data)
 		game_goals_create(game_id, data)
 
-	user_stats_update(player1.id, game_id, data)
 	data = GamesSerializer(game).data
 	return JsonResponse(data, status=200)
+	
+@csrf_exempt
+def game_update(request, game_id):
+	if request.method != 'POST':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	if request.content_type != 'application/json':
+		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
+
+	data = {}
+
+	try:
+		data = json.loads(request.body.decode('utf-8'))['data']
+	except json.JSONDecodeError:
+		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+	except KeyError as e:
+		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+
+	return game_update_helper(data, game_id)
 
 @csrf_exempt
 def get_game(request, game_id):
