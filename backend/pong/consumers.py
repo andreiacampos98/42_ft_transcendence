@@ -145,6 +145,12 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		data = json.loads(text_data)
 		event = data['event']
 
+		if event == 'FINISH':
+			game_data = data['data']
+			game_id = game_data['id']
+			del game_data['id']
+			game_update_helper(data['data'], game_id)
+
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_name, {
 				"type": handlers[event], 
@@ -162,9 +168,4 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		self.send(event['message'])
 
 	def send_end_game_message(self, event):
-		game_data = json.loads(event['message'])['data']
-		game_id = game_data['id']
-		del game_data['id']
-		
-		game_update_helper(game_data, game_id)
 		self.send(event['message'])

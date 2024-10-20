@@ -57,7 +57,6 @@ export class AbstractGameController extends THREE.Group {
 		if (scorer != null) {
 			this.stats.registerGoal(scorer, this.ball);
 			this.ball.reset({});
-			console.log(this.goals);
 		}
 		if (!this.stats.isGameOver())
 			return ;
