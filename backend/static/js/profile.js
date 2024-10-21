@@ -65,11 +65,14 @@ async function loadDonutChart() {
 
 	var options = {
 		chart: {
-			type: 'donut',      
-			height: 200         
+			type: 'donut',
+			offsetX: -110,      
+			height: 200, 
+			width: '100%',
+			// background: '#FFFFFF'     
 		},
 		series: [remoteTime, aiTime, localTime, tournamentTime], 
-		labels: ['Remote Game', 'AI mode', 'Local Game', 'Tournaments'], 
+		labels: ['Remote Games', 'AI Mode', 'Local Games', 'Tournaments'], 
 		colors: ['#EC6158', '#46CDBD', '#66DD53', '#FFAD72'],    
 		legend: {
 			position: 'right',   
@@ -79,8 +82,7 @@ async function loadDonutChart() {
 				width: 12,
 				height: 12
 			},
-			fontSize: '14px',
-			fontWeight: 'bold',
+			fontSize: '16px',
 			labels: {
 				colors: ['#fff','#fff','#fff','#fff']  
 			}
@@ -88,7 +90,7 @@ async function loadDonutChart() {
 		plotOptions: {
 			pie: {
 				donut: {
-					size: '70%', 
+					size: '70%',
 					labels: {
 						show: true,
 						total: {
