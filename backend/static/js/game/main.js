@@ -4,13 +4,17 @@ const gameType = document.getElementById('game-engine').getAttribute('game-type'
 const userID = document.getElementById('game-engine').getAttribute('data-user-id');
 const username = document.getElementById('game-engine').getAttribute('data-username');
 
-if (gameType == "Remote") {
+const setupGame = (data) => {
+	let app = new MyApp();
+	app.init(data);
+	app.render();
+};
+
+const remoteHandler = () => {
 	let socket = new WebSocket(`ws://${window.location.host}/ws/games/remote/queue`);
 	socket.onmessage = (event) => {
 		const { player1, player2, ball, gameID } = JSON.parse(event.data);
-		
-		let app = new MyApp();
-		app.init({ 
+		setupGame({
 			player1Data: player1, 
 			player2Data: player2,
 			socket: socket, 
@@ -18,15 +22,20 @@ if (gameType == "Remote") {
 			gameID: gameID,
 			ballDirection: ball.direction,
 		});
-		app.render();
-	}
+	};
 }
-else {
-	let app = new MyApp();
-	app.init({ 
+
+const localHandler = () => {
+	setupGame({ 
 		player1Data: {'id': userID, 'username': username},
 		player2Data: {'id': '', 'username': ''},
 		gameType: gameType 
 	});
-	app.render();
 }
+
+const handlers = {
+	'Local': localHandler,
+	'Remote': remoteHandler
+};
+
+handlers[gameType]();
