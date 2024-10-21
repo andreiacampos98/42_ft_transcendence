@@ -165,7 +165,7 @@ textarea, #username-input, #email-input {
 }
 
 .my-nav-tabs {
-    padding-left: 10vw;
+    padding-left: calc(50% - 125px);
 }
 
 #tabs .my-nav-tabs {

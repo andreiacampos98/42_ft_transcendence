@@ -66,7 +66,8 @@ async function loadDonutChart() {
 	var options = {
 		chart: {
 			type: 'donut',
-			offsetX: -110,      
+			offsetX: -110,
+			offsetY: 10,    
 			height: 200, 
 			width: '100%',
 			// background: '#FFFFFF'     
