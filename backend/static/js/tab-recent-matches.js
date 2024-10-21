@@ -46,7 +46,7 @@ function formatTimestamp_day(timestamp) {
 }
 
 // Function to convert the content of the div
-function convertDay(div_class) {
+function formatDays(div_class) {
     // Get the div element by its ID
     const dateDivs = document.querySelectorAll(div_class);
 
@@ -73,7 +73,7 @@ function formatTimestamp_second(timestamp) {
 }
 
 // Function to convert the content of the div
-function convertTime(div_class) {
+function formatHours(div_class) {
     // Get the div element by its ID
     const dateDivs = document.querySelectorAll(div_class);
 
@@ -101,7 +101,7 @@ function placement_func(placement) {
 }
 
 // Converter colocações
-function convertPlacement() {
+function formatTournamentPlacements() {
     const place = document.querySelectorAll(".placement");
     place.forEach(div => {
         const placement = div.textContent;
@@ -123,7 +123,7 @@ function calculateTimeDifference(duration) {
 }
 
 // Converter duração
-function convertduration() {
+function formatGameDurations() {
     const places = document.querySelectorAll(".duration");
     places.forEach(div => {
         const duration = div.textContent;
@@ -132,32 +132,13 @@ function convertduration() {
     });
 }
 
-// Adicionar ouvintes de eventos aos tabs
-const gamesTab = document.getElementById('tab-games');
-if (gamesTab) {
-    gamesTab.addEventListener('click', function() {
-        onGamesClick(); // Muda para jogos
-        convertduration(); // Converte durações
-        convertDay(".date-day"); // Converte datas
-        convertTime(".date-second"); // Converte datas
-    });
-}
+document.addEventListener('DOMContentLoaded', (event) => {
+	document.getElementById('tab-games').onclick = () => onGamesClick();
+	document.getElementById('tab-tournaments').onclick = () => onTournamentsClick();
+	document.getElementById('tab-profile').onclick = () => onProfileClick();
 
-const tournamentsTab = document.getElementById('tab-tournaments');
-if (tournamentsTab) {
-    tournamentsTab.addEventListener('click', function() {
-        onTournamentsClick(); // Muda para torneios
-        convertPlacement(); // Converte colocações
-        convertduration(); // Converte durações
-        convertDay(".date-day"); // Converte datas
-        convertTime(".date-second"); // Converte datas
-    });
-}
-
-const profileTab = document.getElementById('tab-profile');
-if (profileTab) {
-    profileTab.addEventListener('click', function() {
-        onProfileClick(); // Muda para perfil
-        
-    });
-}
+	formatTournamentPlacements(); // Converte colocações
+	formatGameDurations(); // Converte durações
+	formatDays(".date-day"); // Converte datas
+	formatHours(".date-second"); // Converte datas
+});
