@@ -272,7 +272,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="donut d-flex justify-content-around">
+						<div class="donut d-flex justify-content-between">
 							<h6 class="graph-title" style="color:#fff">Time Spent per Mode</h6>
 							<div id="chart1">
 							</div>
@@ -287,9 +287,9 @@
 						<div class="records d-flex numbers-stat">
 							<h6 class="graph-title" style="color:#fff">Records</h6>
 							<div class="record-info d-flex justify-content-between align-items-center">
-								<div class="img-tit d-flex">
+								<div class="img-tit d-flex align-items-center">
 									<img src="{% static 'assets/icons/speed.png' %}" alt="Max Speed">
-									<div class="record-info-tit">
+									<div class="record-info-tit d-flex flex-column justify-content-around">
 										<h6 class="record-tit">Maximum Ball Speed</h6>
 										<h6 class="record-date">{{ stats.date_max_ball_speed }}</h6> <!--preciso destes dados!-->
 									</div>
@@ -299,7 +299,7 @@
 							<div class="record-info d-flex justify-content-between align-items-center">
 								<div class="img-tit d-flex">
 									<img src="{% static 'assets/icons/rally.png' %}" alt="Max Speed">
-									<div class="record-info-tit">
+									<div class="record-info-tit d-flex flex-column justify-content-around">
 										<h6 class="record-tit">Maximum Rally Length</h6>
 										<h6 class="record-date">{{ stats.date_max_rally_length }}</h6> <!--preciso destes dados!-->
 									</div>
@@ -309,7 +309,7 @@
 							<div class="record-info d-flex justify-content-between align-items-center">
 								<div class="img-tit d-flex">
 									<img src="{% static 'assets/icons/longest.png' %}" alt="Max Speed">
-									<div class="record-info-tit">
+									<div class="record-info-tit d-flex flex-column justify-content-around">
 										<h6 class="record-tit">Longest Game</h6>
 										<h6 class="record-date">{{ stats.date_longest_game }}</h6> <!--preciso destes dados!-->
 									</div>
@@ -319,7 +319,7 @@
 							<div class="record-info d-flex justify-content-between align-items-center">
 								<div class="img-tit d-flex">
 									<img src="{% static 'assets/icons/quickest.png' %}" alt="Max Speed">
-									<div class="record-info-tit">
+									<div class="record-info-tit d-flex flex-column justify-content-around">
 										<h6 class="record-tit">Quickest Game</h6>
 										<h6 class="record-date">{{ stats.date_quickest_game }}</h6> <!--preciso destes dados!-->
 									</div>
