@@ -73,7 +73,7 @@ function formatTimestamp_second(timestamp) {
 }
 
 // Function to convert the content of the div
-function formatHours(div_class) {
+function formatRecordsTimestamp(div_class) {
     // Get the div element by its ID
     const dateDivs = document.querySelectorAll(div_class);
 
@@ -140,5 +140,5 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	formatTournamentPlacements(); // Converte colocações
 	formatGameDurations(); // Converte durações
 	formatDays(".date-day"); // Converte datas
-	formatHours(".date-second"); // Converte datas
+	formatRecordsTimestamp(".date-second"); // Converte datas
 });
