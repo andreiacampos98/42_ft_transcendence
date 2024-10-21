@@ -1298,6 +1298,7 @@ def profile(request, id):
 		goals_scored_suffered_ratio = 0
 	graph = win_rate_nb_games_day(request, user_profile.id)
 	graph_send = json.loads(graph.content)
+	ic(GamesSerializer(games[0]).data)
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -1315,7 +1316,6 @@ def profile(request, id):
 		'graph': graph_send,
 		'page': 'profile' if is_own_profile else 'else'
 	}
-	ic(context)
 	return render(request, 'pages/view_profile.html', context)
 
 

@@ -25,119 +25,6 @@ function onTournamentsClick() {
     document.getElementById("tab-profile").classList.remove("active");
 }
 
-/*function parseCustomDate(dateString) {
-    // Expressão regular para capturar a data e hora
-    const datePattern = /([A-Za-z]+)\.\s(\d{1,2}),\s(\d{4}),\s(\d{1,2}):(\d{2})\s([a|p]\.m\.)/;
-    const match = dateString.match(datePattern);
-
-    if (!match) {
-        console.error("Formato de data inválido:", dateString);
-        return null;
-    }
-
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const monthString = match[1].replace(".", "").trim();  // Remove o ponto e espaços
-    const month = monthNames.indexOf(monthString);
-    console.log("Month ",month)
-    const day = parseInt(match[2], 10);
-    const year = parseInt(match[3], 10);
-    let hours = parseInt(match[4], 10);
-    const minutes = parseInt(match[5], 10);
-    const period = match[6]; // "a.m." ou "p.m."
-
-    // Converte para o formato 24 horas
-    if (period === "p.m." && hours < 12) {
-        hours += 12;
-    } else if (period === "a.m." && hours === 12) {
-        hours = 0;
-    }
-
-    // Retorna um objeto Date válido
-    return new Date(Date.UTC(year, month, day, hours, minutes));
-}
-
-
-// Formatar data com dia
-function formatTimestamp_day(timestamp) {
-    console.log("aqui2", timestamp)
-    const date = parseCustomDate(timestamp); // Usar a função de parsing
-    console.log("aqui", date)
-    if (!date) return "Invalid date"; // Verifica se o parsing falhou
-
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const day = String(date.getUTCDate()).padStart(2, '0');
-    const month = monthNames[date.getUTCMonth()];
-    const year = date.getUTCFullYear();
-    return `${day}, ${month}. ${year}`;
-}
-
-// Formatar timestamp com segundos
-function formatTimestamp_second(timestamp) {
-    const date = parseCustomDate(timestamp); // Usar a função de parsing
-    if (!date) return "Invalid time"; // Verifica se o parsing falhou
-
-    const hours = String(date.getUTCHours()).padStart(2, '0');
-    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-    const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
-}
-
-
-// Converter datas no div
-function convertDateInDiv1(div_class) {
-    const dateDivs = document.querySelectorAll(div_class);
-    dateDivs.forEach(div => {
-        const isoTimestamp = div.textContent;
-        const formattedDate = formatTimestamp_day(isoTimestamp);
-        div.textContent = formattedDate;
-    });
-}
-
-
-// Converter datas no div
-function convertDateInDiv2(div_class) {
-    const dateDivs = document.querySelectorAll(div_class);
-    dateDivs.forEach(div => {
-        const isoTimestamp = div.textContent;
-        const formattedDate = formatTimestamp_second(isoTimestamp);
-        div.textContent = formattedDate;
-    });
-}
-
- */
-
-
-function parseCustomDate(dateString) {
-    // Expressão regular para capturar a data e hora
-    const datePattern = /([A-Za-z]+)\.\s(\d{1,2}),\s(\d{4}),\s(\d{1,2}):(\d{2})\s([a|p]\.m\.)/;
-    const match = dateString.match(datePattern);
-
-    if (!match) {
-        console.error("Formato de data inválido:", dateString);
-        return null;
-    }
-
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const monthString = match[1].replace(".", "").trim();  // Remove o ponto e espaços
-    const month = monthNames.indexOf(monthString);
-    console.log("Month ",month)
-    const day = parseInt(match[2], 10);
-    const year = parseInt(match[3], 10);
-    let hours = parseInt(match[4], 10);
-    const minutes = parseInt(match[5], 10);
-    const period = match[6]; // "a.m." ou "p.m."
-
-    // Converte para o formato 24 horas
-    if (period === "p.m." && hours < 12) {
-        hours += 12;
-    } else if (period === "a.m." && hours === 12) {
-        hours = 0;
-    }
-
-    // Retorna um objeto Date válido
-    return new Date(Date.UTC(year, month, day, hours, minutes));
-}
-
 
 function formatTimestamp_day(timestamp) {
     const date = new Date(timestamp);
@@ -150,42 +37,43 @@ function formatTimestamp_day(timestamp) {
     const month = monthNames[date.getUTCMonth()];
     const year = date.getUTCFullYear();
 
-    // Format the result as dd, mmm yyyy hh:mm:ss
-    return `${day}, ${month}. ${year}`;
+	const suffixes = ['st', 'nd', 'rd'];
+	const dayUnits = date.getUTCDate() % 10;
+	
+	if ((dayUnits >= 1 && dayUnits <= 3) && (date.getUTCDate() < 10 || date.getUTCDate() > 13))
+		return `${day}${suffixes[dayUnits - 1]}, ${month}. ${year}`;
+	return `${day}th, ${month}. ${year}`;
 }
 
 // Function to convert the content of the div
-function convertDateInDiv1(div_class) {
+function convertDay(div_class) {
     // Get the div element by its ID
     const dateDivs = document.querySelectorAll(div_class);
 
-            // Loop through each div and convert its content
-            dateDivs.forEach(div => {
-                const isoTimestamp = div.textContent; // Get the ISO date string from the div
-                const formattedDate = formatTimestamp_day(isoTimestamp); // Format the date
-                div.textContent = formattedDate; // Set the formatted date back into the div
-            });
+	// Loop through each div and convert its content
+	dateDivs.forEach(div => {
+		const isoTimestamp = div.textContent; // Get the ISO date string from the div
+		const formattedDate = formatTimestamp_day(isoTimestamp); // Format the date
+		div.textContent = formattedDate; // Set the formatted date back into the div
+	});
 }
 
 function formatTimestamp_second(timestamp) {
+	console.log(timestamp);
     const date = new Date(timestamp);
 
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-    // Get the day, month, year, hours, minutes, and seconds from the date object
-    const day = String(date.getUTCDate()).padStart(2, '0');
-    const month = monthNames[date.getUTCMonth()];
-    const year = date.getUTCFullYear();
     const hours = String(date.getUTCHours()).padStart(2, '0');
     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
     const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+
+	console.log(`${hours}:${minutes}:${seconds}`);
 
     // Format the result as dd, mmm yyyy hh:mm:ss
     return `${hours}:${minutes}:${seconds}`;
 }
 
 // Function to convert the content of the div
-function convertDateInDiv2(div_class) {
+function convertTime(div_class) {
     // Get the div element by its ID
     const dateDivs = document.querySelectorAll(div_class);
 
@@ -250,8 +138,8 @@ if (gamesTab) {
     gamesTab.addEventListener('click', function() {
         onGamesClick(); // Muda para jogos
         convertduration(); // Converte durações
-        convertDateInDiv1(".date-day"); // Converte datas
-        convertDateInDiv2(".date-second"); // Converte datas
+        convertDay(".date-day"); // Converte datas
+        convertTime(".date-second"); // Converte datas
     });
 }
 
@@ -261,8 +149,8 @@ if (tournamentsTab) {
         onTournamentsClick(); // Muda para torneios
         convertPlacement(); // Converte colocações
         convertduration(); // Converte durações
-        convertDateInDiv1(".date-day"); // Converte datas
-        convertDateInDiv2(".date-second"); // Converte datas
+        convertDay(".date-day"); // Converte datas
+        convertTime(".date-second"); // Converte datas
     });
 }
 

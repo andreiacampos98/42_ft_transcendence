@@ -365,8 +365,8 @@
 								{% endif %}
 								<div class="details d-flex align-items-center justify-content-evenly" >
 									<span class="content date d-flex flex-column" style="height: 42px; align-items: baseline"   id="isoDateDiv2">
-										<div class="date-day">{{ game.created_at }}</div>
-										<div class="date-second">{{ game.created_at }}</div>
+										<div class="date-day">{{ game.created_at|date:"c" }}</div>
+										<div class="date-second">{{ game.created_at|date:"c" }}</div>
 									</span>
 									<span class="content duration"> {{ game.duration }} </span>
 									{% if user_view.id == game.winner_id.id %}
@@ -448,8 +448,8 @@
 									</div>
 									<div class="details d-flex align-items-center justify-content-evenly">
 										<span class="content date d-flex flex-column" style="height: 42px; align-items: baseline" id="isoDateDiv1">
-											<div class="date-day">{{ tour.tournament.created_at }}</div>
-											<div  class="date-second">{{ tour.tournament.created_at }}</div>
+											<div class="date-day">{{ tour.tournament.created_at|date:"c" }}</div>
+											<div  class="date-second">{{ tour.tournament.created_at|date:"c" }}</div>
 										</span>
 										<span class="content duration">{{ tour.tournament.duration }}</span>
 										<span class="content placement"> {{ tour.placement }}</span>
