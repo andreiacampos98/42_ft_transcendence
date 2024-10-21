@@ -92,3 +92,36 @@ export var TEST_GOALS = [
 		'ball_speed': Math.random() * 10,
 	},
 ];
+
+export const TEST_STATS = [
+	{
+		day: "2024-10-18T00:00:00Z",
+		total_games: 5,
+		win_rate: 1
+	},
+	{
+		day: "2024-10-19T00:00:00Z",
+		total_games: 6,
+		win_rate: 2
+	},
+	{
+		day: "2024-10-20T00:00:00Z",
+		total_games: 7,
+		win_rate: 3
+	},	
+	{
+		day: "2024-10-21T00:00:00Z",
+		total_games: 8,
+		win_rate: 4
+	},
+	{
+		day: "2024-10-22T00:00:00Z",
+		total_games: 16,
+		win_rate: 9
+	},
+	{
+		day: "2024-10-24T00:00:00Z",
+		total_games: 7,
+		win_rate: 7
+	}
+];

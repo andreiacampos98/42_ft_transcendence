@@ -59,14 +59,11 @@ function formatDays(div_class) {
 }
 
 function formatTimestamp_second(timestamp) {
-	console.log(timestamp);
     const date = new Date(timestamp);
 
     const hours = String(date.getUTCHours()).padStart(2, '0');
     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
     const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-
-	console.log(`${hours}:${minutes}:${seconds}`);
 
     // Format the result as dd, mmm yyyy hh:mm:ss
     return `${hours}:${minutes}:${seconds}`;

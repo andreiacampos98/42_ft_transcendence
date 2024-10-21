@@ -89,7 +89,10 @@ async function loadCharts() {
 
 	var options = {
 		chart: {
-		  type: 'line'
+		  type: 'line',
+		  toolbar: {
+			show: false
+		},
 		},
 		stroke: {
 			curve: 'straight',

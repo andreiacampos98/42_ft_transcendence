@@ -1,11 +1,9 @@
+import { TEST_STATS } from "./game/macros";
 
-// Get the modal
 var modal2 = document.getElementById("modal2");
-// Get the button that opens the modal
 var btn2 = document.getElementById("remove-friend-button");
-// Get the  element that closes the modal
 var goback = document.getElementById("cancel");
-// When the user clicks the button, open the modal
+
 if (btn2) {
 	btn2.onclick = function() {
 		modal2.style.display = "block";
@@ -16,7 +14,6 @@ goback.onclick = function() {
 	modal2.style.display = "none";
 }
 
-// When the user clicks anywhere outside of the modal2, close it
 window.onclick = function(event) {
 	if (event.target == modal2) {
 		modal2.style.display = "none";
@@ -127,21 +124,30 @@ async function loadBarLineChart() {
 	const response = await fetch(`/graph/${userID}`, {
 		method: "GET",
 	});
-	const stats = await response.json();
-	console.log(stats);
+	const dailyRawStats = await response.json();
+	// const dailyRawStats = TEST_STATS;
 
-	const tempRates = stats.map((x) => x.win_rate);
-	const tempTotalGames = stats.map((x) => x.total_games);
+	const tempRates = dailyRawStats.map((x) => x.win_rate);
+	const tempTotalGames = dailyRawStats.map((x) => x.total_games);
 	const winRates = new Array(7).fill(0);
 	const totalGames = new Array(7).fill(0);
 
-	console.log(tempRates);
-	console.log(tempTotalGames);
-	tempRates.forEach((rate, i) => {
-		winRates[i] = rate});
-	tempTotalGames.forEach((games, i) => totalGames[i] = games);
+	tempRates.forEach((winRate, i) => {
+		const timestamp = new Date(dailyRawStats[i].day);
+		if (timestamp.getDate() < new Date().getDate())
+			return ;
+		
+		const weekday = (timestamp.getDay() + 6) % 7;
+		winRates[weekday] = winRate;
+	});
+	tempTotalGames.forEach((numGames, i) => {
+		const timestamp = new Date(dailyRawStats[i].day);
+		if (timestamp.getDate() < new Date().getDate())
+			return ;
 
-	console.log(winRates, totalGames);
+		const weekday = (timestamp.getDay() + 6) % 7;
+		totalGames[weekday] = numGames;
+	});
 
 	var options = {
 		chart: {
@@ -153,18 +159,26 @@ async function loadBarLineChart() {
 			},
 			width: '100%',
 		},
-		series: [{
-			name: 'Win Rate',
-			type: 'column',
-			data: totalGames
-		}, {
-			name: 'Win Rate Line',
-			type: 'line',
-			data: winRates,
-			stroke: {
-				width: 2,
-			},
-		}],
+		plotOptions: {
+			bar: {
+			  borderRadius: 10,
+			}
+		},
+		series: [
+			{
+				name: 'Games Played',
+				type: 'column',
+				data: totalGames
+			}, 
+			{
+				name: 'Win Rate (%)',
+				type: 'line',
+				data: winRates,
+				stroke: {
+					width: 2,
+				},
+			}
+		],
 		xaxis: {
 			categories: ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],
 			labels: {
@@ -190,13 +204,22 @@ async function loadBarLineChart() {
 			show: false
 		},
 		tooltip: {
-			enabled: false
-		},
+			y: {
+			  formatter: function (val) {
+				return val;
+			  }
+			}
+		  },
 		dataLabels: {
-			enabled: false
-		},
+			enabled: false,
+		  },
 		legend: {
-			show: false
+			show: true,
+			horizontalAlign: 'center', 
+			fontSize: '14px',          
+			labels: {
+				colors: ['#FFFFFF', '#FFFFFF'],  
+			},
 		}
 	};
 	
