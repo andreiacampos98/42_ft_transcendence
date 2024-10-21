@@ -585,7 +585,7 @@ def game_update_helper(data, game_id):
 		
 	if data['nb_goals_user1'] > data['nb_goals_user2']:
 		game.winner_id = player1
-	elif data['nb_goals_user1'] > data['nb_goals_user2'] and game.type != "Local":
+	elif data['nb_goals_user1'] < data['nb_goals_user2'] and game.type != "Local":
 		game.winner_id = player2
 	game.save()
 

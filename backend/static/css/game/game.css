@@ -26,13 +26,30 @@
     right: 100px;
 }
 
-#score {
+#scoreboard {
 	color: white;
-	font-size: 32px;
-	font-weight: bold;
-    height: 100px;
-	left: calc(50% - 50px); 
+    height: 50px;
+    width: 100%; 
 	position: absolute;
     top: 36px; 
-    width: 100px; 
+}
+
+#p1 {
+	font-size: 24px;
+	text-align: end;
+}
+
+#p2 {
+	font-size: 24px;
+	text-align: start;
+}
+
+#score {
+	font-size: 32px;
+	font-weight: bold;
+}
+
+#p1, #p2, #score {
+	width: 300px;
+	/* background-color: red;	 */
 }

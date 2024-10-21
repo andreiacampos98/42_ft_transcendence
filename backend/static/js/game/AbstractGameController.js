@@ -44,6 +44,11 @@ export class AbstractGameController extends THREE.Group {
 		this.add(this.player1.paddle);
 		this.add(this.player2.paddle);
 		this.add(this.ball);
+
+		const p1display = document.getElementById('p1');
+		const p2display = document.getElementById('p2');
+		p1display.textContent = `${this.player1.username}`;
+		p2display.textContent = `${this.player2.username}`;
 	}
 
 	update() {

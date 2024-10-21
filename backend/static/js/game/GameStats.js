@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GameStats.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nunomiguel533 <nunomiguel533@student.42    +#+  +:+       +#+        */
+/*   By: crypto <crypto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/10/20 21:10:37 by nunomiguel5      ###   ########.fr       */
+/*   Updated: 2024/10/21 15:08:36 by crypto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ export class GameStats {
 		this.gameStats = {};
 		this.scoredFirst = null;
 		this.startTime = null
-		this.scoreBoard = null;
+		this.gameScore = null;
 		this.init();
 	}
 
@@ -32,7 +32,7 @@ export class GameStats {
 		this.startTime = new Date().getTime();
 		this.score[this.player1.username] = 0;
 		this.score[this.player2.username] = 0;
-		this.scoreBoard = document.getElementById('score');
+		this.gameScore = document.getElementById('score');
 		
 		//! Testing
 		// this.goals = TEST_GOALS;
@@ -51,7 +51,7 @@ export class GameStats {
 		this.score[scorer.username] += 1;
 		this.goals.push(goal);
 		console.log(this.goals);
-		this.scoreBoard.textContent = 
+		this.gameScore.textContent = 
 			`${this.score[this.player1.username]} : ${this.score[this.player2.username]}`;
 		
 		console.log(goal);

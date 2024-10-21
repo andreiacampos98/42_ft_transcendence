@@ -28,7 +28,7 @@ const remoteHandler = () => {
 const localHandler = () => {
 	setupGame({ 
 		player1Data: {'id': userID, 'username': username},
-		player2Data: {'id': '', 'username': ''},
+		player2Data: {'id': '', 'username': 'Anonymous'},
 		gameType: gameType 
 	});
 }
