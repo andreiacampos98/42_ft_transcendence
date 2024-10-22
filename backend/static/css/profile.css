@@ -496,3 +496,7 @@ input:checked + .slider:before {
     margin-top: 16px;
 }
 
+.no-data img {
+	width: 140px;
+	height: 140px;
+}
