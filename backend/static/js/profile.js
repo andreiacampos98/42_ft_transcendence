@@ -1,4 +1,4 @@
-import { TEST_STATS } from "./game/macros";
+// import { TEST_STATS } from "./game/macros";
 
 var modal2 = document.getElementById("modal2");
 var btn2 = document.getElementById("remove-friend-button");

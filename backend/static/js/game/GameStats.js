@@ -46,7 +46,7 @@ export class GameStats {
 			'timestamp': new Date().toISOString(),
 			'user': scorer.id,
 			'rally_length': ball.rally,
-			'ball_speed': Math.round(ball.speed.x),
+			'ball_speed': parseFloat(ball.speed.x.toFixed(2)),
 		};
 		this.score[scorer.username] += 1;
 		this.goals.push(goal);

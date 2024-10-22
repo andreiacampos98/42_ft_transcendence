@@ -47,8 +47,8 @@ export class AbstractGameController extends THREE.Group {
 
 		const p1display = document.getElementById('p1');
 		const p2display = document.getElementById('p2');
-		p1display.textContent = `${this.player1.username}`;
-		p2display.textContent = `${this.player2.username}`;
+		p1display.textContent = `${this.player1.id}-${this.player1.username}`;
+		p2display.textContent = `${this.player2.id}-${this.player2.username}`;
 	}
 
 	update() {

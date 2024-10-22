@@ -1,3 +1,6 @@
+const FAST_BALL_SPEED = 2;
+const HIGH_RALLY_LENGTH = 15;
+
 function interpolateColor(startColor, endColor, factor) {
     const result = startColor.slice(); // Create a copy of the start color
     for (let i = 0; i < 3; i++) {
@@ -14,23 +17,23 @@ function rgbToHex(rgb) {
 
 // Main function to apply the background color to all divs with class 'square'
 function applyGradientToHeatmap() {
-    const squares1 = document.querySelectorAll('.square-length'); // Select all divs with class 'square'
-    const squares2 = document.querySelectorAll('.square-speed'); // Select all divs with class 'square'
+    const rallyLengthSquares = document.querySelectorAll('.square-length'); // Select all divs with class 'square'
+    const ballSpeedSquares = document.querySelectorAll('.square-speed'); // Select all divs with class 'square'
     const startColor = [255, 255, 255]; // RGB for #FFFFFF (white)
     const endColor = [253, 180, 39];  // RGB for #F8D082 (light orange)
 
-    squares1.forEach(square => {
+    rallyLengthSquares.forEach(square => {
         const value = parseInt(square.textContent); // Get the text inside the div and convert to integer
-        const factor = value / 100; // Calculate the interpolation factor (0 to 1)
+        const factor = value / HIGH_RALLY_LENGTH; // Calculate the interpolation factor (0 to 1)
 
         const interpolatedColor = interpolateColor(startColor, endColor, factor); // Get the interpolated color
         const hexColor = rgbToHex(interpolatedColor); // Convert the RGB color to hex format
 
         square.style.backgroundColor = hexColor; // Apply the background color to the div
     });
-    squares2.forEach(square => {
+    ballSpeedSquares.forEach(square => {
         const value = parseInt(square.textContent); // Get the text inside the div and convert to integer
-        const factor = value / 100; // Calculate the interpolation factor (0 to 1)
+        const factor = value / FAST_BALL_SPEED; // Calculate the interpolation factor (0 to 1)
 
         const interpolatedColor = interpolateColor(startColor, endColor, factor); // Get the interpolated color
         const hexColor = rgbToHex(interpolatedColor); // Convert the RGB color to hex format

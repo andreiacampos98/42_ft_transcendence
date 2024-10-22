@@ -111,15 +111,14 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		}
 
 		new_game = json.loads(game_create_helper(new_game_data).content)
-
 		async_to_sync(self.channel_layer.group_add)(host_player['room_name'], self.channel_name)
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_name, {
 				"type": "send.start.game.message", 
 				"message": json.dumps({
 					'gameID': new_game['id'],
-					'player1': curr_player,
-					'player2': host_player,
+					'player1': host_player,
+					'player2': curr_player,
 					'ball': {
 						'direction': {
 							'x': 1 if random.randint(0, 1) == 1 else -1,

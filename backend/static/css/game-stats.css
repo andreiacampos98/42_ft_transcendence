@@ -149,6 +149,7 @@
 .records-title {
     font-size: large;
     color: #fff;
+    margin-bottom: 16px;
 }
 
 .rally-len, .ball-speed  {
@@ -183,20 +184,23 @@
 
 .squares {
     color: #FFFFFF;
-    width: 65%;
+    width: 80%;
     min-width: 270px;
-    padding-bottom: 20px;
+    padding-bottom: 8px;
 }
 
 .square-length, .square-speed {
-    width: 25px;
-    height: 25px;
+    width: 35px;
+    height: 28px;
     background-color: #FFFFFF;
     border-radius: 3px;
     color: #836938;
     font-weight: bold;
+    font-size: 14px;
     margin-bottom: 3px;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .squares span {
