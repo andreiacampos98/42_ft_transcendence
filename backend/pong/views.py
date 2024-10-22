@@ -905,16 +905,18 @@ def tournament_list_user(request, user_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
 
-	all_tour=TournamentsUsers.objects.filter(user_id=user_id)
-	serializer = TournamentsUsersSerializer(all_tour, many=True)
-	all_tourusers_list = serializer.data
+	all_users = TournamentsUsers.objects.filter(user_id=user_id)
+	serializer = TournamentsUsersSerializer(all_users, many=True)
+	all_user_tours = serializer.data
 
-	for touruser in all_tourusers_list:
+	for touruser in all_user_tours:
 		tournament = Tournaments.objects.get(pk=touruser['tournament_id'])
 		serializer = TournamentsSerializer(tournament)
 		touruser['tournament'] = serializer.data
 
-	return JsonResponse(all_tourusers_list, safe=False)
+	all_user_tours.sort(reverse=True, key=lambda t: t['created_at'])
+
+	return JsonResponse(all_user_tours, safe=False)
 
 
 @csrf_exempt
