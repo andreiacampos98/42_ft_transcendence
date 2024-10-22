@@ -1,6 +1,6 @@
 {% extends 'navs.html' %}
 {% load static %}
-
+{% load custom_filters %}
 
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/game-stats.css' %}">
@@ -13,7 +13,11 @@
 				data-user-1-name="{{game.user1_id.username}}" data-user-2-name="{{game.user2_id.username}}"></div>
             <div class="profile-head d-flex align-items-center justify-content-center">
                 <div class="d-flex align-items-center justify-content-center flex-column">
-                    <img class="profile-medium" src="{{ game.user1_id.picture }}">
+                    {% if "http" in game.user1_id.picture %}
+                        <img class="profile-medium" src="{{ game.user1_id.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                    {% else %}
+                        <img class="profile-medium" src="{{ game.user1_id.picture }}" alt="Profile">
+                    {% endif %}
                     <span style="margin-top: 5px;">{{game.user1_id.username}}</span>
                 </div>
                 <div class="scoreboard d-flex align-items-center justify-content-center flex-column">
@@ -28,7 +32,11 @@
                     <span>{{game.nb_goals_user1}}&nbsp;-&nbsp;{{game.nb_goals_user2}}</span>
                 </div>
                 <div class="d-flex align-items-center justify-content-center flex-column">
-                    <img class="profile-medium" src="{{ game.user2_id.picture }}">
+                    {% if "http" in game.user2_id.picture %}
+                        <img class="profile-medium" src="{{ game.user2_id.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                    {% else %}
+                        <img class="profile-medium" src="{{ game.user2_id.picture }}" alt="Profile">
+                    {% endif %}
                     <span style="margin-top: 5px;">{{game.user2_id.username}}</span>
                 </div>
             </div>
@@ -165,7 +173,11 @@
                         <h6 class="record-sub">Who bounced back the most goals.</h6>
                         <div class="record-info d-flex justify-content-between align-items-center">
                             <div class="img-tit d-flex align-items-center">
-                                <img class="profile-medium" src="{{stats.gdo_user.picture}}" alt="The one">
+                                {% if "http" in stats.gdo_user.picture %}
+                                    <img class="profile-medium" src="{{ stats.gdo_user.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                                {% else %}
+                                    <img class="profile-medium" src="{{ stats.gdo_user.picture }}" alt="Profile">
+                                {% endif %}
                                 <h6 class="name">{{stats.gdo_user.username}}</h6>
                             </div>
                             <h6 class="winr"> {{stats.greatest_deficit_overcome}} </h6>
@@ -176,7 +188,11 @@
                         <h6 class="record-sub">Who scored more goals in a row.</h6>
                         <div class="record-info d-flex justify-content-between align-items-center">
                             <div class="img-tit d-flex align-items-center">
-                                <img class="profile-medium" src="{{stats.mcg_user.picture}}" alt="The one">
+                                {% if "http" in stats.mcg_user.picture %}
+                                    <img class="profile-medium" src="{{ stats.mcg_user.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                                {% else %}
+                                    <img class="profile-medium" src="{{ stats.mcg_user.picture }}" alt="Profile">
+                                {% endif %}
                                 <h6 class="name">{{stats.mcg_user.username}}</h6>
                             </div>
                             <h6 class="winr"> {{stats.most_consecutive_goals}} </h6>
@@ -187,7 +203,11 @@
                         <h6 class="record-sub">Who had the biggest goal lead.</h6>
                         <div class="record-info d-flex justify-content-between align-items-center">
                             <div class="img-tit d-flex align-items-center">
-                                <img class="profile-medium" src="{{stats.bg_user.picture}}" alt="The one">
+                                {% if "http" in stats.bg_user.picture %}
+                                    <img class="profile-medium" src="{{ stats.bg_user.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                                {% else %}
+                                    <img class="profile-medium" src="{{ stats.bg_user.picture }}" alt="Profile">
+                                {% endif %}
                                 <h6 class="name">{{stats.bg_user.username}}</h6>
                             </div>
                             <h6 class="winr"> {{stats.biggest_lead}} </h6>
