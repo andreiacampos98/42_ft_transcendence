@@ -347,6 +347,11 @@ textarea, #username-input, #email-input {
 	padding-bottom: 5px;
 }
 
+.tour-game-winner {
+	color: #F8D082;
+	font-weight: bold;
+}
+
 .winr, .graph-value {
 	font-weight: bold;
 	color: #F8D082;
@@ -499,4 +504,8 @@ input:checked + .slider:before {
 .no-data img {
 	width: 140px;
 	height: 140px;
+}
+
+.game-link{
+	text-decoration:none;
 }

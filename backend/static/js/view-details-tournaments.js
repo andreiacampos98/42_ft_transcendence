@@ -93,10 +93,9 @@ function detailTournamentGames(button) {
                 user2Link.appendChild(user2ProfilePic);
                 user2Link.appendChild(user2Name);
                 if ( game.game.nb_goals_user1 > game.game.nb_goals_user2) {
-                    user1Name.classList.add('winr');
+                    user1Name.classList.add('tour-game-winner');
                 } else {
-                    user2Name.classList.add('winr');
-
+                    user2Name.classList.add('tour-game-winner');
                 }
 
                 const gameDetailLink = document.createElement('a');
