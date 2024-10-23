@@ -1,29 +1,222 @@
 {% extends 'navs.html' %}
 {% load static %}
-
+{% load custom_filters %}
 
 {% block main_content %}
-<div>
-    <h1>Game {{ game_id }}</h1>
-    <p>Longer Rally {{ stats.data.longer_rally }}</p>
-    <p>Shorter Rally {{ stats.data.shorter_rally }}</p>
-    <p>Average Rally {{ stats.data.average_rally }}</p>
-    <p>Max Ball Speed {{ stats.data.max_ball_speed }}</p>
-    <p>Min Ball Speed  {{ stats.data.min_ball_speed }}</p>
-    <p>Average Ball Speed  {{ stats.data.average_ball_speed }}</p>
-    <p>Greatest Deficit Overcome  {{ stats.data.greatest_deficit_overcome }}</p>
-    <p>User GDO {{ stats.data.gdo_user.username }}</p>
-    <p>Most Consecutive Goals  {{ stats.data.most_consecutive_goals }}</p>
-    <p>User MCG {{ stats.data.mcg_user.username }}</p>
-    <p>Biggest Lead {{ stats.data.biggest_lead }}</p>
-    <p>User BG  {{ stats.data.bg_user.username }}</p>
-    <h1>Goals: </h1>
-    {% for goal in goals.data %}
-        <p>Goal Rally Length: {{ goal.rally_length }}</p>
-        <p>Ball Speed: {{ goal.ball_speed }}</p>
-        <p>Timestamp: {{ goal.timestamp }}</p>
-        <p>User: {{ goal.user }}</p>
-    {% endfor %}
+<link rel="stylesheet" href="{% static 'css/game-stats.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script defer src="{% static 'js/game-stats.js' %}"></script>
+<div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
+    <div class="main d-flex" id="main-wrapper">
+        <div class="main d-flex flex-column" id="profile-main">
+			<div id="game-id" data-game-id="{{game.id}}" data-user-1="{{game.user1_id.id}}" data-user-2="{{game.user2_id.id}}"
+				data-user-1-name="{{game.user1_id.username}}" data-user-2-name="{{game.user2_id.username}}"></div>
+            <div class="profile-head d-flex align-items-center justify-content-center">
+                <div class="d-flex align-items-center justify-content-center flex-column">
+                    {% if "http" in game.user1_id.picture %}
+                        <img class="profile-medium" src="{{ game.user1_id.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                    {% else %}
+                        <img class="profile-medium" src="{{ game.user1_id.picture }}" alt="Profile">
+                    {% endif %}
+                    <span style="margin-top: 5px;">{{game.user1_id.username}}</span>
+                </div>
+                <div class="scoreboard d-flex align-items-center justify-content-center flex-column">
+                    {% if user.id == game.user1_id.id or user.id == game.user2_id.id %}
+                        {% if user.id == game.winner_id%}
+                            <span class="content" style="font-weight: bold; color: #F8D082">VICTORY</span>
+                        {% else %}
+                            <span class="content" style="font-weight: bold;">DEFEAT</span>
+                        {% endif %}
+                    {% endif %}
+					<!-- <span>{{user.id}}-{{game.user1_id.id}}-{{game.user2_id.id}}-{{game.winner_id}}</span> -->
+                    <span>{{game.nb_goals_user1}}&nbsp;-&nbsp;{{game.nb_goals_user2}}</span>
+                </div>
+                <div class="d-flex align-items-center justify-content-center flex-column">
+                    {% if "http" in game.user2_id.picture %}
+                        <img class="profile-medium" src="{{ game.user2_id.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                    {% else %}
+                        <img class="profile-medium" src="{{ game.user2_id.picture }}" alt="Profile">
+                    {% endif %}
+                    <span style="margin-top: 5px;">{{game.user2_id.username}}</span>
+                </div>
+            </div>
+            <div class="profile-foot d-flex align-items-center">
+                <div class="bar-graphs d-flex flex-column align-items-center">
+                    <h6 class="graph-title" style="color:#fff;padding: 30px;padding-bottom: 10px;">Score History</h6>
+                    <div id="chart"></div>
+                </div>
+                <div class="averages d-flex flex-column justify-content-around">
+                    <div class="records d-flex flex-column align-items-center justify-content-center" style="margin-top: 0;">
+                        <h6 class="records-title">Rally Length per Goal</h6>
+                        <div class="squares d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">0</div>
+                                <span">1</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">0</div>
+                                <span">2</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">0</div>
+                                <span">3</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">0</div>
+                                <span">4</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">0</div>
+                                <span">5</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">0</div>
+                                <span">6</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">0</div>
+                                <span">7</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">0</div>
+                                <span">8</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-length">0</div>
+                                <span">9</span>
+                            </div>
+                        </div>
+                        <div class="rally-len d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img src="{% static 'assets/icons/rally-len.png' %}">
+                                <div class="grey-line"></div>
+                            </div>
+                            <div class="minutes">
+                                <h6 class="winr">{{stats.shorter_rally}}</h6>
+                                <span> Min</span>
+                            </div>
+                            <div class="average">
+                                <h6 class="winr">{{stats.average_rally}}</h6>
+                                <span> Average</span>
+                            </div>
+                            <div class="max">
+                                <h6 class="winr">{{stats.longer_rally}}</h6>
+                                <span>Max</span>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="records d-flex flex-column align-items-center justify-content-center"  style="margin-bottom: 0;">
+                        <h6 class="records-title">Ball Speed per Goal</h6>
+                        <div class="squares d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">0</div>
+                                <span>1</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">0</div>
+                                <span>2</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">0</div>
+                                <span>3</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">0</div>
+                                <span>4</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">0</div>
+                                <span>5</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">0</div>
+                                <span>6</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">0</div>
+                                <span>7</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">0</div>
+                                <span>8</span>
+                            </div>
+                            <div class="d-flex align-items-center flex-column">
+                                <div class="square-speed">0</div>
+                                <span>9</span>
+                            </div>
+                        </div>
+                        <div class="ball-speed d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img src="{% static 'assets/icons/ball-speed.png' %}">
+                                <div class="grey-line"></div>
+                            </div>
+                            <div class="minutes">
+                                <h6 class="winr">{{stats.min_ball_speed}}</h6>
+                                <span> Min</span>
+                            </div>
+                            <div class="average">
+                                <h6 class="winr">{{stats.average_ball_speed}}</h6>
+                                <span> Average</span>
+                            </div>
+                            <div class="max">
+                                <h6 class="winr">{{stats.max_ball_speed}}</h6>
+                                <span>Max</span>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="performance d-flex flex-column justify-content-around">
+                    <div class="records d-flex numbers-stat justify-content-center"  style="margin-top: 0;">
+                        <h6 class="record-title">Greateast Deficit Overcome</h6>
+                        <h6 class="record-sub">Who bounced back the most goals.</h6>
+                        <div class="record-info d-flex justify-content-between align-items-center">
+                            <div class="img-tit d-flex align-items-center">
+                                {% if "http" in stats.gdo_user.picture %}
+                                    <img class="profile-medium" src="{{ stats.gdo_user.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                                {% else %}
+                                    <img class="profile-medium" src="{{ stats.gdo_user.picture }}" alt="Profile">
+                                {% endif %}
+                                <h6 class="name">{{stats.gdo_user.username}}</h6>
+                            </div>
+                            <h6 class="winr"> {{stats.greatest_deficit_overcome}} </h6>
+                        </div>
+                    </div>
+                    <div class="records d-flex numbers-stat justify-content-center">
+                        <h6 class="record-title">Most Consecutive Goals</h6>
+                        <h6 class="record-sub">Who scored more goals in a row.</h6>
+                        <div class="record-info d-flex justify-content-between align-items-center">
+                            <div class="img-tit d-flex align-items-center">
+                                {% if "http" in stats.mcg_user.picture %}
+                                    <img class="profile-medium" src="{{ stats.mcg_user.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                                {% else %}
+                                    <img class="profile-medium" src="{{ stats.mcg_user.picture }}" alt="Profile">
+                                {% endif %}
+                                <h6 class="name">{{stats.mcg_user.username}}</h6>
+                            </div>
+                            <h6 class="winr"> {{stats.most_consecutive_goals}} </h6>
+                        </div>
+                    </div>
+                    <div class="records d-flex numbers-stat justify-content-center"  style="margin-bottom: 0;">
+                        <h6 class="record-title">Biggest Lead</h6>
+                        <h6 class="record-sub">Who had the biggest goal lead.</h6>
+                        <div class="record-info d-flex justify-content-between align-items-center">
+                            <div class="img-tit d-flex align-items-center">
+                                {% if "http" in stats.bg_user.picture %}
+                                    <img class="profile-medium" src="{{ stats.bg_user.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                                {% else %}
+                                    <img class="profile-medium" src="{{ stats.bg_user.picture }}" alt="Profile">
+                                {% endif %}
+                                <h6 class="name">{{stats.bg_user.username}}</h6>
+                            </div>
+                            <h6 class="winr"> {{stats.biggest_lead}} </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

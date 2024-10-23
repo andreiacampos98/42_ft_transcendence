@@ -15,7 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
 function detailTournamentGames(button) {
     const tournament_id = button.getAttribute('data-tournament-id');
     const detailsDiv = document.getElementById('details-' + tournament_id);
+    const imgElement = button.querySelector('img');
 
+    const buttonParentDiv = button.closest('div.details');
+    const grandParentDiv = buttonParentDiv.closest('div.match-block'); // assuming match-block is the outer div class
+    // Toggle classes or add them as needed
+    grandParentDiv.classList.add("enlarged2");
+    buttonParentDiv.classList.add("enlarged");
     if (detailsDiv.style.display === 'none' || detailsDiv.style.display === '') {
         fetch(`/tournaments/${tournament_id}/games`, {
             headers: {
@@ -30,11 +36,20 @@ function detailTournamentGames(button) {
         })
         .then(data => {
             const gameList = detailsDiv;
-            gameList.innerHTML = '';
+            gameList.innerHTML = `
+            <div class="header2 d-flex align-items-center justify-content-evenly">
+                    <span class="title" style="width: 100px;"></span>
+                    <span class="title">Phase</span>
+                    <span class="title">Duration</span>
+                    <span class="title">Player 1</span>
+                    <span class="title">Score</span>
+                    <span class="title">Player 2</span>
+                </div>
+                `;
             
             data.forEach(game => {
                 const gameBlock = document.createElement('div');
-                gameBlock.classList.add('match-container');
+                gameBlock.classList.add('match-container2');
                 gameBlock.id = `game-${game.game.id}`; 
 
                 const user1Link = document.createElement('a');
@@ -77,28 +92,42 @@ function detailTournamentGames(button) {
 
                 user2Link.appendChild(user2ProfilePic);
                 user2Link.appendChild(user2Name);
-                
+                if ( game.game.nb_goals_user1 > game.game.nb_goals_user2) {
+                    user1Name.classList.add('tour-game-winner');
+                } else {
+                    user2Name.classList.add('tour-game-winner');
+                }
+
+                const gameDetailLink = document.createElement('a');
+                gameDetailLink.href = `/games/${game.game.id}/stats`;
+                gameDetailLink.classList.add('game-link'); 
 
                 gameBlock.innerHTML = `
-                    <div class="match-block d-flex align-items-center pingpong victory">
+                    <div class="match-block2 d-flex align-items-center">
                         <div class="details d-flex align-items-center justify-content-evenly">
-                            <span class="result">${game.phase}</span>
-                            <span class="date">${game.game.duration}</span>
-                            ${user1Link.outerHTML}
-                            <span class="result">${game.game.nb_goals_user1} - ${game.game.nb_goals_user2}</span>
-                            ${user2Link.outerHTML}
+                            <span class="content result" style="margin-left: 50px;" >${game.phase}</span>
+                            <span class="content date">${game.game.duration}</span>
+                            <span class="content last" style="font-size: inherit; padding-right: 0;">${user1Link.outerHTML}</span>
+                            <span class="content last" style="font-weight: bold; padding-right: 0;">${game.game.nb_goals_user1} - ${game.game.nb_goals_user2}</span>
+                            <span class="content last" style="font-size: inherit; padding-right: 0;">${user2Link.outerHTML}</span>
                         </div>
                     </div>
                 `;
 
-                gameList.appendChild(gameBlock); 
+                gameDetailLink.appendChild(gameBlock);
+    
+                gameList.appendChild(gameDetailLink); 
             });
-            detailsDiv.style.display = 'block'; 
+            detailsDiv.style.display = 'flex';
+            imgElement.src = "/static/assets/icons/return.png";
         })
         .catch(error => {
             console.error('Erro ao buscar jogos:', error);
         });
     } else {
-        detailsDiv.style.display = 'none'; 
+        detailsDiv.style.display = 'none';
+        imgElement.src = "/static/assets/icons/Collapse-Arrow.png";
+        grandParentDiv.classList.toggle("enlarged2");
+        buttonParentDiv.classList.toggle("enlarged");
     }
 }

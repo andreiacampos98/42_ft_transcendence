@@ -3,35 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   GameStats.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: crypted <crypted@student.42.fr>            +#+  +:+       +#+        */
+/*   By: crypto <crypto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/10/01 21:41:00 by crypted          ###   ########.fr       */
+/*   Updated: 2024/10/21 15:08:36 by crypto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { MAX_GOALS, TEST_GOALS } from "./macros.js";
 
 export class GameStats {
-	constructor(player, enemy) {
-		this.player = player;
-		this.enemy = enemy;
+	constructor(player1, player2) {
+		this.player1 = player1;
+		this.player2 = player2;
 		this.score = {};
 		this.goals = [];
 		this.loser = null;
 		this.winner = null;
-		this.gameId = 0;
+		this.gameID = 0;
 		this.gameStats = {};
 		this.scoredFirst = null;
-		this.startTime = null;
+		this.startTime = null
+		this.gameScore = null;
 		this.init();
 	}
 
 	init() {
 		this.startTime = new Date().getTime();
-		this.score[this.player.username] = 0;
-		this.score[this.enemy.username] = 0;
-
+		this.score[this.player1.username] = 0;
+		this.score[this.player2.username] = 0;
+		this.gameScore = document.getElementById('score');
+		
 		//! Testing
 		// this.goals = TEST_GOALS;
 		// this.calculateSmallStats();
@@ -44,17 +46,15 @@ export class GameStats {
 			'timestamp': new Date().toISOString(),
 			'user': scorer.id,
 			'rally_length': ball.rally,
-			'ball_speed': Math.abs(ball.speed.x),
+			'ball_speed': parseFloat(ball.speed.x.toFixed(2)),
 		};
 		this.score[scorer.username] += 1;
 		this.goals.push(goal);
+		console.log(this.goals);
+		this.gameScore.textContent = 
+			`${this.score[this.player1.username]} : ${this.score[this.player2.username]}`;
+		
 		console.log(goal);
-
-		if (this.gameHasEnded()){
-			this.calculateSmallStats();
-			this.calculateAdvancedStats();
-			this.sendGameResults();
-		}
 	}
 
 	calculateSmallStats() {
@@ -71,7 +71,7 @@ export class GameStats {
 	}
 
 	calculateAdvancedStats() {
-		let stats = {}, p1 = this.player.id, p2 = this.enemy.id;
+		let stats = {}, p1 = this.player1.id, p2 = this.player2.id;
 		stats[p1] = { "score": 0, "canOvercome": false, "maxOvercome": 0, "overcome": 0,
 			"maxLead": 0, "lead": 0, "maxConsecutive": 0, "consecutive": 0 };
 		stats[p2] = { "score": 0, "canOvercome": false, "maxOvercome": 0, "overcome": 0,
@@ -107,55 +107,46 @@ export class GameStats {
 			stats[p1].maxConsecutive = Math.max(stats[p1].consecutive, stats[p1].maxConsecutive);
 			stats[p2].maxConsecutive = Math.max(stats[p2].consecutive, stats[p2].maxConsecutive);
 			stats[loser].consecutive = 0;
-
-			console.log(stats[p1], stats[p2]);
 		}
 
 		this.gameStats["greatest_deficit_overcome"] = Math.max(stats[p1].maxOvercome, stats[p2].maxOvercome);
-		this.gameStats["gdo_user"] = stats[p1].maxOvercome > stats[p2].maxOvercome ? p1 : p2;
+		this.gameStats["gdo_user"] = stats[p1].maxOvercome >= stats[p2].maxOvercome ? p1 : p2;
 		this.gameStats["most_consecutive_goals"] = Math.max(stats[p1].maxConsecutive, stats[p2].maxConsecutive);
-		this.gameStats["mcg_user"] = stats[p1].maxConsecutive > stats[p2].maxConsecutive ? p1 : p2;
+		this.gameStats["mcg_user"] = stats[p1].maxConsecutive >= stats[p2].maxConsecutive ? p1 : p2;
 		this.gameStats["biggest_lead"] = Math.max(stats[p1].maxLead, stats[p2].maxLead);
-		this.gameStats["bg_user"] = stats[p1].maxLead > stats[p2].maxLead ? p1 : p2;
+		this.gameStats["bg_user"] = stats[p1].maxLead >= stats[p2].maxLead ? p1 : p2;
 	}
 
-	async sendGameResults() {
+	assembleGameResults(){
+		this.calculateSmallStats();
+		this.calculateAdvancedStats();
+
 		const now = new Date().getTime();
-		const formData = {
+		const results = {
+			"id": this.gameID, 
 			"duration": Math.round((now - this.startTime) / 1000),
-			"nb_goals_user1": this.score[this.player.username],
-			"nb_goals_user2": this.score[this.enemy.username],
+			"nb_goals_user1": this.score[this.player1.username],
+			"nb_goals_user2": this.score[this.player2.username],
 			"game_stats": this.gameStats,
 			"user1_stats": {
-				"scored_first": this.goals[0].user == this.player.id
+				"scored_first": this.goals[0].user == this.player1.id
 			},
 			"user2_stats": {
-				"scored_first": this.goals[0].user == this.enemy.id
+				"scored_first": this.goals[0].user == this.player2.id
 			},
-			"goals": this.goals
+			"goals": this.goals				
 		};
-		console.log(formData);
-
-		this.winner = this.score[this.player.username] == MAX_GOALS ? this.player : this.enemy;
-		this.loser = this.winner == this.player ? this.enemy : this.player;
-
-		const response = await fetch(`/games/update/${this.gameId}`, {
-			method: 'POST',
-			body: JSON.stringify(formData),
-			headers: {
-				'Content-Type': 'application/json',
-			}
-		});
-
-		const responseData = await response.json();
-		console.log(responseData);
+		console.log('GAME REPORT', results);
+		return results;
 	}
 
-	gameHasEnded() {
-		return (Object.values(this.score).includes(MAX_GOALS));
-	}
+	isGameOver() {
+		if (!Object.values(this.score).includes(MAX_GOALS))
+			return false;
 
-	debug() {
+		this.winner = this.score[this.player1.username] == MAX_GOALS ? this.player1 : this.player2;
+		this.loser = this.winner == this.player1 ? this.player2 : this.player1;
 
+		return true;
 	}
 }

@@ -87,10 +87,9 @@ body {
 
 .left-div .icon2 {
     width: 50px; /* Adjust icon size as needed */
-    height: 50px;
     margin: 5px 0; /* Vertical margin between icons */
 	margin-right: 15px;
-
+    padding-top: 10px;
 }
 
 .left-div.expanded .icon-title {
@@ -184,3 +183,10 @@ h2 {
 	font-weight: bold;
     color: #FFFFFF;
 }*/
+
+.profile-medium {
+	width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}

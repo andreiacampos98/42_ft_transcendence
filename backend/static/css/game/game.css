@@ -25,3 +25,31 @@
     top: 0px;
     right: 100px;
 }
+
+#scoreboard {
+	color: white;
+    height: 50px;
+    width: 100%; 
+	position: absolute;
+    top: 36px; 
+}
+
+#p1 {
+	font-size: 24px;
+	text-align: end;
+}
+
+#p2 {
+	font-size: 24px;
+	text-align: start;
+}
+
+#score {
+	font-size: 32px;
+	font-weight: bold;
+}
+
+#p1, #p2, #score {
+	width: 300px;
+	/* background-color: red;	 */
+}

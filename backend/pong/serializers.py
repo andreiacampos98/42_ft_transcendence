@@ -62,7 +62,6 @@ class NotificationsSerializer(serializers.ModelSerializer):
 		fields = ['id', 'type', 'status', 'description', 'user_id', 'other_user_id', 'created_at']
 
 class GamesSerializer(serializers.ModelSerializer):
-	
 	class Meta:
 		model = Games
 		fields = '__all__'
