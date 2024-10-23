@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 <link rel="stylesheet" href="{% static 'css/match-block.css' %}">
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script defer src="{% static 'js/profile.js' %}"></script>
+<script defer src="{% static 'js/profile.js' %}" type="module"></script>
 <script defer src="{% static 'js/edit-profile.js' %}"></script>
 <script defer src="{% static 'js/change-password.js' %}"></script>
 <script defer src="{% static 'js/friends_add_remove.js' %}"></script>
@@ -281,21 +281,21 @@
 							<div class="no-data donut d-flex justify-content-center align-items-center">								
 								<img src="{% static 'assets/images/no-data-image.png' %}">
 								<h4>No Available Data</h4>
-								<span>You haven't played any games yet!</span>
+								<span>You haven't played any games so far!</span>
 							</div>
 						{% endif %}
 					</div>
 					<div class="profile-foot d-flex align-items-center">
-						{% if games|length > 0 %}
+						{% if no_week_games %}
+							<div class="no-data donut d-flex justify-content-center align-items-center" style="width: 65%;">								
+								<img src="{% static 'assets/images/no-data-image.png' %}">
+								<h4>No games this week</h4>
+								<span>It seems you haven't played this week yet</span>
+							</div>
+						{% else %}
 							<div class="bar-graphs d-flex flex-column align-items-center">
 								<h6 class="graph-title" style="color:#fff">Win Rate and Games Played / Day </h6>
 								<div id="chart2"></div>
-							</div>
-						{% else %}
-							<div class="no-data donut d-flex justify-content-center align-items-center" style="width: 65%;">								
-								<img src="{% static 'assets/images/no-data-image.png' %}">
-								<h4>No Available Data</h4>
-								<span>You haven't played any games yet!</span>
 							</div>
 						{% endif %}
 						<div class="records d-flex numbers-stat">

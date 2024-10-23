@@ -1,4 +1,4 @@
-// import { TEST_STATS } from "./game/macros";
+import { TEST_STATS } from "./game/macros.js";
 
 var modal2 = document.getElementById("modal2");
 var btn2 = document.getElementById("remove-friend-button");
@@ -66,8 +66,7 @@ async function loadDonutChart() {
 			offsetX: -110,
 			offsetY: 10,    
 			height: 200, 
-			width: '100%',
-			// background: '#FFFFFF'     
+			width: '100%',  
 		},
 		series: [remoteTime, aiTime, localTime, tournamentTime], 
 		labels: ['Remote Games', 'AI Mode', 'Local Games', 'Tournaments'], 
@@ -127,22 +126,26 @@ async function loadBarLineChart() {
 	const dailyRawStats = await response.json();
 	// const dailyRawStats = TEST_STATS;
 
-	const tempRates = dailyRawStats.map((x) => x.win_rate);
-	const tempTotalGames = dailyRawStats.map((x) => x.total_games);
+	const rawWinRates = dailyRawStats.map((x) => x.win_rate);
+	const rawTotalGames = dailyRawStats.map((x) => x.total_games);
 	const winRates = new Array(7).fill(0);
 	const totalGames = new Array(7).fill(0);
 
-	tempRates.forEach((winRate, i) => {
+	const today = new Date();
+	var lastMonday = new Date();
+	lastMonday.setDate(today.getDate() - (today.getDay() + 6) % 7);
+
+	rawWinRates.forEach((winRate, i) => {
 		const timestamp = new Date(dailyRawStats[i].day);
-		if (timestamp.getDate() < new Date().getDate())
+		if (timestamp.getDate() < lastMonday.getDate())
 			return ;
 		
 		const weekday = (timestamp.getDay() + 6) % 7;
 		winRates[weekday] = winRate;
 	});
-	tempTotalGames.forEach((numGames, i) => {
+	rawTotalGames.forEach((numGames, i) => {
 		const timestamp = new Date(dailyRawStats[i].day);
-		if (timestamp.getDate() < new Date().getDate())
+		if (timestamp.getDate() < lastMonday.getDate())
 			return ;
 
 		const weekday = (timestamp.getDay() + 6) % 7;

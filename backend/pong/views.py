@@ -375,15 +375,15 @@ def user_stats_update(user_id, game_id, data):
 	
 	game = Games.objects.get(pk=game_id)
 	if game.user1_id.id == user_id:
-		stats.nb_goals_scored = data['nb_goals_user1']
-		stats.nb_goals_suffered = data['nb_goals_user2']
+		stats.nb_goals_scored += data['nb_goals_user1']
+		stats.nb_goals_suffered += data['nb_goals_user2']
 		if data['user1_stats']['scored_first']:
 			stats.num_first_goals += 1
 		if data['nb_goals_user1'] > data['nb_goals_user2']:
 			stats.nb_games_won += 1
 	else:
-		stats.nb_goals_scored = data['nb_goals_user2']
-		stats.nb_goals_suffered = data['nb_goals_user1']
+		stats.nb_goals_scored += data['nb_goals_user2']
+		stats.nb_goals_suffered += data['nb_goals_user1']
 		if data['user2_stats']['scored_first']:
 			stats.num_first_goals += 1
 		if data['nb_goals_user2'] > data['nb_goals_user1']:
@@ -1283,8 +1283,6 @@ def profile(request, id):
 		friendship_status = None
 
 	user = get_object_or_404(Users, id=id)
-	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) 
-						).exclude(type="Tournament").order_by('-created_at')
 	tournament_response = tournament_list_user(request, user_profile.id)
 	user_tournaments = json.loads(tournament_response.content)
 	stats_response = user_stats(request, user_profile.id)
@@ -1295,6 +1293,15 @@ def profile(request, id):
 		goals_scored_suffered_ratio = 0
 	graph = win_rate_nb_games_day(request, user_profile.id)
 	graph_send = json.loads(graph.content)
+	
+	games = Games.objects.filter(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id),
+		).exclude(type="Tournament").order_by('-created_at')
+
+	last_game_date = games.first().created_at
+	today = datetime.today()
+	monday = today - timedelta(days=today.weekday())
+	monday = monday.astimezone(last_game_date.tzinfo)
+	
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -1308,10 +1315,12 @@ def profile(request, id):
 		'games': games,
 		'tours': user_tournaments,
 		'stats': stats,
+		'no_week_games': last_game_date < monday,
 		'goals_scored_suffered_ratio': goals_scored_suffered_ratio,
 		'graph': graph_send,
 		'page': 'profile' if is_own_profile else 'else'
 	}
+
 	return render(request, 'pages/view_profile.html', context)
 
 

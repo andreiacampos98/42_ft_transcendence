@@ -97,31 +97,31 @@ export const TEST_STATS = [
 	{
 		day: "2024-10-18T00:00:00Z",
 		total_games: 5,
-		win_rate: 1
+		win_rate: 20
 	},
 	{
 		day: "2024-10-19T00:00:00Z",
 		total_games: 6,
-		win_rate: 2
+		win_rate: 33
 	},
 	{
 		day: "2024-10-20T00:00:00Z",
 		total_games: 7,
-		win_rate: 3
+		win_rate: 42
 	},	
 	{
 		day: "2024-10-21T00:00:00Z",
 		total_games: 8,
-		win_rate: 4
+		win_rate: 50
 	},
 	{
 		day: "2024-10-22T00:00:00Z",
 		total_games: 16,
-		win_rate: 9
+		win_rate: 58
 	},
 	{
 		day: "2024-10-24T00:00:00Z",
 		total_games: 7,
-		win_rate: 7
+		win_rate: 100
 	}
 ];
