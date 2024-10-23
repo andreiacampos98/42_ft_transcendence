@@ -23,13 +23,13 @@ window.onclick = function(event) {
 function formatDate(timestamp) {
 	const date = new Date(timestamp);
 	
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    const day = String(date.getUTCDate()).padStart(2, '0');
-    const month = monthNames[date.getUTCMonth()];
-    const year = date.getUTCFullYear();
+	const day = String(date.getUTCDate()).padStart(2, '0');
+	const month = monthNames[date.getUTCMonth()];
+	const year = date.getUTCFullYear();
 	const hours = String(date.getUTCHours()).padStart(2, '0');
-    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+	const minutes = String(date.getUTCMinutes()).padStart(2, '0');
 
 	const suffixes = ['st', 'nd', 'rd'];
 	const dayUnits = date.getUTCDate() % 10;
@@ -41,11 +41,11 @@ function formatDate(timestamp) {
 
 function formatRecordsTimestamp(divClass) {
 	
-    const recordTimeDivs = document.querySelectorAll(divClass);
+	const recordTimeDivs = document.querySelectorAll(divClass);
 	
-    recordTimeDivs.forEach(div => {
-        div.textContent = formatDate(div.textContent);
-    });
+	recordTimeDivs.forEach(div => {
+		div.textContent = formatDate(div.textContent);
+	});
 }
 
 async function loadDonutChart() {
@@ -162,10 +162,25 @@ async function loadBarLineChart() {
 			},
 			width: '100%',
 		},
+		followCursor: true,
 		plotOptions: {
 			bar: {
-			  borderRadius: 10,
+				borderRadius: 10,
 			}
+		},
+		grid: {
+			show: true,
+			borderColor: '#ffffff0C',    
+			xaxis: {
+				lines: {
+					show: true         
+				}
+			},
+			yaxis: {
+				lines: {
+					show: true         
+				}
+			},
 		},
 		series: [
 			{
@@ -203,19 +218,16 @@ async function loadBarLineChart() {
 		yaxis: {
 			show: false
 		},
-		grid: {
-			show: false
-		},
 		tooltip: {
 			y: {
-			  formatter: function (val) {
+			formatter: function (val) {
 				return val;
-			  }
 			}
-		  },
+			},
+		},
 		dataLabels: {
 			enabled: false,
-		  },
+		},
 		legend: {
 			show: true,
 			horizontalAlign: 'center', 

@@ -2,44 +2,44 @@ const FAST_BALL_SPEED = 2;
 const HIGH_RALLY_LENGTH = 15;
 
 function interpolateColor(startColor, endColor, factor) {
-    const result = startColor.slice(); // Create a copy of the start color
-    for (let i = 0; i < 3; i++) {
-        // Interpolate each color component (R, G, B)
-        result[i] = Math.round(result[i] + factor * (endColor[i] - startColor[i]));
-    }
-    return result;
+	const result = startColor.slice(); // Create a copy of the start color
+	for (let i = 0; i < 3; i++) {
+		// Interpolate each color component (R, G, B)
+		result[i] = Math.round(result[i] + factor * (endColor[i] - startColor[i]));
+	}
+	return result;
 }
 
 // Convert RGB array to hex color string
 function rgbToHex(rgb) {
-    return `#${rgb.map(x => x.toString(16).padStart(2, '0')).join('')}`;
+	return `#${rgb.map(x => x.toString(16).padStart(2, '0')).join('')}`;
 }
 
 // Main function to apply the background color to all divs with class 'square'
 function applyGradientToHeatmap() {
-    const rallyLengthSquares = document.querySelectorAll('.square-length'); // Select all divs with class 'square'
-    const ballSpeedSquares = document.querySelectorAll('.square-speed'); // Select all divs with class 'square'
-    const startColor = [255, 255, 255]; // RGB for #FFFFFF (white)
-    const endColor = [253, 180, 39];  // RGB for #F8D082 (light orange)
+	const rallyLengthSquares = document.querySelectorAll('.square-length'); // Select all divs with class 'square'
+	const ballSpeedSquares = document.querySelectorAll('.square-speed'); // Select all divs with class 'square'
+	const startColor = [255, 255, 255]; // RGB for #FFFFFF (white)
+	const endColor = [253, 180, 39];  // RGB for #F8D082 (light orange)
 
-    rallyLengthSquares.forEach(square => {
-        const value = parseInt(square.textContent); // Get the text inside the div and convert to integer
-        const factor = value / HIGH_RALLY_LENGTH; // Calculate the interpolation factor (0 to 1)
+	rallyLengthSquares.forEach(square => {
+		const value = parseInt(square.textContent); // Get the text inside the div and convert to integer
+		const factor = value / HIGH_RALLY_LENGTH; // Calculate the interpolation factor (0 to 1)
 
-        const interpolatedColor = interpolateColor(startColor, endColor, factor); // Get the interpolated color
-        const hexColor = rgbToHex(interpolatedColor); // Convert the RGB color to hex format
+		const interpolatedColor = interpolateColor(startColor, endColor, factor); // Get the interpolated color
+		const hexColor = rgbToHex(interpolatedColor); // Convert the RGB color to hex format
 
-        square.style.backgroundColor = hexColor; // Apply the background color to the div
-    });
-    ballSpeedSquares.forEach(square => {
-        const value = parseInt(square.textContent); // Get the text inside the div and convert to integer
-        const factor = value / FAST_BALL_SPEED; // Calculate the interpolation factor (0 to 1)
+		square.style.backgroundColor = hexColor; // Apply the background color to the div
+	});
+	ballSpeedSquares.forEach(square => {
+		const value = parseInt(square.textContent); // Get the text inside the div and convert to integer
+		const factor = value / FAST_BALL_SPEED; // Calculate the interpolation factor (0 to 1)
 
-        const interpolatedColor = interpolateColor(startColor, endColor, factor); // Get the interpolated color
-        const hexColor = rgbToHex(interpolatedColor); // Convert the RGB color to hex format
+		const interpolatedColor = interpolateColor(startColor, endColor, factor); // Get the interpolated color
+		const hexColor = rgbToHex(interpolatedColor); // Convert the RGB color to hex format
 
-        square.style.backgroundColor = hexColor; // Apply the background color to the div
-    });
+		square.style.backgroundColor = hexColor; // Apply the background color to the div
+	});
 }
 
 function fillHeatmap(rallyLengths, ballSpeeds){
@@ -92,8 +92,8 @@ async function loadCharts() {
 
 	var options = {
 		chart: {
-		  type: 'line',
-		  toolbar: {
+		type: 'line',
+		toolbar: {
 			show: false
 		},
 		},
@@ -103,15 +103,16 @@ async function loadCharts() {
 		markers: {
 			size: 1,
 		},
-		series: [{
-		  name: username1,
-		  data: gameState[user1ID].state
-		},
-		{
-			name: username2,
-			data: gameState[user2ID].state
-		  }],
-	
+		series: [
+			{
+				name: username1,
+				data: gameState[user1ID].state
+			},
+			{
+				name: username2,
+				data: gameState[user2ID].state
+			}
+		],
 		xaxis: {
 			categories: [1, 2, 3, 4, 5, 6, 7, 8, 9],
 			labels: {
@@ -165,8 +166,8 @@ async function loadCharts() {
 			},
 		},
 		colors: ['#F8D082', '#336181'],
-	  };
-	  
+	};
+	
 	var chart = new ApexCharts(document.querySelector("#chart"), options);
 	chart.render();
 }
