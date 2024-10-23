@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function toggle2FA() {
     const checkbox = document.getElementById('enable');
-    const statusMessage = document.getElementById('message');
+    // const statusMessage = document.getElementById('message');
     
     const isChecked = checkbox.checked;
-    statusMessage.textContent = isChecked ? "Disable 2FA" : "Enable 2FA";
+    // statusMessage.textContent = isChecked ? "Disable 2FA" : "Enable 2FA";
     console.log(isChecked)
     try {
         const userId = document.getElementById('enable').getAttribute('data-user-id');

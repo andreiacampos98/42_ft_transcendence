@@ -1,6 +1,6 @@
-import { Player } from './Player.js';
+import { AbstractPlayer } from './AbstractPlayer.js';
 
-export class AIPlayer extends Player {
+export class AIPlayer extends AbstractPlayer {
 	constructor () {
 		super(0, "AI Bot", null, null);
 	}

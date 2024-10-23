@@ -20,7 +20,8 @@ clean:
 		backend/pong/__pycache__/ \
 		backend/pong/migrations/__pycache__/ \
 		backend/pong/templatetags/__pycache__/ \
-		backend/pong/migrations/*_initial.py
+		backend/pong/migrations/*_initial.py \
+		backend/pong/migrations/0*.py
 
 	mkdir data/
 

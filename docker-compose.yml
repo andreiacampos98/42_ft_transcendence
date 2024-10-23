@@ -12,10 +12,13 @@ services:
         networks:
             - Transcendence
         depends_on:
-            - postgres
-            - redis
+            postgres:
+              condition: service_healthy
+            redis:
+              condition: service_started
         env_file:
             - .env
+        restart: on-failure
 
     postgres:
         container_name: postgres-container
@@ -28,9 +31,14 @@ services:
         ports:
             - "5432:5432"
         networks:
-            - Transcendence
+            - Transcendence 
         env_file:
             - .env
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U postgres"]
+          interval: 3s
+          timeout: 5s
+          retries: 5
 
     pgadmin4:
         container_name: pgadmin4-container

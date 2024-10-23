@@ -25,6 +25,7 @@ import json, requests, os
 from icecream import ic
 from .models import Users
 import pprint  
+import socket
 # Since we want to create an API endpoint for reading, creating, and updating 
 # Company objects, we can use Django Rest Framework mixins for such actions.
 from rest_framework import status
@@ -90,8 +91,8 @@ def user_create(request):
 		myuser.save()
 
 		UserStats.objects.create(
-            user_id=myuser
-        )
+			user_id=myuser
+		)
 
 		user = authenticate(username=username, password=password1)
 
@@ -198,12 +199,16 @@ def search_suggestions(request):
 
 @csrf_exempt
 def search_users(request):
+	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	term = request.GET.get('searched', '')
 	userss = Users.objects.filter(username__icontains=term)
 	return render(request, 'pages/search_users.html', {
 		'searched': term,
 		'userss': userss,
 		'numbers': userss.count(),
+		'friends': friends,
+		'user_id': user_id
 	})
 
 #! --------------------------------------- Friends ---------------------------------------
@@ -334,24 +339,24 @@ def user_stats(request, user_id):
 	return JsonResponse({'message': 'Method not allowed'}, status=405)
 
 def leaderboard(request):
-    if request.method == 'GET':
-        top_users = UserStats.objects.all().order_by('-nb_tournaments_won')[:3]
+	if request.method == 'GET':
+		top_users = UserStats.objects.all().order_by('-nb_tournaments_won')[:3]
 
-        enriched_top_users = []
-        for top_user in top_users:
-            user = Users.objects.get(pk=top_user.user_id.id) 
+		enriched_top_users = []
+		for top_user in top_users:
+			user = Users.objects.get(pk=top_user.user_id.id) 
 
-            user_stats_serializer = UserStatsSerializer(top_user)
-            user_serializer = UsersSerializer(user)
+			user_stats_serializer = UserStatsSerializer(top_user)
+			user_serializer = UsersSerializer(user)
 
-            enriched_data = user_stats_serializer.data
-            enriched_data['user'] = user_serializer.data
+			enriched_data = user_stats_serializer.data
+			enriched_data['user'] = user_serializer.data
 
-            enriched_top_users.append(enriched_data)
+			enriched_top_users.append(enriched_data)
 
-        return JsonResponse(enriched_top_users, safe=False, status=200)
+		return JsonResponse(enriched_top_users, safe=False, status=200)
 
-    return JsonResponse({'message': 'Method not allowed'}, status=405)
+	return JsonResponse({'message': 'Method not allowed'}, status=405)
 
 
 def current_place(request, user_id):
@@ -372,15 +377,15 @@ def user_stats_update(user_id, game_id, data):
 	
 	game = Games.objects.get(pk=game_id)
 	if game.user1_id.id == user_id:
-		stats.nb_goals_scored = data['nb_goals_user1']
-		stats.nb_goals_suffered = data['nb_goals_user2']
+		stats.nb_goals_scored += data['nb_goals_user1']
+		stats.nb_goals_suffered += data['nb_goals_user2']
 		if data['user1_stats']['scored_first']:
 			stats.num_first_goals += 1
 		if data['nb_goals_user1'] > data['nb_goals_user2']:
 			stats.nb_games_won += 1
 	else:
-		stats.nb_goals_scored = data['nb_goals_user2']
-		stats.nb_goals_suffered = data['nb_goals_user1']
+		stats.nb_goals_scored += data['nb_goals_user2']
+		stats.nb_goals_suffered += data['nb_goals_user1']
 		if data['user2_stats']['scored_first']:
 			stats.num_first_goals += 1
 		if data['nb_goals_user2'] > data['nb_goals_user1']:
@@ -396,12 +401,16 @@ def user_stats_update(user_id, game_id, data):
 
 	if data['game_stats']['max_ball_speed'] > stats.max_ball_speed:
 		stats.max_ball_speed = data['game_stats']['max_ball_speed']
+		stats.date_max_ball_speed = game.created_at
 	if data['game_stats']['longer_rally'] > stats.max_rally_length:
 		stats.max_rally_length = data['game_stats']['longer_rally']
+		stats.date_max_rally_length = game.created_at
 	if data['duration'] < stats.quickest_game :
 		stats.quickest_game = data['duration']
+		stats.date_quickest_game = game.created_at
 	if data['duration'] > stats.longest_game:
 		stats.longest_game = data['duration']
+		stats.date_longest_game = game.created_at
 	stats.save()
 	data_stats = UserStatsSerializer(stats)
 	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
@@ -410,15 +419,15 @@ def win_rate_nb_games_day(request, user_id):
 	today = timezone.now()
 	seven_day_before = today - timedelta(days=7)
 	games = Games.objects.filter((Q(user1_id = user_id) | Q(user2_id = user_id)) & Q(created_at__gte=seven_day_before) 
-							  & ~Q(type='Tournament')).order_by('-created_at')
+							& ~Q(type='Tournament')).order_by('-created_at')
 
 	stats = games.annotate(day=TruncDay('created_at')).values('day').annotate(
-        total_games=Count('id'), ).annotate(
-		  win_rate=Case(
-            When(total_games=0, then=0), 
-            default=(100 * Count(Case(When(winner_id=user_id, then=1))) / Count('id')),
-            output_field=IntegerField()
-           )
+		total_games=Count('id'), ).annotate(
+		win_rate=Case(
+			When(total_games=0, then=0), 
+			default=(100 * Count(Case(When(winner_id=user_id, then=1))) / Count('id')),
+			output_field=IntegerField()
+		)
 		).order_by('-day')
 
 	return JsonResponse(list(stats), safe=False) 
@@ -463,7 +472,7 @@ def game_stats(request, game_id):
 			stats = GamesStats.objects.get(game=game_id)
 			serializer = GamesStatsSerializer(stats)
 			data = serializer.data
-			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
+			return JsonResponse(data, safe=False, status=200)
 		except GamesStats.DoesNotExist:
 			return JsonResponse({'message': 'GamesStats not found.'}, status=404)
 
@@ -503,7 +512,7 @@ def game_goals(request, game_id):
 			stats = Goals.objects.filter(game=game_id)
 			serializer = GoalsSerializer(stats, many=True)
 			data = serializer.data
-			return JsonResponse({'message': 'Game Stats', 'data': data}, status=200)
+			return JsonResponse(data, safe=False, status=200)
 		except Goals.DoesNotExist:
 			return JsonResponse({'message': 'Goals not found.'}, status=404)
 
@@ -518,36 +527,31 @@ def game_goals_all(request):
 
 #! --------------------------------------- Games ---------------------------------------
 
-@csrf_exempt
-def game_create(request):
-	try:
-		data = json.loads(request.body.decode('utf-8'))
-		serializer = GamesSerializer(data=data)
-		data['start_date'] = datetime.now().isoformat()
-		if serializer.is_valid():
-			serializer.save()
-			user1_id = data.get('user1_id')
-			user2_id = data.get('user2_id')
+def game_create_helper(data: dict):
+	serializer = GamesSerializer(data=data)
+	data['start_date'] = datetime.now().isoformat()
 
-			if user1_id:
-				user1 = Users.objects.get(id=user1_id)
-				user1.status = "Playing"
-				user1.save()
-
-			if user2_id:
-				user2 = Users.objects.get(id=user2_id)
-				user2.status = "Playing"
-				user2.save()
-
-			return JsonResponse(serializer.data, status=201)
+	if not serializer.is_valid():
 		return JsonResponse(serializer.errors, status=400)
-	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
-	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
-	
+
+	serializer.save()
+	user1_id = data.get('user1_id')
+	user2_id = data.get('user2_id')
+
+	if user1_id:
+		user1 = Users.objects.get(id=user1_id)
+		user1.status = "Playing"
+		user1.save()
+
+	if user2_id:
+		user2 = Users.objects.get(id=user2_id)
+		user2.status = "Playing"
+		user2.save()
+
+	return JsonResponse(serializer.data, status=201)
+
 @csrf_exempt
-def game_update(request, game_id):
+def game_create(request=None):
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
 	if request.content_type != 'application/json':
@@ -562,6 +566,10 @@ def game_update(request, game_id):
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
 
+	return game_create_helper(data)
+
+
+def game_update_helper(data, game_id):
 	game = Games.objects.get(pk=game_id)
 	game.duration = data['duration']
 	game.nb_goals_user1 = data['nb_goals_user1']
@@ -576,33 +584,54 @@ def game_update(request, game_id):
 		player2 = Users.objects.get(pk=game.user2_id.id)
 		player2.status = "Online"
 		player2.save()
-
+		
+	# elif data['nb_goals_user1'] < data['nb_goals_user2'] and game.type != "Local":
 	if data['nb_goals_user1'] > data['nb_goals_user2']:
 		game.winner_id = player1
-	elif data['nb_goals_user1'] > data['nb_goals_user2'] and game.type != "Local":
+	else:
 		game.winner_id = player2
 	game.save()
-  
 
 	user_stats_update(player1.id, game_id, data)
-	user_stats_update(player2.id, game_id, data)
-	game_stats_create(game_id, data)
-	game_goals_create(game_id, data)
+	if game.type != "Local":
+		user_stats_update(player2.id, game_id, data)
+		game_stats_create(game_id, data)
+		game_goals_create(game_id, data)
 
 	data = GamesSerializer(game).data
 	return JsonResponse(data, status=200)
+	
+@csrf_exempt
+def game_update(request, game_id):
+	if request.method != 'POST':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	if request.content_type != 'application/json':
+		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
+
+	data = {}
+
+	try:
+		data = json.loads(request.body.decode('utf-8'))['data']
+	except json.JSONDecodeError:
+		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+	except KeyError as e:
+		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+
+	return game_update_helper(data, game_id)
 
 @csrf_exempt
 def get_game(request, game_id):
 	if request.method !='GET':
 		return JsonResponse({'message': 'Method not allowed'}, status=405)
-	if request.method == 'GET':
-		try:
-			game = Games.objects.get(id=game_id)
-			serializer = GamesSerializer(game)
-			return JsonResponse({'message': 'Game Info', 'data': serializer.data}, status=200)
-		except Games.DoesNotExist:
-			return JsonResponse({'message': 'Game not found.'}, status=404)
+	try:
+		game = Games.objects.get(id=game_id)
+		serializer = GamesSerializer(game)
+		data = serializer.data
+		data['user1_id'] = UsersSerializer(game.user1_id).data	
+		data['user2_id'] = UsersSerializer(game.user2_id).data	
+		return JsonResponse({'message': 'Game Info', 'data': data}, status=200)
+	except Games.DoesNotExist:
+		return JsonResponse({'message': 'Game not found.'}, status=404)
 
 
 #! --------------------------------------- Tournaments ---------------------------------------
@@ -878,16 +907,18 @@ def tournament_list_user(request, user_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
 
-	all_tour=TournamentsUsers.objects.filter(user_id=user_id)
-	serializer = TournamentsUsersSerializer(all_tour, many=True)
-	all_tourusers_list = serializer.data
+	all_users = TournamentsUsers.objects.filter(user_id=user_id)
+	serializer = TournamentsUsersSerializer(all_users, many=True)
+	all_user_tours = serializer.data
 
-	for touruser in all_tourusers_list:
+	for touruser in all_user_tours:
 		tournament = Tournaments.objects.get(pk=touruser['tournament_id'])
 		serializer = TournamentsSerializer(tournament)
 		touruser['tournament'] = serializer.data
 
-	return JsonResponse(all_tourusers_list, safe=False)
+	all_user_tours.sort(reverse=True, key=lambda t: t['created_at'])
+
+	return JsonResponse(all_user_tours, safe=False)
 
 
 @csrf_exempt
@@ -919,6 +950,8 @@ def tournament_update_game(request, tournament_id, game_id):
 		user_id=tour_game.game_id.user2_id.id,
 		tournament_id=tournament_id
 	)
+	user1 = Users.objects.get(pk=tour_game.game_id.user1_id.id)
+	user2 = Users.objects.get(pk=tour_game.game_id.user2_id.id)
 
 	player1.score += data['nb_goals_user1'] * 100
 	player1.save()
@@ -941,6 +974,11 @@ def tournament_update_game(request, tournament_id, game_id):
 	for match in curr_phase_matches:
 		if match.game_id.winner_id is not None:
 			finished_matches += 1
+	
+	user_stats_update(user2.id, game_id, data)
+	user_stats_update(user1.id, game_id, data)
+	game_stats_create(game_id, data)
+	game_goals_create(game_id, data)
 
 	if finished_matches == total_phase_matches[curr_phase] and curr_phase != 'Final':
 		return advance_tournament_phase(curr_phase, tournament_id)
@@ -960,44 +998,45 @@ def tournament_update_game(request, tournament_id, game_id):
 
 	
 @csrf_exempt
-def get_access_token(code):
-    response = requests.post(settings.TOKEN_URL_A, data={
-        'grant_type': 'authorization_code',
-        'client_id': settings.CLIENT_ID_A,
-        'client_secret': settings.CLIENT_SECRET_A,
-        'redirect_uri': settings.REDIRECT_URI_A,
-        'code': code,
-    })
-    if response.status_code == 200:
-        token_data = response.json()
-        access_token = token_data.get('access_token')
-        ic(access_token)
-        return access_token
-    else:
-        return None
+def get_access_token(host, code):
+	response = requests.post(settings.TOKEN_URL_A, data={
+		'grant_type': 'authorization_code',
+		'client_id': settings.CLIENT_ID_A,
+		'client_secret': settings.CLIENT_SECRET_A,
+		'redirect_uri': f'http://{host}/home42/',
+		'code': code,
+	})
+	ic(response.text)
+	if response.status_code == 200:
+		token_data = response.json()
+		access_token = token_data.get('access_token')
+		ic(access_token)
+		return access_token
+	else:
+		return None
 
 def get_user_info(token):
 
-    headers = {
-        "Authorization": f"Bearer {token}"
-    }
-    user_info_response = requests.get(settings.USER_INFO_URL_A, headers=headers)
+	headers = {
+		"Authorization": f"Bearer {token}"
+	}
+	user_info_response = requests.get(settings.USER_INFO_URL_A, headers=headers)
 
-    if user_info_response.status_code == 200:
-        return user_info_response.json()
-    else:
-        return None
+	if user_info_response.status_code == 200:
+		return user_info_response.json()
+	else:
+		return None
 	
 def signin42(request):
 	try:
 		client_id = settings.CLIENT_ID_A
-		
-		authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={settings.REDIRECT_URI_A}'
+		uri = f'http://{request.get_host()}/home42/'
+		authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={uri}'
 		ic(authorization_url)
 		return HttpResponseRedirect(authorization_url)
 	
 	except Exception as e:
-		return HttpResponseRedirect(settings.REDIRECT_URI_A or '/') 
+		return HttpResponseRedirect('/') 
 
 def login42(request):
 	authorization_code = request.GET.get('code')
@@ -1005,7 +1044,7 @@ def login42(request):
 	if authorization_code is None:
 		return JsonResponse({'error': 'Authorization code missing', 'data': {}}, status=400)
 
-	access_token = get_access_token(authorization_code)
+	access_token = get_access_token(request.get_host(), authorization_code)
 	if access_token is None:
 		return JsonResponse({'error': 'Failed to fetch access token', 'data': {}}, status=400)
 
@@ -1215,7 +1254,10 @@ def home(request):
 @login_required
 def gamelocal(request):
 	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	user_id = request.user.id
 	context = {
+		'friends': friends,
 		'user_id': user_id,
 	}
 	return render(request,'pages/gamelocal.html', context)
@@ -1223,8 +1265,11 @@ def gamelocal(request):
 @login_required
 def gameonline(request):
 	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	user_id = request.user.id
 	context = {
 		'user_id': user_id,
+		'friends': friends,
 	}
 	return render(request,'pages/gameonline.html', context)
 
@@ -1264,31 +1309,54 @@ def tournaments(request):
 @login_required
 def ongoingtournaments(request, tournament_id):
 	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	tournament = Tournaments.objects.get(pk=tournament_id)
 	context = {
 		'user_id': user_id,
-		'tournament_id': tournament_id
+		'friends': friends,
+		'tournament_id': tournament_id,
+		'tournament_size': tournament.capacity,
+		'tournament_name': tournament.name
 	}
 	return render(request,'pages/ongoing-tourn.html', context)
 
 @login_required
 def tournamentstats(request, tournament_id):
+	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	tournament = Tournaments.objects.get(pk=tournament_id)
+	tour_users = TournamentsUsers.objects.filter(tournament_id=tournament_id).order_by('placement')
+	tour_games = TournamentsGames.objects.filter(tournament_id=tournament_id).order_by('pk')
 	context = {
-		'tournament_id': tournament_id
+		'friends': friends,
+		'tournament_id': tournament_id,
+		'tournament_size': tournament.capacity,
+		'tournament_name': tournament.name,
+		'tour_users': tour_users,
+		'tour_games': tour_games,
+		'user_id': user_id
 	}
-	return render(request,'pages/tournament_stats.html', context)
+	ic(context)
+	return render(request,'pages/tournament_overview.html', context)
 
 @login_required
 def gamestats(request, game_id):
+	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	stats = game_stats(request, game_id)
 	data_stats = json.loads(stats.content)
 	goals = game_goals(request, game_id)
 	data_goals = json.loads(goals.content)
-	ic(data_goals)
+	game = json.loads(get_game(request, game_id).content)['data']
 	context = {
+		'friends': friends,
+		'game': game,
 		'game_id': game_id,
 		'stats': data_stats,
-		'goals': data_goals
+		'goals': data_goals,
+		'user_id': user_id
 	}
+	ic(context)
 	return render(request,'pages/game_stats.html', context)
 
 @login_required
@@ -1315,18 +1383,26 @@ def profile(request, id):
 		friendship_status = None
 
 	user = get_object_or_404(Users, id=id)
-	games = Games.objects.filter(Q(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id)) 
-						).exclude(type="Tournament").order_by('-created_at')
 	tournament_response = tournament_list_user(request, user_profile.id)
 	user_tournaments = json.loads(tournament_response.content)
 	stats_response = user_stats(request, user_profile.id)
 	stats = json.loads(stats_response.content)
 	if stats['nb_goals_suffered'] != 0:
-		goals_sored_suffered_ratio = stats['nb_goals_scored'] / stats['nb_goals_suffered']
+		goals_scored_suffered_ratio = round(stats['nb_goals_scored'] / stats['nb_goals_suffered'], 2)
 	else:
-		goals_sored_suffered_ratio = 0
+		goals_scored_suffered_ratio = 0
 	graph = win_rate_nb_games_day(request, user_profile.id)
 	graph_send = json.loads(graph.content)
+	
+	games = Games.objects.filter(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id),
+		).exclude(type="Tournament").order_by('-created_at')
+
+	if games.count() != 0:
+		last_game_date = games.first().created_at
+		today = datetime.today()
+		monday = today - timedelta(days=today.weekday())
+		monday = monday.astimezone(last_game_date.tzinfo)
+	
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -1340,11 +1416,12 @@ def profile(request, id):
 		'games': games,
 		'tours': user_tournaments,
 		'stats': stats,
-		'goals_scored_suffered_ratio': goals_sored_suffered_ratio,
+		'no_week_games': last_game_date < monday if games.count() != 0 else True,
+		'goals_scored_suffered_ratio': goals_scored_suffered_ratio,
 		'graph': graph_send,
 		'page': 'profile' if is_own_profile else 'else'
 	}
-	ic(context)
+
 	return render(request, 'pages/view_profile.html', context)
 
 

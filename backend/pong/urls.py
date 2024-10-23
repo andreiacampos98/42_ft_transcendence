@@ -75,14 +75,9 @@ urlpatterns = [
     path('games/create', views.game_create, name='game-create'),
     path('games/update/<int:game_id>', views.game_update, name='game-update'),
     
-    #! Games Stats
-    path('debug/games/<int:game_id>/stats', views.game_stats, name='debug-game-stats'),
-    path('debug/games/stats', views.game_stats_all, name='debug-game-stats-all'),
-    
     #! Goals
     #path('games/<int:game_id>/goals/add', views.game_goals_create, name='game-goals-create'),
-    path('debug/games/<int:game_id>/goals', views.game_goals, name='game-goals'),
-    path('debug/games/goals', views.game_goals_all, name='game-goals-all'),
+    path('games/<int:game_id>/goals', views.game_goals, name='game-goals'),
 
 	#! Tournaments
     path('tournaments/create', views.tournament_create, name='tournament-create'),
@@ -108,9 +103,13 @@ urlpatterns = [
     #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
     path('debug/games/<int:game_id>', views.get_game, name='debug-get-game'),
+    path('debug/games/goals', views.game_goals_all, name='game-goals-all'),
+    path('debug/games/<int:game_id>/stats', views.game_stats, name='debug-game-stats'),
+    path('debug/games/stats', views.game_stats_all, name='debug-game-stats-all'),
     
 ] 
 
 websocket_urlpatterns = [
     path('ws/tournaments/<int:tournament_id>', consumers.TournamentConsumer.as_asgi()),
+    path('ws/games/remote/queue', consumers.RemoteGameQueueConsumer.as_asgi()),
 ]

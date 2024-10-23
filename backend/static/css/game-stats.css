@@ -1,0 +1,233 @@
+#main-wrapper {
+    display: flex;
+    width: 100%;
+    gap: 20px; 
+}
+
+.scoreboard {
+    font-size: x-large;
+    font-weight: bold;
+    width: 130px;
+}
+
+.profile-head {
+    color: #FFFFFF;
+    height: 20%;
+}
+
+.stats2 {
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    
+}
+
+.percentages {
+    margin-bottom: 20px;
+}
+
+
+.profile-foot {
+    width: 100%;
+    height: 60%;
+    margin-top: 10px;
+    min-width: 1624px;
+    min-height: 500px;
+}
+
+.bar-graphs {
+    border-radius: 8px;
+    background-color: #ffffff0C;
+    border: 1px solid #ffffff2a;
+    width: 56%;
+    height: 100%;
+    margin: 5px;
+}
+
+.records {
+    margin: 5px;
+    border-radius: 8px;
+    background-color: #ffffff0C;
+    border: 1px solid #ffffff2a;
+    height: 100%;
+    padding: 20px;
+
+}
+
+.record-info {
+    width: 100%;
+    padding: 20px;
+    padding: 0;
+    padding-top: 20px;
+    padding-bottom: 5px;
+}
+
+.record-info-tit {
+    height: 35px;
+    text-align: left;
+    padding-left: 5px;
+
+}
+
+.img-tit {
+    flex-direction: row;
+}
+
+.img-tit img {
+    width: 40px;
+    height: 40px;
+}
+
+.record-title {
+    color: #FFFFFF;
+    font-size: large;
+    margin-bottom: 0;
+}
+
+.record-sub {
+    color: #FFFFFF;
+    font-size: x-small;
+    margin-bottom: 0;
+}
+
+
+.record-date {
+    color: #ffffff83;
+    font-size: x-small;
+
+}
+
+.stats-title {
+    color: #c3c3c3bb;
+    font-size: x-small;
+}
+
+.stat .winr {
+    font-size: larger !important;
+}
+.icon-stat {
+    height: 30px;
+    width: 30px;
+}
+
+.graph-title {
+    font-size: x-large;
+    color: #fff;
+}
+
+.winr, .graph-value {
+    font-weight: bold;
+    color: #F8D082;
+}
+
+.numbers-stat{
+    flex-direction: column;
+}
+
+.numbers-stat h4 {
+    margin: 0;
+}
+
+.graph-img {
+    max-width: 50%;
+    max-height: 50%;
+}
+
+.averages {
+    width: 28%;
+    height: 100%;
+    min-width: 320px;
+}
+
+.performance {
+    width: 16%;
+    height: 100%;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.records-title {
+    font-size: large;
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+.rally-len, .ball-speed  {
+    /*background: url('../assets/images/rally-len.png') no-repeat;*/
+    background: linear-gradient(to right, #ffffff00, #f8d18218);
+    background-size: cover; /* Make the image cover the entire div */
+    width: 90%;
+    border-radius: 8px;
+    border: 1px solid #ffffff2a;
+}
+
+.grey-line {
+    width: 2px;
+    height: 50px;
+    background-color: #ffffff5d;
+    border-radius: 8px;
+}
+
+.rally-len div, .ball-speed div {
+    width: 88px;
+    color: #FFFFFF;
+}
+
+.rally-len div  h6, .ball-speed div  h6 {
+    margin-bottom: 0;
+    font-size: x-large;
+}
+
+.rally-len div  span, .ball-speed div  span {
+    font-size: smaller;
+}
+
+.squares {
+    color: #FFFFFF;
+    width: 80%;
+    min-width: 270px;
+    padding-bottom: 8px;
+}
+
+.square-length, .square-speed {
+    width: 35px;
+    height: 28px;
+    background-color: #FFFFFF;
+    border-radius: 3px;
+    color: #836938;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.squares span {
+    font-size: smaller;
+}
+
+.record-info .name {
+    padding-left: 10px;
+    color: #FFFFFF;
+    margin-bottom: 0;
+    font-size: large;
+}
+
+.record-info .winr {
+    font-size: xx-large;
+    margin-bottom: 0;
+}
+
+
+.records .record-title {
+    padding-bottom: 10px;
+    
+}
+
+
+#chart {
+    width: 70%;   /* Set the width of the chart */
+    height: 70%;  /* Set the height of the chart */
+    margin: 0 auto; /* Center the chart */
+}

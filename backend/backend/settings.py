@@ -27,7 +27,6 @@ load_dotenv(dotenv_path=env_path)
 TOKEN_URL_A=os.getenv("TOKEN_URL")
 CLIENT_ID_A=os.getenv("CLIENT_ID")
 CLIENT_SECRET_A=os.getenv("CLIENT_SECRET")
-REDIRECT_URI_A=os.getenv("REDIRECT_URI")
 USER_INFO_URL_A=os.getenv("USER_INFO_URL")
 
 

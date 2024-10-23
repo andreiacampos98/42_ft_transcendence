@@ -16,7 +16,7 @@ RUN apk add --update --no-cache python3-dev python3 py3-pip gcc musl-dev libpq-d
     && pip install "channels[daphne]" \
     && rm -rf /var/cache/apk/*
 
-
-
-
-CMD source /.venv/bin/activate && python3 ./manage.py runserver 0.0.0.0:8002
+CMD source /.venv/bin/activate \
+	&& python3 manage.py makemigrations \
+	&& python3 manage.py migrate \
+	&& python3 ./manage.py runserver 0.0.0.0:8002
