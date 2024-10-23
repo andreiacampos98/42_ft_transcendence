@@ -24,6 +24,7 @@ import json, requests, os
 from icecream import ic
 from .models import Users
 import pprint  
+import socket
 # Since we want to create an API endpoint for reading, creating, and updating 
 # Company objects, we can use Django Rest Framework mixins for such actions.
 from rest_framework import status
@@ -89,8 +90,8 @@ def user_create(request):
 		myuser.save()
 
 		UserStats.objects.create(
-            user_id=myuser
-        )
+			user_id=myuser
+		)
 
 		user = authenticate(username=username, password=password1)
 
@@ -337,24 +338,24 @@ def user_stats(request, user_id):
 	return JsonResponse({'message': 'Method not allowed'}, status=405)
 
 def leaderboard(request):
-    if request.method == 'GET':
-        top_users = UserStats.objects.all().order_by('-nb_tournaments_won')[:3]
+	if request.method == 'GET':
+		top_users = UserStats.objects.all().order_by('-nb_tournaments_won')[:3]
 
-        enriched_top_users = []
-        for top_user in top_users:
-            user = Users.objects.get(pk=top_user.user_id.id) 
+		enriched_top_users = []
+		for top_user in top_users:
+			user = Users.objects.get(pk=top_user.user_id.id) 
 
-            user_stats_serializer = UserStatsSerializer(top_user)
-            user_serializer = UsersSerializer(user)
+			user_stats_serializer = UserStatsSerializer(top_user)
+			user_serializer = UsersSerializer(user)
 
-            enriched_data = user_stats_serializer.data
-            enriched_data['user'] = user_serializer.data
+			enriched_data = user_stats_serializer.data
+			enriched_data['user'] = user_serializer.data
 
-            enriched_top_users.append(enriched_data)
+			enriched_top_users.append(enriched_data)
 
-        return JsonResponse(enriched_top_users, safe=False, status=200)
+		return JsonResponse(enriched_top_users, safe=False, status=200)
 
-    return JsonResponse({'message': 'Method not allowed'}, status=405)
+	return JsonResponse({'message': 'Method not allowed'}, status=405)
 
 
 def current_place(request, user_id):
@@ -417,15 +418,15 @@ def win_rate_nb_games_day(request, user_id):
 	today = timezone.now()
 	seven_day_before = today - timedelta(days=7)
 	games = Games.objects.filter((Q(user1_id = user_id) | Q(user2_id = user_id)) & Q(created_at__gte=seven_day_before) 
-							  & ~Q(type='Tournament')).order_by('-created_at')
+							& ~Q(type='Tournament')).order_by('-created_at')
 
 	stats = games.annotate(day=TruncDay('created_at')).values('day').annotate(
-        total_games=Count('id'), ).annotate(
-		  win_rate=Case(
-            When(total_games=0, then=0), 
-            default=(100 * Count(Case(When(winner_id=user_id, then=1))) / Count('id')),
-            output_field=IntegerField()
-           )
+		total_games=Count('id'), ).annotate(
+		win_rate=Case(
+			When(total_games=0, then=0), 
+			default=(100 * Count(Case(When(winner_id=user_id, then=1))) / Count('id')),
+			output_field=IntegerField()
+		)
 		).order_by('-day')
 
 	return JsonResponse(list(stats), safe=False) 
@@ -996,44 +997,45 @@ def tournament_update_game(request, tournament_id, game_id):
 
 	
 @csrf_exempt
-def get_access_token(code):
-    response = requests.post(settings.TOKEN_URL_A, data={
-        'grant_type': 'authorization_code',
-        'client_id': settings.CLIENT_ID_A,
-        'client_secret': settings.CLIENT_SECRET_A,
-        'redirect_uri': settings.REDIRECT_URI_A,
-        'code': code,
-    })
-    if response.status_code == 200:
-        token_data = response.json()
-        access_token = token_data.get('access_token')
-        ic(access_token)
-        return access_token
-    else:
-        return None
+def get_access_token(host, code):
+	response = requests.post(settings.TOKEN_URL_A, data={
+		'grant_type': 'authorization_code',
+		'client_id': settings.CLIENT_ID_A,
+		'client_secret': settings.CLIENT_SECRET_A,
+		'redirect_uri': f'http://{host}/home42/',
+		'code': code,
+	})
+	ic(response.text)
+	if response.status_code == 200:
+		token_data = response.json()
+		access_token = token_data.get('access_token')
+		ic(access_token)
+		return access_token
+	else:
+		return None
 
 def get_user_info(token):
 
-    headers = {
-        "Authorization": f"Bearer {token}"
-    }
-    user_info_response = requests.get(settings.USER_INFO_URL_A, headers=headers)
+	headers = {
+		"Authorization": f"Bearer {token}"
+	}
+	user_info_response = requests.get(settings.USER_INFO_URL_A, headers=headers)
 
-    if user_info_response.status_code == 200:
-        return user_info_response.json()
-    else:
-        return None
+	if user_info_response.status_code == 200:
+		return user_info_response.json()
+	else:
+		return None
 	
 def signin42(request):
 	try:
 		client_id = settings.CLIENT_ID_A
-		
-		authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={settings.REDIRECT_URI_A}'
+		uri = f'http://{request.get_host()}/home42/'
+		authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={uri}'
 		ic(authorization_url)
 		return HttpResponseRedirect(authorization_url)
 	
 	except Exception as e:
-		return HttpResponseRedirect(settings.REDIRECT_URI_A or '/') 
+		return HttpResponseRedirect('/') 
 
 def login42(request):
 	authorization_code = request.GET.get('code')
@@ -1041,7 +1043,7 @@ def login42(request):
 	if authorization_code is None:
 		return JsonResponse({'error': 'Authorization code missing', 'data': {}}, status=400)
 
-	access_token = get_access_token(authorization_code)
+	access_token = get_access_token(request.get_host(), authorization_code)
 	if access_token is None:
 		return JsonResponse({'error': 'Failed to fetch access token', 'data': {}}, status=400)
 
