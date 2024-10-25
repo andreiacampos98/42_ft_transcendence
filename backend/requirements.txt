@@ -15,4 +15,4 @@ django-crispy-forms
 crispy-bootstrap4
 django-otp
 pyotp
-jwt
+djangorestframework_simplejwt

@@ -1,4 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.exceptions import NotAuthenticated
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
@@ -100,7 +103,7 @@ def user_create(request):
 			myuser.status="Online"
 			myuser.save()
 			login(request, user)
-			return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.'}, status=201)
+			return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.', 'username': myuser.username}, status=201)
 
 		
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)

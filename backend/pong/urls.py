@@ -1,4 +1,5 @@
 from django.urls import path, include, re_path
+from rest_framework_simplejwt import views as jwt_views
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from rest_framework.routers import DefaultRouter
@@ -100,6 +101,11 @@ urlpatterns = [
     path('toggle-2fa/<int:user_id>', views.toogle2fa, name='toogle-2fa'),
     path('opt/', views.otp_view, name='opt'),
     path('otpmethod/', views.otp_method, name='opt-method'),
+
+
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),    
+
     #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
     path('debug/games/<int:game_id>', views.get_game, name='debug-get-game'),
