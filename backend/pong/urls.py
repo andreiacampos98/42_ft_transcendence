@@ -101,7 +101,6 @@ urlpatterns = [
     path('debug/games/goals', views.game_goals_all, name='game-goals-all'),
     path('debug/games/<int:game_id>/stats', views.game_stats, name='debug-game-stats'),
     path('debug/games/stats', views.game_stats_all, name='debug-game-stats-all'),
-    
 ] 
 
 websocket_urlpatterns = [

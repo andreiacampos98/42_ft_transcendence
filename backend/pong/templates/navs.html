@@ -83,6 +83,7 @@
                     <button class="select-item d-flex align-items-center">
                         <a class="side-menu_a" 
                             hx-get="{% url 'home' %}"
+							hx-swap="outerHTML"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true">
@@ -102,6 +103,7 @@
                     <button class="select-item d-flex align-items-center">
                         <a class="side-menu_a"  
                             hx-get="{% url 'tournaments' %}"
+							hx-swap="outerHTML"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true">
@@ -119,6 +121,7 @@
                     <button class="select-item d-flex align-items-center">
                         <a class="side-menu_a" 
                             hx-get="{% url 'user-profile' user.id %}"
+							hx-swap="outerHTML"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true">
