@@ -2,7 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
-
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 #make_password Creates a hashed password in the format used by this application.
@@ -60,6 +60,13 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return True
+    
+    def tokens(self):
+        refresh = RefreshToken.for_user(self)
+        return {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token)
+        }
 
 class Friends(models.Model):
     user1_id = models.ForeignKey(Users, related_name="friends_with", on_delete=models.CASCADE)

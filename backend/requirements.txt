@@ -16,3 +16,5 @@ crispy-bootstrap4
 django-otp
 pyotp
 djangorestframework_simplejwt
+PyJWT
+django-cors-headers
