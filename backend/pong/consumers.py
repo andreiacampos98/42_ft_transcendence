@@ -1,7 +1,7 @@
 import json
 from .views import game_create_helper, game_update_helper, tournament_init_phase
 from .models import Tournaments, TournamentsUsers, Users
-from .serializers import TournamentsGamesSerializer, TournamentsUsersSerializer, UsersSerializer
+from .serializers import GamesSerializer, TournamentsGamesSerializer, TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
 
 from asgiref.sync import async_to_sync
@@ -97,9 +97,13 @@ class TournamentConsumer(WebsocketConsumer):
 
 			async_to_sync(self.channel_layer.group_add)(game_room, user1['channel_name'])
 			async_to_sync(self.channel_layer.group_add)(game_room, user2['channel_name'])
+
+			tournament_data = TournamentsGamesSerializer(tour_game).data
+			tournament_data['game_id'] = GamesSerializer(tour_game.game_id).data
+
 			async_to_sync(self.channel_layer.group_send)(game_room, {
 				"type": "send.something", 
-				"message": json.dumps(TournamentsGamesSerializer(tour_game).data)
+				"message": json.dumps(tournament_data)
 			})
 
 	def send_users(self, event):
