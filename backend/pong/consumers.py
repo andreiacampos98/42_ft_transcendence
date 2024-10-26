@@ -75,9 +75,13 @@ class TournamentConsumer(WebsocketConsumer):
 			tour_user['user'] = user_data
 
 		# Broadcast current list to all users
-		async_to_sync(self.channel_layer.group_send)(
-			self.tournament_room, {"type": "send.users", "message": json.dumps(tour_users_data)}
-		)
+		async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
+			"type": "send.users", 
+			"message": json.dumps({
+				"event": 'USER_JOINED',
+				"data": tour_users_data
+			})
+		})
 
 		# Add the user to the users list
 		self.users[self.user.id] = {
@@ -100,10 +104,15 @@ class TournamentConsumer(WebsocketConsumer):
 
 			tournament_data = TournamentsGamesSerializer(tour_game).data
 			tournament_data['game_id'] = GamesSerializer(tour_game.game_id).data
+			tournament_data['user1_id'] = UsersSerializer(tour_game.game_id.user1_id).data
+			tournament_data['user2_id'] = UsersSerializer(tour_game.game_id.user2_id).data
 
 			async_to_sync(self.channel_layer.group_send)(game_room, {
 				"type": "send.something", 
-				"message": json.dumps(tournament_data)
+				"message": json.dumps({
+					'event': 'START',
+					'data': tournament_data
+				})
 			})
 
 	def send_users(self, event):

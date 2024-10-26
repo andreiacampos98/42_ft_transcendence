@@ -2,61 +2,42 @@
 const tournamentId = localStorage.getItem('tournament_id');
 console.log(tournamentId);
 
-socket = new WebSocket(`ws://${window.location.host}/ws/tournaments/${tournamentId}`);
-socket.onopen = (event) => {
+tournamentWideSocket = new WebSocket(`ws://${window.location.host}/ws/tournaments/${tournamentId}`);
+tournamentWideSocket.onopen = (event) => {
     console.log('Socket opening', event);
-    // socket.send(JSON.stringify({
-	// 	'event': 'JOIN',
-	// 	'data': {
-	// 		'alias': localStorage.getItem('alias'),
-	// 		'tournament_id': localStorage.getItem('tournament_id'),
-	// 	}
-    // }));
 };
 
-socket.onmessage = (event) => {
-    const players = JSON.parse(event.data);
-    const playerSlots = document.querySelectorAll(".player");
+tournamentWideSocket.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+		
+	if (message.event == 'USER_JOINED') {
+		const players = message.data;		
+		const playerSlots = document.querySelectorAll(".player");
 
-    console.log('WebSocket message received:', players);
-
-    players.forEach((player, i) => {
-        playerSlots[i].querySelector("span.name").textContent = player.alias
-        playerSlots[i].querySelector("img").src = player.user.picture
-        // place image on the slot as well
-    });
-    
-    return false;
+		players.forEach((player, i) => {
+			playerSlots[i].querySelector("span.name").textContent = player.alias;
+			playerSlots[i].querySelector("img").src = player.user.picture;
+		});
+	}
+	else if (message.event == 'START') {
+		localStorage.setItem('game', JSON.stringify(message.data));
+		history.pushState(null, '', `/gametournament/`);
+		htmx.ajax('GET', `/gametournament/`, {
+			target: '#main'  
+		});
+	}
 };
 
-socket.onerror = (error) => {
+tournamentWideSocket.onerror = (error) => {
     console.error('WebSocket error:', error);
 };
 
-socket.onclose = (event) => {
+tournamentWideSocket.onclose = (event) => {
     console.log('Socket closed', event);
 };
 
 
 // ==================================================================
-
-function updateRound2Player(elementId, player) {
-    const element = document.getElementById(elementId);
-    element.querySelector('.name').innerText = player.name;
-    element.querySelector('.score').innerText = player.score;
-    element.querySelector('.icon').src = player.icon;
-}
-
-function updateRound3Player(elementId, player) {
-    const element = document.getElementById(elementId);
-    element.querySelector('.name').innerText = player.name;
-    element.querySelector('.score').innerText = player.score;
-    element.querySelector('.icon').src = player.icon;
-
-    // Highlight the final winner
-    element.style.borderColor = '#28a745';
-    element.style.backgroundColor = '#d4edda';
-}
 
 async function leaveTournament() {
     var tournamentId = document.getElementById("leave-tournament").getAttribute("data-tournament-id");
@@ -68,7 +49,7 @@ async function leaveTournament() {
         });
 
         if (response.ok) {
-            socket.send(JSON.stringify({}));
+            tournamentWideSocket.send(JSON.stringify({}));
             history.pushState(null, '', `/tournaments/`);
             htmx.ajax('GET', `/tournaments/`, {
                 target: '#main'  

@@ -33,9 +33,23 @@ const localHandler = () => {
 	});
 }
 
+const tournamentHandler = () => {
+	const gameInfo = JSON.parse(localStorage.getItem('game'));
+	const { user1_id: p1 , user2_id: p2, id } = gameInfo;
+	console.log(gameInfo);
+
+	setupGame({ 
+		player1Data: {'id': p1.id, 'username': p1.username},
+		player2Data: {'id': p2.id, 'username': p2.username},
+		gameType: gameType,
+		gameID: id,
+	});
+}
+
 const handlers = {
 	'Local': localHandler,
-	'Remote': remoteHandler
+	'Remote': remoteHandler,
+	'Tournament': tournamentHandler,
 };
 
 handlers[gameType]();
