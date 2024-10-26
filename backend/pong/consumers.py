@@ -1,7 +1,7 @@
 import json
 from .views import game_create_helper, game_update_helper, tournament_init_phase
 from .models import Tournaments, TournamentsUsers, Users
-from .serializers import TournamentsUsersSerializer, UsersSerializer
+from .serializers import TournamentsGamesSerializer, TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
 
 from asgiref.sync import async_to_sync
@@ -14,11 +14,13 @@ class TournamentConsumer(WebsocketConsumer):
 	users = {}
 	tournament_id = 0
 	tournament = None
+	games = {}
 
 	def connect(self):
 		self.accept()
-		self.tournament_room = f'{self.scope["url_route"]["kwargs"]["tournament_id"]}'
 		self.user = self.scope['user']
+		self.game_room = ''
+		self.tournament_room = f'{self.scope["url_route"]["kwargs"]["tournament_id"]}'
 		
 		# Get the tournament info
 		if self.tournament is None and self.tournament_id == 0:
@@ -35,12 +37,12 @@ class TournamentConsumer(WebsocketConsumer):
 		if self.tournament is not None and len(self.users) == self.tournament.capacity:
 			first_phase_games = tournament_init_phase(self.tournament_id)
 			ic(first_phase_games)
-			# self.link_user_rooms(first_phase_games)
+			self.link_user_rooms(first_phase_games)
 			
 
 	def disconnect(self, code):
 		# Use tournament_leave handler to remote the user from the database
-		if self.user.id not in self.queue:
+		if self.user.id not in self.users:
 			return 
 	
 		async_to_sync(self.channel_layer.group_discard)(self.tournament_room, self.channel_name)
@@ -81,12 +83,31 @@ class TournamentConsumer(WebsocketConsumer):
 		self.users[self.user.id] = {
 			'id': self.user.id,
 			'username': self.scope['user'].username,
+			'channel_name': self.channel_name,
+			'game_room': ''
 		}
+
+	def link_user_rooms(self, phase_games):
+		for tour_game in phase_games:
+			user1 = self.users[tour_game.game_id.user1_id.id]
+			user2 = self.users[tour_game.game_id.user2_id.id]
+
+			game_room = f'tournament_game_{tour_game.id}'
+			user1['game_room'] = user2['game_room'] = game_room
+
+			async_to_sync(self.channel_layer.group_add)(game_room, user1['channel_name'])
+			async_to_sync(self.channel_layer.group_add)(game_room, user2['channel_name'])
+			async_to_sync(self.channel_layer.group_send)(game_room, {
+				"type": "send.something", 
+				"message": json.dumps(TournamentsGamesSerializer(tour_game).data)
+			})
 
 	def send_users(self, event):
 		self.send(text_data=event["message"])
-		
 
+	def send_something(self, event):
+		self.send(text_data=event["message"])
+		
 class RemoteGameQueueConsumer(WebsocketConsumer):
 	queue = {}
 
