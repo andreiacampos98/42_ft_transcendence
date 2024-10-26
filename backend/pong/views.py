@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import NotAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
@@ -1438,7 +1439,8 @@ def signout(request):
 
 	user.status = "Offline"
 	user.save()
-
+	token = RefreshToken(base64_encoded_token_string)
+	token.blacklist()
 	logout(request)
 
 	return redirect('login')

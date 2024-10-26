@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     'rest_framework', #django rest framework
     'rest_framework_swagger',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'django_otp',
     'django_otp.plugins.otp_totp',

@@ -10,6 +10,7 @@ from . import views
 #router.register('users', UsersViewSet)
 
 
+
 urlpatterns = [
 
     #! Pages
@@ -104,7 +105,8 @@ urlpatterns = [
 
 
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),    
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/blacklist/', jwt_views.TokenBlacklistView.as_view(), name='token_blacklist'), 
 
     #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
