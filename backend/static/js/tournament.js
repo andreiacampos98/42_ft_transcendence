@@ -109,12 +109,6 @@ function onCreateButtonClick()
           });
       }
     })
-    .then(data => {
-        if (data.data != {}) {
-        } else {
-            alert("Error: " + (data.message || 'Unknown error'));
-        }
-    })
     .catch(error => console.error('Error:', error));
 }
 

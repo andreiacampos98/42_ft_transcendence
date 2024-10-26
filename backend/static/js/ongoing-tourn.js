@@ -2,7 +2,7 @@
 const tournamentId = localStorage.getItem('tournament_id');
 console.log(tournamentId);
 
-socket = new WebSocket(`ws://localhost:8002/ws/tournaments/${tournamentId}`);
+socket = new WebSocket(`ws://${window.location.host}/ws/tournaments/${tournamentId}`);
 socket.onopen = (event) => {
     console.log('Socket opening', event);
     socket.send(JSON.stringify({
