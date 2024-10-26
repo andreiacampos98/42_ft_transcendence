@@ -1,6 +1,6 @@
 import json
-from .views import game_create_helper, game_update_helper
-from .models import TournamentsUsers, Users
+from .views import game_create_helper, game_update_helper, tournament_init_phase
+from .models import Tournaments, TournamentsUsers, Users
 from .serializers import TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
 
@@ -11,23 +11,57 @@ import random
 
 
 class TournamentConsumer(WebsocketConsumer):
-	def connect(self):
-		self.room_group_name = f'{self.scope["url_route"]["kwargs"]["tournament_id"]}'
+	users = {}
+	tournament_id = 0
+	tournament = None
 
+	def connect(self):
+		self.accept()
+		self.tournament_room = f'{self.scope["url_route"]["kwargs"]["tournament_id"]}'
+		self.user = self.scope['user']
+		
+		# Get the tournament info
+		if self.tournament is None and self.tournament_id == 0:
+			self.tournament_id = self.scope["url_route"]["kwargs"]["tournament_id"]
+			self.tournament = Tournaments.objects.get(pk=self.tournament_id)
+
+		# Adding user to tournament-wide channel
 		async_to_sync(self.channel_layer.group_add)(
-			self.room_group_name, self.channel_name
+			self.tournament_room, self.channel_name
 		)
 
-		self.accept()
+		self.update_tournament_users()
+
+		if self.tournament is not None and len(self.users) == self.tournament.capacity:
+			first_phase_games = tournament_init_phase(self.tournament_id)
+			ic(first_phase_games)
+			# self.link_user_rooms(first_phase_games)
+			
 
 	def disconnect(self, code):
-		async_to_sync(self.channel_layer.group_discard)(
-			self.room_group_name, self.channel_name
-		)
+		# Use tournament_leave handler to remote the user from the database
+		if self.user.id not in self.queue:
+			return 
+	
+		async_to_sync(self.channel_layer.group_discard)(self.tournament_room, self.channel_name)
+
+		del self.users[self.user.id]
 		return super().disconnect(code)
 	
 	def receive(self, text_data):
-		tournament_id = self.room_group_name
+		# handlers = {
+		# 	# 'UPDATE': 'send.update.paddle.message',
+		# 	# 'SYNC': 'send.ball.sync.message',
+		# 	# 'FINISH': 'send.end.game.message',
+		# }
+		# message = json.loads(text_data)
+		# event = message['event']
+	
+		# handlers[event]()
+		pass
+		
+	def update_tournament_users(self):
+		tournament_id = self.tournament_room
 		all_tour_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
 		serializer = TournamentsUsersSerializer(all_tour_users, many=True)
 
@@ -38,9 +72,16 @@ class TournamentConsumer(WebsocketConsumer):
 			user_data = UsersSerializer(user).data
 			tour_user['user'] = user_data
 
+		# Broadcast current list to all users
 		async_to_sync(self.channel_layer.group_send)(
-			self.room_group_name, {"type": "send.users", "message": json.dumps(tour_users_data)}
+			self.tournament_room, {"type": "send.users", "message": json.dumps(tour_users_data)}
 		)
+
+		# Add the user to the users list
+		self.users[self.user.id] = {
+			'id': self.user.id,
+			'username': self.scope['user'].username,
+		}
 
 	def send_users(self, event):
 		self.send(text_data=event["message"])
@@ -55,21 +96,12 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		self.room_name = ''
 		self.game_id = 0
 
-		# if the queue is empty: (no room available)
-		#	- create a new channel_name and add it to the object
-		# 	- push the new object alongside the channel name to the queue
-		# else: (available rooms)
-		# 	- Pop the first available room in the queue
-		#	- Add the client to the room
-		# 	- Broadcast a message to the channel with a starting command
 		if self.user.id in self.queue:
 			return
 
 		if len(self.queue) == 0:
-			ic('adding player to queue')
 			self.add_player_to_queue()
 		else:
-			ic('adding player to waiting room')
 			self.add_player_to_waiting_room()
 		ic(self.queue)
 

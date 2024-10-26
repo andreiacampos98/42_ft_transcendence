@@ -75,7 +75,7 @@ def user_create(request):
 			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
 
 		if not username or not password1 or not password2:
-			return JsonResponse({'message': 'All fields are required.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'All fields are rcouquircoud.', 'data': {}}, status=400)
 
 		if Users.objects.filter(username=username).exists():
 			return JsonResponse({'message': 'Username already exists! Please try another username.', 'data': {}}, status=400)
@@ -712,6 +712,44 @@ def tournament_update(request, tournament_id):
 
 #! --------------------------------------- Tournaments Users ---------------------------------------
 
+def tournament_init_phase(tournament_id):
+	tournament = Tournaments.objects.get(pk=tournament_id)
+	all_tour_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
+	games_data = []
+
+	for i in range(0, tournament.capacity, 2):
+		user1, user2 = all_tour_users[i], all_tour_users[i + 1]
+
+		game = {
+			'start_date':datetime.now().isoformat(),
+			'user1_id': user1.user_id.id,
+			'user2_id': user2.user_id.id,
+			'type': "Tournament",
+		}
+		games_data.append(game)
+	
+	serializer = GamesSerializer(data=games_data, many=True)
+	if not serializer.is_valid():
+		return JsonResponse(serializer.errors, status=400, safe=False)
+	games = serializer.save()
+	
+	tour_games_data = []
+	for game in games:
+		tour_game = {
+			'phase': first_tour_phase[tournament.capacity],
+			'game_id': game.id,
+			'tournament_id': tournament_id
+		}
+		tour_games_data.append(tour_game)
+
+	tournament.status='Ongoing'
+	tournament.save()
+	serializer = TournamentsGamesSerializer(data=tour_games_data, many=True)
+	if not serializer.is_valid():
+		return JsonResponse(serializer.errors, status=400, safe=False)
+	
+	return serializer.save()
+
 @csrf_exempt
 def tournament_join(request, tournament_id, user_id):
 	if request.method != 'POST':	
@@ -736,47 +774,8 @@ def tournament_join(request, tournament_id, user_id):
 	serializer = TournamentsUsersSerializer(data=data)
 	if not serializer.is_valid():
 		return JsonResponse(serializer.errors, status=400)
-
 	serializer.save()
-
-	all_tour_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
-	tournament = Tournaments.objects.get(pk=tournament_id)
-
-	if all_tour_users.count() == tournament.capacity:
-		games_data = []
-
-		for i in range(0, tournament.capacity, 2):
-			user1, user2 = all_tour_users[i], all_tour_users[i + 1]
-
-			game = {
-				'start_date':datetime.now().isoformat(),
-				'user1_id': user1.user_id.id,
-				'user2_id': user2.user_id.id,
-				'type': "Tournament",
-			}
-			games_data.append(game)
-		
-		serializer = GamesSerializer(data=games_data, many=True)
-		if not serializer.is_valid():
-			return JsonResponse(serializer.errors, status=400, safe=False)
-		
-		games = serializer.save()
-
-		tour_games_data = []
-		for game in games:
-			tour_game = {
-				'phase': first_tour_phase[tournament.capacity],
-				'game_id': game.id,
-				'tournament_id': tournament_id
-			}
-
-			tour_games_data.append(tour_game)
-		tournament.status='Ongoing'
-		tournament.save()
-		serializer = TournamentsGamesSerializer(data=tour_games_data, many=True)
-		if not serializer.is_valid():
-			return JsonResponse(serializer.errors, status=400, safe=False)
-		serializer.save()
+	
 	user = Users.objects.get(pk=user_id)
 	user.status = "Playing"
 	user.save()

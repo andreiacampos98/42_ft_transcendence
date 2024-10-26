@@ -5,10 +5,13 @@ console.log(tournamentId);
 socket = new WebSocket(`ws://${window.location.host}/ws/tournaments/${tournamentId}`);
 socket.onopen = (event) => {
     console.log('Socket opening', event);
-    socket.send(JSON.stringify({
-        'alias': localStorage.getItem('alias'),
-        'tournament_id': localStorage.getItem('tournament_id'),
-    }));
+    // socket.send(JSON.stringify({
+	// 	'event': 'JOIN',
+	// 	'data': {
+	// 		'alias': localStorage.getItem('alias'),
+	// 		'tournament_id': localStorage.getItem('tournament_id'),
+	// 	}
+    // }));
 };
 
 socket.onmessage = (event) => {
