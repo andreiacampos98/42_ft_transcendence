@@ -919,22 +919,7 @@ def tournament_list_user(request, user_id):
 	return JsonResponse(all_user_tours, safe=False)
 
 
-@csrf_exempt
-def tournament_update_game(request, tournament_id, game_id):
-	if request.method != 'POST':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
-	if request.content_type != 'application/json':
-		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
-
-	data = {}
-
-	try:
-		data = json.loads(request.body.decode('utf-8'))
-	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
-	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
-
+def tournament_update_game_helper(tournament_id, game_id, data):
 	tour_game = TournamentsGames.objects.get(tournament_id=tournament_id, game_id=game_id)
 	tour_game.game_id.duration = data['duration']
 	tour_game.game_id.nb_goals_user1 = data['nb_goals_user1']
@@ -990,6 +975,24 @@ def tournament_update_game(request, tournament_id, game_id):
 	data['game'] = GamesSerializer(tour_game.game_id).data
 
 	return JsonResponse(data, status=200)
+
+@csrf_exempt
+def tournament_update_game(request, tournament_id, game_id):
+	if request.method != 'POST':
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	if request.content_type != 'application/json':
+		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
+
+	data = {}
+
+	try:
+		data = json.loads(request.body.decode('utf-8'))
+	except json.JSONDecodeError:
+		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+	except KeyError as e:
+		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+
+	return tournament_update_game_helper(tournament_id, game_id, data)
 
 
 #! --------------------------------------- Login42 ---------------------------------------

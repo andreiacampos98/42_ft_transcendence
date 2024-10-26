@@ -102,10 +102,10 @@ urlpatterns = [
     path('debug/games/goals', views.game_goals_all, name='game-goals-all'),
     path('debug/games/<int:game_id>/stats', views.game_stats, name='debug-game-stats'),
     path('debug/games/stats', views.game_stats_all, name='debug-game-stats-all'),
-    
 ] 
 
 websocket_urlpatterns = [
     path('ws/tournaments/<int:tournament_id>', consumers.TournamentConsumer.as_asgi()),
+    path('ws/tournaments/<int:tournament_id>/games/<int:game_id>', consumers.TournamentGameConsumer.as_asgi()),
     path('ws/games/remote/queue', consumers.RemoteGameQueueConsumer.as_asgi()),
 ]

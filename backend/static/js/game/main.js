@@ -13,14 +13,13 @@ const setupGame = (data) => {
 const remoteHandler = () => {
 	let socket = new WebSocket(`ws://${window.location.host}/ws/games/remote/queue`);
 	socket.onmessage = (event) => {
-		const { player1, player2, ball, gameID } = JSON.parse(event.data);
+		const { player1, player2, gameID } = JSON.parse(event.data);
 		setupGame({
 			player1Data: player1, 
 			player2Data: player2,
 			socket: socket, 
 			gameType: gameType,
 			gameID: gameID,
-			ballDirection: ball.direction,
 		});
 	};
 }
@@ -35,15 +34,19 @@ const localHandler = () => {
 
 const tournamentHandler = () => {
 	const gameInfo = JSON.parse(localStorage.getItem('game'));
-	const { user1_id: p1 , user2_id: p2, id } = gameInfo;
+	const { user1_id: p1 , user2_id: p2, game_id: gameInstance, tournament_id: tourID } = gameInfo;
 	console.log(gameInfo);
 
-	setupGame({ 
-		player1Data: {'id': p1.id, 'username': p1.username},
-		player2Data: {'id': p2.id, 'username': p2.username},
-		gameType: gameType,
-		gameID: id,
-	});
+	let socket = new WebSocket(`ws://${window.location.host}/ws/tournaments/${tourID}/games/${gameInstance.id}`);
+	socket.onmessage = (event) => {
+		setupGame({ 
+			player1Data: {'id': p1.id, 'username': p1.username},
+			player2Data: {'id': p2.id, 'username': p2.username},
+			socket: socket,
+			gameType: gameType,
+			gameID: gameInstance.id,
+		});
+	}
 }
 
 const handlers = {

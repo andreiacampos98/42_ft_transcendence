@@ -6,7 +6,7 @@ import { AbstractGameController } from './AbstractGameController.js';
 
 
 export class RemoteGameController extends AbstractGameController {
-	constructor({ player1Data, player2Data, gameID, socket, ballDirection }) {
+	constructor({ player1Data, player2Data, gameID, socket }) {
 		super({type: "Remote"});
 
 		this.players = {};
@@ -15,7 +15,7 @@ export class RemoteGameController extends AbstractGameController {
 		this.registerKeybinds();
 		this.registerSocketEvents();
 		this.createPlayers(player1Data, player2Data, gameID);
-		this.build(ballDirection);
+		this.build();
 	}
 
 	createPlayers(player1Data, player2Data, gameID) {
@@ -77,7 +77,7 @@ export class RemoteGameController extends AbstractGameController {
 		}
 	}
 
-	build(ballDirection) {
+	build() {
 		const onPaddleHit = () => {
 			this.socket.send(JSON.stringify({
 				'event': 'SYNC',
@@ -91,7 +91,6 @@ export class RemoteGameController extends AbstractGameController {
 			}));
 		};
 		const ballData = {
-			ballDirection: ballDirection,
 			onPaddleHit: onPaddleHit
 		};
 

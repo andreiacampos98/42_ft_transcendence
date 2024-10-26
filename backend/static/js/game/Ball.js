@@ -4,7 +4,7 @@ import { BALL_SPEEDUP_FACTOR, BALL_START_SPEED, BALL_RADIUS,
 	ARENA_SEMI_DEPTH } from './macros.js';
 
 export class Ball extends THREE.Object3D { 
-	constructor ({ radius, speed, direction, onPaddleHit=null }) {
+	constructor ({ radius, speed, direction=null, onPaddleHit=null }) {
 		super();
 
 		this.radius = radius || BALL_RADIUS;
