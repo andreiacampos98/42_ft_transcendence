@@ -10,6 +10,8 @@ async function submitOtp(event) {
     if (response.ok) {
         const data = await response.json();
         if (data.redirect) {
+            localStorage.setItem("access_token", JSON.stringify(data.access_token))
+            localStorage.setItem("refresh_token", JSON.stringify(data.refresh_token))
             history.pushState(null, '', `/home/`);
             htmx.ajax('GET', `/home/`, {
                 target: '#main'  

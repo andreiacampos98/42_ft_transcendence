@@ -100,12 +100,12 @@ def user_create(request):
 		user = authenticate(username=username, password=password1)
 
 		if user is not None:
+			user_tokens = user.tokens()
 			myuser.status="Online"
 			myuser.save()
 			login(request, user)
-			return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.', 'username': myuser.username}, status=201)
+			return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.', 'username': myuser.username, 'access_token': user_tokens.get('access'), 'refresh_token': user_tokens.get('refresh')}, status=201)
 
-		
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 @csrf_exempt
@@ -1431,19 +1431,12 @@ def profile(request, id):
 @login_required
 @csrf_exempt
 def signout(request):
-	print("A função signout foi chamada")
-	ic('aqui')
 	user = Users.objects.get(pk=request.user.id)
-	ic(user.username)  # Para depuração, imprime o nome de usuário
-	ic(user.status)    # Para depuração, imprime o status
-
 	user.status = "Offline"
 	user.save()
-	token = RefreshToken(base64_encoded_token_string)
-	token.blacklist()
-	logout(request)
 
-	return redirect('login')
+	logout(request)
+	return JsonResponse({'message': 'Your account has been successfully logout.'}, status=201)
 
 #! --------------------------------------- Auxiliary ---------------------------------------
 

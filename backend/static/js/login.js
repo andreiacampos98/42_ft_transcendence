@@ -37,6 +37,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             });
         } else {
             console.log('Login in successful');
+            localStorage.setItem("access_token", JSON.stringify(data.access_token))
+            localStorage.setItem("refresh_token", JSON.stringify(data.refresh_token))
             history.pushState(null, '', `/home/`);
             htmx.ajax('GET', `/home/`, {
                 target: '#main',

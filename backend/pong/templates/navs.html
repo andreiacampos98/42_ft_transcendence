@@ -16,6 +16,7 @@
     <script defer src="{% static 'js/friends.js' %}"></script>
     <script defer src="{% static 'js/friend-block.js' %}"></script>
     <script defer src="{% static 'js/notifications.js' %}"></script>
+    <script defer src="{% static 'js/signout.js' %}"></script>
     
     <main id="MainPage" style="padding: 70px;">
         {% block main_content %}
@@ -132,15 +133,9 @@
                             {% endif %}
                         </a>
                     </button>
-                    <button class="select-item d-flex align-items-center logout-icon">
-                        <a class="side-menu_a" 
-                            hx-get="{% url 'signout' %}"
-                            hx-trigger="click"
-                            hx-target="#main"
-                            hx-push-url="true">
-                            <img class="logout-img" src="{% static 'assets/icons/logout.png' %}" alt="logout">
-                            <span class="icon-title">Logout</span>
-                        </a>
+                    <button class="select-item d-flex align-items-center logout-icon" onclick="onSignout()">
+                        <img class="logout-img" src="{% static 'assets/icons/logout.png' %}" alt="logout">
+                        <span class="icon-title">Logout</span>
                     </button>
                 </div>
             </div>

@@ -42,6 +42,8 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
             errorMessage.style.display = 'block';
         } else {
             console.log('Login in successful');
+            localStorage.setItem("access_token", JSON.stringify(data.access_token))
+            localStorage.setItem("refresh_token", JSON.stringify(data.refresh_token))
             htmx.ajax('GET', `/home/`, {
                 target: '#main'  
             });

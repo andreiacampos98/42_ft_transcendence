@@ -29,6 +29,7 @@ function getChangePassword() {
         method: "POST",
         body: formData,
         headers: {
+            "Authorization": localStorage.getItem(access_token) ? `Bearer ${token}` : null,
             "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
         }
     })
