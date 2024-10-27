@@ -1,13 +1,13 @@
 // ==================================================================
-const tournamentId = localStorage.getItem('tournament_id');
+tournamentId = localStorage.getItem('tournament_id');
 console.log(tournamentId);
 
-tournamentWideSocket = new WebSocket(`ws://${window.location.host}/ws/tournaments/${tournamentId}`);
-tournamentWideSocket.onopen = (event) => {
+tournamentSocket = new WebSocket(`ws://${window.location.host}/ws/tournaments/${tournamentId}`);
+tournamentSocket.onopen = (event) => {
     console.log('Socket opening', event);
 };
 
-tournamentWideSocket.onmessage = (event) => {
+tournamentSocket.onmessage = (event) => {
     const message = JSON.parse(event.data);
 		
 	if (message.event == 'USER_JOINED') {
@@ -19,7 +19,7 @@ tournamentWideSocket.onmessage = (event) => {
 			playerSlots[i].querySelector("img").src = player.user.picture;
 		});
 	}
-	else if (message.event == 'START') {
+	else if (message.event == 'BEGIN_PHASE') {
 		localStorage.setItem('game', JSON.stringify(message.data));
 		history.pushState(null, '', `/gametournament/`);
 		htmx.ajax('GET', `/gametournament/`, {
@@ -28,11 +28,11 @@ tournamentWideSocket.onmessage = (event) => {
 	}
 };
 
-tournamentWideSocket.onerror = (error) => {
+tournamentSocket.onerror = (error) => {
     console.error('WebSocket error:', error);
 };
 
-tournamentWideSocket.onclose = (event) => {
+tournamentSocket.onclose = (event) => {
     console.log('Socket closed', event);
 };
 
@@ -49,7 +49,7 @@ async function leaveTournament() {
         });
 
         if (response.ok) {
-            tournamentWideSocket.send(JSON.stringify({}));
+            tournamentSocket.send(JSON.stringify({}));
             history.pushState(null, '', `/tournaments/`);
             htmx.ajax('GET', `/tournaments/`, {
                 target: '#main'  

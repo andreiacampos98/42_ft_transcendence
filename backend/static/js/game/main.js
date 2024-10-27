@@ -17,7 +17,7 @@ const remoteHandler = () => {
 		setupGame({
 			player1Data: player1, 
 			player2Data: player2,
-			socket: socket, 
+			gameSocket: socket, 
 			gameType: gameType,
 			gameID: gameID,
 		});
@@ -35,14 +35,19 @@ const localHandler = () => {
 const tournamentHandler = () => {
 	const gameInfo = JSON.parse(localStorage.getItem('game'));
 	const { user1_id: p1 , user2_id: p2, game_id: gameInstance, tournament_id: tourID } = gameInfo;
+	
 	console.log(gameInfo);
+	console.log('User: ', user);
 
-	let socket = new WebSocket(`ws://${window.location.host}/ws/tournaments/${tourID}/games/${gameInstance.id}`);
-	socket.onmessage = (event) => {
+	let tournamentSocket = 
+
+	let gameSocket = new WebSocket(`ws://${window.location.host}/ws/tournaments/${tourID}/games/${gameInstance.id}`);
+	gameSocket.onmessage = (event) => {
 		setupGame({ 
 			player1Data: {'id': p1.id, 'username': p1.username},
 			player2Data: {'id': p2.id, 'username': p2.username},
-			socket: socket,
+			gameSocket: gameSocket,
+			tournamentSocket: user.tournamentSocket,
 			gameType: gameType,
 			gameID: gameInstance.id,
 		});

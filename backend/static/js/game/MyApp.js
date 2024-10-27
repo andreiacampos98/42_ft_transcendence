@@ -35,7 +35,7 @@ export class MyApp  {
     /**
      * initializes the application
      */
-    init({player1Data, player2Data, socket=null, gameType, gameID=null}) {
+    init({player1Data, player2Data, gameSocket, tournamentSocket, gameType, gameID=null}) {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
@@ -45,7 +45,8 @@ export class MyApp  {
 			this.gameController = new RemoteGameController({ 
 				player1Data: player1Data, 
 				player2Data: player2Data,
-				socket: socket, 
+				gameSocket: gameSocket,
+				tournamentSocket: tournamentSocket,
 				gameID: gameID,
 			});
 		} else {
