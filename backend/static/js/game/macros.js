@@ -20,7 +20,7 @@ export const ARENA_SEMI_DEPTH = 0.25;
 
 export const MAX_GOALS = 5;
 
-export const FPS = 30;
+export const FPS = 50;
 export const REFRESH_RATE = 1000 / FPS;
 
 export const STANDARD_KEYBINDS = {

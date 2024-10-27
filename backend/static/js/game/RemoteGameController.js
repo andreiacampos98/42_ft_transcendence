@@ -21,7 +21,7 @@ export class RemoteGameController extends AbstractGameController {
 	createPlayers(player1Data, player2Data, gameID) {
 		const { id: p1ID, username: p1Username } = player1Data;
 		const { id: p2ID, username: p2Username } = player2Data;
-		const currPlayerID = document.getElementById('game-engine').getAttribute('data-user-id');
+		const currPlayerID = document.getElementById('metadata').getAttribute('data-user-id');
 		const onUpdate = (id, username, targetY) => {
 			this.socket.send(JSON.stringify({
 				'event': 'UPDATE',

@@ -1,8 +1,8 @@
 import { MyApp } from './MyApp.js';
 
-const gameType = document.getElementById('game-engine').getAttribute('game-type');
-const userID = document.getElementById('game-engine').getAttribute('data-user-id');
-const username = document.getElementById('game-engine').getAttribute('data-username');
+const gameType = document.getElementById('metadata').getAttribute('game-type');
+const userID = document.getElementById('metadata').getAttribute('data-user-id');
+const username = document.getElementById('metadata').getAttribute('data-username');
 
 const setupGame = (data) => {
 	let app = new MyApp();
@@ -26,6 +26,7 @@ const remoteHandler = () => {
 }
 
 const localHandler = () => {
+	console.log('I GOT CALLED');
 	setupGame({ 
 		player1Data: {'id': userID, 'username': username},
 		player2Data: {'id': '', 'username': 'Anonymous'},

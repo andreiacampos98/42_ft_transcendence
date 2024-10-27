@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { Ball } from './Ball.js';
 import { Arena } from './Arena.js';
 
-const CURR_PLAYER_ID = document.getElementById('game-engine').getAttribute('data-user-id');
+const CURR_PLAYER_ID = document.getElementById('metadata').getAttribute('data-user-id');
 
 export class AbstractGameController extends THREE.Group {
 	constructor ({ type }) {

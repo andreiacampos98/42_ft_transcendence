@@ -8,18 +8,6 @@
 	border-radius: 8px;
 }
 
-#camera { 
-    position: absolute; 
-    left: 100px; 
-    top: 20px; 
-    width: 100px; 
-    height: 100px; 
-    color: lightgreen; 
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 20px; 
-    z-index: 1000; 
-}
-
 #gui { 
     position: absolute;
     top: 0px;
