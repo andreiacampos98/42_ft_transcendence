@@ -22,6 +22,7 @@ window.onclick = function(event) {
 }
 
 function getChangePassword() {
+    const token = localStorage.getItem("access_token");
     const userId = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
     const formData = new FormData(document.getElementById("change-password-form"));
 
@@ -29,12 +30,12 @@ function getChangePassword() {
         method: "POST",
         body: formData,
         headers: {
-            "Authorization": localStorage.getItem(access_token) ? `Bearer ${token}` : null,
-            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
         }
     })
     .then(response => response.json())
     .then(data => {
+        console.log(data);
         if (JSON.stringify(data.data) === '{}') {
             alert(data.message);
         } else {

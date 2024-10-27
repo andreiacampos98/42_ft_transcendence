@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
@@ -161,8 +162,24 @@ def user_update(request, pk):
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
 
+
+def validate_token(request):
+	jwt_authenticator = JWTAuthentication()
+
+	try:
+		user, validated_token = jwt_authenticator.authenticate(request)
+		return user
+	except (InvalidToken, TokenError):
+		return None
+
+
 @csrf_exempt
 def user_password(request, pk):
+	user = validate_token(request)
+
+	if user is None:
+		return JsonResponse({'message': "Invalid or expired token", 'data': {}}, status=401)
+
 	if request.method == 'POST':
 		user = get_object_or_404(Users, pk=pk)
 		old_password = request.POST.get('old_password')
