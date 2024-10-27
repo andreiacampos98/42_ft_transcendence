@@ -21,34 +21,38 @@ window.onclick = function(event) {
   }
 }
 
-function getChangePassword() {
+async function getChangePassword() {
     const token = localStorage.getItem("access_token");
     const userId = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
     const formData = new FormData(document.getElementById("change-password-form"));
 
-    fetch(`/users/${userId}/password`, {
+    console.log("aqui")
+    const response = await fetch(`/users/${userId}/password`, {
         method: "POST",
         body: formData,
         headers: {
             "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        if (JSON.stringify(data.data) === '{}') {
-            alert(data.message);
-        } else {
-            // Create the modal pop-up
-			modal.style.display = "none";
-			var modal3 = document.getElementById("modal3");
-			modal3.style.display = "block";
-			document.getElementById("confirm-btn").addEventListener("click", () => {
-				window.location.href = data.redirect_url;
-			});
-		}
-	})
-	.catch(error => console.error('Error:', error));
+    });
+    const data = await response.json();
+    console.log(response, data);
+    if (!response.ok && response.status != 401)
+      alert(data.message);
+    else if (!response.ok && response.status == 401) {
+      history.pushState(null, '', `/`);
+      htmx.ajax('GET', `/`, {
+        target: '#main'
+      });
+    }
+    else {
+      // Create the modal pop-up
+      modal.style.display = "none";
+      var modal3 = document.getElementById("modal3");
+      modal3.style.display = "block";
+      document.getElementById("confirm-btn").addEventListener("click", () => {
+        window.location.href = data.redirect_url;
+      });
+    }
 }
 
 function toggleOldVisibility() {

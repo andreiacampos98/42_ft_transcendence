@@ -175,10 +175,10 @@ def validate_token(request):
 
 @csrf_exempt
 def user_password(request, pk):
-	user = validate_token(request)
+	token_valid = validate_token(request)
 
-	if user is None:
-		return JsonResponse({'message': "Invalid or expired token", 'data': {}}, status=401)
+	if token_valid is None:
+		return JsonResponse({'message': "Invalid or expired token"}, status=401)
 
 	if request.method == 'POST':
 		user = get_object_or_404(Users, pk=pk)
