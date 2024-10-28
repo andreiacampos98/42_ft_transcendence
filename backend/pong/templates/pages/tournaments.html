@@ -5,8 +5,15 @@
    
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/tournament.css' %}">
-<script defer src="{% static 'js/tournament.js' %}"></script>
-<script defer src="{% static 'js/join_tournament.js' %}"></script>
+<!-- <script>
+	script = document.createElement('script');
+	script.src = '/static/js/tournament.js';
+	document.getElementById('main').appendChild(script);
+
+	script2 = document.createElement('script');
+	script2.src = '/static/js/join_tournament.js';
+	document.getElementById('main').appendChild(script2);
+</script> -->
 <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
     <div class="main" style="padding-block: 56px; padding-inline: 72px">
         <div class="top d-flex justify-content-between align-items-flex-start">

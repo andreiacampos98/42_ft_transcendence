@@ -14,6 +14,7 @@ document.querySelectorAll('.open-register-tournament-modal').forEach(button => {
     });
 });
 
+console.log('I RAN');
 
 var goback = document.getElementById("cancel-register-tournament");
 

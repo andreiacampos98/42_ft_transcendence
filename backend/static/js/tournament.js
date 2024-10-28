@@ -1,9 +1,9 @@
 function initModal(){
 	let modal = document.getElementById("modal2");
-	let openModalButton = document.getElementById("tournament-creater");
+	let createTournamentButton = document.getElementById("tournament-creater");
 	let goBackButton = document.getElementById("cancel-create-tournament");
 
-	openModalButton.onclick = () => modal.style.display = "block";
+	createTournamentButton.onclick = () => modal.style.display = "block";
 	goBackButton.onclick = () => modal.style.display = "none";
 	window.onclick = (event) => {
 		if (event.target == modal)
@@ -78,18 +78,8 @@ function onCreateButtonClick()
 			});
 		}
 	})
-	.then(data => {
-		if (data.data != {}) {
-
-		} else {
-			alert("Error: " + (data.message || 'Unknown error'));
-		}
-	})
 	.catch(error => console.error('Error:', error));
 }
 
-window.addEventListener('htmx:beforeRequest', (event) => {
-	console.log('HERE');
-	initModal();
-	initCreateTournamentButton();
-});
+initModal();
+initCreateTournamentButton();

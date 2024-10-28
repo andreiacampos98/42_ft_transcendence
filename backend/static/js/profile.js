@@ -4,6 +4,8 @@ var modal2 = document.getElementById("modal2");
 var btn2 = document.getElementById("remove-friend-button");
 var goback = document.getElementById("cancel");
 
+console.log(btn2);
+
 if (btn2) {
 	btn2.onclick = function() {
 		modal2.style.display = "block";

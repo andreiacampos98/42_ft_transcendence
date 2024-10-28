@@ -1,32 +1,81 @@
-// const scrollContainer_meu = document.querySelector('.main');
+var currRoute = '';
+var previousRouteScripts = [];
+const routeScripts = {
+	'/tournaments/': ['tournament', 'join_tournament'],
+	'/users/': [
+		'profile', 
+		'edit-profile', 
+		'change-password', 
+		'friends-add-remove', 
+		'tab-recent-matches', 
+		'view-details-tournaments',
+		'https://cdn.jsdelivr.net/npm/apexcharts'
+	],
+	'/tournaments/ongoing/': ['ongoing-tourn'],
+	'/gamelocal/': ['game/main'],
+	'/gameonline/': ['game/main'],
+	'/gametournament/': ['game/main'],
+};
+const moduleScripts = ['profile'];
 
-// scrollContainer_meu.addEventListener('wheel', (event) => {
-//     // Check if the content requires horizontal scrolling
-//     const canScrollHorizontally = scrollContainer_meu.scrollWidth > scrollContainer_meu.clientWidth;
-//     // Check if the content requires vertical scrolling
-//     const canScrollVertically = scrollContainer_meu.scrollHeight > scrollContainer_meu.clientHeight;
 
-//     if (canScrollHorizontally && !event.shiftKey) {
-//         // If horizontal scrolling is needed and Shift is not held down, scroll horizontally
-//         event.preventDefault(); // Prevent vertical scrolling
-//         scrollContainer_meu.scrollLeft += event.deltaY; // Scroll horizontally by deltaY amount
-//     } else if (canScrollVertically && (event.shiftKey || !canScrollHorizontally)) {
-//         // If vertical scrolling is needed and Shift is held down or horizontal scrolling isn't needed
-//         scrollContainer_meu.scrollTop += event.deltaY; // Scroll vertically
-//     }
-// });
+// const routeStyleSheets = {
 
-const callback = (mutations) => {
-	// console.log(mutations);
-	mutations.forEach((mutation) => {
-		mutation.addedNodes.forEach((node) => {
-			// if (node.nodeType === 1 && !node["htmx-internal-data"]) {
-				htmx.process(node);
-			// }
-		})
+// }
+
+// const appendStylesheets = (route) => {
+	
+
+// };
+const appendScripts = (route) => {
+	routeScripts[route].forEach(file => {
+		const body = document.getElementById('main');
+		let script = document.createElement('script');
+
+		script.type = moduleScripts.includes(file) ? 'module' : '';
+		if (file.startsWith('https'))
+			script.src = file;
+		else
+			script.src = `/static/js/${file}.js`; 
+		console.log(script.src);
+		body.appendChild(script);
+		// previousRouteScripts.push(script);
 	});
 };
 
-const observer = new MutationObserver(callback);
+const callback = (mutations) => {
+	// Ignore second set of mutations
+	if (currRoute == window.location.pathname)
+		return ;
+	
+	currRoute = window.location.pathname;
 
-observer.observe(document, {childList: true, subtree: true});
+	// previousRouteScripts.forEach(script => {
+	// 	console.log('Removing: ', script.src);
+	// 	script.remove();
+	// });
+
+	Object.keys(routeScripts).forEach(key => {
+		if (currRoute.startsWith(key)) {
+			appendScripts(key);
+		}
+	});
+
+	// for (let route of routeStyleSheets) {
+	// 	if (!currRoute.startsWith(route)) {
+	// 		appendStylesheets(route);
+	// 		break;
+	// 	}
+	// }
+	
+}
+
+const observeHTML = () => {
+	const targetNode = document.getElementById('main');
+	const config = { 'childList': true };
+	
+	const observer = new MutationObserver(callback);
+	observer.observe(targetNode, config);
+};
+
+window.addEventListener('DOMContentLoaded', (event) => observeHTML());
