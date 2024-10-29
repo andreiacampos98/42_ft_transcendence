@@ -19,14 +19,6 @@ const routeScripts = {
 const moduleScripts = ['profile'];
 
 
-// const routeStyleSheets = {
-
-// }
-
-// const appendStylesheets = (route) => {
-	
-
-// };
 const appendScripts = (route) => {
 	routeScripts[route].forEach(file => {
 		const body = document.getElementById('main');
@@ -60,14 +52,6 @@ const callback = (mutations) => {
 			appendScripts(key);
 		}
 	});
-
-	// for (let route of routeStyleSheets) {
-	// 	if (!currRoute.startsWith(route)) {
-	// 		appendStylesheets(route);
-	// 		break;
-	// 	}
-	// }
-	
 }
 
 const observeHTML = () => {
