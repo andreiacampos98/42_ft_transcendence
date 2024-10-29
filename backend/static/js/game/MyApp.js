@@ -173,8 +173,3 @@ export class MyApp  {
 			timeoutID = setTimeout(updateCallback, REFRESH_RATE);
     }
 }
-
-window.addEventListener('popstate', function(event) {	
-    if (confirm("You're about to leave the game! Are you sure?!"))
-		this.window.cancelAnimationFrame(frameID);
-});

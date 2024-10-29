@@ -2,21 +2,20 @@
 {% load static %}
 
 {% block body %}
-    <link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/scroll.css' %}">
-    <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
-    <link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
-    <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
+	<link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
+	<link rel="stylesheet" href="{% static 'css/scroll.css' %}">
+	<link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
+	<link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
+	<link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
+	<link rel="stylesheet" href="{% static 'css/notifications.css' %}">
 	<link rel="stylesheet" href="{% static 'css/modals.css' %}">
 	<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script defer src="{% static 'js/navs.js' %}"></script>
-    <script defer src="{% static 'js/suggest_users.js' %}"></script>
-    <script defer src="{% static 'js/friends.js' %}"></script>
-    <script defer src="{% static 'js/friend-block.js' %}"></script>
-    <script defer src="{% static 'js/notifications.js' %}"></script>
-    
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script defer src="{% static 'js/navs.js' %}"></script>
+	<script defer src="{% static 'js/suggest_users.js' %}"></script>
+	<script defer src="{% static 'js/friends.js' %}"></script>
+	<script defer src="{% static 'js/friend-block.js' %}"></script>
+	<script defer src="{% static 'js/notifications.js' %}"></script>
     <main id="MainPage" style="padding: 70px;">
         {% block main_content %}
         {% endblock %}

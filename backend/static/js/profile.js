@@ -111,8 +111,7 @@ async function loadDonutChart() {
 			enabled: false        
 		}
 	};
-
-	var chart = new ApexCharts(document.querySelector("#chart1"), options);
+	var chart = new ApexCharts(document.getElementById("chart1"), options);
 	chart.render();
 }
 
@@ -149,7 +148,9 @@ async function loadBarLineChart() {
 		const weekday = (timestamp.getDay() + 6) % 7;
 		totalGames[weekday] = numGames;
 	});
-	
+	console.log('TOTAL GAMES', totalGames);
+	console.log('WIN RATES', winRates);
+
 	var options = {
 		chart: {
 			type: 'line',
