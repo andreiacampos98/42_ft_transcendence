@@ -4,7 +4,7 @@
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/game/game.css' %}">
 <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
-<script type="module" src="{% static 'js/game/main.js' %}"></script>
+<!-- <script type="module" src="{% static 'js/game/main.js' %}"></script> -->
 <div class="main-content non_compressed" id="main-content">
 	<span id='metadata' data-user-id="{{ user.id }}" data-username="{{ user.username }}" game-type="Local"></span>
 	<div id="canvas-container" style="width: 100%; height: 100%; z-index: -100;"></div>
@@ -15,5 +15,20 @@
 		<div id="p2"></div>
 	</div>
 </div>
+<script type="module">
+	import { MyApp } from '/static/js/game/MyApp.js';
+
+	const gameType = document.getElementById('metadata').getAttribute('game-type');
+	const userID = document.getElementById('metadata').getAttribute('data-user-id');
+	const username = document.getElementById('metadata').getAttribute('data-username');
+
+	let app = new MyApp();
+	app.init({ 
+		player1Data: {'id': userID, 'username': username},
+		player2Data: {'id': '', 'username': 'Anonymous'},
+		gameType: gameType 
+	});
+	app.render();
+</script>
 
 {% endblock %}

@@ -12,26 +12,21 @@ const routeScripts = {
 		'https://cdn.jsdelivr.net/npm/apexcharts'
 	],
 	'/tournaments/ongoing/': ['ongoing-tourn'],
-	// '/gamelocal/': ['game/main'],
-	// '/gameonline/': ['game/main'],
-	// '/gametournament/': ['game/main'],
+	'/gamelocal/': ['game/main'],
+	'/gameonline/': ['game/main'],
+	'/gametournament/': ['game/main'],
 };
 const moduleScripts = ['game/main'];
 
 
 const appendScripts = (route) => {
-	routeScripts[route].forEach(file => {
-		const body = document.getElementById('main');
+	console.log('Current route: ', route);
+	routeScripts[route].forEach(file => {		
 		let script = document.createElement('script');
-
 		script.type = moduleScripts.includes(file) ? 'module' : '';
-		if (file.startsWith('https'))
-			script.src = file;
-		else
-			script.src = `/static/js/${file}.js`; 
+		script.src = file.startsWith('https') ? file : `/static/js/${file}.js`;
 		console.log(script.src);
-		body.appendChild(script);
-		// previousRouteScripts.push(script);
+		document.body.appendChild(script);
 	});
 };
 
@@ -41,11 +36,6 @@ const callback = (mutations) => {
 		return ;
 	
 	currRoute = window.location.pathname;
-
-	// previousRouteScripts.forEach(script => {
-	// 	console.log('Removing: ', script.src);
-	// 	script.remove();
-	// });
 
 	Object.keys(routeScripts).forEach(key => {
 		if (currRoute.startsWith(key)) {
