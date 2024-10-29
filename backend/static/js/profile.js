@@ -2,7 +2,6 @@ var modal2 = document.getElementById("modal2");
 var btn2 = document.getElementById("remove-friend-button");
 var goback = document.getElementById("cancel");
 
-console.log(btn2);
 
 if (btn2) {
 	btn2.onclick = function() {
@@ -54,13 +53,11 @@ async function loadDonutChart() {
 		method: "GET",
 	});
 	const stats = await response.json();
-	console.log(stats);
 	
 	const remoteTime = Math.round(stats.remote_time_played / 60);
 	const aiTime = Math.round(stats.ai_time_played / 60);
 	const localTime = Math.round(stats.local_time_played / 60);
 	const tournamentTime = Math.round(stats.tournament_time_played / 60);
-
 	var options = {
 		chart: {
 			type: 'donut',
@@ -152,7 +149,7 @@ async function loadBarLineChart() {
 		const weekday = (timestamp.getDay() + 6) % 7;
 		totalGames[weekday] = numGames;
 	});
-
+	
 	var options = {
 		chart: {
 			type: 'line',
@@ -243,7 +240,6 @@ async function loadBarLineChart() {
 	chart.render();
 }
 
-console.log('I RAN');
 
 formatRecordsTimestamp(".record-date");
 loadDonutChart();
