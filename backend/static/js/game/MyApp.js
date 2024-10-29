@@ -169,7 +169,8 @@ export class MyApp  {
 			this.stats.end();
 		}).bind(this);
 
-		timeoutID = setTimeout(updateCallback, REFRESH_RATE);
+		if (window.location.pathname.startsWith('/game'))
+			timeoutID = setTimeout(updateCallback, REFRESH_RATE);
     }
 }
 

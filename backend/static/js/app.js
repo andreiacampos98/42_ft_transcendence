@@ -12,11 +12,11 @@ const routeScripts = {
 		'https://cdn.jsdelivr.net/npm/apexcharts'
 	],
 	'/tournaments/ongoing/': ['ongoing-tourn'],
-	'/gamelocal/': ['game/main'],
-	'/gameonline/': ['game/main'],
-	'/gametournament/': ['game/main'],
+	// '/gamelocal/': ['game/main'],
+	// '/gameonline/': ['game/main'],
+	// '/gametournament/': ['game/main'],
 };
-const moduleScripts = ['profile'];
+const moduleScripts = ['game/main'];
 
 
 const appendScripts = (route) => {

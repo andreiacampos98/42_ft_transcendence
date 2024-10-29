@@ -1,5 +1,3 @@
-import { TEST_STATS } from "./game/macros.js";
-
 var modal2 = document.getElementById("modal2");
 var btn2 = document.getElementById("remove-friend-button");
 var goback = document.getElementById("cancel");
@@ -56,6 +54,7 @@ async function loadDonutChart() {
 		method: "GET",
 	});
 	const stats = await response.json();
+	console.log(stats);
 	
 	const remoteTime = Math.round(stats.remote_time_played / 60);
 	const aiTime = Math.round(stats.ai_time_played / 60);
@@ -243,6 +242,8 @@ async function loadBarLineChart() {
 	var chart = new ApexCharts(document.querySelector("#chart2"), options);
 	chart.render();
 }
+
+console.log('I RAN');
 
 formatRecordsTimestamp(".record-date");
 loadDonutChart();

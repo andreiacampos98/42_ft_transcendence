@@ -26,7 +26,7 @@ const remoteHandler = () => {
 }
 
 const localHandler = () => {
-	console.log('I GOT CALLED');
+	console.log('LOCAL HANDLER STARTING');
 	setupGame({ 
 		player1Data: {'id': userID, 'username': username},
 		player2Data: {'id': '', 'username': 'Anonymous'},

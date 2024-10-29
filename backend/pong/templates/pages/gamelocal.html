@@ -1,13 +1,10 @@
 {% extends 'navs.html' %}
 {% load static %}
 
-{% block head %}
+{% block main_content %}
 <link rel="stylesheet" href="{% static 'css/game/game.css' %}">
 <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
-{% endblock %}
-
-
-{% block main_content %}
+<script type="module" src="{% static 'js/game/main.js' %}"></script>
 <div class="main-content non_compressed" id="main-content">
 	<span id='metadata' data-user-id="{{ user.id }}" data-username="{{ user.username }}" game-type="Local"></span>
 	<div id="canvas-container" style="width: 100%; height: 100%; z-index: -100;"></div>
@@ -18,22 +15,5 @@
 		<div id="p2"></div>
 	</div>
 </div>
-
-<script>
-	let script = document.createElement("script");
-    script.type = "module";
-    script.src = "/static/js/game/main.js";
-	script.defer = true;
-
-	let css = document.createElement('link');
-	css.setAttribute('rel', 'stylesheet');
-	css.setAttribute('href', '/static/css/game/game.css');
-
-	let css2 = document.createElement('link');
-	css2.setAttribute('rel', 'stylesheet');
-	css2.setAttribute('href', '/static/css/side-menu.css');
-
-	document.getElementById("main-content").append(script, css, css2);
-</script>
 
 {% endblock %}
