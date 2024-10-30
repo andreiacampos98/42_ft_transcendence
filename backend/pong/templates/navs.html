@@ -24,7 +24,7 @@
     </main>
     {% if user.is_authenticated %}
 		{% block friend-bar %}
-            <button class="toggle-button" id="toggle-button" onclick="toggleSidebar('{{user_id}}')">
+            <button class="toggle-button" id="toggle-button" onclick="toggleFriendsDrawer('{{user_id}}')">
                 <img src="{% static 'assets/icons/puxador.png' %}">
             </button>
             <div class="sidebar" id="sidebar"></div>
