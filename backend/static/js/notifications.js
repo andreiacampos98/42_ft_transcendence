@@ -12,129 +12,120 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 
-function removeNotification(notificationId, listItem){
+async function removeNotification(notificationId, listItem){
     const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
-    fetch(`/notifications/${userId}/${notificationId}`, {
+    const response = await fetch(`/notifications/${userId}/${notificationId}`, {
         method: 'DELETE',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }
-    })
-    .then(response => {
-        if (response.ok) {
-            listItem.remove();
-        } else {
-            console.error('Error deleting notification:', response.statusText);
-        }
-    })
-    .catch(error => {
-        console.error('Error deleting notification:', error);
     });
+	const data = await response.json();
+	if (!response.ok)
+		console.error(`Error deleting notification: ${data.message}`);
+	else
+		listItem.remove();
 }
 
 
-function getNotifications() {
+async function getNotifications() {
     const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
 
-    fetch(`/notifications/${userId}`, {
+    const response = await fetch(`/notifications/${userId}`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        const notificationList = document.getElementById('notificationList');
-        notificationList.innerHTML = '';  // Clear existing notifications
-
-        data.forEach(notification => {
-            const listItem = document.createElement('li');
-            listItem.classList.add('notif-li');
-
-            const right_div = document.createElement('div');
-            right_div.classList.add('time-text-button');
-            
-            const profilePic = document.createElement('img');
-            profilePic.classList.add('profile-pic-notif');
-            const uri = notification.other_user_id.picture;
-            if (notification.other_user_id.picture.includes('http')) {
-                profilePic.src = decodeURIComponent(uri.slice(7))
-            } else {
-                profilePic.src = notification.other_user_id.picture;
-            }
-            profilePic.alt = `${notification.other_user_id.username}'s profile picture`;
-            
-            const textContent = document.createElement('h4');
-            textContent.classList.add('description-notif');
-
-            
-            textContent.innerHTML = `<a class="name-notif">${notification.other_user_id.username}</a> ${notification.description}`;
-            textContent.onclick = function() {
-                history.pushState(null, '', `/users/${notification.other_user_id.id}`);
-                htmx.ajax('GET', `/users/${notification.other_user_id.id}`, {
-                    target: '#main'  
-                });
-            };
-
-            const timestamp = document.createElement('span');
-            timestamp.classList.add('timestamp');
-            const date = new Date(notification.created_at);
-
-            const formattedDate = date.toLocaleDateString('en-GB', {day: '2-digit', month: '2-digit'});
-
-            // Format time as "hh:mm"
-            const formattedTime = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false});
-
-            // Combine date and time
-            timestamp.textContent = `${formattedDate}, ${formattedTime}`;
-            
-            listItem.appendChild(profilePic);
-            listItem.appendChild(right_div);
-            
-            right_div.appendChild(timestamp);
-            right_div.appendChild(textContent);
-
-            if (notification.status === 'Pending' && notification.type === 'Friend Request') {
-                const acceptButton = document.createElement('button');
-                acceptButton.textContent = 'Accept';
-                acceptButton.classList.add('button-notif');
-                acceptButton.id = "accept";
-                acceptButton.onclick = () => handleNotificationAction(notification.id, 'accept', userId, notification.other_user_id.id);
-
-                const declineButton = document.createElement('button');
-                declineButton.textContent = 'Decline';
-                declineButton.classList.add('button-notif');
-                declineButton.id = "decline";
-                declineButton.onclick = () => handleNotificationAction(notification.id, 'decline', userId, notification.other_user_id.id);
-
-                const buttons = document.createElement('div');
-                buttons.classList.add('d-flex');
-                buttons.classList.add('align-items-center');
-                right_div.classList.add('accept-decline');
-
-                buttons.appendChild(acceptButton);
-                buttons.appendChild(declineButton);
-
-                right_div.appendChild(buttons);
-				
-				
-            }
-
-			const closeSpan = document.createElement('span');
-			closeSpan.classList.add('close');
-			closeSpan.textContent = 'x';
-            closeSpan.style.cursor = 'pointer';
-            closeSpan.onclick = () => removeNotification(notification.id, listItem);
-			listItem.appendChild(closeSpan);
-
-            notificationList.appendChild(listItem);
-        });
-
-        const modal = document.getElementById('modal-notif');
-        modal.style.display = 'block';
-    })
-    .catch(error => {
-        console.error('Error fetching notifications:', error);
     });
+	const data = await response.json();
+
+	if (!response.ok)
+		console.error(`Error getting notifications: ${data.message}`);
+    
+	const notificationList = document.getElementById('notificationList');
+	notificationList.innerHTML = '';  // Clear existing notifications
+
+	data.forEach(notification => {
+		const listItem = document.createElement('li');
+		listItem.classList.add('notif-li');
+
+		const right_div = document.createElement('div');
+		right_div.classList.add('time-text-button');
+		
+		const profilePic = document.createElement('img');
+		profilePic.classList.add('profile-pic-notif');
+		profilePic.alt = `${notification.other_user_id.username}'s profile picture`;
+		
+		const uri = notification.other_user_id.picture;
+		if (notification.other_user_id.picture.includes('http')) 
+			profilePic.src = decodeURIComponent(uri.slice(7))
+		else 
+			profilePic.src = notification.other_user_id.picture;
+		
+		const textContent = document.createElement('h4');
+		textContent.classList.add('description-notif');
+
+		textContent.innerHTML = `<a class="name-notif">${notification.other_user_id.username}</a> ${notification.description}`;
+		textContent.onclick = function() {
+			history.pushState(null, '', `/users/${notification.other_user_id.id}`);
+			htmx.ajax('GET', `/users/${notification.other_user_id.id}`, {
+				target: '#main'  
+			});
+		};
+
+		const timestamp = document.createElement('span');
+		timestamp.classList.add('timestamp');
+		const date = new Date(notification.created_at);
+
+		const formattedDate = date.toLocaleDateString('en-GB', {day: '2-digit', month: '2-digit'});
+
+		// Format time as "hh:mm"
+		const formattedTime = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false});
+
+		// Combine date and time
+		timestamp.textContent = `${formattedDate}, ${formattedTime}`;
+		
+		listItem.appendChild(profilePic);
+		listItem.appendChild(right_div);
+		
+		right_div.appendChild(timestamp);
+		right_div.appendChild(textContent);
+
+		if (notification.status === 'Pending' && notification.type === 'Friend Request') {
+			const acceptButton = document.createElement('button');
+			acceptButton.textContent = 'Accept';
+			acceptButton.classList.add('button-notif');
+			acceptButton.id = "accept";
+			acceptButton.onclick = () => handleNotificationAction(notification.id, 'accept', userId, notification.other_user_id.id);
+
+			const declineButton = document.createElement('button');
+			declineButton.textContent = 'Decline';
+			declineButton.classList.add('button-notif');
+			declineButton.id = "decline";
+			declineButton.onclick = () => handleNotificationAction(notification.id, 'decline', userId, notification.other_user_id.id);
+
+			const buttons = document.createElement('div');
+			buttons.classList.add('d-flex');
+			buttons.classList.add('align-items-center');
+			right_div.classList.add('accept-decline');
+
+			buttons.appendChild(acceptButton);
+			buttons.appendChild(declineButton);
+
+			right_div.appendChild(buttons);
+		}
+
+		const closeSpan = document.createElement('span');
+		closeSpan.classList.add('close');
+		closeSpan.textContent = 'x';
+		closeSpan.style.cursor = 'pointer';
+		closeSpan.onclick = () => removeNotification(notification.id, listItem);
+		listItem.appendChild(closeSpan);
+
+		notificationList.appendChild(listItem);
+	});
+
+	const modal = document.getElementById('modal-notif');
+	modal.style.display = 'block';
 }
 
 

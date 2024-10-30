@@ -1066,12 +1066,12 @@ def login42(request):
 
 	access_token = get_access_token(request.get_host(), authorization_code)
 	if access_token is None:
-		return JsonResponse({'error': 'Failed to fetch access token', 'data': {}}, status=400)
+		return JsonResponse({'error': 'Failed to get access token', 'data': {}}, status=400)
 
 
 	user_info = get_user_info(access_token)
 	if not user_info:
-		return JsonResponse({'error': 'Failed to fetch user info', 'data': {}}, status=400)
+		return JsonResponse({'error': 'Failed to get user info', 'data': {}}, status=400)
 
 
 	request.session['access_token'] = access_token
