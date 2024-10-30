@@ -459,7 +459,7 @@ def user_stats_all(request):
 		stats = UserStats.objects.all()
 		data_stats = UserStatsSerializer(stats, many=True)
 		return JsonResponse({'message': 'All users stats', 'data': data_stats.data}, status=200)
-	return JsonResponse({'message': 'All users stats', 'data':{} }, safe=False, status=400)
+	return JsonResponse({'message': 'All users stats' }, safe=False, status=400)
 
 
 #! --------------------------------------- Game Stats ---------------------------------------
@@ -504,7 +504,7 @@ def game_stats_all(request):
 		stats = GamesStats.objects.all()
 		data_stats = GamesStatsSerializer(stats, many=True)
 		return JsonResponse({'message': 'All games stats', 'data': data_stats.data}, status=200)
-	return JsonResponse({'message': 'All games stats', 'data':{} }, safe=False, status=400)
+	return JsonResponse({'message': 'All games stats' }, safe=False, status=400)
 
 #! --------------------------------------- Goals ---------------------------------------
 def game_goals_create(game_id, data):
@@ -543,7 +543,7 @@ def game_goals_all(request):
 		stats = Goals.objects.all()
 		data_stats = GoalsSerializer(stats, many=True)
 		return JsonResponse({'message': 'All goals', 'data': data_stats.data}, status=200)
-	return JsonResponse({'message': 'No goals', 'data':{} }, safe=False, status=400)
+	return JsonResponse({'message': 'No goals' }, safe=False, status=400)
 
 #! --------------------------------------- Games ---------------------------------------
 
