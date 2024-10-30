@@ -23,6 +23,7 @@ clean:
 		backend/pong/migrations/*_initial.py \
 		backend/pong/migrations/0*.py
 
+	rm -rf backend/media/upload/*
 	mkdir data/
 
 prune:
