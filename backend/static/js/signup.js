@@ -17,7 +17,7 @@ function togglereconfirmButton() {
     togglereconfirmImage.alt = type === 'password' ? 'Show Password' : 'Hide Password';
 }
 
-document.getElementById('signupForm').addEventListener('submit', function(event) {
+document.getElementById('signupForm').addEventListener('submit', async function(event) {
     event.preventDefault(); 
 
     const formData = {
@@ -26,32 +26,25 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
         reconfirm: document.getElementById('reconfirm').value
     };
 
-    fetch(`/users/create`, {
+    const response = await fetch(`/users/create`, {
         method: 'POST',
         body: JSON.stringify(formData),
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
-    })
-    .then(response => response.json()) 
-    .then(data => {
-        if (JSON.stringify(data.data) === '{}') {
-            console.log('Login in failed');
-            errorMessage.textContent = data.message;
-            errorMessage.style.display = 'block';
-        } else {
-            console.log('Login in successful');
-            localStorage.setItem("access_token", JSON.stringify(data.access_token))
-            localStorage.setItem("refresh_token", JSON.stringify(data.refresh_token))
-            htmx.ajax('GET', `/home/`, {
-                target: '#main'  
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        errorMessage.textContent = 'An unexpected error occurred. Please try again later.';
-        errorMessage.style.display = 'block';
     });
+	const data = await response.json();
+	if (!response.ok) {
+		console.log('Login in failed');
+		errorMessage.textContent = data.message;
+		errorMessage.style.display = 'block';
+		return ;
+	}
+	console.log('Login in successful');
+	localStorage.setItem("access_token", JSON.stringify(data.access_token))
+	localStorage.setItem("refresh_token", JSON.stringify(data.refresh_token))
+	htmx.ajax('GET', `/home/`, {
+		target: '#main'  
+	});
 });
