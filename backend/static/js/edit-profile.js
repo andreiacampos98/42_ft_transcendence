@@ -38,27 +38,25 @@ function onCancelButtonClick() {
     document.getElementById("open-change-password-modal").style.display = "block";
 }
 
-function onSaveButtonClick(event, userId) {
+async function onSaveButtonClick(event, userId) {
     event.preventDefault(); 
     const formData = new FormData(document.getElementById("edit-profile-form"));
 
-    fetch(`/users/${userId}/update`, {
+    const response = await fetch(`/users/${userId}/update`, {
         method: "POST",
         body: formData,
         headers: {
             "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (JSON.stringify(data.data) === '{}') {
-            alert(data.message);
-        } else {
-            history.pushState(null, '', `/users/${userId}`);
-            htmx.ajax('GET', `/users/${userId}`, {
-                target: '#main'  
-            });
-        }
-    })
-    .catch(error => console.error('Error:', error));
+    });
+	const data = await response.json();
+
+	if (response.status != 201)
+		alert(data.message);
+	else {
+		history.pushState(null, '', `/users/${userId}`);
+		htmx.ajax('GET', `/users/${userId}`, {
+			target: '#main'  
+		});
+	}
 }
