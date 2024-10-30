@@ -24,46 +24,39 @@ document.getElementById('auth-method-select').addEventListener('change', functio
     authForm.innerHTML = formContent;
 });
 
-document.getElementById('submit-auth').addEventListener('click', function() {
+document.getElementById('submit-auth').addEventListener('click', async function() {
     const selectedMethod = document.getElementById('auth-method-select').value;
-    let data = {};
+    let formData = {};
 
     if (selectedMethod === 'sms') {
-        data.info = document.getElementById('phone').value;
-        data.method = 'sms'
+        formData.info = document.getElementById('phone').value;
+        formData.method = 'sms'
     } else if (selectedMethod === 'auth_app') {
-        data.info = document.getElementById('auth-code').value;
-        data.method = 'auth_app'
+        formData.info = document.getElementById('auth-code').value;
+        formData.method = 'auth_app'
     } else if (selectedMethod === 'email') {
-        data.info = document.getElementById('email').value;
-        data.method = 'email'
+        formData.info = document.getElementById('email').value;
+        formData.method = 'email'
     }
 
     // Make an AJAX call or submit the form data here
-    console.log('Submitting data for', selectedMethod, data);
-    fetch(`/otpmethod/`, {
+    console.log('Submitting data for', selectedMethod, formData);
+    const response = await fetch(`/otpmethod/`, {
         method: 'POST',
-        body: JSON.stringify(data),
+        body: JSON.stringify(formData),
         headers: {
             'Content-Type': 'application/json',
         }
-    })
-    .then(response => response.json()) 
-    .then(data => {
-        console.log(data);
-        if (JSON.stringify(data.data) === '{}') {
-            errorMessage.textContent = data.message;
-            errorMessage.style.display = 'block';
-        } else {
-            history.pushState(null, '', `/otp/`);
-            htmx.ajax('GET', `/otp/`, {
-                target: '#main',
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        errorMessage.textContent = 'An unexpected error occurred. Please try again later.';
-        errorMessage.style.display = 'block';
     });
+	const data = await response.json();
+	if (!response.ok) {
+		errorMessage.textContent = data.message;
+		errorMessage.style.display = 'block';
+		return ;
+	}
+
+    history.pushState(null, '', `/otp/`);
+	htmx.ajax('GET', `/otp/`, {
+		target: '#main',
+	});
 });
