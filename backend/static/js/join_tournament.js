@@ -42,7 +42,6 @@ async function registerTournament() {
     } else {
       alias = document.getElementById("nickname-input-join").value;
     }
-    // Prepare form data and send via fetch API
     var formData = {
         "alias": alias
     };

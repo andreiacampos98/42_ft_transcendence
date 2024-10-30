@@ -14,7 +14,7 @@ async function getSuggestions() {
 	});
 	const data = await response.json();
 	if (!response.ok) {
-		console.error(`Error fetching suggestions: ${data.message}`);
+		console.error(`Error getting suggestions: ${data.message}`);
 		return ;
 	}
 	suggestionsBox.innerHTML = ''; // Clear previous suggestions
