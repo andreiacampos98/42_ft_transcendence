@@ -77,19 +77,19 @@ def user_create(request):
 			password2 = data.get('reconfirm')
 			ic([username, password1, password2])
 		except json.JSONDecodeError:
-			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
 
 		if not username or not password1 or not password2:
-			return JsonResponse({'message': 'All fields are required.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'All fields are required.'}, status=400)
 
 		if Users.objects.filter(username=username).exists():
-			return JsonResponse({'message': 'Username already exists! Please try another username.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Username already exists! Please try another username.'}, status=400)
 
 		if password1 != password2:
-			return JsonResponse({'message': 'Passwords didn\'t match.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Passwords didn\'t match.'}, status=400)
 
 		if not username.isalnum():
-			return JsonResponse({'message': 'Username must be alphanumeric.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Username must be alphanumeric.'}, status=400)
 
 		myuser = Users.objects.create_user(username=username, password=password1)
 		myuser.save()
@@ -114,7 +114,7 @@ def delete_profile(request, id):
 	if request.method =='DELETE':
 		Users.objects.filter(id=id).delete()
 		return JsonResponse({'message': 'User deleted'}, status=200)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 
 @csrf_exempt
@@ -130,7 +130,7 @@ def user_update(request, pk):
 				validate_email(email)
 				user.email=email
 			except ValidationError:
-				return JsonResponse({'message': 'Invalid email format.', 'data': {}}, status=400)
+				return JsonResponse({'message': 'Invalid email format.'}, status=400)
 
 		if 'picture' in request.FILES:
 			user.picture = request.FILES['picture']
@@ -148,7 +148,7 @@ def user_update(request, pk):
 	
 		new_username = data.get('username', None)
 		if Users.objects.filter(username=new_username).exists() and user.username != new_username:
-			return JsonResponse({'message': 'Username already exists.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Username already exists.'}, status=400)
 
 		description = data.get('description', None)
 
@@ -160,7 +160,7 @@ def user_update(request, pk):
 		ic("Aqui1")
 		return JsonResponse({'message': 'User updated.', }, status=201)
 	else:
-		return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 
 def validate_token(request):
@@ -187,16 +187,16 @@ def user_password(request, pk):
 		new_password2 = request.POST.get('password2')
 
 		if not user.check_password(old_password):
-			return JsonResponse({'message': 'Old password is incorrect.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Old password is incorrect.'}, status=400)
 
 		if not new_password1:
-			return JsonResponse({'message': 'New password is required.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'New password is required.'}, status=400)
 
 		if user.check_password(new_password1):
-			return JsonResponse({'message': 'New password cannot be the same as the old password.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'New password cannot be the same as the old password.'}, status=400)
 		
 		if new_password1 != new_password2:
-			return JsonResponse({'message': 'Passwords did not match.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Passwords did not match.'}, status=400)
 
 		user.set_password(new_password1)
 		user.save()
@@ -204,7 +204,7 @@ def user_password(request, pk):
 		update_session_auth_hash(request, user)
 		return JsonResponse({'message': 'Password updated successfully', 'redirect_url': reverse('user-profile', args=[user.id])}, status=200)
 	else:
-		return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 @csrf_exempt
 def search_suggestions(request):
@@ -245,11 +245,11 @@ def get_user_friends(request, user_id):
 def add_remove_friend(request, user1_id, user2_id):
 	if request.method == 'POST':
 		if user1_id == user2_id:
-			return JsonResponse({'message': 'Users cannot be friends with themselves.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Users cannot be friends with themselves.'}, status=400)
 		
 		if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or \
 		Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
-			return JsonResponse({'message': 'Friendship already exists.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Friendship already exists.'}, status=400)
 
 		user1 = get_object_or_404(Users, id=user1_id)
 		user2 = get_object_or_404(Users, id=user2_id)
@@ -271,7 +271,7 @@ def add_remove_friend(request, user1_id, user2_id):
 		).first()
 
 		if not friendship:
-			return JsonResponse({'message': 'Friendship does not exist.', 'data': {}}, status=404)
+			return JsonResponse({'message': 'Friendship does not exist.'}, status=404)
 
 		friendship.delete()
 
@@ -279,7 +279,7 @@ def add_remove_friend(request, user1_id, user2_id):
 			'message': 'Friendship deleted successfully.'
 		}
 		return JsonResponse(response_data, status=200)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 @csrf_exempt
 def accept_friend(request, user1_id, user2_id):
@@ -289,10 +289,10 @@ def accept_friend(request, user1_id, user2_id):
 		).first()
 
 		if not friendship:
-			return JsonResponse({'message': 'Friendship does not exist.', 'data': {}}, status=404)
+			return JsonResponse({'message': 'Friendship does not exist.'}, status=404)
 		
 		if friendship.accepted:
-			return JsonResponse({'message': 'Friendship request has already been accepted.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Friendship request has already been accepted.'}, status=400)
 		
 		friendship.accepted = True
 		friendship.save()
@@ -304,7 +304,7 @@ def accept_friend(request, user1_id, user2_id):
 			'message': 'User accept the request.'
 		}
 		return JsonResponse(response_data, status=200)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 #! --------------------------- Notifications ----------------------------------
 
@@ -313,7 +313,7 @@ def get_user_notifications(request, user_id):
 		notifications = Notifications.objects.filter(user_id = user_id)
 		serializer = NotificationsSerializer(notifications, many=True)
 		return JsonResponse(serializer.data, safe=False)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 @csrf_exempt
 def delete_user_notification(request, user_id, notif_id):
@@ -324,7 +324,7 @@ def delete_user_notification(request, user_id, notif_id):
 			'message': 'Notification deleted.'
 		}
 		return JsonResponse(response_data, status=204)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 @csrf_exempt
 def update_notification(request, notif_id):
@@ -336,7 +336,7 @@ def update_notification(request, notif_id):
 			'message': 'Status of notification updated.'
 		}
 		return JsonResponse(response_data, status=204)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 #! --------------------------------------- User Stats ---------------------------------------
 
@@ -393,7 +393,7 @@ def user_stats_update(user_id, game_id, data):
 
 	stats = UserStats.objects.get(user_id=user_id)
 	if not stats:
-		return JsonResponse({'message': 'User stats not found', 'data': {}}, status=404)
+		return JsonResponse({'message': 'User stats not found'}, status=404)
 	
 	game = Games.objects.get(pk=game_id)
 	if game.user1_id.id == user_id:
@@ -454,7 +454,7 @@ def win_rate_nb_games_day(request, user_id):
 
 def user_stats_all(request):
 	if request.method != 'GET':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 	elif request.method == 'GET':
 		stats = UserStats.objects.all()
 		data_stats = UserStatsSerializer(stats, many=True)
@@ -499,7 +499,7 @@ def game_stats(request, game_id):
 
 def game_stats_all(request):
 	if request.method != 'GET':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 	elif request.method == 'GET':
 		stats = GamesStats.objects.all()
 		data_stats = GamesStatsSerializer(stats, many=True)
@@ -538,7 +538,7 @@ def game_goals(request, game_id):
 
 def game_goals_all(request):
 	if request.method != 'GET':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 	elif request.method == 'GET':
 		stats = Goals.objects.all()
 		data_stats = GoalsSerializer(stats, many=True)
@@ -573,18 +573,18 @@ def game_create_helper(data: dict):
 @csrf_exempt
 def game_create(request=None):
 	if request.method != 'POST':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 	if request.content_type != 'application/json':
-		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
+		return JsonResponse({'message': 'Only JSON allowed'}, status=406)
 
 	data = {}
 
 	try:
 		data = json.loads(request.body.decode('utf-8'))
 	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
 
 	return game_create_helper(data)
 
@@ -624,18 +624,18 @@ def game_update_helper(data, game_id):
 @csrf_exempt
 def game_update(request, game_id):
 	if request.method != 'POST':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 	if request.content_type != 'application/json':
-		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
+		return JsonResponse({'message': 'Only JSON allowed'}, status=406)
 
 	data = {}
 
 	try:
 		data = json.loads(request.body.decode('utf-8'))['data']
 	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
 
 	return game_update_helper(data, game_id)
 
@@ -659,32 +659,32 @@ def get_game(request, game_id):
 @csrf_exempt
 def tournament_create(request):
 	if request.method != 'POST':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}})
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method})
 
 	try:
 		data = json.loads(request.body.decode('utf-8'))
 	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
 	
 	name = data.get('name', '')
 	nickname = data.get('alias', '')
 
 	if name == '':
-		return JsonResponse({'message': 'The name is blank', 'data': {}}, status=400)
+		return JsonResponse({'message': 'The name is blank'}, status=400)
 	if nickname == '':
-		return JsonResponse({'message': 'The nickname is blank', 'data': {}}, status=400)
+		return JsonResponse({'message': 'The nickname is blank'}, status=400)
 
 	if len(name) > 64:
-		return JsonResponse({'message': 'The name of the tournament is too long.', 'data': {}}, status=400)
+		return JsonResponse({'message': 'The name of the tournament is too long.'}, status=400)
 	
 	if len(nickname) > 64:
-		return JsonResponse({'message': 'The nickname is too long.', 'data': {}}, status=400)
+		return JsonResponse({'message': 'The nickname is too long.'}, status=400)
 
 	tour_serializer = TournamentsSerializer(data=data)
 	if not tour_serializer.is_valid():
-		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_serializer.errors, 'data': {}}, status=400)
+		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_serializer.errors}, status=400)
 
 	tournament = tour_serializer.save()
 	user_data = {
@@ -695,7 +695,7 @@ def tournament_create(request):
 
 	tour_user_serializer = TournamentsUsersSerializer(data=user_data)
 	if not tour_user_serializer.is_valid():
-		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_user_serializer.errors, 'data': {}}, status=400)
+		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_user_serializer.errors}, status=400)
 	tour_user_serializer.save()
 	ic(data['host_id'])
 	user= Users.objects.get(pk=data['host_id'])
@@ -706,7 +706,7 @@ def tournament_create(request):
 
 def tournament_list(request):
 	if request.method != 'GET':
-		return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 	elif request.method == 'GET':
 		tournaments = Tournaments.objects.all()
 		serializer = TournamentsSerializer(tournaments, many=True)
@@ -716,7 +716,7 @@ def tournament_list(request):
 @csrf_exempt
 def tournament_update(request, tournament_id):
 	if request.method != 'PATCH':	
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 	if request.content_type != 'application/json':
 		return JsonResponse({'message': 'Only JSON allowed'}, status=406)
 
@@ -736,23 +736,23 @@ def tournament_update(request, tournament_id):
 @csrf_exempt
 def tournament_join(request, tournament_id, user_id):
 	if request.method != 'POST':	
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 
 	try:
 		data = json.loads(request.body.decode('utf-8'))
 	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
 
 	data['tournament_id'] = tournament_id
 	data['user_id'] = user_id
 	nickname = data.get('alias', '')
 	ic(nickname)
 	if nickname == '':
-		return JsonResponse({'message': 'The nickname is blank', 'data': {}}, status=400)
+		return JsonResponse({'message': 'The nickname is blank'}, status=400)
 	if len(nickname) > 64:
-		return JsonResponse({'message': 'The nickname is too long.', 'data': {}}, status=400)
+		return JsonResponse({'message': 'The nickname is too long.'}, status=400)
 		
 	serializer = TournamentsUsersSerializer(data=data)
 	if not serializer.is_valid():
@@ -807,7 +807,7 @@ def tournament_join(request, tournament_id, user_id):
 @csrf_exempt
 def tournament_leave(request, tournament_id, user_id):
 	if request.method != 'DELETE':	
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 	
 	user_tour = get_object_or_404(TournamentsUsers, tournament_id=tournament_id, user_id=user_id)
 	user_tour.delete()
@@ -822,7 +822,7 @@ def tournament_leave(request, tournament_id, user_id):
 @csrf_exempt
 def tournament_list_users(request, tournament_id):
 	if request.method != 'GET':
-		return JsonResponse({'message': 'Invalid request method.', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 	tour_users = []
 	users = TournamentsUsers.objects.filter(tournament_id=tournament_id)		
@@ -842,7 +842,7 @@ def tournament_list_users(request, tournament_id):
 # @csrf_exempt
 # def tournament_list_games(request, tournament_id):
 # 	if request.method != 'GET':
-# 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+# 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 
 # 	tgames = TournamentsGames.objects.filter(tournament_id=tournament_id)
 # 	serializer = TournamentsGamesSerializer(tgames, many=True)
@@ -869,7 +869,7 @@ def tournament_list_users(request, tournament_id):
 @csrf_exempt
 def tournament_list_games(request, tournament_id):
 	if request.method != 'GET':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 
 	tgames = TournamentsGames.objects.filter(tournament_id=tournament_id)
 	serializer = TournamentsGamesSerializer(tgames, many=True)
@@ -890,7 +890,7 @@ def tournament_list_games(request, tournament_id):
 
 
 		except Games.DoesNotExist:
-			return JsonResponse({'message': 'Game not found', 'data': {}}, status=404)
+			return JsonResponse({'message': 'Game not found'}, status=404)
 		except Users.DoesNotExist as e:
 			return JsonResponse({'message': 'User not found', 'error': str(e)}, status=404)
 		except Exception as e:
@@ -903,7 +903,7 @@ def tournament_list_games(request, tournament_id):
 @csrf_exempt
 def tournament_list_user_games(request, user_id):
 	if request.method != 'GET':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 
 	# Get all TournamentsGames instances and respective Games instances
 	temp = TournamentsGames.objects.all()
@@ -925,7 +925,7 @@ def tournament_list_user_games(request, user_id):
 @csrf_exempt
 def tournament_list_user(request, user_id):
 	if request.method != 'GET':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 
 	all_users = TournamentsUsers.objects.filter(user_id=user_id)
 	serializer = TournamentsUsersSerializer(all_users, many=True)
@@ -944,18 +944,18 @@ def tournament_list_user(request, user_id):
 @csrf_exempt
 def tournament_update_game(request, tournament_id, game_id):
 	if request.method != 'POST':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 	if request.content_type != 'application/json':
-		return JsonResponse({'message': 'Only JSON allowed', 'data': {}}, status=406)
+		return JsonResponse({'message': 'Only JSON allowed'}, status=406)
 
 	data = {}
 
 	try:
 		data = json.loads(request.body.decode('utf-8'))
 	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON', 'data': {}}, status=400)
+		return JsonResponse({'message': 'Invalid JSON'}, status=400)
 	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}', 'data': {}}, status=400)
+		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
 
 	tour_game = TournamentsGames.objects.get(tournament_id=tournament_id, game_id=game_id)
 	tour_game.game_id.duration = data['duration']
@@ -1062,16 +1062,16 @@ def login42(request):
 	authorization_code = request.GET.get('code')
 	
 	if authorization_code is None:
-		return JsonResponse({'error': 'Authorization code missing', 'data': {}}, status=400)
+		return JsonResponse({'error': 'Authorization code missing'}, status=400)
 
 	access_token = get_access_token(request.get_host(), authorization_code)
 	if access_token is None:
-		return JsonResponse({'error': 'Failed to get access token', 'data': {}}, status=400)
+		return JsonResponse({'error': 'Failed to get access token'}, status=400)
 
 
 	user_info = get_user_info(access_token)
 	if not user_info:
-		return JsonResponse({'error': 'Failed to get user info', 'data': {}}, status=400)
+		return JsonResponse({'error': 'Failed to get user info'}, status=400)
 
 
 	request.session['access_token'] = access_token
@@ -1114,7 +1114,7 @@ def login42(request):
 			login(request, user)
 			return redirect('home')
 
-	return JsonResponse({'error': 'User login failed', 'data': {}}, status=400)
+	return JsonResponse({'error': 'User login failed'}, status=400)
 
 #! --------------------------------------- 2FA ---------------------------------------
 
@@ -1146,13 +1146,13 @@ def toogle2fa(request, user_id):
 			enabled = data.get('enabled')
 
 		except json.JSONDecodeError:
-			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
 		ic(enabled)
 		user = Users.objects.get(pk=user_id)
 		user.two_factor = enabled
 		user.save()
 		return JsonResponse({'message': 'User enable/disable two factor authentication.'}, status=200)
-	return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
+	return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 
 
 #! --------------------------------------- Pages ---------------------------------------
@@ -1169,11 +1169,11 @@ def loginview(request):
 			password = data.get('password')
 
 		except json.JSONDecodeError:
-			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
 
 		user42 = Users.objects.filter(username=username).first()
 		if user42.user_42 is not None:
-			return JsonResponse({'message': 'User 42 detected. Please sign in with 42.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'User 42 detected. Please sign in with 42.'}, status=400)
 
 		user = authenticate(username=username, password=password)
 
@@ -1188,7 +1188,7 @@ def loginview(request):
 			return JsonResponse({'message': 'You have successfully logged in.', 'access_token': user_tokens.get('access'), 'refresh_token': user_tokens.get('refresh'), 'data': {'home': True }}, status=201)
 
 		else:
-			return JsonResponse({'message': 'Bad Credentials.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Bad Credentials.'}, status=400)
 
 	return render(request, 'pages/login.html')
 
@@ -1200,13 +1200,13 @@ def otp_method(request):
 			info = data.get('info', '')
 			method = data.get('method', '')
 			if not method:
-				return JsonResponse({'message': 'Please choose a method', 'data': {}}, status=400)
+				return JsonResponse({'message': 'Please choose a method'}, status=400)
 			if not info:
-				return JsonResponse({'message': 'There is no value', 'data': {}}, status=400)
+				return JsonResponse({'message': 'There is no value'}, status=400)
 			ic(method)
 			ic(info)
 		except json.JSONDecodeError:
-			return JsonResponse({'message': 'Invalid JSON.', 'data': {}}, status=400)
+			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
 		
 		send_otp(request, method, info)
 		return JsonResponse({'message': 'Code sent.'}, status=200)
