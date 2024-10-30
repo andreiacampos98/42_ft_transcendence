@@ -1183,9 +1183,9 @@ def loginview(request):
 			user.save()
 			if user.two_factor:
 				request.session['username'] = username
-				return JsonResponse({'message': 'You have successufly logged in.', 'access_token': user_tokens.get('access'), 'refresh_token': user_tokens.get('refresh'),'data': {'otp': True }}, status=201)
+				return JsonResponse({'message': 'You have successfully logged in.', 'access_token': user_tokens.get('access'), 'refresh_token': user_tokens.get('refresh'),'data': {'otp': True }}, status=201)
 			login(request, user)
-			return JsonResponse({'message': 'You have successufly logged in.', 'access_token': user_tokens.get('access'), 'refresh_token': user_tokens.get('refresh'), 'data': {'home': True }}, status=201)
+			return JsonResponse({'message': 'You have successfully logged in.', 'access_token': user_tokens.get('access'), 'refresh_token': user_tokens.get('refresh'), 'data': {'home': True }}, status=201)
 
 		else:
 			return JsonResponse({'message': 'Bad Credentials.', 'data': {}}, status=400)

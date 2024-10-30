@@ -8,7 +8,7 @@ function togglePasswordVisibility() {
 }
 
 
-document.getElementById('loginForm').addEventListener('submit', function(event) {
+document.getElementById('loginForm').addEventListener('submit', async function(event) {
     event.preventDefault(); 
 
     const formData = {
@@ -16,40 +16,40 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         password: document.getElementById('password').value
     };
 
-    fetch(``, {
+    const response = await fetch(``, {
         method: 'POST',
         body: JSON.stringify(formData),
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         }
-    })
-    .then(response => response.json()) 
-    .then(data => {
-        console.log(data);
-        if (Object.keys(data.data).length === 0) {
-            errorMessage.textContent = data.message;
-            errorMessage.style.display = 'block';
-        } else if (data.data.hasOwnProperty('otp')) {
-            history.pushState(null, '', `/otpmethod/`);
-            htmx.ajax('GET', `/otpmethod/`, {
-                target: '#main',
-            });
-        } else {
-            console.log('Login in successful');
-            localStorage.setItem("access_token", JSON.stringify(data.access_token))
-            localStorage.setItem("refresh_token", JSON.stringify(data.refresh_token))
-            history.pushState(null, '', `/home/`);
-            htmx.ajax('GET', `/home/`, {
-                target: '#main',
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        errorMessage.textContent = 'An unexpected error occurred. Please try again later.';
-        errorMessage.style.display = 'block';
     });
+	const data = await response.json();
+	if (!response.ok) {
+		console.error('Error:', response);
+        errorMessage.textContent = data.message;
+		errorMessage.style.display = 'block';
+		return ;
+	}
+	
+	console.log(data);
+
+	if (data.data.hasOwnProperty('otp')) {
+		history.pushState(null, '', `/otpmethod/`);
+		htmx.ajax('GET', `/otpmethod/`, {
+			target: '#main',
+		});
+	} else {
+		console.log('Login in successful');
+		localStorage.setItem("access_token", JSON.stringify(data.access_token))
+		localStorage.setItem("refresh_token", JSON.stringify(data.refresh_token))
+		history.pushState(null, '', `/home/`);
+		htmx.ajax('GET', `/home/`, {
+			target: '#main',
+		});
+	}
+    
+
 });
 
 
