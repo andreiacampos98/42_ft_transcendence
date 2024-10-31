@@ -1,6 +1,5 @@
 var currRoute = '';
-console.log(currRoute);
-var previousRouteScripts = [];
+
 const routeScripts = {
 	'/tournaments/': ['tournament', 'join_tournament'],
 	'/users/': [
@@ -13,18 +12,12 @@ const routeScripts = {
 		'https://cdn.jsdelivr.net/npm/apexcharts'
 	],
 	'/tournaments/ongoing/': ['ongoing-tourn'],
-	'/gamelocal/': ['game/main'],
-	'/gameonline/': ['game/main'],
-	'/gametournament/': ['game/main'],
 };
-const moduleScripts = ['game/main'];
 
 
 const appendScripts = (route) => {
-	console.log('Current route: ', route);
 	routeScripts[route].forEach(file => {		
 		let script = document.createElement('script');
-		script.type = moduleScripts.includes(file) ? 'module' : '';
 		script.src = file.startsWith('https') ? file : `/static/js/${file}.js`;
 		console.log(script.src);
 		document.body.appendChild(script);
@@ -40,6 +33,7 @@ const mutationsCallback = (mutations) => {
 	
 	Object.keys(routeScripts).forEach(key => {
 		if (currRoute.startsWith(key)) {
+			console.log('Current route: ', key);
 			appendScripts(key);
 		}
 	})
