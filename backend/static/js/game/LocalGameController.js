@@ -4,13 +4,13 @@ import { AbstractGameController } from './AbstractGameController.js';
 import { PADDLE_OFFSET_X, ARENA_SEMI_LENGTH, STANDARD_KEYBINDS, ALTERNATE_KEYBINDS } from './macros.js';
 
 export class LocalGameController extends AbstractGameController {
-	constructor({ player1Data, player2Data, ballDirection }) {
+	constructor({ player1Data, player2Data }) {
 		super({type: "Local"});
 		
 		this.registerKeybinds();
 		this.createPlayers(player1Data, player2Data);
 		this.createGameInstance();
-		this.build(ballDirection);
+		super.build({});
 	}
 
 	createPlayers(player1Data, player2Data) {
@@ -66,13 +66,5 @@ export class LocalGameController extends AbstractGameController {
 				'Content-Type': 'application/json',
 			}
 		});
-	}
-
-	build(ballDirection) {
-		const ballData = {
-			ballDirection: ballDirection,
-		};
-
-		super.build(ballData);
 	}
 }

@@ -53,7 +53,6 @@ export class MyApp  {
 			this.gameController = new LocalGameController({ 
 				player1Data: player1Data, 
 				player2Data: player2Data,
-				ballDirection: ballDirection
 			});
 		}
 		this.scene.add(this.gameController);

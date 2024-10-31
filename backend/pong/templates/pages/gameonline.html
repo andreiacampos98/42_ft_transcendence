@@ -21,14 +21,14 @@
 	const userID = document.getElementById('metadata').getAttribute('data-user-id');
 	const username = document.getElementById('metadata').getAttribute('data-username');
 
-	let socket = new WebSocket(`ws://${window.location.host}/ws/games/remote/queue`);
-	socket.onmessage = (event) => {
+	let gameSocket = new WebSocket(`ws://${window.location.host}/ws/games/remote/queue`);
+	gameSocket.onmessage = (event) => {
 		const { player1, player2, ball, gameID } = JSON.parse(event.data);
 
 		let app = new MyApp();
 		app.init({player1Data: player1, 
 			player2Data: player2,
-			socket: socket, 
+			gameSocket: gameSocket, 
 			gameType: "Remote",
 			gameID: gameID,
 			ballDirection: ball.direction,
