@@ -66,8 +66,8 @@ async function registerTournament() {
         console.log("aqui")
         console.log(data.data)
         if (response.ok) {
-            localStorage.setItem('alias', formData.alias);
-            localStorage.setItem('tournament_id', tournamentId);
+			user.tournamentAlias = formData.alias;
+			user.tournamentID = tournamentId;
             history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
             htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
                 target: '#main'  

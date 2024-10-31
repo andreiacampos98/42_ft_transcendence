@@ -1,40 +1,29 @@
-// ==================================================================
-tournamentId = localStorage.getItem('tournament_id');
-console.log(tournamentId);
+console.log(user);
 
-tournamentSocket = new WebSocket(`ws://${window.location.host}/ws/tournaments/${tournamentId}`);
-tournamentSocket.onopen = (event) => {
-    console.log('Socket opening', event);
-};
-
-tournamentSocket.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-		
-	if (message.event == 'USER_JOINED') {
-		const players = message.data;		
-		const playerSlots = document.querySelectorAll(".player");
-
-		players.forEach((player, i) => {
-			playerSlots[i].querySelector("span.name").textContent = player.alias;
-			playerSlots[i].querySelector("img").src = player.user.picture;
-		});
+user.connectSocket(
+	'tournamentSocket', 
+	`ws://${window.location.host}/ws/tournaments/${user.tournamentID}`, 
+	(event) => {
+		const message = JSON.parse(event.data);
+			
+		if (message.event == 'USER_JOINED') {
+			const players = message.data;		
+			const playerSlots = document.querySelectorAll(".player");
+	
+			players.forEach((player, i) => {
+				playerSlots[i].querySelector("span.name").textContent = player.alias;
+				playerSlots[i].querySelector("img").src = player.user.picture;
+			});
+		}
+		else if (message.event == 'BEGIN_PHASE') {
+			user.tournamentGameData = message.data;
+			history.pushState(null, '', `/gametournament/`);
+			htmx.ajax('GET', `/gametournament/`, {
+				target: '#main'  
+			});
+		}
 	}
-	else if (message.event == 'BEGIN_PHASE') {
-		localStorage.setItem('game', JSON.stringify(message.data));
-		history.pushState(null, '', `/gametournament/`);
-		htmx.ajax('GET', `/gametournament/`, {
-			target: '#main'  
-		});
-	}
-};
-
-tournamentSocket.onerror = (error) => {
-    console.error('WebSocket error:', error);
-};
-
-tournamentSocket.onclose = (event) => {
-    console.log('Socket closed', event);
-};
+);
 
 
 // ==================================================================
@@ -49,7 +38,7 @@ async function leaveTournament() {
         });
 
         if (response.ok) {
-            tournamentSocket.send(JSON.stringify({}));
+            user.tournamentSocket.send(JSON.stringify({}));
             history.pushState(null, '', `/tournaments/`);
             htmx.ajax('GET', `/tournaments/`, {
                 target: '#main'  

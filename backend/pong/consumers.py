@@ -34,6 +34,8 @@ class TournamentConsumer(WebsocketConsumer):
 		if self.user.id not in self.users:
 			self.add_new_tournament_user()
 
+		# ic(self.user.id, self.user.username)
+		# ic(self.has_started, self.tournament, self.users)
 		if not self.has_started and self.tournament is not None and len(self.users) == self.tournament.capacity:
 			first_phase_games = tournament_init_phase(self.tournament_id)
 			self.begin_phase(first_phase_games)
@@ -113,6 +115,7 @@ class TournamentConsumer(WebsocketConsumer):
 			tournament_data['user1_id'] = UsersSerializer(tour_game.game_id.user1_id).data
 			tournament_data['user2_id'] = UsersSerializer(tour_game.game_id.user2_id).data
 
+			ic(game_room)
 			async_to_sync(self.channel_layer.group_send)(game_room, {
 				"type": "broadcast", 
 				"message": json.dumps({
@@ -121,8 +124,9 @@ class TournamentConsumer(WebsocketConsumer):
 				})
 			})
 
-	def broadcast(self, event):
+	def broadcast(self, event):		
 		self.send(text_data=event["message"])
+
 	
 class TournamentGameConsumer(WebsocketConsumer):
 	gameClients = set()

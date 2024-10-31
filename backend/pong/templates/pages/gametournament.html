@@ -18,22 +18,28 @@
 <script type="module">
 	import { MyApp } from '/static/js/game/MyApp.js';
 
-	const userID = document.getElementById('metadata').getAttribute('data-user-id');
-	const username = document.getElementById('metadata').getAttribute('data-username');
+	const { 
+		user1_id: p1 , user2_id: p2, 
+		game_id: gameInstance, tournament_id: tourID 
+	} = user.tournamentGameData;
+	
+	console.log('User: ', user);
 
-	let gameSocket = new WebSocket(`ws://${window.location.host}/ws/games/remote/queue`);
-	gameSocket.onmessage = (event) => {
-		const { player1, player2, ball, gameID } = JSON.parse(event.data);
-
-		let app = new MyApp();
-		app.init({player1Data: player1, 
-			player2Data: player2,
-			gameSocket: gameSocket, 
-			gameType: "Tournament",
-			gameID: gameID,
-			ballDirection: ball.direction,
-		});
-		app.render();
-	}
+	user.connectSocket(
+		'gameSocket',
+		`ws://${window.location.host}/ws/tournaments/${tourID}/games/${gameInstance.id}`,
+		(event) => {
+			let app = new MyApp();
+			app.init({ 
+				player1Data: {'id': p1.id, 'username': p1.username},
+				player2Data: {'id': p2.id, 'username': p2.username},
+				gameSocket: user.gameSocket,
+				tournamentSocket: user.tournamentSocket,
+				gameType: "Tournament",
+				gameID: gameInstance.id,
+			});
+			app.render();
+		}
+	);
 </script>
 {% endblock %}

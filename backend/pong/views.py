@@ -921,9 +921,7 @@ def tournament_list_user(request, user_id):
 
 def tournament_update_game_helper(tournament_id, game_id, data):
 	tour_game = TournamentsGames.objects.get(tournament_id=tournament_id, game_id=game_id)
-	tour_game.game_id.duration = data['duration']
-	tour_game.game_id.nb_goals_user1 = data['nb_goals_user1']
-	tour_game.game_id.nb_goals_user2 = data['nb_goals_user2']
+	game_update_helper(data, game_id)
 
 	player1 = TournamentsUsers.objects.get(
 		user_id=tour_game.game_id.user1_id.id,
@@ -1195,7 +1193,8 @@ def tournaments(request):
 	# Obtém a lista de amigos
 	act_user = Users.objects.filter(id=user_id)
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
-	tournaments = Tournaments.objects.exclude(status='Finished')
+	tournaments = Tournaments.objects.exclude(status='Finished') \
+		.order_by('-created_at')
 
 	num_tour_players = []
 	for tournament in tournaments:

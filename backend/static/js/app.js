@@ -3,13 +3,13 @@ var currRoute = '';
 const routeScripts = {
 	'/tournaments/': ['tournament', 'join_tournament'],
 	'/users/': [
+		'https://cdn.jsdelivr.net/npm/apexcharts',
 		'profile', 
 		'edit-profile', 
 		'change-password', 
 		'friends-add-remove', 
 		'tab-recent-matches', 
 		'view-details-tournaments',
-		'https://cdn.jsdelivr.net/npm/apexcharts'
 	],
 	'/tournaments/ongoing/': ['ongoing-tourn'],
 };
