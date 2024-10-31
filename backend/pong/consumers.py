@@ -9,19 +9,27 @@ from channels.generic.websocket import WebsocketConsumer
 from channels.layers import get_channel_layer
 import random
 
+next_phase = dict(zip(
+	['Last 16', 'Quarter-final', 'Semi-final'], 
+	['Quarter-final', 'Semi-final', 'Final']
+))
 
 class TournamentConsumer(WebsocketConsumer):
 	users = {}
 	tournament = None
 	games = {}
 	has_started = False
+	curr_phase = {
+		'name': '',
+		'num_games': 0,
+		'finished_games': 0
+	}
 
 	def connect(self):
 		self.accept()
 		self.user = self.scope['user']
 		self.tournament_room = f'tournament_{self.scope["url_route"]["kwargs"]["tournament_id"]}'
 		self.tournament_id = self.scope["url_route"]["kwargs"]["tournament_id"]
-		
 		# The first client will initialize the tournament variable
 		if self.tournament is None:
 			self.tournament = Tournaments.objects.get(pk=self.tournament_id)
@@ -37,7 +45,8 @@ class TournamentConsumer(WebsocketConsumer):
 		# ic(self.user.id, self.user.username)
 		# ic(self.has_started, self.tournament, self.users)
 		if not self.has_started and self.tournament is not None and len(self.users) == self.tournament.capacity:
-			first_phase_games = tournament_init_phase(self.tournament_id)
+			self.curr_phase['name'], self.curr_phase['num_games'], first_phase_games \
+				= tournament_init_phase(self.tournament_id)
 			self.begin_phase(first_phase_games)
 			self.has_started = True
 			
@@ -67,7 +76,15 @@ class TournamentConsumer(WebsocketConsumer):
 			message_handlers[event](message)
 
 	def on_game_finish(self, message):
-		ic(message)
+		ic('BEFORE', self.curr_phase)
+		self.curr_phase['finished_games'] += 1
+
+		if self.curr_phase['finished_games'] == self.curr_phase['num_games']:
+			self.curr_phase['name'] = next_phase[self.curr_phase['name']]
+			self.curr_phase['num_games'] //= 2
+			self.curr_phase['finished_games'] = 0
+
+		ic('AFTER', self.curr_phase)
 				
 	def add_new_tournament_user(self):
 		# Add the user to the users list
@@ -100,6 +117,7 @@ class TournamentConsumer(WebsocketConsumer):
 		})
 
 	def begin_phase(self, phase_games):
+		# And now pair up the players in their rooms
 		for tour_game in phase_games:
 			user1 = self.users[tour_game.game_id.user1_id.id]
 			user2 = self.users[tour_game.game_id.user2_id.id]

@@ -715,6 +715,9 @@ def tournament_update(request, tournament_id):
 def tournament_init_phase(tournament_id):
 	tournament = Tournaments.objects.get(pk=tournament_id)
 	all_tour_users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
+
+	first_phase = first_tour_phase[tournament.capacity]
+	first_phase_num_games = tournament.capacity // 2
 	games_data = []
 
 	for i in range(0, tournament.capacity, 2):
@@ -746,9 +749,9 @@ def tournament_init_phase(tournament_id):
 	tournament.save()
 	serializer = TournamentsGamesSerializer(data=tour_games_data, many=True)
 	if not serializer.is_valid():
-		return JsonResponse(serializer.errors, status=400, safe=False)
+		return None, None, None
 	
-	return serializer.save()
+	return first_phase, first_phase_num_games, serializer.save()
 
 @csrf_exempt
 def tournament_join(request, tournament_id, user_id):
