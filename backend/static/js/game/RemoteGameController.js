@@ -6,16 +6,17 @@ import { AbstractGameController } from './AbstractGameController.js';
 
 
 export class RemoteGameController extends AbstractGameController {
-	constructor({ player1Data, player2Data, gameID, socket, ballDirection }) {
+	constructor({ player1Data, player2Data, gameID, gameSocket, tournamentSocket=null }) {
 		super({type: "Remote"});
 
 		this.players = {};
-		this.socket = socket;
+		this.gameSocket = gameSocket;
+		this.tournamentSocket = tournamentSocket;
 		
 		this.registerKeybinds();
 		this.registerSocketEvents();
 		this.createPlayers(player1Data, player2Data, gameID);
-		this.build(ballDirection);
+		this.build();
 	}
 
 	createPlayers(player1Data, player2Data, gameID) {
@@ -23,7 +24,7 @@ export class RemoteGameController extends AbstractGameController {
 		const { id: p2ID, username: p2Username } = player2Data;
 		const currPlayerID = document.getElementById('metadata').getAttribute('data-user-id');
 		const onUpdate = (id, username, targetY) => {
-			this.socket.send(JSON.stringify({
+			this.gameSocket.send(JSON.stringify({
 				'event': 'UPDATE',
 				'data': {
 					'id': id,
@@ -60,7 +61,7 @@ export class RemoteGameController extends AbstractGameController {
 	}
 
 	registerSocketEvents(){
-		this.socket.onmessage = (ev) => {
+		this.gameSocket.onmessage = (ev) => {
 			const { event, data } = JSON.parse(ev.data);
 			
 			if (event == 'UPDATE')
@@ -68,18 +69,18 @@ export class RemoteGameController extends AbstractGameController {
 			else if (event == 'SYNC')
 				this.ball.sync(data.ball);
 			else if (event == 'FINISH'){
-				this.socket.close();
+				this.gameSocket.close();
 			}
 		}
 
-		this.socket.onerror = (ev) => {
+		this.gameSocket.onerror = (ev) => {
 			console.error(ev);
 		}
 	}
 
-	build(ballDirection) {
+	build() {
 		const onPaddleHit = () => {
-			this.socket.send(JSON.stringify({
+			this.gameSocket.send(JSON.stringify({
 				'event': 'SYNC',
 				'data': {
 					'ball': {
@@ -91,7 +92,6 @@ export class RemoteGameController extends AbstractGameController {
 			}));
 		};
 		const ballData = {
-			ballDirection: ballDirection,
 			onPaddleHit: onPaddleHit
 		};
 
@@ -103,7 +103,11 @@ export class RemoteGameController extends AbstractGameController {
 		console.log(`WINNER:`, this.stats.winner, 'SCORE:', this.stats.score);
 		console.log('SENDING DATA TO SERVER...');
 
-		this.socket.send(JSON.stringify({
+		this.gameSocket.send(JSON.stringify({
+			'event': 'FINISH',
+			'data': results
+		}));
+		this.tournamentSocket.send(JSON.stringify({
 			'event': 'FINISH',
 			'data': results
 		}));

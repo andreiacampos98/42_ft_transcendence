@@ -162,6 +162,9 @@
 
 .round-3 .matchup .line {
     top: 50%;
-    height: 50%;
-    
+    height: 50%;    
+}
+
+#game-canvas {
+	display: none;
 }
