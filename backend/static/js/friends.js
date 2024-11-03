@@ -18,17 +18,30 @@ async function toggleFriendsDrawer(user_id) {
     button.classList.toggle('show');
     addClassToTopLevelDivs('darkened-image');
 
+	let token = localStorage.getItem("access_token");
     if (!sidebar.classList.contains('show'))
         return ;
 
     const response = await fetch(`/friends/${user_id}`, {
 		method: 'GET',
         headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+			"Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
         }
     });
 	const data = await response.json();
-
+	
+	if (!response.ok && response.status != 401) {
+		console.error(data.message);
+		return ;
+	}
+	else if (!response.ok && response.status == 401) {
+		alert("As your session has expired, you will be logged out.");
+		history.pushState(null, '', `/`);
+		htmx.ajax('GET', `/`, {
+			target: '#main'
+		});
+	}
     var friends = data.map((entry) => {
 		if (entry.user1_id.id == user_id)
 			return entry.user2_id;

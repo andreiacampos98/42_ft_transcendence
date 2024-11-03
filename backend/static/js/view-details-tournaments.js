@@ -1,25 +1,11 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          mutation.addedNodes.forEach((node) => {
-            if (node.nodeType === 1 && !node["htmx-internal-data"]) {
-              htmx.process(node)
-            }
-          })
-        })
-      });
-    observer.observe(document, {childList: true, subtree: true});
-})
-
-
 async function detailTournamentGames(button) {
+
     const tournament_id = button.getAttribute('data-tournament-id');
     const detailsDiv = document.getElementById('details-' + tournament_id);
     const imgElement = button.querySelector('img');
 
     const buttonParentDiv = button.closest('div.details');
-    const grandParentDiv = buttonParentDiv.closest('div.match-block'); // assuming match-block is the outer div class
-    // Toggle classes or add them as needed
+    const grandParentDiv = buttonParentDiv.closest('div.match-block');
     grandParentDiv.classList.add("enlarged2");
     buttonParentDiv.classList.add("enlarged");
     if (detailsDiv.style.display != 'none' && detailsDiv.style.display != '') {
@@ -30,17 +16,25 @@ async function detailTournamentGames(button) {
 		return;
 	} 
 
+	let token = localStorage.getItem("access_token");
 	const response = await fetch(`/tournaments/${tournament_id}/games`, {
 		headers: {
-			'X-Requested-With': 'XMLHttpRequest'
+			'X-Requested-With': 'XMLHttpRequest',
+			"Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
 		}
 	});
 	const data = await response.json();
-	if (!response.ok) {
+	if (!response.ok && response.status != 401) {
 		console.error(data.message);
 		return ;
 	}
-	
+	else if (!response.ok && response.status == 401) {
+		alert("As your session has expired, you will be logged out.");
+		history.pushState(null, '', `/`);
+		htmx.ajax('GET', `/`, {
+			target: '#main'
+		});
+	}
 	const gameList = detailsDiv;
 	gameList.innerHTML = `
 	<div class="header2 d-flex align-items-center justify-content-evenly">

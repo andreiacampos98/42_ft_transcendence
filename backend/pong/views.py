@@ -149,14 +149,6 @@ def user_create(request):
 			return response
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-#@csrf_exempt
-def delete_profile(request, id):
-	if request.method =='DELETE':
-		Users.objects.filter(id=id).delete()
-		return JsonResponse({'message': 'User deleted'}, status=200)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
-
-
 
 def user_update(request, pk):
 	token_valid = validate_token(request)
@@ -245,8 +237,15 @@ def user_password(request, pk):
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-#@csrf_exempt
+
 def search_suggestions(request):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
 	term = request.GET.get('term', '')
 	if term:
 		users = Users.objects.filter(username__icontains=term)[:5]
@@ -256,7 +255,7 @@ def search_suggestions(request):
 	return JsonResponse([], safe=False)
 
 
-#@csrf_exempt
+
 def search_users(request):
 	user_id = request.user.id
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
@@ -273,6 +272,13 @@ def search_users(request):
 #! --------------------------------------- Friends ---------------------------------------
 
 def get_user_friends(request, user_id):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
 	if request.method == 'GET':
 		friends = Friends.objects.filter(
 			(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(accepted=True)
@@ -362,6 +368,13 @@ def accept_friend(request, user1_id, user2_id):
 #! --------------------------- Notifications ----------------------------------
 
 def get_user_notifications(request, user_id):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
 	if request.method == 'GET':
 		notifications = Notifications.objects.filter(user_id = user_id)
 		serializer = NotificationsSerializer(notifications, many=True)
@@ -455,7 +468,7 @@ def current_place(request, user_id):
 		position += 1
 	return None
 
-#@csrf_exempt
+
 def user_stats_update(user_id, game_id, data):
 
 	stats = UserStats.objects.get(user_id=user_id)
@@ -502,7 +515,7 @@ def user_stats_update(user_id, game_id, data):
 	data_stats = UserStatsSerializer(stats)
 	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
 
-def win_rate_nb_games_day(request, user_id):
+def win_rate_nb_games_day(user_id):
 	today = timezone.now()
 	seven_day_before = today - timedelta(days=7)
 	games = Games.objects.filter((Q(user1_id = user_id) | Q(user2_id = user_id)) & Q(created_at__gte=seven_day_before) 
@@ -530,7 +543,7 @@ def user_stats_all(request):
 
 
 #! --------------------------------------- Game Stats ---------------------------------------
-#@csrf_exempt
+
 def game_stats_create(game_id, data):
 	game = Games.objects.get(pk=game_id)
 	game_stats, created = GamesStats.objects.get_or_create(game=game)
@@ -613,7 +626,6 @@ def game_goals_all(request):
 	return JsonResponse({'message': 'No goals' }, safe=False, status=400)
 
 #! --------------------------------------- Games ---------------------------------------
-
 def game_create_helper(data: dict):
 	serializer = GamesSerializer(data=data)
 	data['start_date'] = datetime.now().isoformat()
@@ -637,7 +649,7 @@ def game_create_helper(data: dict):
 
 	return JsonResponse(serializer.data, status=201)
 
-#@csrf_exempt
+
 def game_create(request=None):
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -672,7 +684,6 @@ def game_update_helper(data, game_id):
 		player2.status = "Online"
 		player2.save()
 		
-	# elif data['nb_goals_user1'] < data['nb_goals_user2'] and game.type != "Local":
 	if data['nb_goals_user1'] > data['nb_goals_user2']:
 		game.winner_id = player1
 	else:
@@ -688,7 +699,6 @@ def game_update_helper(data, game_id):
 	data = GamesSerializer(game).data
 	return JsonResponse(data, status=200)
 	
-#@csrf_exempt
 def game_update(request, game_id):
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -706,7 +716,7 @@ def game_update(request, game_id):
 
 	return game_update_helper(data, game_id)
 
-#@csrf_exempt
+
 def get_game(request, game_id):
 	if request.method !='GET':
 		return JsonResponse({'message': 'Method not allowed'}, status=405)
@@ -956,8 +966,15 @@ def tournament_list_users(request, tournament_id):
 
 # 	return JsonResponse(tgames_list, safe=False)
 
-#@csrf_exempt
 def tournament_list_games(request, tournament_id):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			ic("invalid token")
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 
@@ -1106,8 +1123,7 @@ def tournament_update_game(request, tournament_id, game_id):
 
 #! --------------------------------------- Login42 ---------------------------------------
 
-	
-#@csrf_exempt
+
 def get_access_token(host, code):
 	response = requests.post(settings.TOKEN_URL_A, data={
 		'grant_type': 'authorization_code',
@@ -1262,7 +1278,7 @@ def send_otp(request, method, info):
             fail_silently=False,
         )
 
-#@csrf_exempt
+
 def toogle2fa(request, user_id):
 	token_valid = validate_token(request)
 
@@ -1291,7 +1307,7 @@ def toogle2fa(request, user_id):
 def signup(request):
 	return render(request, 'pages/sign-up.html')
 
-#@csrf_exempt
+
 def loginview(request):
 	if request.method == 'POST':
 		try:
@@ -1428,9 +1444,8 @@ def setnewpassword(request):
 def home(request):
 	if 'username' in request.session:
 		del request.session['username']
-	user_id = request.user.id  # Obtém o ID do usuário atual
+	user_id = request.user.id 
 
-	# Obtém a lista de amigos
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	context = {
 		'friends': friends,
@@ -1463,9 +1478,8 @@ def gameonline(request):
 
 @login_required
 def tournaments(request):
-	user_id = request.user.id  # Obtém o ID do usuário atual
+	user_id = request.user.id 
 
-	# Obtém a lista de amigos
 	act_user = Users.objects.filter(id=user_id)
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	tournaments = Tournaments.objects.exclude(status='Finished')
@@ -1579,7 +1593,7 @@ def profile(request, id):
 		goals_scored_suffered_ratio = round(stats['nb_goals_scored'] / stats['nb_goals_suffered'], 2)
 	else:
 		goals_scored_suffered_ratio = 0
-	graph = win_rate_nb_games_day(request, user_profile.id)
+	graph = win_rate_nb_games_day(user_profile.id)
 	graph_send = json.loads(graph.content)
 	
 	games = Games.objects.filter(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id),
@@ -1614,7 +1628,6 @@ def profile(request, id):
 
 
 @login_required
-#@csrf_exempt
 def signout(request):
 	user = Users.objects.get(pk=request.user.id)
 	user.status = "Offline"
@@ -1697,3 +1710,11 @@ def calculate_placements(tournament_id):
 	tournament.save()
 	serializer = TournamentsUsersSerializer(tour_users, many=True)
 	return JsonResponse(serializer.data, status=200, safe=False)
+
+
+#@csrf_exempt
+def delete_profile(request, id):
+	if request.method =='DELETE':
+		Users.objects.filter(id=id).delete()
+		return JsonResponse({'message': 'User deleted'}, status=200)
+	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)

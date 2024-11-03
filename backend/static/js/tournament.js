@@ -105,7 +105,7 @@ async function onCreateButtonClick()
     });
   } else {
     alert("Tournament created successfully!");
-    const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
+    const tournamentId = data.data.id;
     console.log(data.data);
     localStorage.setItem('alias', formData.alias);
     localStorage.setItem('tournament_id', tournamentId);

@@ -39,17 +39,27 @@ async function removeNotification(notificationId, listItem){
 
 async function getNotifications() {
     const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
-
+    let token = localStorage.getItem("access_token");
     const response = await fetch(`/notifications/${userId}`, {
         method: 'GET',
         headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
         }
     });
 	const data = await response.json();
 
-	if (!response.ok)
+    if (!response.ok && response.status != 401) {
 		console.error(`Error getting notifications: ${data.message}`);
+		return ;
+	}
+	else if (!response.ok && response.status == 401) {
+		alert("As your session has expired, you will be logged out.");
+		history.pushState(null, '', `/`);
+		htmx.ajax('GET', `/`, {
+			target: '#main'
+		});
+	}
     
 	const notificationList = document.getElementById('notificationList');
 	notificationList.innerHTML = '';  // Clear existing notifications

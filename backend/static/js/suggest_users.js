@@ -1,24 +1,34 @@
 async function getSuggestions() {
+	let token = localStorage.getItem("access_token");
     var input = document.getElementById('search').value;
     var suggestionsBox = document.getElementById('suggestions');
 
-    if (!input.length) { // Trigger suggestions after 2 characters
-        suggestionsBox.innerHTML = ''; // Clear suggestions if input is short
-        suggestionsBox.style.display = 'none'; // Hide suggestions
+    if (!input.length) { 
+        suggestionsBox.innerHTML = ''; 
+        suggestionsBox.style.display = 'none'; 
 		return ;
     }
 	const response = await fetch(`/users/search_suggestions?term=${encodeURIComponent(input)}&_=${new Date().getTime()}`, {
 		headers: {
 			'X-Requested-With': 'XMLHttpRequest',
+			"Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
 		}
 	});
 	const data = await response.json();
-	if (!response.ok) {
+	if (!response.ok && response.status != 401) {
 		console.error(`Error getting suggestions: ${data.message}`);
 		return ;
 	}
-	suggestionsBox.innerHTML = ''; // Clear previous suggestions
-	suggestionsBox.style.display = data.length ? 'block' : 'none'; // Hide suggestions if none
+	else if (!response.ok && response.status == 401) {
+		alert("As your session has expired, you will be logged out.");
+		history.pushState(null, '', `/`);
+		htmx.ajax('GET', `/`, {
+			target: '#main'
+		});
+		return;
+	}
+	suggestionsBox.innerHTML = ''; 
+	suggestionsBox.style.display = data.length ? 'block' : 'none'; 
 
 	data.forEach(user => {
 		console.log(user);
