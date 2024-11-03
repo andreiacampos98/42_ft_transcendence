@@ -25,3 +25,19 @@ class TournamentUser {
 };
 
 let user = new TournamentUser();
+
+window.navigation.addEventListener('navigate', function (event) {
+	console.log(event);
+	const currRoute = window.location.pathname;
+	if (currRoute.startsWith('/tournaments/ongoing/') || currRoute.startsWith('/gametournament'))
+		return ;
+
+	if (user.tournamentSocket) {
+		user.tournamentSocket.close();
+		user.tournamentSocket = null;
+	}
+	if (user.gameSocket) {
+		user.gameSocket.close();
+		user.gameSocket = null;
+	}
+});

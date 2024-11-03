@@ -9,9 +9,14 @@ from channels.generic.websocket import WebsocketConsumer
 from channels.layers import get_channel_layer
 import random
 
-next_phase = dict(zip(
+phase_after = dict(zip(
 	['Last 16', 'Quarter-final', 'Semi-final'], 
 	['Quarter-final', 'Semi-final', 'Final']
+))
+
+phase_of = dict(zip(
+	[16, 8, 4], 
+	['Last 16', 'Quarter-final', 'Semi-final']
 ))
 
 class TournamentConsumer(WebsocketConsumer):
@@ -35,6 +40,8 @@ class TournamentConsumer(WebsocketConsumer):
 		# The first client will initialize the tournament variable
 		if self.tournament is None:
 			self.tournament = Tournaments.objects.get(pk=self.tournament_id)
+			self.curr_phase['name'] = phase_of[self.tournament.capacity]
+			ic(self.curr_phase)
 
 		# Adding user to tournament-wide channel
 		async_to_sync(self.channel_layer.group_add)(
@@ -45,7 +52,7 @@ class TournamentConsumer(WebsocketConsumer):
 
 		ic(self.users)
 		if not self.has_started and self.tournament is not None and len(self.users) == self.tournament.capacity:
-			self.curr_phase['name'], self.curr_phase['num_games'], first_phase_games \
+			self.curr_phase['num_games'], first_phase_games \
 				= tournament_init_phase(self.tournament_id)
 			self.begin_phase(first_phase_games)
 			self.has_started = True
@@ -80,9 +87,12 @@ class TournamentConsumer(WebsocketConsumer):
 	def on_game_finish(self, data):
 		ic('BEFORE', self.curr_phase)
 		self.curr_phase['finished_games'] += 1
+
 		if self.curr_phase['name'] == 'Final':
-			temp = Tournaments.objects.get(pk=self.tournament_id).winner_id.id
-			winner = TournamentsUsers.objects.get(tournament_id=self.tournament_id, user_id=temp)
+			user = Tournaments.objects.get(pk=self.tournament_id).winner_id
+			winner = TournamentsUsers.objects.get(tournament_id=self.tournament_id, user_id=user.id)
+			winner = TournamentsUsersSerializer(winner).data
+			winner['user'] = UsersSerializer(user).data
 			self.reset()
 
 			async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
@@ -90,13 +100,13 @@ class TournamentConsumer(WebsocketConsumer):
 				"message": json.dumps({
 					"event": 'END_TOURNAMENT',
 					"data": {
-						'winner': TournamentsUsersSerializer(winner).data
+						'winner': winner
 					}
 				})
 			})
 
 		elif self.curr_phase['finished_games'] == self.curr_phase['num_games']:
-			self.curr_phase['name'] = next_phase[self.curr_phase['name']]
+			self.curr_phase['name'] = phase_after[self.curr_phase['name']]
 			self.curr_phase['num_games'] //= 2
 			self.curr_phase['finished_games'] = 0
 			curr_phase_games = TournamentsGames.objects.filter(
@@ -163,7 +173,10 @@ class TournamentConsumer(WebsocketConsumer):
 			"type": "broadcast", 
 			"message": json.dumps({
 				"event": 'USER_JOINED',
-				"data": tour_users_data
+				"data": {
+					'phase': self.curr_phase['name'].lower(),
+					'players': tour_users_data
+				}
 			})
 		})
 

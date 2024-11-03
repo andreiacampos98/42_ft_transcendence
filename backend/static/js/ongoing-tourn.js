@@ -1,14 +1,37 @@
-console.log(user);
-
-const fillPlayersSlot = (query, players) => {
+var firstPhase = '';
+const fillPlayerSlots = (selector, players) => {
+	const query = `.${selector}.player`;
 	const slots = document.querySelectorAll(query);
-	console.log(query, slots);	
+	console.log(query, slots);
 	
 	players.forEach((player, i) => {
 		slots[i].querySelector("span.name").textContent = player.alias;
 		slots[i].querySelector("img").src = player.user.picture;
 	});
+	
 };
+
+const updateTournamentUI = (currPhase, currPhasePlayers) => {	
+	let key = `tournament-${user.tournamentID}-${currPhase}`;
+	console.log(currPhase, currPhasePlayers);
+	if (currPhasePlayers)
+		localStorage.setItem(key, JSON.stringify(currPhasePlayers));
+	
+	let selectors = ['quarter-final', 'semi-final', 'final'];
+	let firstPhaseIndex = selectors.indexOf(firstPhase);
+	let currPhaseIndex = selectors.indexOf(currPhase);
+	console.log(firstPhaseIndex, currPhaseIndex + 1);
+	let phases = selectors.slice(firstPhaseIndex, currPhaseIndex + 1);
+	console.log(phases);
+	
+	phases.forEach((phase) => {
+		let rawPlayers = localStorage.getItem(`tournament-${user.tournamentID}-${phase}`);
+		let players = JSON.parse(rawPlayers);
+		fillPlayerSlots(phase, players);
+	});
+};
+
+console.log(user);
 
 user.connectSocket(
 	'tournamentSocket', 
@@ -19,7 +42,8 @@ user.connectSocket(
 		console.log(message);
 
 		if (eventType == 'USER_JOINED') {
-			fillPlayersSlot(".player", data);
+			firstPhase = data.phase;
+			updateTournamentUI(data.phase, data.players);
 		}
 		else if (eventType == 'BEGIN_PHASE') {
 			setTimeout(() => {
@@ -33,12 +57,14 @@ user.connectSocket(
 		else if (eventType == 'END_PHASE') {
 			console.log(data.phase);
 			setTimeout(() => {
-				fillPlayersSlot(`.${data.phase}.player`, data.players);
+				updateTournamentUI(data.phase, data.players);
 			}, 1100);
 		}
 		else if (eventType == 'END_TOURNAMENT') {			
 			setTimeout(() => {
-				fillPlayersSlot(".winner.player", [data.winner]);
+				updateTournamentUI('final', null);
+				fillPlayerSlots('winner', [data.winner]);
+				user.tournamentSocket.close();
 			}, 2000);
 		}
 	}

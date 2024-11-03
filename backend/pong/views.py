@@ -733,7 +733,7 @@ def tournament_init_phase(tournament_id):
 	
 	serializer = GamesSerializer(data=games_data, many=True)
 	if not serializer.is_valid():
-		return None, None, None
+		return None, None
 	games = serializer.save()
 	
 	tour_games_data = []
@@ -749,9 +749,9 @@ def tournament_init_phase(tournament_id):
 	tournament.save()
 	serializer = TournamentsGamesSerializer(data=tour_games_data, many=True)
 	if not serializer.is_valid():
-		return None, None, None
+		return None, None
 	
-	return first_phase, first_phase_num_games, serializer.save()
+	return first_phase_num_games, serializer.save()
 
 @csrf_exempt
 def tournament_join(request, tournament_id, user_id):
