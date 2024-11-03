@@ -41,18 +41,27 @@ function onCancelButtonClick() {
 async function onSaveButtonClick(event, userId) {
     event.preventDefault(); 
     const formData = new FormData(document.getElementById("edit-profile-form"));
+    let token = localStorage.getItem("access_token");
+	const refresh_token =localStorage.getItem("refresh_token");
 
     const response = await fetch(`/users/${userId}/update`, {
         method: "POST",
         body: formData,
         headers: {
-            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
         }
     });
 	const data = await response.json();
 
-	if (response.status != 201)
+	if (response.status != 201 && response.status != 401)
 		alert(data.message);
+    else if (response.status == 401) {
+		alert("As your session has expired, you will be logged out.");
+		history.pushState(null, '', `/`);
+		htmx.ajax('GET', `/`, {
+			target: '#main'
+		});
+	}
 	else {
 		history.pushState(null, '', `/users/${userId}`);
 		htmx.ajax('GET', `/users/${userId}`, {

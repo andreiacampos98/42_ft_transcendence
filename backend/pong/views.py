@@ -57,7 +57,37 @@ total_phase_matches = dict(zip(
 
 
 
+
+def validate_token(request):
+	jwt_authenticator = JWTAuthentication()
+
+	try:
+		user, validated_token = jwt_authenticator.authenticate(request)
+		ic(validated_token)
+		return user
+	except (InvalidToken, TokenError):
+		return None
+
+
+def refresh_token(request):
+	refresh_url = reverse('token_refresh')
+	refresh_token = request.COOKIES.get('refresh_token')
+	ic(refresh_token)
+	ic(refresh_url)
+	response = requests.post(
+		request.build_absolute_uri(refresh_url),
+		data={'refresh': refresh_token}
+	)
+
+	if response.status_code == 200:
+		ic(response.json()['access'])
+		return response.json()['access']  
+	return None
+
+
 #! --------------------------------------- Users ---------------------------------------
+
+
 
 def user_detail(request, pk):
 	if request.method == 'GET':
@@ -132,8 +162,15 @@ def delete_profile(request, id):
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 
-@csrf_exempt
+
 def user_update(request, pk):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
 	user = get_object_or_404(Users, pk=pk)
 
 	if request.method == 'POST':
@@ -178,33 +215,6 @@ def user_update(request, pk):
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 
-def validate_token(request):
-	jwt_authenticator = JWTAuthentication()
-
-	try:
-		user, validated_token = jwt_authenticator.authenticate(request)
-		ic(validated_token)
-		return user
-	except (InvalidToken, TokenError):
-		return None
-
-@csrf_exempt
-def refresh_token(request):
-	refresh_url = reverse('token_refresh')
-	refresh_token = request.COOKIES.get('refresh_token')
-	ic(refresh_token)
-	ic(refresh_url)
-	response = requests.post(
-		request.build_absolute_uri(refresh_url),
-		data={'refresh': refresh_token}
-	)
-
-	if response.status_code == 200:
-		ic(response.json()['access'])
-		return response.json()['access']  
-	return None
-
-@csrf_exempt
 def user_password(request, pk):
 	token_valid = validate_token(request)
 
