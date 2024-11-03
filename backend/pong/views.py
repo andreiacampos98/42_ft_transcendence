@@ -1559,9 +1559,10 @@ def signout(request):
 	user = Users.objects.get(pk=request.user.id)
 	user.status = "Offline"
 	user.save()
-
+	response = JsonResponse({'message': 'Your account has been successfully logged out.'}, status=200)
+	response.delete_cookie('refresh_token')
 	logout(request)
-	return JsonResponse({'message': 'Your account has been successfully logout.'}, status=201)
+	return response
 
 #! --------------------------------------- Auxiliary ---------------------------------------
 

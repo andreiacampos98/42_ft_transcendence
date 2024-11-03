@@ -11,6 +11,7 @@ async function onSignout() {
 		alert(data.message);
 	else {
 		localStorage.removeItem("access_token");
+		localStorage.removeItem("refresh_token");
 		history.pushState(null, '', '/');
 		htmx.ajax('GET', `/`, {
 			target: '#main'  
