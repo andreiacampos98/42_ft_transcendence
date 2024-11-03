@@ -58,13 +58,13 @@ export class LocalGameController extends AbstractGameController {
 
 		await fetch(`/games/update/${this.stats.gameID}`, {
 			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
 			body: JSON.stringify({
 				'event': 'FINISH',
 				'data': results
 			}),
-			headers: {
-				'Content-Type': 'application/json',
-			}
 		});
 	}
 }

@@ -733,7 +733,7 @@ def tournament_init_phase(tournament_id):
 	
 	serializer = GamesSerializer(data=games_data, many=True)
 	if not serializer.is_valid():
-		return JsonResponse(serializer.errors, status=400, safe=False)
+		return None, None, None
 	games = serializer.save()
 	
 	tour_games_data = []

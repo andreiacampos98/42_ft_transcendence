@@ -5,22 +5,34 @@ user.connectSocket(
 	`ws://${window.location.host}/ws/tournaments/${user.tournamentID}`, 
 	(event) => {
 		const message = JSON.parse(event.data);
-			
-		if (message.event == 'USER_JOINED') {
-			const players = message.data;		
+		const { event: eventType, data } = message;
+		console.log(message);
+
+		if (eventType == 'USER_JOINED') {
+			const players = data;	
 			const playerSlots = document.querySelectorAll(".player");
+			console.log(eventType, data, players);
+			console.log(playerSlots);	
 	
 			players.forEach((player, i) => {
 				playerSlots[i].querySelector("span.name").textContent = player.alias;
 				playerSlots[i].querySelector("img").src = player.user.picture;
 			});
 		}
-		else if (message.event == 'BEGIN_PHASE') {
-			user.tournamentGameData = message.data;
-			history.pushState(null, '', `/gametournament/`);
-			htmx.ajax('GET', `/gametournament/`, {
-				target: '#main'  
-			});
+		else if (eventType == 'BEGIN_PHASE') {
+			setTimeout(() => {
+				user.tournamentGameData = data;
+				history.pushState(null, '', `/gametournament/`);
+				htmx.ajax('GET', `/gametournament/`, {
+					target: '#main'  
+				});
+			}, 2000);
+		}
+		// else if (event_type == 'END_PHASE') {
+			//! UPDATE THE UI BASED ON PAST RESULTS
+		// }
+		else if (eventType == 'END_TOURNAMENT') {
+			
 		}
 	}
 );

@@ -1,6 +1,6 @@
 import json
 from .views import game_create_helper, game_update_helper, tournament_init_phase, tournament_update_game_helper
-from .models import Tournaments, TournamentsUsers, Users
+from .models import Tournaments, TournamentsGames, TournamentsUsers, Users
 from .serializers import GamesSerializer, TournamentsGamesSerializer, TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
 
@@ -38,7 +38,7 @@ class TournamentConsumer(WebsocketConsumer):
 		async_to_sync(self.channel_layer.group_add)(
 			self.tournament_room, self.channel_name
 		)
-
+		ic(self.users)
 		if self.user.id not in self.users:
 			self.add_new_tournament_user()
 
@@ -73,16 +73,41 @@ class TournamentConsumer(WebsocketConsumer):
 		if event in broadcast_handlers:
 			broadcast_handlers[event]()
 		else:
-			message_handlers[event](message)
+			message_handlers[event](message['data'])
 
-	def on_game_finish(self, message):
+	def on_game_finish(self, data):
 		ic('BEFORE', self.curr_phase)
 		self.curr_phase['finished_games'] += 1
+		if self.curr_phase['name'] == 'Final':
+			winner = Tournaments.objects.get(pk=self.tournament_id).winner_id
 
-		if self.curr_phase['finished_games'] == self.curr_phase['num_games']:
+			async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
+				"type": "broadcast", 
+				"message": json.dumps({
+					"event": 'END_TOURNAMENT',
+					"data": {
+						'winner': UsersSerializer(winner).data
+					}
+				})
+			})
+
+		elif self.curr_phase['finished_games'] == self.curr_phase['num_games']:
+			#! Send the new user pairs for the next phase
+			# async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
+			# 	"type": "broadcast", 
+			# 	"message": json.dumps({
+			# 		"event": 'END_PHASE',
+			# 		"data": tour_users_data
+			# 	})
+			# })
 			self.curr_phase['name'] = next_phase[self.curr_phase['name']]
 			self.curr_phase['num_games'] //= 2
 			self.curr_phase['finished_games'] = 0
+			curr_phase_games = TournamentsGames.objects.filter(
+				tournament_id=self.tournament_id, phase=self.curr_phase['name']
+			)
+			
+			self.begin_phase(curr_phase_games)
 
 		ic('AFTER', self.curr_phase)
 				
@@ -132,6 +157,7 @@ class TournamentConsumer(WebsocketConsumer):
 			tournament_data['game_id'] = GamesSerializer(tour_game.game_id).data
 			tournament_data['user1_id'] = UsersSerializer(tour_game.game_id.user1_id).data
 			tournament_data['user2_id'] = UsersSerializer(tour_game.game_id.user2_id).data
+			tournament_data['phase'] = self.curr_phase['name'].lower()
 
 			ic(game_room)
 			async_to_sync(self.channel_layer.group_send)(game_room, {
