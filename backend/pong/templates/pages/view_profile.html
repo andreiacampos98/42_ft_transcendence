@@ -21,9 +21,7 @@
 				<div class="m-content"> 
 					<h3>Change Password</h3>
 					<div class="form-div d-flex justify-content-center">
-						<form id="change-password-form" class="d-flex " method="POST">
-							{% csrf_token %}
-							
+						<form id="change-password-form" class="d-flex " method="POST">							
 							<label for="old_password-input">Old Password</label>
 							<div class="password-input-div d-flex">
 								<input class="pass-input" type="password" id="old_password-input" name="old_password" required>
@@ -61,7 +59,6 @@
 					<p>You're about to remove <strong>{{ user_view.username }}</strong> from your friends list. Are you sure?</p>
 					<div style="width: 100%;" class="bottom-buttons d-flex justify-content-between">
 						<form id="remove-friend-form" onsubmit="return friends_remove(event, '{{ user_id }}', '{{ user_view.id }}')">
-							{% csrf_token %}
 							<button class="change modal-button" id="leaver" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
 								<span class="change-b" id="change">Yes, I am.</span>
 							</button>
@@ -128,14 +125,12 @@
 								</div>		
 							{% else %}
 								<form id="add-friend-form" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
-									{% csrf_token %}
 									<button id="add-friend-button" type="submit">Add Friend</button>
 								</form>
 							{% endif %}
 						{% endif %}
 					{% else %}
 						<form id="add-friend-form" class="d-flex align-items-center justify-content-center" onsubmit="return friends_add(event, '{{ user_id }}', '{{ user_view.id }}')">
-							{% csrf_token %}
 							<button class="edit d-flex align-items-center justify-content-center" id="add-friend-button" type="submit">
 								<img class="friends" src="{% static 'assets/icons/add-friend.png' %}">
 								Add Friend
@@ -148,7 +143,6 @@
 					<button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
 				</div>
 				<form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
-					{% csrf_token %}
 					<input type="file" id="profile-picture-input" name="picture">
 					<div class="email-joined-edit d-flex align-items-center">
 						<label for="username-input">

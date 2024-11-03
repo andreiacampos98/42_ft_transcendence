@@ -14,10 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function toggle2FA() {
     const checkbox = document.getElementById('enable');
-    // const statusMessage = document.getElementById('message');
-    
     const isChecked = checkbox.checked;
-    // statusMessage.textContent = isChecked ? "Disable 2FA" : "Enable 2FA";
+    let token = localStorage.getItem("access_token");
+	  const refresh_token =localStorage.getItem("refresh_token")
     console.log(isChecked)
     try {
         const userId = document.getElementById('enable').getAttribute('data-user-id');
@@ -25,17 +24,24 @@ async function toggle2FA() {
         const response = await fetch(`/toggle-2fa/${userId}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+              "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({ enabled: isChecked })
         });
-
-        if (!response.ok) {
-            throw new Error('There was an issue updating the status of 2FA');
-        }
-
+        
         const data = await response.json();
         console.log(data.message); 
+        if (!response.ok && response.status != 401) {
+            throw new Error('There was an issue updating the status of 2FA');
+        }
+        else if (response.status == 401) {
+          alert("As your session has expired, you will be logged out.");
+          history.pushState(null, '', `/`);
+          htmx.ajax('GET', `/`, {
+            target: '#main'
+          });
+        }
     } catch (error) {
         console.error('Erro:', error);
         alert('There was an issue changing the status of 2FA.');

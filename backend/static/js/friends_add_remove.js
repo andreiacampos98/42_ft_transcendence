@@ -6,7 +6,6 @@ async function friends_add(event, userId1, userId2) {
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
         body: JSON.stringify({
             'user1_id': userId1,
@@ -30,7 +29,6 @@ async function friends_remove(event, userId1, userId2) {
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         }
     });
 

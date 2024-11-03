@@ -59,8 +59,7 @@ SESSION_SAVE_EVERY_REQUEST = True  # Salva a sessão em cada request, opcional
 SESSION_COOKIE_SECURE = False  # Deve ser True em produção, requer HTTPS
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Define se a sessão expira ao fechar o navegador
 
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = True
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -91,7 +90,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

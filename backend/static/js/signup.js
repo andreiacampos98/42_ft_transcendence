@@ -31,7 +31,6 @@ document.getElementById('signupForm').addEventListener('submit', async function(
         body: JSON.stringify(formData),
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
     });
 	const data = await response.json();

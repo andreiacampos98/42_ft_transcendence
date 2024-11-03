@@ -18,7 +18,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.middleware.csrf import get_token
 from datetime import datetime
 from django.utils import timezone
 from datetime import timedelta
@@ -98,7 +97,7 @@ def user_detail(request, pk):
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 
-@csrf_exempt
+#@csrf_exempt
 def user_create(request):
 	if request.method == 'POST':
 		try:
@@ -154,7 +153,7 @@ def user_create(request):
 			return response
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-@csrf_exempt
+#@csrf_exempt
 def delete_profile(request, id):
 	if request.method =='DELETE':
 		Users.objects.filter(id=id).delete()
@@ -169,6 +168,7 @@ def user_update(request, pk):
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
+			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	user = get_object_or_404(Users, pk=pk)
@@ -249,7 +249,7 @@ def user_password(request, pk):
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-@csrf_exempt
+#@csrf_exempt
 def search_suggestions(request):
 	term = request.GET.get('term', '')
 	if term:
@@ -260,7 +260,7 @@ def search_suggestions(request):
 	return JsonResponse([], safe=False)
 
 
-@csrf_exempt
+#@csrf_exempt
 def search_users(request):
 	user_id = request.user.id
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
@@ -284,7 +284,7 @@ def get_user_friends(request, user_id):
 		serializer = FriendsSerializer(friends, many=True)
 	return JsonResponse(serializer.data, safe=False)
 
-@csrf_exempt
+#@csrf_exempt
 def add_remove_friend(request, user1_id, user2_id):
 	if request.method == 'POST':
 		if user1_id == user2_id:
@@ -324,7 +324,7 @@ def add_remove_friend(request, user1_id, user2_id):
 		return JsonResponse(response_data, status=200)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-@csrf_exempt
+#@csrf_exempt
 def accept_friend(request, user1_id, user2_id):
 	if request.method == 'PATCH':
 		friendship = Friends.objects.filter(
@@ -358,7 +358,7 @@ def get_user_notifications(request, user_id):
 		return JsonResponse(serializer.data, safe=False)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-@csrf_exempt
+#@csrf_exempt
 def delete_user_notification(request, user_id, notif_id):
 	if request.method == 'DELETE':
 		notifications = Notifications.objects.filter(Q(user_id = user_id) & Q( id = notif_id))
@@ -369,7 +369,7 @@ def delete_user_notification(request, user_id, notif_id):
 		return JsonResponse(response_data, status=204)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-@csrf_exempt
+#@csrf_exempt
 def update_notification(request, notif_id):
 	if request.method == 'PATCH':
 		notifications = Notifications.objects.get(id = notif_id)
@@ -431,7 +431,7 @@ def current_place(request, user_id):
 		position += 1
 	return None
 
-@csrf_exempt
+#@csrf_exempt
 def user_stats_update(user_id, game_id, data):
 
 	stats = UserStats.objects.get(user_id=user_id)
@@ -506,7 +506,7 @@ def user_stats_all(request):
 
 
 #! --------------------------------------- Game Stats ---------------------------------------
-@csrf_exempt
+#@csrf_exempt
 def game_stats_create(game_id, data):
 	game = Games.objects.get(pk=game_id)
 	game_stats, created = GamesStats.objects.get_or_create(game=game)
@@ -613,7 +613,7 @@ def game_create_helper(data: dict):
 
 	return JsonResponse(serializer.data, status=201)
 
-@csrf_exempt
+#@csrf_exempt
 def game_create(request=None):
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -664,7 +664,7 @@ def game_update_helper(data, game_id):
 	data = GamesSerializer(game).data
 	return JsonResponse(data, status=200)
 	
-@csrf_exempt
+#@csrf_exempt
 def game_update(request, game_id):
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -682,7 +682,7 @@ def game_update(request, game_id):
 
 	return game_update_helper(data, game_id)
 
-@csrf_exempt
+#@csrf_exempt
 def get_game(request, game_id):
 	if request.method !='GET':
 		return JsonResponse({'message': 'Method not allowed'}, status=405)
@@ -699,7 +699,7 @@ def get_game(request, game_id):
 
 #! --------------------------------------- Tournaments ---------------------------------------
 
-@csrf_exempt
+#@csrf_exempt
 def tournament_create(request):
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method})
@@ -756,7 +756,7 @@ def tournament_list(request):
 	return JsonResponse(serializer.data, safe=False, status=400)
 
 
-@csrf_exempt
+#@csrf_exempt
 def tournament_update(request, tournament_id):
 	if request.method != 'PATCH':	
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -776,7 +776,7 @@ def tournament_update(request, tournament_id):
 
 #! --------------------------------------- Tournaments Users ---------------------------------------
 
-@csrf_exempt
+#@csrf_exempt
 def tournament_join(request, tournament_id, user_id):
 	if request.method != 'POST':	
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -847,7 +847,7 @@ def tournament_join(request, tournament_id, user_id):
 	return JsonResponse({'data': serializer.data}, status=201, safe=False)
 
 
-@csrf_exempt
+#@csrf_exempt
 def tournament_leave(request, tournament_id, user_id):
 	if request.method != 'DELETE':	
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -862,7 +862,7 @@ def tournament_leave(request, tournament_id, user_id):
 	}
 	return JsonResponse(response_data, status=204)
 
-@csrf_exempt
+#@csrf_exempt
 def tournament_list_users(request, tournament_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
@@ -882,7 +882,7 @@ def tournament_list_users(request, tournament_id):
 
 #! --------------------------------------- Tournaments Games ---------------------------------------
 
-# @csrf_exempt
+# #@csrf_exempt
 # def tournament_list_games(request, tournament_id):
 # 	if request.method != 'GET':
 # 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -909,7 +909,7 @@ def tournament_list_users(request, tournament_id):
 
 # 	return JsonResponse(tgames_list, safe=False)
 
-@csrf_exempt
+#@csrf_exempt
 def tournament_list_games(request, tournament_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -943,7 +943,7 @@ def tournament_list_games(request, tournament_id):
 
 
 
-@csrf_exempt
+#@csrf_exempt
 def tournament_list_user_games(request, user_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -965,7 +965,7 @@ def tournament_list_user_games(request, user_id):
 	return JsonResponse(user_tour_games, status=200, safe=False)
 
 #auxiliar function
-@csrf_exempt
+#@csrf_exempt
 def tournament_list_user(request, user_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -984,7 +984,7 @@ def tournament_list_user(request, user_id):
 	return JsonResponse(all_user_tours, safe=False)
 
 
-@csrf_exempt
+#@csrf_exempt
 def tournament_update_game(request, tournament_id, game_id):
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -1060,7 +1060,7 @@ def tournament_update_game(request, tournament_id, game_id):
 #! --------------------------------------- Login42 ---------------------------------------
 
 	
-@csrf_exempt
+#@csrf_exempt
 def get_access_token(host, code):
 	response = requests.post(settings.TOKEN_URL_A, data={
 		'grant_type': 'authorization_code',
@@ -1215,12 +1215,15 @@ def send_otp(request, method, info):
             fail_silently=False,
         )
 
-
-	#elif method == 'sms':
-	#elif method == 'auth_app':
-
-@csrf_exempt
+#@csrf_exempt
 def toogle2fa(request, user_id):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
 	if request.method == 'POST':
 		try:
 			data = json.loads(request.body) 
@@ -1241,7 +1244,7 @@ def toogle2fa(request, user_id):
 def signup(request):
 	return render(request, 'pages/sign-up.html')
 
-@csrf_exempt
+#@csrf_exempt
 def loginview(request):
 	if request.method == 'POST':
 		try:
@@ -1310,7 +1313,7 @@ def loginview(request):
 
 	return render(request, 'pages/login.html')
 
-@csrf_exempt
+#@csrf_exempt
 def otp_method(request):
 	if(request.method == 'POST'):
 		try:
@@ -1331,7 +1334,7 @@ def otp_method(request):
 
 	return render(request, 'pages/otp_method.html')
 
-@csrf_exempt
+#@csrf_exempt
 def otp_view(request):
 	if request.method == 'POST':
 		otp = request.POST.get('otp')
@@ -1564,7 +1567,7 @@ def profile(request, id):
 
 
 @login_required
-@csrf_exempt
+#@csrf_exempt
 def signout(request):
 	user = Users.objects.get(pk=request.user.id)
 	user.status = "Offline"

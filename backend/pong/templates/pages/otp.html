@@ -9,7 +9,6 @@
         <div class="login-container2">
             <h4 class="title"><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
             <form id="otpForm" method="POST" onsubmit="return submitOtp(event);">
-                {% csrf_token %}
                 <div class="input-group">
                     <label for="otp">Otp</label>
                     <input type="text" id="otp" name="otp" placeholder="Code" required>
