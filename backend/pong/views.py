@@ -280,7 +280,7 @@ def get_user_friends(request, user_id):
 		serializer = FriendsSerializer(friends, many=True)
 	return JsonResponse(serializer.data, safe=False)
 
-#@csrf_exempt
+
 def add_remove_friend(request, user1_id, user2_id):
 	token_valid = validate_token(request)
 
@@ -327,8 +327,15 @@ def add_remove_friend(request, user1_id, user2_id):
 		return JsonResponse(response_data, status=200)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-#@csrf_exempt
+
 def accept_friend(request, user1_id, user2_id):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
 	if request.method == 'PATCH':
 		friendship = Friends.objects.filter(
 			(Q(user1_id=user1_id, user2_id=user2_id) | Q(user1_id=user2_id, user2_id=user1_id))
@@ -361,8 +368,15 @@ def get_user_notifications(request, user_id):
 		return JsonResponse(serializer.data, safe=False)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-#@csrf_exempt
+
 def delete_user_notification(request, user_id, notif_id):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+
 	if request.method == 'DELETE':
 		notifications = Notifications.objects.filter(Q(user_id = user_id) & Q( id = notif_id))
 		notifications.delete()
@@ -372,8 +386,15 @@ def delete_user_notification(request, user_id, notif_id):
 		return JsonResponse(response_data, status=204)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-#@csrf_exempt
+
 def update_notification(request, notif_id):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+
 	if request.method == 'PATCH':
 		notifications = Notifications.objects.get(id = notif_id)
 		notifications.status = 'Read'

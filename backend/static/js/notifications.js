@@ -13,16 +13,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 async function removeNotification(notificationId, listItem){
+    let token = localStorage.getItem("access_token");
     const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
     const response = await fetch(`/notifications/${userId}/${notificationId}`, {
         method: 'DELETE',
         headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
         }
     });
 	const data = await response.json();
-	if (!response.ok)
+	if (!response.ok && response.status != 401)
 		console.error(`Error deleting notification: ${data.message}`);
+    else if(response.status == 401){
+        alert("As your session has expired, you will be logged out.");
+        history.pushState(null, '', `/`);
+        htmx.ajax('GET', `/`, {
+            target: '#main'
+        });
+    }
 	else
 		listItem.remove();
 }
@@ -143,51 +152,78 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
         if (status === 'accept') {
             console.log(`Sending friend accept request for user ${userId} and user ${otherUserId}`);
 
+            let token = localStorage.getItem("access_token");
             const friendAcceptResponse = await fetch(`/friends/accept/${userId}/${otherUserId}`, {
                 method: 'PATCH',
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+                    "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
                 }
             });
 
-            if (!friendAcceptResponse.ok) {
+            if (!friendAcceptResponse.ok && friendAcceptResponse.status != 401) {
                 throw new Error(`Error accepting friend request: ${friendAcceptResponse.statusText}`);
             }
-
-            console.log('Friend accept request successful');
-
-            const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
-                method: 'PATCH',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            if (!notificationUpdateResponse.ok) {
-                throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
+            else if(friendAcceptResponse.status == 401){
+                alert("As your session has expired, you will be logged out.");
+                history.pushState(null, '', `/`);
+                htmx.ajax('GET', `/`, {
+                    target: '#main'
+                });
             }
-
-            console.log('Notification update request successful');
+            else{
+                console.log('Friend accept request successful');
+                token = localStorage.getItem("access_token");
+                const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
+                    }
+                });
+    
+                if (!notificationUpdateResponse.ok && notificationUpdateResponse.status != 401) {
+                    throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
+                }
+                else if(notificationUpdateResponse.status == 401){
+                    alert("As your session has expired, you will be logged out.");
+                    history.pushState(null, '', `/`);
+                    htmx.ajax('GET', `/`, {
+                        target: '#main'
+                    });
+                }
+                else{
+                    console.log('Notification update request successful');
+                }
+            }
         } else if (status === 'decline') {
             console.log(`Sending decline notification request for notification ${notificationId}`);
+            let token = localStorage.getItem("access_token");
 
             const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
                 method: 'PATCH',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
                 },
                 body: JSON.stringify({ status: 'Declined' })
             });
 
-            if (!notificationUpdateResponse.ok) {
+            if (!notificationUpdateResponse.ok && notificationUpdateResponse.status != 401) {
                 throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
             }
-
-            console.log('Notification decline request successful');
+            else if(notificationUpdateResponse.status == 401){
+                alert("As your session has expired, you will be logged out.");
+                history.pushState(null, '', `/`);
+                htmx.ajax('GET', `/`, {
+                    target: '#main'
+                });
+            }
+            else{
+                console.log('Notification decline request successful');
+            }
         }
-
-        // Update the UI or perform any other necessary actions
         getNotifications();
     } catch (error) {
         console.error('Error handling notification action:', error);
@@ -222,66 +258,96 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
 
         if (status === 'accept') {
             console.log(`Sending friend accept request for user ${userId} and user ${otherUserId}`);
-
+            
+            let token = localStorage.getItem("access_token");
             const friendAcceptResponse = await fetch(`/friends/accept/${userId}/${otherUserId}`, {
                 method: 'PATCH',
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+                    "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
                 }
             });
 
-            if (!friendAcceptResponse.ok) {
+            if (!friendAcceptResponse.ok && friendAcceptResponse.status != 401) {
                 throw new Error(`Error accepting friend request: ${friendAcceptResponse.statusText}`);
             }
-
-            console.log('Friend accept request successful');
-
-            const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
-                method: 'PATCH',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            if (!notificationUpdateResponse.ok) {
-                throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
+            else if(friendAcceptResponse.status == 401){
+                alert("As your session has expired, you will be logged out.");
+                history.pushState(null, '', `/`);
+                htmx.ajax('GET', `/`, {
+                    target: '#main'
+                });
             }
+            else{
+                console.log('Friend accept request successful');
+                token = localStorage.getItem("access_token");
+                const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
+                    }
+                });
 
-            const declineButton = document.getElementById("decline-friend-button");
-            const acceptButton = document.getElementById("accept-friend-button");
-            const removeFriendButton = document.getElementById("remove-friend-button");
+                if (!notificationUpdateResponse.ok && notificationUpdateResponse.status != 401) {
+                    throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
+                }
+                else if(notificationUpdateResponse.status == 401){
+                    alert("As your session has expired, you will be logged out.");
+                    history.pushState(null, '', `/`);
+                    htmx.ajax('GET', `/`, {
+                        target: '#main'
+                    });
+                }
+                else{
 
-            if (declineButton) declineButton.style.display = "none";
-            if (acceptButton) acceptButton.style.display = "none";
-            if (removeFriendButton) removeFriendButton.style.display = "block";
+                    const declineButton = document.getElementById("decline-friend-button");
+                    const acceptButton = document.getElementById("accept-friend-button");
+                    const removeFriendButton = document.getElementById("remove-friend-button");
 
-            console.log('Notification update request successful');
-            window.location.reload();
+                    if (declineButton) declineButton.style.display = "none";
+                    if (acceptButton) acceptButton.style.display = "none";
+                    if (removeFriendButton) removeFriendButton.style.display = "block";
+
+                    console.log('Notification update request successful');
+                    window.location.reload();
+                }
+            }
         } else if (status === 'decline') {
             console.log(`Sending decline notification request for notification ${notificationId}`);
-
+            let token = localStorage.getItem("access_token");
             const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
                 method: 'PATCH',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
                 },
                 body: JSON.stringify({ status: 'Declined' })
             });
 
-            if (!notificationUpdateResponse.ok) {
+            if (!notificationUpdateResponse.ok && notificationUpdateResponse.status != 401) {
                 throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
             }
+            else if(notificationUpdateResponse.status == 401){
+                alert("As your session has expired, you will be logged out.");
+                history.pushState(null, '', `/`);
+                htmx.ajax('GET', `/`, {
+                    target: '#main'
+                });
+            }
+            else{
 
-            const declineButton = document.getElementById("decline-friend-button");
-            const acceptButton = document.getElementById("accept-friend-button");
-            const addFriendButton = document.getElementById("add-friend-button");
+                const declineButton = document.getElementById("decline-friend-button");
+                const acceptButton = document.getElementById("accept-friend-button");
+                const addFriendButton = document.getElementById("add-friend-button");
 
-            if (declineButton) declineButton.style.display = "none";
-            if (acceptButton) acceptButton.style.display = "none";
-            if (addFriendButton) addFriendButton.style.display = "block";
+                if (declineButton) declineButton.style.display = "none";
+                if (acceptButton) acceptButton.style.display = "none";
+                if (addFriendButton) addFriendButton.style.display = "block";
 
-            console.log('Notification decline request successful');
+                console.log('Notification decline request successful');
+            }
         }
 
         window.location.reload();
