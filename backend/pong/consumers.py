@@ -24,6 +24,8 @@ class TournamentConsumer(WebsocketConsumer):
 		'num_games': 0,
 		'finished_games': 0
 	}
+	# ! THIS ATTRIBUTES CAN'T STAY HERE AS THEY WILL BE SHARED AMONGST ALL 
+	# ! EXISTING TOURNAMENTS ONGOING AT THE SAME TIME
 
 	def connect(self):
 		self.accept()
@@ -38,12 +40,10 @@ class TournamentConsumer(WebsocketConsumer):
 		async_to_sync(self.channel_layer.group_add)(
 			self.tournament_room, self.channel_name
 		)
-		ic(self.users)
 		if self.user.id not in self.users:
 			self.add_new_tournament_user()
 
-		# ic(self.user.id, self.user.username)
-		# ic(self.has_started, self.tournament, self.users)
+		ic(self.users)
 		if not self.has_started and self.tournament is not None and len(self.users) == self.tournament.capacity:
 			self.curr_phase['name'], self.curr_phase['num_games'], first_phase_games \
 				= tournament_init_phase(self.tournament_id)
@@ -57,6 +57,8 @@ class TournamentConsumer(WebsocketConsumer):
 			return
 
 		del self.users[self.user.id]
+		if len(self.users) == 0:
+			self.reset()
 		async_to_sync(self.channel_layer.group_discard)(self.tournament_room, self.channel_name)
 		return super().disconnect(code)
 	
@@ -79,33 +81,57 @@ class TournamentConsumer(WebsocketConsumer):
 		ic('BEFORE', self.curr_phase)
 		self.curr_phase['finished_games'] += 1
 		if self.curr_phase['name'] == 'Final':
-			winner = Tournaments.objects.get(pk=self.tournament_id).winner_id
+			temp = Tournaments.objects.get(pk=self.tournament_id).winner_id.id
+			winner = TournamentsUsers.objects.get(tournament_id=self.tournament_id, user_id=temp)
+			self.reset()
 
 			async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
 				"type": "broadcast", 
 				"message": json.dumps({
 					"event": 'END_TOURNAMENT',
 					"data": {
-						'winner': UsersSerializer(winner).data
+						'winner': TournamentsUsersSerializer(winner).data
 					}
 				})
 			})
 
 		elif self.curr_phase['finished_games'] == self.curr_phase['num_games']:
-			#! Send the new user pairs for the next phase
-			# async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
-			# 	"type": "broadcast", 
-			# 	"message": json.dumps({
-			# 		"event": 'END_PHASE',
-			# 		"data": tour_users_data
-			# 	})
-			# })
 			self.curr_phase['name'] = next_phase[self.curr_phase['name']]
 			self.curr_phase['num_games'] //= 2
 			self.curr_phase['finished_games'] = 0
 			curr_phase_games = TournamentsGames.objects.filter(
 				tournament_id=self.tournament_id, phase=self.curr_phase['name']
 			)
+
+			#! Send the new user pairs for the next phase
+			next_phase_users = []
+			for tour_game in curr_phase_games:
+				game = tour_game.game_id
+				ic(game.id, game.user1_id.id, game.user2_id.id)
+				tour_user1 = TournamentsUsers.objects.get(
+					tournament_id=self.tournament_id, user_id=game.user1_id.id
+				)
+				tour_user2 = TournamentsUsers.objects.get(
+					tournament_id=self.tournament_id, user_id=game.user2_id.id
+				)
+				user1 = Users.objects.get(pk=tour_user1.user_id.id) 
+				user2 = Users.objects.get(pk=tour_user2.user_id.id) 
+				tour_user1 = TournamentsUsersSerializer(tour_user1).data
+				tour_user2 = TournamentsUsersSerializer(tour_user2).data
+				tour_user1['user'] = UsersSerializer(user1).data
+				tour_user2['user'] = UsersSerializer(user2).data
+				next_phase_users.extend([tour_user1, tour_user2])
+
+			async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
+				"type": "broadcast", 
+				"message": json.dumps({
+					"event": 'END_PHASE',
+					"data": {
+						'phase': self.curr_phase['name'].lower(),
+						'players': next_phase_users
+					}
+				})
+			})
 			
 			self.begin_phase(curr_phase_games)
 
@@ -167,6 +193,17 @@ class TournamentConsumer(WebsocketConsumer):
 					'data': tournament_data
 				})
 			})
+
+	def reset(self):
+		self.games.clear()
+		self.users.clear()
+		self.tournament = None
+		self.has_started = False
+		self.curr_phase = {
+			'name': '',
+			'num_games': 0,
+			'finished_games': 0
+		}
 
 	def broadcast(self, event):		
 		self.send(text_data=event["message"])
@@ -347,4 +384,3 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 
 	def send_end_game_message(self, event):
 		self.send(event['message'])
-

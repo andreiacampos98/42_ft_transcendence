@@ -1,5 +1,15 @@
 console.log(user);
 
+const fillPlayersSlot = (query, players) => {
+	const slots = document.querySelectorAll(query);
+	console.log(query, slots);	
+	
+	players.forEach((player, i) => {
+		slots[i].querySelector("span.name").textContent = player.alias;
+		slots[i].querySelector("img").src = player.user.picture;
+	});
+};
+
 user.connectSocket(
 	'tournamentSocket', 
 	`ws://${window.location.host}/ws/tournaments/${user.tournamentID}`, 
@@ -9,15 +19,7 @@ user.connectSocket(
 		console.log(message);
 
 		if (eventType == 'USER_JOINED') {
-			const players = data;	
-			const playerSlots = document.querySelectorAll(".player");
-			console.log(eventType, data, players);
-			console.log(playerSlots);	
-	
-			players.forEach((player, i) => {
-				playerSlots[i].querySelector("span.name").textContent = player.alias;
-				playerSlots[i].querySelector("img").src = player.user.picture;
-			});
+			fillPlayersSlot(".player", data);
 		}
 		else if (eventType == 'BEGIN_PHASE') {
 			setTimeout(() => {
@@ -28,11 +30,16 @@ user.connectSocket(
 				});
 			}, 2000);
 		}
-		// else if (event_type == 'END_PHASE') {
-			//! UPDATE THE UI BASED ON PAST RESULTS
-		// }
-		else if (eventType == 'END_TOURNAMENT') {
-			
+		else if (eventType == 'END_PHASE') {
+			console.log(data.phase);
+			setTimeout(() => {
+				fillPlayersSlot(`.${data.phase}.player`, data.players);
+			}, 1100);
+		}
+		else if (eventType == 'END_TOURNAMENT') {			
+			setTimeout(() => {
+				fillPlayersSlot(".winner.player", [data.winner]);
+			}, 2000);
 		}
 	}
 );
