@@ -887,8 +887,15 @@ def tournament_join(request, tournament_id, user_id):
 	return JsonResponse({'data': serializer.data}, status=201, safe=False)
 
 
-#@csrf_exempt
 def tournament_leave(request, tournament_id, user_id):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			ic("invalid token")
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
 	if request.method != 'DELETE':	
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 	

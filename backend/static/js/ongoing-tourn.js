@@ -56,12 +56,16 @@ function updateRound3Player(elementId, player) {
 }
 
 async function leaveTournament() {
+    let token = localStorage.getItem("access_token");
     var tournamentId = document.getElementById("leave-tournament").getAttribute("data-tournament-id");
     var userId = document.getElementById("leave-tournament").getAttribute("data-user-id");
 
     try {
         const response =  await fetch(`/tournaments/${tournamentId}/users/${userId}/leave`, {
             method: 'DELETE',
+            headers: {
+                "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
+            }
         });
 
         if (response.ok) {
@@ -69,6 +73,12 @@ async function leaveTournament() {
             history.pushState(null, '', `/tournaments/`);
             htmx.ajax('GET', `/tournaments/`, {
                 target: '#main'  
+            });
+        } else if (!response.ok && response.status == 401) {
+            alert("As your session has expired, you will be logged out.");
+            history.pushState(null, '', `/`);
+            htmx.ajax('GET', `/`, {
+                target: '#main'
             });
         }
     } catch (error) {
