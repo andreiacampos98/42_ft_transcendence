@@ -16,7 +16,6 @@ async function toggle2FA() {
     const checkbox = document.getElementById('enable');
     const isChecked = checkbox.checked;
     let token = localStorage.getItem("access_token");
-	  const refresh_token =localStorage.getItem("refresh_token")
     console.log(isChecked)
     try {
         const userId = document.getElementById('enable').getAttribute('data-user-id');

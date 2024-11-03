@@ -1,16 +1,3 @@
-// document.addEventListener('DOMContentLoaded', () => {
-//     const observer = new MutationObserver((mutations) => {
-//         mutations.forEach((mutation) => {
-//           mutation.addedNodes.forEach((node) => {
-//             if (node.nodeType === 1 && !node["htmx-internal-data"]) {
-//               htmx.process(node)
-//             }
-//           })
-//         })
-//       });
-//     observer.observe(document, {childList: true, subtree: true});
-// })
-
 function addClassToTopLevelDivs(className) {
     // Select all div elements that are direct children of the body
     const topLevelDivs = document.body.querySelectorAll(':scope > div');
@@ -35,6 +22,7 @@ async function toggleFriendsDrawer(user_id) {
         return ;
 
     const response = await fetch(`/friends/${user_id}`, {
+		method: 'GET',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }
@@ -48,7 +36,7 @@ async function toggleFriendsDrawer(user_id) {
 			return entry.user1_id;
 	});
 
-	sidebar.innerHTML = '';  // Clear existing content
+	sidebar.innerHTML = '';
 
 	friends.forEach((friend) => {
 		console.log(friend);

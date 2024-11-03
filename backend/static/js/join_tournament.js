@@ -31,13 +31,13 @@ window.onclick = function(event) {
 }
 
 async function registerTournament() {
+    let token = localStorage.getItem("access_token");
     var tournamentId = document.getElementById("registration").getAttribute("data-tournament-id");
     var userId = document.getElementById("registration").getAttribute("data-user-id");
     const checkbox = document.getElementById('use-usernamejoin-checkbox');
 
     var alias;
-    if(checkbox.checked)
-    {
+    if(checkbox.checked){
       alias = document.getElementById("nickname-input-join").getAttribute('data-user-username');
     } else {
       alias = document.getElementById("nickname-input-join").value;
@@ -53,6 +53,7 @@ async function registerTournament() {
             body: JSON.stringify(formData),
             headers: {
                 'Content-Type': 'application/json',
+                "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
             }
         })
         const data = await response.json();
@@ -65,6 +66,12 @@ async function registerTournament() {
             history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
             htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
                 target: '#main'  
+            });
+        } else if (!response.ok && response.status == 401) {
+            alert("As your session has expired, you will be logged out.");
+            history.pushState(null, '', `/`);
+            htmx.ajax('GET', `/`, {
+                target: '#main'
             });
         } else {
             alert("Registration failed: " + (data.message || 'Unknown error'));

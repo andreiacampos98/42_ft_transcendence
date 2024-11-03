@@ -55,8 +55,6 @@ total_phase_matches = dict(zip(
 ))
 
 
-
-
 def validate_token(request):
 	jwt_authenticator = JWTAuthentication()
 
@@ -86,8 +84,6 @@ def refresh_token(request):
 
 #! --------------------------------------- Users ---------------------------------------
 
-
-
 def user_detail(request, pk):
 	if request.method == 'GET':
 		user = get_object_or_404(Users, pk=pk)
@@ -97,7 +93,7 @@ def user_detail(request, pk):
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 
-#@csrf_exempt
+
 def user_create(request):
 	if request.method == 'POST':
 		try:
@@ -286,6 +282,13 @@ def get_user_friends(request, user_id):
 
 #@csrf_exempt
 def add_remove_friend(request, user1_id, user2_id):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
 	if request.method == 'POST':
 		if user1_id == user2_id:
 			return JsonResponse({'message': 'Users cannot be friends with themselves.'}, status=400)
@@ -699,8 +702,16 @@ def get_game(request, game_id):
 
 #! --------------------------------------- Tournaments ---------------------------------------
 
-#@csrf_exempt
+
 def tournament_create(request):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			ic("invalid token")
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method})
 
@@ -776,8 +787,16 @@ def tournament_update(request, tournament_id):
 
 #! --------------------------------------- Tournaments Users ---------------------------------------
 
-#@csrf_exempt
+
 def tournament_join(request, tournament_id, user_id):
+	token_valid = validate_token(request)
+
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			ic("invalid token")
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+
 	if request.method != 'POST':	
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 

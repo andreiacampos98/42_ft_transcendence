@@ -23,7 +23,6 @@ window.onclick = function(event) {
 
 async function getChangePassword() {
 	let token = localStorage.getItem("access_token");
-	const refresh_token =localStorage.getItem("refresh_token");
 	const userId = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
 	const formData = new FormData(document.getElementById("change-password-form"));
 

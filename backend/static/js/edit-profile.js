@@ -42,7 +42,6 @@ async function onSaveButtonClick(event, userId) {
     event.preventDefault(); 
     const formData = new FormData(document.getElementById("edit-profile-form"));
     let token = localStorage.getItem("access_token");
-	const refresh_token =localStorage.getItem("refresh_token");
 
     const response = await fetch(`/users/${userId}/update`, {
         method: "POST",

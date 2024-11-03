@@ -32,6 +32,7 @@ async function getNotifications() {
     const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
 
     const response = await fetch(`/notifications/${userId}`, {
+        method: 'GET',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }

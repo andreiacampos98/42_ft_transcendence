@@ -67,6 +67,7 @@ createTournamentButton.onmouseleave = function () {
 
 async function onCreateButtonClick()
 {
+    let token = localStorage.getItem("access_token");
     const userId = document.querySelector('button[onclick="onCreateButtonClick()"]').getAttribute('data-user-id');
     const checkbox = document.getElementById('use-username-checkbox');
     var alias;
@@ -90,21 +91,30 @@ async function onCreateButtonClick()
         body: JSON.stringify(formData),
         headers: {
             'Content-Type': 'application/json',
+            "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
         }
     });
 	const data = await response.json();
-	if (!response.ok)
+	if (!response.ok && response.status != 401)
 		alert(data.message);
+  else if (!response.ok && response.status == 401) {
+    alert("As your session has expired, you will be logged out.");
+    history.pushState(null, '', `/`);
+    htmx.ajax('GET', `/`, {
+        target: '#main'
+    });
+  } else {
+    alert("Tournament created successfully!");
+    const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
+    console.log(data.data);
+    localStorage.setItem('alias', formData.alias);
+    localStorage.setItem('tournament_id', tournamentId);
+    history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
+    htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
+      target: '#main' , 
+    });
+  }
     
-	alert("Tournament created successfully!");
-	const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
-	console.log(data.data);
-	localStorage.setItem('alias', formData.alias);
-	localStorage.setItem('tournament_id', tournamentId);
-	history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
-	htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
-		target: '#main' , 
-	});
 }
 
 var checkbox = document.getElementById('use-username-checkbox');
