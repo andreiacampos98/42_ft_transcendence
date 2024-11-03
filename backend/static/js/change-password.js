@@ -22,11 +22,44 @@ window.onclick = function(event) {
 }
 
 async function getChangePassword() {
-	const token = localStorage.getItem("access_token");
+	let token = localStorage.getItem("access_token");
+	const refresh_token =localStorage.getItem("refresh_token");
 	const userId = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
 	const formData = new FormData(document.getElementById("change-password-form"));
 
-	console.log("aqui")
+	/*const response_token = await fetch(`/api/token/verify/`,{
+		method: "POST",
+		body: JSON.stringify({ 'token': token }),
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+	const data_token = await response_token.json();
+	if (!response_token.ok){
+		console.log("token is not valid.");
+		const response_new = await fetch(`/api/token/refresh/`,{
+			method: "POST",
+			body: JSON.stringify({ 'refresh': refresh_token }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		const data_new = await response_new.json();
+		if (!response_new.ok){
+			console.log("redirect to home");
+			history.pushState(null, '', `/`);
+			htmx.ajax('GET', `/`, {
+				target: '#main'
+			});
+		}
+		else {
+			token = data_new.access;
+			localStorage.setItem("access_token", token);
+		}
+
+	}*/
+
+	//token = localStorage.getItem("access_token");
 	const response = await fetch(`/users/${userId}/password`, {
 		method: "POST",
 		body: formData,
@@ -39,6 +72,7 @@ async function getChangePassword() {
 	if (!response.ok && response.status != 401)
 		alert(data.message);
 	else if (!response.ok && response.status == 401) {
+		alert("As your session has expired, you will be logged out.");
 		history.pushState(null, '', `/`);
 		htmx.ajax('GET', `/`, {
 			target: '#main'

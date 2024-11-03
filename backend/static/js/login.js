@@ -21,7 +21,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         body: JSON.stringify(formData),
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         }
     });
 	const data = await response.json();
@@ -41,8 +40,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 		});
 	} else {
 		console.log('Login in successful');
-		localStorage.setItem("access_token", JSON.stringify(data.access_token))
-		localStorage.setItem("refresh_token", JSON.stringify(data.refresh_token))
+		localStorage.setItem("access_token", data.access_token); 
+		localStorage.setItem("refresh_token", data.refresh_token); 
 		history.pushState(null, '', `/home/`);
 		htmx.ajax('GET', `/home/`, {
 			target: '#main',

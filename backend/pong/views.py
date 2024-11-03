@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.exceptions import NotAuthenticated
@@ -105,8 +106,22 @@ def user_create(request):
 			myuser.status="Online"
 			myuser.save()
 			login(request, user)
-			return JsonResponse({'message': 'Your account has been successfully created and you are now logged in.', 'username': myuser.username, 'access_token': user_tokens.get('access'), 'refresh_token': user_tokens.get('refresh')}, status=201)
+			response = JsonResponse({
+				'message': 'Your account has been successfully created and you are now logged in.',
+				'username': myuser.username,
+				'access_token': user_tokens.get('access'),
+				'refresh_token': user_tokens.get('refresh')
+			}, status=201)
+			
+			response.set_cookie(
+				'refresh_token',
+				user_tokens.get('refresh'),
+				httponly=True, 
+				secure=True, 
+				samesite='Lax'   
+			)
 
+			return response
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 @csrf_exempt
@@ -168,17 +183,35 @@ def validate_token(request):
 
 	try:
 		user, validated_token = jwt_authenticator.authenticate(request)
+		ic(validated_token)
 		return user
 	except (InvalidToken, TokenError):
 		return None
 
+@csrf_exempt
+def refresh_token(request):
+	refresh_url = reverse('token_refresh')
+	refresh_token = request.COOKIES.get('refresh_token')
+	ic(refresh_token)
+	ic(refresh_url)
+	response = requests.post(
+		request.build_absolute_uri(refresh_url),
+		data={'refresh': refresh_token}
+	)
+
+	if response.status_code == 200:
+		ic(response.json()['access'])
+		return response.json()['access']  
+	return None
 
 @csrf_exempt
 def user_password(request, pk):
 	token_valid = validate_token(request)
 
 	if token_valid is None:
-		return JsonResponse({'message': "Invalid or expired token"}, status=401)
+		new_token = refresh_token(request)
+		if new_token is None:
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 
 	if request.method == 'POST':
 		user = get_object_or_404(Users, pk=pk)
@@ -1088,10 +1121,30 @@ def login42(request):
 		user = searchuser.first()
 		user = authenticate(username=user.username, password="password")
 		if user is not None:
+			user_tokens = user.tokens()
 			user.status = "Online"
 			user.save()
 			login(request, user)
-			return redirect('home')
+
+			response_data = {
+				'message': 'You are now logged in.',
+				'username': user.username,
+				'access_token': user_tokens.get('access'),
+				'refresh_token': user_tokens.get('refresh'),
+				'redirect_url': 'home'
+			}
+			
+			response = JsonResponse(response_data, status=201)
+
+			response.set_cookie(
+				'refresh_token',
+				user_tokens.get('refresh'),
+				httponly=True, 
+				secure=True, 
+				samesite='Lax'
+			)
+
+			return response
 	else:
 		i = 0
 		original_username = username 
@@ -1112,7 +1165,25 @@ def login42(request):
 			myuser.status = "Online"
 			myuser.save()
 			login(request, user)
-			return redirect('home')
+			response_data = {
+				'message': 'You are now logged in.',
+				'username': user.username,
+				'access_token': user_tokens.get('access'),
+				'refresh_token': user_tokens.get('refresh'),
+				'redirect_url': 'home'
+			}
+			
+			response = JsonResponse(response_data, status=201)
+
+			response.set_cookie(
+				'refresh_token',
+				user_tokens.get('refresh'),
+				httponly=True, 
+				secure=True, 
+				samesite='Lax'
+			)
+
+			return response
 
 	return JsonResponse({'error': 'User login failed'}, status=400)
 
@@ -1183,10 +1254,47 @@ def loginview(request):
 			user.save()
 			if user.two_factor:
 				request.session['username'] = username
-				return JsonResponse({'message': 'You have successfully logged in.', 'access_token': user_tokens.get('access'), 'refresh_token': user_tokens.get('refresh'),'data': {'otp': True }}, status=201)
-			login(request, user)
-			return JsonResponse({'message': 'You have successfully logged in.', 'access_token': user_tokens.get('access'), 'refresh_token': user_tokens.get('refresh'), 'data': {'home': True }}, status=201)
+				response_data = {
+					'message': 'You have successfully logged in.',
+					'username': user.username,
+					'access_token': user_tokens.get('access'),
+					'refresh_token': user_tokens.get('refresh'),
+					'redirect_url': 'home',
+					'data': {'otp': True }
+				}
+				
+				response = JsonResponse(response_data, status=201)
 
+				response.set_cookie(
+					'refresh_token',
+					user_tokens.get('refresh'),
+					httponly=True, 
+					secure=True, 
+					samesite='Lax'
+				)
+
+				return response
+			login(request, user)
+			response_data = {
+				'message': 'You have successfully logged in.',
+				'username': user.username,
+				'access_token': user_tokens.get('access'),
+				'refresh_token': user_tokens.get('refresh'),
+				'redirect_url': 'home',
+				'data': {'home': True }
+			}
+			
+			response = JsonResponse(response_data, status=201)
+
+			response.set_cookie(
+				'refresh_token',
+				user_tokens.get('refresh'),
+				httponly=True, 
+				secure=True, 
+				samesite='Lax'
+			)
+
+			return response
 		else:
 			return JsonResponse({'message': 'Bad Credentials.'}, status=400)
 
