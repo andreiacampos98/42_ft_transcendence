@@ -59,8 +59,10 @@ def validate_token(request):
 	jwt_authenticator = JWTAuthentication()
 
 	try:
-		user, validated_token = jwt_authenticator.authenticate(request)
-		ic(validated_token)
+		auth_result = jwt_authenticator.authenticate(request)
+		if auth_result is None:
+			return None
+		user, validated_token = auth_result 
 		return user
 	except (InvalidToken, TokenError):
 		return None
@@ -80,6 +82,19 @@ def refresh_token(request):
 		ic(response.json()['access'])
 		return response.json()['access']  
 	return None
+
+
+def check_token(request):
+	if request.method != 'GET':
+		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
+
+	token_valid = validate_token(request)
+	if token_valid is None:
+		new_token = refresh_token(request)
+		if new_token is None:
+			ic("invalid token")
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+	return JsonResponse({'message': 'The token is valid.'}, status=200)
 
 
 #! --------------------------------------- Users ---------------------------------------

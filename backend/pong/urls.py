@@ -109,6 +109,7 @@ urlpatterns = [
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/blacklist/', jwt_views.TokenBlacklistView.as_view(), name='token_blacklist'), 
 
+    path('tokencheck/', views.check_token, name='token-check'),
     #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
     path('debug/games/<int:game_id>', views.get_game, name='debug-get-game'),

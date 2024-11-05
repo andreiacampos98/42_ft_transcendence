@@ -1,4 +1,7 @@
+import  {checkTokenBeforeNavigation} from './token,js';
+
 function onProfileClick() {
+    if (!checkTokenBeforeNavigation()) return;
     document.getElementById("games").style.display = "none";
     document.getElementById("tournaments").style.display = "none";
     document.getElementById("profile").style.display = "block";
@@ -8,6 +11,7 @@ function onProfileClick() {
 }
 
 function onGamesClick() {
+    if (!checkTokenBeforeNavigation()) return;
     document.getElementById("games").style.display = "block";
     document.getElementById("tournaments").style.display = "none";
     document.getElementById("profile").style.display = "none";
@@ -17,6 +21,7 @@ function onGamesClick() {
 }
 
 function onTournamentsClick() {
+    if (!checkTokenBeforeNavigation()) return;
     document.getElementById("games").style.display = "none";
     document.getElementById("tournaments").style.display = "block";
     document.getElementById("profile").style.display = "none";

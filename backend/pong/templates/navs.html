@@ -17,6 +17,7 @@
     <script defer src="{% static 'js/friend-block.js' %}"></script>
     <script defer src="{% static 'js/notifications.js' %}"></script>
     <script defer src="{% static 'js/signout.js' %}"></script>
+    <script defer src="{% static 'js/token.js' %}"></script>
     
     <main id="MainPage" style="padding: 70px;">
         {% block main_content %}
@@ -37,6 +38,7 @@
                 hx-trigger="submit"
                 hx-target="#main"
                 hx-push-url="true"
+                onclick="checkTokenBeforeNavigation(event)"
                 id="searchForm">
                 <div class="search-container d-flex align-items-center">
                     <input type="text" autocomplete="off" placeholder="Search for players..." name="searched" id="search" onkeyup="getSuggestions()">
@@ -62,7 +64,8 @@
                 <a  hx-get="{% url 'user-profile' user.id %}"
                     hx-trigger="click"
                     hx-target="#main"
-                    hx-push-url="true">
+                    hx-push-url="true"
+                    onclick="checkTokenBeforeNavigation(event)">
                     {% if "http" in user.picture.url %}
                         <img class="profile-pic" src="{{ user.picture }}" alt="Profile">
                     {% else %}
@@ -86,7 +89,8 @@
                             hx-get="{% url 'home' %}"
                             hx-trigger="click"
                             hx-target="#main"
-                            hx-push-url="true">
+                            hx-push-url="true"
+                            onclick="checkTokenBeforeNavigation(event)">
                             <!-- data-url="{% url 'home' %}" data-page="home" 
                             data-icon="{% static 'assets/icons/pong.png' %}" 
                             data-highlight="{% static 'assets/icons/pong-highlight.png' %}" 
@@ -105,7 +109,8 @@
                             hx-get="{% url 'tournaments' %}"
                             hx-trigger="click"
                             hx-target="#main"
-                            hx-push-url="true">
+                            hx-push-url="true"
+                            onclick="checkTokenBeforeNavigation(event)">
                             <!-- data-url="{% url 'tournaments' %}" data-page="tournaments" data-icon="{% static 'assets/icons/tournament.png' %}" data-highlight="{% static 'assets/icons/tournament-highlight.png' %}" onclick="loadPage(event)"> -->
                             {% if page == "tournament" %}
                                 <img class="icon" id="highlight-icon2" src="{% static 'assets/icons/tournament-highlight.png' %}" alt="Ping Pong">
@@ -122,7 +127,8 @@
                             hx-get="{% url 'user-profile' user.id %}"
                             hx-trigger="click"
                             hx-target="#main"
-                            hx-push-url="true">
+                            hx-push-url="true"
+                            onclick="checkTokenBeforeNavigation(event)">
                             <!-- data-url="{% url 'user-profile' user.id %}" data-page="profile" data-icon="{% static 'assets/icons/profile.png' %}" data-highlight="{% static 'assets/icons/profile-highlight.png' %}" onclick="loadPage(event)"> -->
                             {% if page == "profile" %}
                                 <img class="icon" id="highlight-icon3" src="{% static 'assets/icons/profile-highlight.png' %}" alt="Ping Pong">
