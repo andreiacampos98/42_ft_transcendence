@@ -515,7 +515,7 @@ def user_stats_update(user_id, game_id, data):
 	data_stats = UserStatsSerializer(stats)
 	return JsonResponse({'message': 'User stats updated successfully', 'data': data_stats.data}, status=200)
 
-def win_rate_nb_games_day(user_id):
+def win_rate_nb_games_day(request, user_id):
 	today = timezone.now()
 	seven_day_before = today - timedelta(days=7)
 	games = Games.objects.filter((Q(user1_id = user_id) | Q(user2_id = user_id)) & Q(created_at__gte=seven_day_before) 
@@ -1319,6 +1319,9 @@ def loginview(request):
 			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
 
 		user42 = Users.objects.filter(username=username).first()
+		if user42 is None:
+			return JsonResponse({'message': 'User didn\'t exist.'}, status=400)
+
 		if user42.user_42 is not None:
 			return JsonResponse({'message': 'User 42 detected. Please sign in with 42.'}, status=400)
 
@@ -1593,7 +1596,7 @@ def profile(request, id):
 		goals_scored_suffered_ratio = round(stats['nb_goals_scored'] / stats['nb_goals_suffered'], 2)
 	else:
 		goals_scored_suffered_ratio = 0
-	graph = win_rate_nb_games_day(user_profile.id)
+	graph = win_rate_nb_games_day(request, user_profile.id)
 	graph_send = json.loads(graph.content)
 	
 	games = Games.objects.filter(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id),
