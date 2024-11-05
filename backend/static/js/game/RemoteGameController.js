@@ -57,7 +57,6 @@ export class RemoteGameController extends AbstractGameController {
 		this.players[this.player2.id] = this.player2;
 		this.stats = new GameStats(this.player1, this.player2);
 		this.stats.gameID = gameID;
-		console.log(this.stats.gameID);
 	}
 
 	registerSocketEvents(){
@@ -118,5 +117,6 @@ export class RemoteGameController extends AbstractGameController {
 			'event': 'FINISH',
 			'data': results
 		}));
+		user.tournamentGameData = null;
 	}
 }

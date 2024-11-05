@@ -44,28 +44,36 @@ user.connectSocket(
 			tournament.setFirstPhase(data.phase);
 			tournament.onPlayerJoined(data.players);
 		}
-		// else if (eventType == 'BEGIN_PHASE') {
-		// 	setTimeout(() => {
-		// 		user.tournamentGameData = data;
-		// 		history.pushState(null, '', `/gametournament/`);
-		// 		htmx.ajax('GET', `/gametournament/`, {
-		// 			target: '#main'  
-		// 		});
-		// 	}, 1000);
-		// }
-		// else if (eventType == 'END_PHASE') {
-		// 	tournament.currPhase = data.phase;
-		// 	setTimeout(() => {
-		// 		tournament.updateUI();
-		// 	}, 1100);
-		// }
-		// else if (eventType == 'END_TOURNAMENT') {			
-		// 	setTimeout(() => {
-		// 		tournament.updateUI();
-		// 		tournament.updatePlayerSlots('winner', [data.winner]);
-		// 		user.tournamentSocket.close();
-		// 	}, 1100);
-		// }
+		else if (eventType == 'BEGIN_PHASE') {
+			tournament.onBeginPhase(data);
+			setTimeout(() => {
+				for (let i = 0; i < data.games.length; i++) {
+					tourGame = data.games[i];
+					if (user.tournamentAlias == tourGame.user1_id.username || user.tournamentAlias == tourGame.user2_id.username)
+						user.tournamentGameData = data.games[i];
+				}
+				if (!user.tournamentGameData)
+					return ;
+				// console.log(user.tournamentGameData);
+				history.pushState(null, '', `/gametournament/`);
+				htmx.ajax('GET', `/gametournament/`, {
+					target: '#main'  
+				});
+			}, 1000);
+		}
+		else if (eventType == 'END_PHASE') {
+			tournament.currPhase = data.phase;
+			setTimeout(() => {
+				tournament.updateUI();
+			}, 1100);
+		}
+		else if (eventType == 'END_TOURNAMENT') {			
+			setTimeout(() => {
+				tournament.updateUI();
+				tournament.updatePlayerSlots('winner', [data.winner]);
+				user.tournamentSocket.close();
+			}, 1100);
+		}
 	}
 );
 

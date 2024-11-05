@@ -4,7 +4,7 @@ class TournamentUser {
 		this.tournamentID = 0;
 		this.tournamentSocket = null;
 		this.gameSocket = null;
-		this.tournamentGameData = {};
+		this.tournamentGameData = null;
 	}
 
 	connectSocket(prop, url, onmessage) {
@@ -53,6 +53,19 @@ class Tournament {
 		delete this.players[player.id];
 	}
 
+	onBeginPhase({phase, games}) {
+		if (phase == this.firstPhase)
+			return ;
+		this.currPhase = phase;
+		this.phaseGames[phase] = games;
+
+		games.forEach(game => {
+			this.phasePlayers[phase].push(game.user1_id);
+			this.phasePlayers[phase].push(game.user2_id);
+		});
+		console.log(this);
+	}
+
 	setFirstPhase(phase) {
 		if (this.firstPhase == phase)
 			return ;
@@ -71,6 +84,7 @@ class Tournament {
 	// }
 
 	updateUI() {
+		console.log(this);
 		let phaseNames = ['quarter-final', 'semi-final', 'final'];
 		let firstPhaseIndex = phaseNames.indexOf(tournament.firstPhase);
 		let currPhaseIndex = phaseNames.indexOf(this.currPhase);
@@ -86,7 +100,6 @@ class Tournament {
 	updatePlayerSlots(cssSelector, players) {
 		const query = `.${cssSelector}.player`;
 		const slots = document.querySelectorAll(query);
-		console.log(query, slots);
 		
 		players.forEach((player, i) => {
 			slots[i].querySelector("span.name").textContent = player.alias;

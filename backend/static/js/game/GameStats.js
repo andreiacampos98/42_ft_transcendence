@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GameStats.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: crypto <crypto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nunomiguel533 <nunomiguel533@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/11/03 14:07:39 by crypto           ###   ########.fr       */
+/*   Updated: 2024/11/05 20:47:25 by nunomiguel5      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,6 @@ export class GameStats {
 		this.goals.push(goal);
 		this.gameScore.textContent = 
 		`${this.score[this.player1.username]} : ${this.score[this.player2.username]}`;
-		
-		console.log(goal);
-		console.log(this.goals);
 	}
 
 	calculateSmallStats() {

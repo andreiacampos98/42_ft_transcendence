@@ -49,7 +49,6 @@ export class LocalGameController extends AbstractGameController {
 		});
 
 		const gameData = await response.json();
-		console.log(gameData);
 		this.stats.gameID = gameData.id;
 	}
 
