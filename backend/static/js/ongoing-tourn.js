@@ -1,35 +1,35 @@
-var firstPhase = '';
-const fillPlayerSlots = (selector, players) => {
-	const query = `.${selector}.player`;
-	const slots = document.querySelectorAll(query);
-	console.log(query, slots);
-	
-	players.forEach((player, i) => {
-		slots[i].querySelector("span.name").textContent = player.alias;
-		slots[i].querySelector("img").src = player.user.picture;
-	});
-	
-};
 
-const updateTournamentUI = (currPhase, currPhasePlayers) => {	
-	let key = `tournament-${user.tournamentID}-${currPhase}`;
-	console.log(currPhase, currPhasePlayers);
-	if (currPhasePlayers)
-		localStorage.setItem(key, JSON.stringify(currPhasePlayers));
+// const fillPlayerSlots = (selector, players) => {
+// 	const query = `.${selector}.player`;
+// 	const slots = document.querySelectorAll(query);
+// 	console.log(query, slots);
 	
-	let selectors = ['quarter-final', 'semi-final', 'final'];
-	let firstPhaseIndex = selectors.indexOf(firstPhase);
-	let currPhaseIndex = selectors.indexOf(currPhase);
-	console.log(firstPhaseIndex, currPhaseIndex + 1);
-	let phases = selectors.slice(firstPhaseIndex, currPhaseIndex + 1);
-	console.log(phases);
+// 	players.forEach((player, i) => {
+// 		slots[i].querySelector("span.name").textContent = player.alias;
+// 		slots[i].querySelector("img").src = player.user.picture;
+// 	});
 	
-	phases.forEach((phase) => {
-		let rawPlayers = localStorage.getItem(`tournament-${user.tournamentID}-${phase}`);
-		let players = JSON.parse(rawPlayers);
-		fillPlayerSlots(phase, players);
-	});
-};
+// };
+
+// const updateTournamentUI = (currPhase, currPhasePlayers) => {	
+// 	let key = `tournament-${user.tournamentID}-${currPhase}`;
+// 	console.log(currPhase, currPhasePlayers);
+// 	if (currPhasePlayers)
+// 		localStorage.setItem(key, JSON.stringify(currPhasePlayers));
+	
+// 	let selectors = ['quarter-final', 'semi-final', 'final'];
+// 	let firstPhaseIndex = selectors.indexOf(tournament.firstPhase);
+// 	let currPhaseIndex = selectors.indexOf(currPhase);
+// 	console.log(firstPhaseIndex, currPhaseIndex + 1);
+// 	let phases = selectors.slice(firstPhaseIndex, currPhaseIndex + 1);
+// 	console.log(phases);
+	
+// 	phases.forEach((phase) => {
+// 		let rawPlayers = localStorage.getItem(`tournament-${user.tournamentID}-${phase}`);
+// 		let players = JSON.parse(rawPlayers);
+// 		fillPhaseSlots(phase, players);
+// 	});
+// };
 
 console.log(user);
 
@@ -39,34 +39,33 @@ user.connectSocket(
 	(event) => {
 		const message = JSON.parse(event.data);
 		const { event: eventType, data } = message;
-		console.log(message);
 
-		if (eventType == 'USER_JOINED') {
-			firstPhase = data.phase;
-			updateTournamentUI(data.phase, data.players);
+		if (eventType == 'USER_JOINED') {			
+			tournament.setFirstPhase(data.phase);
+			tournament.onPlayerJoined(data.players);
 		}
-		else if (eventType == 'BEGIN_PHASE') {
-			setTimeout(() => {
-				user.tournamentGameData = data;
-				history.pushState(null, '', `/gametournament/`);
-				htmx.ajax('GET', `/gametournament/`, {
-					target: '#main'  
-				});
-			}, 2000);
-		}
-		else if (eventType == 'END_PHASE') {
-			console.log(data.phase);
-			setTimeout(() => {
-				updateTournamentUI(data.phase, data.players);
-			}, 1100);
-		}
-		else if (eventType == 'END_TOURNAMENT') {			
-			setTimeout(() => {
-				updateTournamentUI('final', null);
-				fillPlayerSlots('winner', [data.winner]);
-				user.tournamentSocket.close();
-			}, 2000);
-		}
+		// else if (eventType == 'BEGIN_PHASE') {
+		// 	setTimeout(() => {
+		// 		user.tournamentGameData = data;
+		// 		history.pushState(null, '', `/gametournament/`);
+		// 		htmx.ajax('GET', `/gametournament/`, {
+		// 			target: '#main'  
+		// 		});
+		// 	}, 1000);
+		// }
+		// else if (eventType == 'END_PHASE') {
+		// 	tournament.currPhase = data.phase;
+		// 	setTimeout(() => {
+		// 		tournament.updateUI();
+		// 	}, 1100);
+		// }
+		// else if (eventType == 'END_TOURNAMENT') {			
+		// 	setTimeout(() => {
+		// 		tournament.updateUI();
+		// 		tournament.updatePlayerSlots('winner', [data.winner]);
+		// 		user.tournamentSocket.close();
+		// 	}, 1100);
+		// }
 	}
 );
 
