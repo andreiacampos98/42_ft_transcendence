@@ -7,23 +7,12 @@
     <div class="login-container">
         <div class="login-container2">
             <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
-            <p>Please choose an authentication method:</p>
-
-            <!-- Dropdown for choosing authentication method -->
-            <select id="auth-method-select" class="auth-method-select">
-                <option value="default">Please choose one of the options</option>
-                <option value="sms">Sign in via SMS</option>
-                <option value="auth_app">Sign in with Authenticator App</option>
-                <option value="email">Sign in via Email Verification</option>
-            </select>
-
-            <!-- Form for input depending on the chosen authentication method -->
+            <p>2FA</p>
             <div id="auth-method-form" class="auth-method-form">
-                <!-- This form will change dynamically based on the user's choice -->
+                <label for="email">Enter your email address:</label>
+                <input type="email" id="email" name="email" placeholder="Your email address">
             </div>
             <p id="errorMessage" class="error-message"></p>
-
-            <!-- Submit button -->
             <button type="submit" id="submit-auth" class="submit-auth">Submit</button>
             <br>
             <h6>© 42 Porto 2024</h6>

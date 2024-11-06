@@ -23,3 +23,16 @@ async function submitOtp(event) {
         document.getElementById('errorMessage').style.display = 'block';
     }
 }
+
+async function resend_code(){
+    let formData = {};
+    formData.info = email;
+    console.log(email);
+    const response = await fetch(`/otpmethod/`, {
+            method: 'POST',
+            body: JSON.stringify(formData),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }); 
+}

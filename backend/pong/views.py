@@ -1277,21 +1277,20 @@ def login42(request):
 
 #! --------------------------------------- 2FA ---------------------------------------
 
-def send_otp(request, method, info):
-	if method == 'email':
-		totp=pyotp.TOTP(pyotp.random_base32(), interval=120) #a password e valida durante 120 segundos
-		otp = totp.now()
-		request.session['otp_secret_key'] = totp.secret
-		valid_date = datetime.now() + timedelta(minutes=2) # data ate quando o codigo e valido
-		request.session['otp_valid_date'] = str(valid_date) 
-		ic(otp)
-		send_mail(
-            'Email Verification OTP',
-            f'Your OTP for email verification is: {otp}',
-            settings.EMAIL_HOST_USER,
-            [info],
-            fail_silently=False,
-        )
+def send_otp(request, info):
+	totp=pyotp.TOTP(pyotp.random_base32(), interval=120) #a password e valida durante 120 segundos
+	otp = totp.now()
+	request.session['otp_secret_key'] = totp.secret
+	valid_date = datetime.now() + timedelta(minutes=2) # data ate quando o codigo e valido
+	request.session['otp_valid_date'] = str(valid_date) 
+	ic(otp)
+	send_mail(
+		'Email Verification OTP',
+		f'Your OTP for email verification is: {otp}',
+		settings.EMAIL_HOST_USER,
+		[info],
+		fail_silently=False,
+	)
 
 
 def toogle2fa(request, user_id):
@@ -1400,17 +1399,12 @@ def otp_method(request):
 		try:
 			data = json.loads(request.body) 
 			info = data.get('info', '')
-			method = data.get('method', '')
-			if not method:
-				return JsonResponse({'message': 'Please choose a method'}, status=400)
 			if not info:
 				return JsonResponse({'message': 'There is no value'}, status=400)
-			ic(method)
-			ic(info)
 		except json.JSONDecodeError:
 			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
 		
-		send_otp(request, method, info)
+		send_otp(request, info)
 		return JsonResponse({'message': 'Code sent.'}, status=200)
 
 	return render(request, 'pages/otp_method.html')
@@ -1418,9 +1412,7 @@ def otp_method(request):
 #@csrf_exempt
 def otp_view(request):
 	if request.method == 'POST':
-		otp = request.POST.get('otp')
-		ic(otp)
-		
+		otp = request.POST.get('otp')		
 		username = request.session.get('username')
 		otp_secret_key = request.session.get('otp_secret_key')
 		otp_valid_date = request.session.get('otp_valid_date')
