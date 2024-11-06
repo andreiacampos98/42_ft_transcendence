@@ -509,4 +509,18 @@
 		</div>
 	</div>
 </div>
+<script>
+	const profile= document.getElementById('tab-profile');
+	const tournaments= document.getElementById('tab-tournaments');
+	const games= document.getElementById('tab-games');
+	profile.addEventListener('click', function(e){
+		checkTokenBeforeNavigation(e);
+	})
+	tournaments.addEventListener('click', function(e){
+		checkTokenBeforeNavigation(e);
+	})
+	games.addEventListener('click', function(e){
+		checkTokenBeforeNavigation(e);
+	})
+</script>
 {% endblock %}
