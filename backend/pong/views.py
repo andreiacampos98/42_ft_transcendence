@@ -1280,6 +1280,10 @@ def login42(request):
 def send_otp(request, info):
 	totp=pyotp.TOTP(pyotp.random_base32(), interval=120) #a password e valida durante 120 segundos
 	otp = totp.now()
+	if request.session.get('otp_secret_key') is not None:
+		del request.session['otp_secret_key']
+	if request.session.get('otp_valid_date') is not None:
+		del request.session['otp_valid_date']
 	request.session['otp_secret_key'] = totp.secret
 	valid_date = datetime.now() + timedelta(minutes=2) # data ate quando o codigo e valido
 	request.session['otp_valid_date'] = str(valid_date) 
