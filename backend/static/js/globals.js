@@ -43,6 +43,44 @@ class Tournament {
 		this.currPhase = null;
 		this.firstPhase = null;
 	}
+	// {
+	// 	"id": 128,
+	// 	"phase": "final",
+	// 	"created_at": "2024-11-06T21:11:59.517443Z",
+	// 	"tournament_id": 74,
+	// 	"game_id": {
+	// 		"id": 132,
+	// 		"type": "Tournament",
+	// 		"start_date": "2024-11-06T21:11:59.514218Z",
+	// 		"duration": 0,
+	// 		"nb_goals_user1": 0,
+	// 		"nb_goals_user2": 0,
+	// 		"created_at": "2024-11-06T21:11:59.515433Z",
+	// 		"winner_id": null,
+	// 		"user1_id": 2,
+	// 		"user2_id": 4
+	// 	},
+	// 	"user1_id": {
+	// 		"id": 2,
+	// 		"username": "bb",
+	// 		"description": null,
+	// 		"email": null,
+	// 		"picture": "/media/default.jpg",
+	// 		"status": "Online",
+	// 		"created_at": "2024-10-31T14:16:32.437708Z",
+	// 		"updated_at": "2024-11-06T21:11:59.366077Z"
+	// 	},
+	// 	"user2_id": {
+	// 		"id": 4,
+	// 		"username": "dd",
+	// 		"description": null,
+	// 		"email": null,
+	// 		"picture": "/media/default.jpg",
+	// 		"status": "Online",
+	// 		"created_at": "2024-10-31T14:18:53.088894Z",
+	// 		"updated_at": "2024-11-06T21:11:59.472840Z"
+	// 	}
+	// }
 
 	onPlayerJoined(players) {
 		this.phasePlayers[this.currPhase] = players;
@@ -54,10 +92,15 @@ class Tournament {
 	}
 
 	onBeginPhase({phase, games}) {
-		if (phase == this.firstPhase)
-			return ;
 		this.currPhase = phase;
-		this.phaseGames[phase] = games;
+		// this.phaseGames[phase] = games;
+
+		games.forEach(tournamentGame => {
+			let gameInstance = tournamentGame.game_id;
+			this.phaseGames[phase][gameInstance.id] = {};
+			this.phaseGames[phase][gameInstance.id][tournamentGame.user1_id.username] = 0;
+			this.phaseGames[phase][gameInstance.id][tournamentGame.user2_id.username] = 0;
+		});
 		
 		console.log('RECEIVED GAMES', games);
 		console.log(`CURRENT PHASE - ${this.currPhase}`);
