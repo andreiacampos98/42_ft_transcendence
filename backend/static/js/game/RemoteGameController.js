@@ -117,6 +117,5 @@ export class RemoteGameController extends AbstractGameController {
 			'event': 'FINISH',
 			'data': results
 		}));
-		user.tournamentGameData = null;
 	}
 }

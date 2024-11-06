@@ -35,11 +35,11 @@ class Tournament {
 			'semi-final': [],
 			'final': [],
 		};
-		this.phaseGames = [{
+		this.phaseGames = {
 			'quarter-final': [],
 			'semi-final': [],
-			'final': null,
-		}];
+			'final': [],
+		};
 		this.currPhase = null;
 		this.firstPhase = null;
 	}
@@ -58,12 +58,16 @@ class Tournament {
 			return ;
 		this.currPhase = phase;
 		this.phaseGames[phase] = games;
-
-		games.forEach(game => {
-			this.phasePlayers[phase].push(game.user1_id);
-			this.phasePlayers[phase].push(game.user2_id);
-		});
+		
+		console.log('RECEIVED GAMES', games);
+		console.log(`CURRENT PHASE - ${this.currPhase}`);
+		console.log(`CURRENT PHASE GAMES`, this.phaseGames[this.currPhase]);
 		console.log(this);
+	}
+
+	onEndPhase({phase, players}) {
+		this.currPhase = phase;
+		this.phasePlayers[phase] = players;
 	}
 
 	setFirstPhase(phase) {
@@ -72,16 +76,6 @@ class Tournament {
 		this.firstPhase = phase;
 		this.currPhase = phase;
 	}
-
-	// getPhasePlayers(phase) {
-	// 	let players = [];
-
-	// 	this.phaseGames[phase].forEach(game => {
-	// 		players.push(game.user1_id);
-	// 		players.push(game.user2_id);
-	// 	});
-	// 	return players;
-	// }
 
 	updateUI() {
 		console.log(this);

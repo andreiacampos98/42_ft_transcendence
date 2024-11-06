@@ -20,64 +20,52 @@ phase_of = dict(zip(
 ))
 
 class TournamentConsumer(WebsocketConsumer):
-	users = {}
-	tournament = None
-	games = {}
-	has_started = False
-	curr_phase = {
-		'name': '',
-		'num_games': 0,
-		'finished_games': 0
-	}
-	# ! THIS ATTRIBUTES CAN'T STAY HERE AS THEY WILL BE SHARED AMONGST ALL 
-	# ! EXISTING TOURNAMENTS ONGOING AT THE SAME TIME
-	# 
-	tournaments = {}
+	active_tournaments = {}
 
 	def connect(self):
 		self.accept()
 		self.user = self.scope['user']
-		self.tournament_room = f'tournament_{self.scope["url_route"]["kwargs"]["tournament_id"]}'
 		self.tournament_id = self.scope["url_route"]["kwargs"]["tournament_id"]
+		self.tournament_room = f'tournament_{self.scope["url_route"]["kwargs"]["tournament_id"]}'
 		# The first client will initialize the tournament variable
-		if self.tournament_id not in self.tournaments:
-			tournament = Tournaments.objects.get(pk=self.tournament_id)
-			self.tournaments[self.tournament_id] = {
-				'data': tournament,
-				'curr_phase': {
-					'name': phase_of[tournament.capacity],
-					'num_games': 0,
-					'finished_games': 0
-				}
+		if self.tournament_id not in self.active_tournaments:
+			instance = Tournaments.objects.get(pk=self.tournament_id)
+			self.active_tournaments[self.tournament_id] = {
+				'users': {},
+				'instance': instance,
+				'has_started': False,
+				'curr_phase': phase_of[instance.capacity],
+				'curr_phase_total_games': instance.capacity // 2,
+				'curr_phase_finished_games': 0
 			}
-			self.tournament = Tournaments.objects.get(pk=self.tournament_id)
-			self.curr_phase['name'] = phase_of[self.tournament.capacity]
-			ic(self.curr_phase)
+		
+		self.tournament = self.active_tournaments[self.tournament_id]
 
 		# Adding user to tournament-wide channel
-		async_to_sync(self.channel_layer.group_add)(
-			self.tournament_room, self.channel_name
-		)
-		if self.user.id not in self.users:
+		async_to_sync(self.channel_layer.group_add)(self.tournament_room, self.channel_name)
+
+		if self.user.id not in self.tournament['users']:
 			self.add_new_tournament_user()
 
-		if not self.has_started and self.tournament is not None and len(self.users) == self.tournament.capacity:
-			self.curr_phase['num_games'], first_phase_games \
-				= tournament_init_phase(self.tournament_id)
+		if not self.tournament['has_started'] and self.is_full():
+			first_phase_games = tournament_init_phase(self.tournament_id)
 			self.begin_phase(first_phase_games)
-			self.has_started = True
-			
+			self.tournament['has_started'] = True
+
+		ic(self.active_tournaments[self.tournament_id])
+		ic('=====================')
+		ic(self.active_tournaments)
+
 
 	def disconnect(self, code):
 		#! IMPORTANT Use tournament_leave handler to remote the user from the database
-		if self.user.id in self.users:
-			del self.users[self.user.id]
-		if len(self.users) == 0:
-			self.reset()
-		ic(self.users)
-		ic(self.tournament)
-		ic(self.games)
-		ic(self.curr_phase)
+		if self.tournament and self.user.id in self.tournament['users']:
+			del self.tournament['users'][self.user.id]
+
+		if self.tournament_id in self.active_tournaments and len(self.tournament['users']) == 0:
+			del self.active_tournaments[self.tournament_id]
+
+		ic(self.active_tournaments)
 		async_to_sync(self.channel_layer.group_discard)(self.tournament_room, self.channel_name)
 		return super().disconnect(code)
 	
@@ -95,18 +83,54 @@ class TournamentConsumer(WebsocketConsumer):
 			broadcast_handlers[event]()
 		else:
 			message_handlers[event](message['data'])
+	
+
+	def is_full(self):
+		return len(self.tournament['users']) == self.tournament['instance'].capacity
+	
+
+	def add_new_tournament_user(self):
+		# Add the user to the users list
+		self.tournament['users'][self.user.id] = {
+			'id': self.user.id,
+			'username': self.user.username,
+			'channel_name': self.channel_name,
+			'game_room': '',
+			'ready_to_play': False,
+		}
+
+		# Gather info about the current tournament users
+		all_tour_users = TournamentsUsers.objects.filter(tournament_id=self.tournament_id)
+		tour_users_data = TournamentsUsersSerializer(all_tour_users, many=True).data
+
+		for tour_user in tour_users_data:
+			user = Users.objects.get(pk=tour_user['user_id']) 
+			tour_user['user'] = UsersSerializer(user).data
+
+		# Broadcast current list to all users
+		async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
+			"type": "broadcast", 
+			"message": json.dumps({
+				"event": 'USER_JOINED',
+				"data": {
+					'phase': self.tournament['curr_phase'].lower(),
+					'players': tour_users_data
+				}
+			})
+		})
+
 
 	def on_game_finish(self, data):
-		ic('BEFORE', self.curr_phase)
-		self.curr_phase['finished_games'] += 1
+		ic('BEFORE', self.tournament['curr_phase'], self.tournament['curr_phase_total_games'], self.tournament['curr_phase_finished_games'])
+		self.tournament['curr_phase_finished_games'] += 1
 
-		if self.curr_phase['name'] == 'Final':
+		if self.tournament['curr_phase'] == 'Final':
 			user = Tournaments.objects.get(pk=self.tournament_id).winner_id
 			winner = TournamentsUsers.objects.get(tournament_id=self.tournament_id, user_id=user.id)
 			winner = TournamentsUsersSerializer(winner).data
 			winner['user'] = UsersSerializer(user).data
-			self.reset()
-
+			
+			del self.active_tournaments[self.tournament_id]
 			async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
 				"type": "broadcast", 
 				"message": json.dumps({
@@ -117,19 +141,20 @@ class TournamentConsumer(WebsocketConsumer):
 				})
 			})
 
-		elif self.curr_phase['finished_games'] == self.curr_phase['num_games']:
-			self.curr_phase['name'] = phase_after[self.curr_phase['name']]
-			self.curr_phase['num_games'] //= 2
-			self.curr_phase['finished_games'] = 0
+		elif self.tournament['curr_phase_finished_games'] == self.tournament['curr_phase_total_games']:
+			# Replace information about the current phase with the next
+			self.tournament['curr_phase'] = phase_after[self.tournament['curr_phase']]
+			self.tournament['curr_phase_total_games'] //= 2
+			self.tournament['curr_phase_finished_games'] = 0
 			curr_phase_games = TournamentsGames.objects.filter(
-				tournament_id=self.tournament_id, phase=self.curr_phase['name']
+				tournament_id=self.tournament_id, phase=self.tournament['curr_phase']
 			)
 
-			#! Send the new user pairs for the next phase
+			# Join all phase winners
 			next_phase_users = []
 			for tour_game in curr_phase_games:
 				game = tour_game.game_id
-				ic(game.id, game.user1_id.id, game.user2_id.id)
+				# ic(game.id, game.user1_id.id, game.user2_id.id)
 				tour_user1 = TournamentsUsers.objects.get(
 					tournament_id=self.tournament_id, user_id=game.user1_id.id
 				)
@@ -143,13 +168,14 @@ class TournamentConsumer(WebsocketConsumer):
 				tour_user1['user'] = UsersSerializer(user1).data
 				tour_user2['user'] = UsersSerializer(user2).data
 				next_phase_users.extend([tour_user1, tour_user2])
-
+			
+			# Send the new user pairs for the next phase
 			async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
 				"type": "broadcast", 
 				"message": json.dumps({
 					"event": 'END_PHASE',
 					"data": {
-						'phase': self.curr_phase['name'].lower(),
+						'phase': self.tournament['curr_phase'].lower(),
 						'players': next_phase_users
 					}
 				})
@@ -157,47 +183,15 @@ class TournamentConsumer(WebsocketConsumer):
 			
 			self.begin_phase(curr_phase_games)
 
-		ic('AFTER', self.curr_phase)
+		ic('AFTER', self.tournament['curr_phase'], self.tournament['curr_phase_total_games'], self.tournament['curr_phase_finished_games'])
 				
-	def add_new_tournament_user(self):
-		# Add the user to the users list
-		self.users[self.user.id] = {
-			'id': self.user.id,
-			'username': self.scope['user'].username,
-			'channel_name': self.channel_name,
-			'game_room': '',
-			'ready_to_play': False,
-		}
-
-		# Gather info about the current tournament users
-		all_tour_users = TournamentsUsers.objects.filter(tournament_id=self.tournament_id)
-		serializer = TournamentsUsersSerializer(all_tour_users, many=True)
-
-		tour_users_data = serializer.data
-
-		for tour_user in tour_users_data:
-			user = Users.objects.get(pk=tour_user['user_id']) 
-			user_data = UsersSerializer(user).data
-			tour_user['user'] = user_data
-
-		# Broadcast current list to all users
-		async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
-			"type": "broadcast", 
-			"message": json.dumps({
-				"event": 'USER_JOINED',
-				"data": {
-					'phase': self.curr_phase['name'].lower(),
-					'players': tour_users_data
-				}
-			})
-		})
 
 	def begin_phase(self, phase_games):
 		# And now pair up the players in their rooms
 		games = []
 		for tour_game in phase_games:
-			user1 = self.users[tour_game.game_id.user1_id.id]
-			user2 = self.users[tour_game.game_id.user2_id.id]
+			user1 = self.tournament['users'][tour_game.game_id.user1_id.id]
+			user2 = self.tournament['users'][tour_game.game_id.user2_id.id]
 
 			game_room = f'tournament_{self.tournament_id}_game_{tour_game.id}'
 			user1['game_room'] = user2['game_room'] = game_room
@@ -209,38 +203,19 @@ class TournamentConsumer(WebsocketConsumer):
 			game_data['game_id'] = GamesSerializer(tour_game.game_id).data
 			game_data['user1_id'] = UsersSerializer(tour_game.game_id.user1_id).data
 			game_data['user2_id'] = UsersSerializer(tour_game.game_id.user2_id).data
-			game_data['phase'] = self.curr_phase['name'].lower()
+			game_data['phase'] = self.tournament['curr_phase'].lower()
 			games.append(game_data)
-
-			# async_to_sync(self.channel_layer.group_send)(game_room, {
-			# 	"type": "broadcast", 
-			# 	"message": json.dumps({
-			# 		'event': 'BEGIN_PHASE',
-			# 		'data': game_data
-			# 	})
-			# })
 		
 		async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
 			"type": "broadcast", 
 			"message": json.dumps({
 				'event': 'BEGIN_PHASE',
 				'data': {
-					'phase': self.curr_phase['name'].lower(),
+					'phase': self.tournament['curr_phase'].lower(),
 					'games': games
 				}
 			})
 		})
-
-	def reset(self):
-		self.games.clear()
-		self.users.clear()
-		self.tournament = None
-		self.has_started = False
-		self.curr_phase = {
-			'name': '',
-			'num_games': 0,
-			'finished_games': 0
-		}
 
 	def broadcast(self, event):		
 		self.send(text_data=event["message"])

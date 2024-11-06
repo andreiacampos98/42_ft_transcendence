@@ -1,36 +1,3 @@
-
-// const fillPlayerSlots = (selector, players) => {
-// 	const query = `.${selector}.player`;
-// 	const slots = document.querySelectorAll(query);
-// 	console.log(query, slots);
-	
-// 	players.forEach((player, i) => {
-// 		slots[i].querySelector("span.name").textContent = player.alias;
-// 		slots[i].querySelector("img").src = player.user.picture;
-// 	});
-	
-// };
-
-// const updateTournamentUI = (currPhase, currPhasePlayers) => {	
-// 	let key = `tournament-${user.tournamentID}-${currPhase}`;
-// 	console.log(currPhase, currPhasePlayers);
-// 	if (currPhasePlayers)
-// 		localStorage.setItem(key, JSON.stringify(currPhasePlayers));
-	
-// 	let selectors = ['quarter-final', 'semi-final', 'final'];
-// 	let firstPhaseIndex = selectors.indexOf(tournament.firstPhase);
-// 	let currPhaseIndex = selectors.indexOf(currPhase);
-// 	console.log(firstPhaseIndex, currPhaseIndex + 1);
-// 	let phases = selectors.slice(firstPhaseIndex, currPhaseIndex + 1);
-// 	console.log(phases);
-	
-// 	phases.forEach((phase) => {
-// 		let rawPlayers = localStorage.getItem(`tournament-${user.tournamentID}-${phase}`);
-// 		let players = JSON.parse(rawPlayers);
-// 		fillPhaseSlots(phase, players);
-// 	});
-// };
-
 console.log(user);
 
 user.connectSocket(
@@ -47,6 +14,7 @@ user.connectSocket(
 		else if (eventType == 'BEGIN_PHASE') {
 			tournament.onBeginPhase(data);
 			setTimeout(() => {
+				user.tournamentGameData = null;
 				for (let i = 0; i < data.games.length; i++) {
 					tourGame = data.games[i];
 					if (user.tournamentAlias == tourGame.user1_id.username || user.tournamentAlias == tourGame.user2_id.username)
@@ -54,16 +22,16 @@ user.connectSocket(
 				}
 				if (!user.tournamentGameData)
 					return ;
-				// console.log(user.tournamentGameData);
+
 				history.pushState(null, '', `/gametournament/`);
 				htmx.ajax('GET', `/gametournament/`, {
 					target: '#main'  
 				});
-			}, 1000);
+			}, 2100);
 		}
 		else if (eventType == 'END_PHASE') {
-			tournament.currPhase = data.phase;
 			setTimeout(() => {
+				tournament.onEndPhase(data);
 				tournament.updateUI();
 			}, 1100);
 		}
