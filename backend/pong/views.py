@@ -1346,7 +1346,6 @@ def loginview(request):
 		user = authenticate(username=username, password=password)
 
 		if user is not None:
-			user_tokens = user.tokens()
 			user.status = "Online"
 			user.save()
 			if user.two_factor:
@@ -1354,23 +1353,13 @@ def loginview(request):
 				response_data = {
 					'message': 'You have successfully logged in.',
 					'username': user.username,
-					'access_token': user_tokens.get('access'),
-					'refresh_token': user_tokens.get('refresh'),
 					'redirect_url': 'home',
 					'data': {'otp': True }
 				}
 				
 				response = JsonResponse(response_data, status=201)
-
-				response.set_cookie(
-					'refresh_token',
-					user_tokens.get('refresh'),
-					httponly=True, 
-					secure=True, 
-					samesite='Lax'
-				)
-
 				return response
+			user_tokens = user.tokens()
 			login(request, user)
 			response_data = {
 				'message': 'You have successfully logged in.',
@@ -1429,12 +1418,26 @@ def otp_view(request):
 				ic(totp.verify(otp))
 				if totp.verify(otp):
 					user = get_object_or_404(Users, username=username)
+					user_tokens = user.tokens()
+					response = JsonResponse({
+						'redirect': True, 
+						'access_token': user_tokens.get('access'),
+						'refresh_token': user_tokens.get('refresh')
+					}, status=200)
 					login(request, user)
 
 					del request.session['otp_secret_key']
 					del request.session['otp_valid_date']
 
-					return JsonResponse({'redirect': True}, status=200)
+					response.set_cookie(
+							'refresh_token',
+							user_tokens.get('refresh'),
+							httponly=True, 
+							secure=True, 
+							samesite='Lax'   
+						)
+
+					return response
 				else:
 					return JsonResponse({'error': 'Invalid one-time password'}, status=400)
 			else:

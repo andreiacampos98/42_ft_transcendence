@@ -100,7 +100,7 @@ urlpatterns = [
 
     #! 2FA
     path('toggle-2fa/<int:user_id>', views.toogle2fa, name='toogle-2fa'),
-    path('opt/', views.otp_view, name='opt'),
+    path('otp/', views.otp_view, name='otp'),
     path('otpmethod/', views.otp_method, name='opt-method'),
 
 

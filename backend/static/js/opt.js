@@ -2,7 +2,7 @@
 async function submitOtp(event) {
     event.preventDefault(); 
     const formData = new FormData(document.getElementById('otpForm'));
-    const response = await fetch('', {
+    const response = await fetch('/otp/', {
         method: 'POST',
         body: formData,
     });
