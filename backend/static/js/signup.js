@@ -16,16 +16,22 @@ function togglereconfirmButton() {
     togglereconfirmImage.src = type === 'password' ? "/static/assets/icons/eyeopen.png" : "/static/assets/icons/eyeclosed(1).png";
     togglereconfirmImage.alt = type === 'password' ? 'Show Password' : 'Hide Password';
 }
+var s_email;
+var s_username;
+var s_password;
 
 document.getElementById('signupForm').addEventListener('submit', async function(event) {
     event.preventDefault(); 
 
     const formData = {
         username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
         password: document.getElementById('password').value,
         reconfirm: document.getElementById('reconfirm').value
     };
-
+    s_email = formData.email;
+    s_username = formData.username;
+    s_password = formData.password;
     const response = await fetch(`/users/create`, {
         method: 'POST',
         body: JSON.stringify(formData),
@@ -40,10 +46,8 @@ document.getElementById('signupForm').addEventListener('submit', async function(
 		errorMessage.style.display = 'block';
 		return ;
 	}
-	console.log('Login in successful');
-	localStorage.setItem("access_token", JSON.stringify(data.access_token))
-	localStorage.setItem("refresh_token", JSON.stringify(data.refresh_token))
-	htmx.ajax('GET', `/home/`, {
+    history.pushState(null, '', `/verifyemail/`);
+	htmx.ajax('GET', `/verifyemail/`, {
 		target: '#main'  
 	});
 });

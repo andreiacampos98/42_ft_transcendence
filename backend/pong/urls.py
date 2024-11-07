@@ -15,6 +15,7 @@ urlpatterns = [
 
     #! Pages
     path('', views.loginview, name="login"),
+    path('verifyemail/', views.verifyemail, name="email"),
     path('otp/', views.otp_view, name='otp'),
     path('otpmethod/', views.otp_method, name='otp-method'),
     path('home/', views.home, name="home"),

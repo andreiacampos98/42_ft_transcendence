@@ -67,7 +67,7 @@ h6 {
 }
 
 
-#password, #username, #reconfirm {
+#password, #username, #email, #reconfirm {
     width: 100%;
     padding: 8px;
 	background-color: #8080801e;
