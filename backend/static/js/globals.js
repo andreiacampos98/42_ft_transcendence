@@ -139,7 +139,7 @@ class Tournament {
 
 		if(cssSelector == 'winner') {
 			playerSlots[0].querySelector(".score2").classList.toggle("winner-score-container");
-			playerSlots[0].querySelector(".score2 img").src="/static/assets/icons/trophy-brown.png";
+			document.querySelector(".score2 img").src="/static/assets/icons/trophy-brown.png";
 			playerSlots[0].classList.add('winner-player');
 			return ;
 		}
