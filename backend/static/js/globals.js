@@ -44,13 +44,15 @@ class Tournament {
 		this.firstPhase = null;
 	}
 
-	onPlayerJoined(players) {
+	onPlayerJoined({phase, players}) {
+		this.setFirstPhase(phase);
 		this.phasePlayers[this.currPhase] = players;
 		this.updateUI();
 	}
 	
 	onPlayerLeft(player) {
 		delete this.players[player.id];
+		this.updateUI();
 	}
 
 	onBeginPhase({phase, games}) {
@@ -76,6 +78,7 @@ class Tournament {
 		this.currPhase = next_phase ? next_phase : this.currPhase;
 		this.phasePlayers[next_phase] = players;
 		console.log(this.phaseGames);
+		this.updateUI();
 	}
 
 	setFirstPhase(phase) {
@@ -99,13 +102,14 @@ class Tournament {
 				.map(([key, gameScore]) => Object.values(gameScore))
 				.flat();
 			this.updatePlayerSlots(phase, players, scores);
+			this.highlightPlayerPaths(phase, scores);
 		});
 	}
 
 	updatePlayerSlots(cssSelector, players, scores) {
 		const query = `.${cssSelector}.player`;
 		const slots = document.querySelectorAll(query);
-		
+
 		players.forEach((player, i) => {
 			slots[i].querySelector("span.name").textContent = player.alias;
 			slots[i].querySelector("img").src = player.user.picture;
@@ -116,6 +120,42 @@ class Tournament {
 			slots[i].querySelector("span.score").textContent = nbGoals;
 		});
 	};
+
+	highlightPlayerPaths(cssSelector, scores) {
+		const query = `.${cssSelector}.player`;
+		const playerSlots = document.querySelectorAll(query);
+
+		if (this.firstPhase == this.currPhase)
+			return ;
+
+		if(cssSelector == 'winner') {
+			playerSlots[0].querySelector(".score2").classList.toggle("winner-score-container");
+			return ;
+		}
+			
+		scores.forEach((score, i) => {
+			if (score == 5){
+				console.log(score, i);
+				console.log(`${cssSelector}-line-${i}`);
+				playerSlots[i].classList.add('winner-player');
+				playerSlots[i].querySelector(".score2").classList.add("winner-score-container");
+				playerSlots[i].querySelector(".score").classList.add("winner-score");
+				document.querySelectorAll(`.${cssSelector}-line-${i}`).forEach(line => 
+					line.classList.add("winner-path")
+				);
+			}
+			else {
+				playerSlots[i].classList.add('loser-player');
+				document.querySelectorAll(`.${cssSelector}-line-${i}`).forEach(line => 
+					line.classList.add("loser-path")
+				);
+			}
+		});
+		
+		document.querySelectorAll(`.${cssSelector}-line`).forEach(line => 
+			line.classList.add('winner-path')
+		);
+	}
 };
 
 let user = new TournamentUser();

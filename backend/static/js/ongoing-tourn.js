@@ -8,8 +8,7 @@ user.connectSocket(
 		const { event: eventType, data } = message;
 
 		if (eventType == 'USER_JOINED') {			
-			tournament.setFirstPhase(data.phase);
-			tournament.onPlayerJoined(data.players);
+			tournament.onPlayerJoined(data);
 		}
 		else if (eventType == 'BEGIN_PHASE') {
 			setTimeout(() => {
@@ -32,7 +31,6 @@ user.connectSocket(
 		else if (eventType == 'END_PHASE') {
 			setTimeout(() => {
 				tournament.onEndPhase(data);
-				tournament.updateUI();
 				if (data.winner) {
 					tournament.updatePlayerSlots('winner', [data.winner]);
 					user.tournamentSocket.close();
