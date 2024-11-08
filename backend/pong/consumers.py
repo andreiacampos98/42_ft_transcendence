@@ -10,8 +10,8 @@ from channels.layers import get_channel_layer
 import random
 
 phase_after = dict(zip(
-	['Last 16', 'Quarter-final', 'Semi-final'], 
-	['Quarter-final', 'Semi-final', 'Final']
+	['Last 16', 'Quarter-final', 'Semi-final', 'Final'], 
+	['Quarter-final', 'Semi-final', 'Final', None]
 ))
 
 phase_of = dict(zip(
@@ -123,64 +123,66 @@ class TournamentConsumer(WebsocketConsumer):
 	def on_game_finish(self, data):
 		ic('BEFORE', self.tournament['curr_phase'], self.tournament['curr_phase_total_games'], self.tournament['curr_phase_finished_games'])
 		self.tournament['curr_phase_finished_games'] += 1
+		winner = None
+		
+		if self.tournament['curr_phase_finished_games'] < self.tournament['curr_phase_total_games']:
+			return 
+		
+		# Replace information about the current phase with the next
+		last_phase = self.tournament['curr_phase']
+		last_phase_games = TournamentsGames.objects.filter(tournament_id=self.tournament_id, phase=last_phase)
+		self.tournament['curr_phase'] = phase_after[last_phase]
+		self.tournament['curr_phase_total_games'] //= 2
+		self.tournament['curr_phase_finished_games'] = 0
+		curr_phase = self.tournament['curr_phase']
+		curr_phase_games = TournamentsGames.objects.filter(tournament_id=self.tournament_id, phase=curr_phase)
 
-		if self.tournament['curr_phase'] == 'Final':
+		# Join all phase winners
+		next_phase_users, last_phase_scores = [], []
+		for tour_game in last_phase_games:
+			winnerID = tour_game.game_id.winner_id.id
+			
+			tour_user = TournamentsUsers.objects.get(tournament_id=self.tournament_id, user_id=winnerID)
+			user = Users.objects.get(pk=tour_user.user_id.id) 
+			
+			tour_user = TournamentsUsersSerializer(tour_user).data
+			tour_user['user'] = UsersSerializer(user).data
+			next_phase_users.append(tour_user)
+
+			username1, username2 = tour_game.game_id.user1_id.username, tour_game.game_id.user2_id.username
+			score1, score2 = tour_game.game_id.nb_goals_user1, tour_game.game_id.nb_goals_user2
+			game_data = {
+				'id': tour_game.game_id.id,
+				'username1': username1,
+				'username2': username2,
+				'score1': score1,
+				'score2': score2,
+			}
+			last_phase_scores.append(game_data)
+
+		if last_phase == 'Final':
 			user = Tournaments.objects.get(pk=self.tournament_id).winner_id
 			winner = TournamentsUsers.objects.get(tournament_id=self.tournament_id, user_id=user.id)
 			winner = TournamentsUsersSerializer(winner).data
 			winner['user'] = UsersSerializer(user).data
-			
 			del self.active_tournaments[self.tournament_id]
-			async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
-				"type": "broadcast", 
-				"message": json.dumps({
-					"event": 'END_TOURNAMENT',
-					"data": {
-						'winner': winner
-					}
-				})
+					
+		# Send the new user pairs for the next phase
+		async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
+			"type": "broadcast", 
+			"message": json.dumps({
+				"event": 'END_PHASE',
+				"data": {
+					'phase': last_phase.lower(),
+					'next_phase': curr_phase.lower() if curr_phase else None,
+					'players': next_phase_users,
+					'results': last_phase_scores,
+					'winner': winner,
+				}
 			})
+		})
 
-		elif self.tournament['curr_phase_finished_games'] == self.tournament['curr_phase_total_games']:
-			# Replace information about the current phase with the next
-			self.tournament['curr_phase'] = phase_after[self.tournament['curr_phase']]
-			self.tournament['curr_phase_total_games'] //= 2
-			self.tournament['curr_phase_finished_games'] = 0
-			curr_phase_games = TournamentsGames.objects.filter(
-				tournament_id=self.tournament_id, phase=self.tournament['curr_phase']
-			)
-
-			# Join all phase winners
-			next_phase_users = []
-			for tour_game in curr_phase_games:
-				game = tour_game.game_id
-				# ic(game.id, game.user1_id.id, game.user2_id.id)
-				tour_user1 = TournamentsUsers.objects.get(
-					tournament_id=self.tournament_id, user_id=game.user1_id.id
-				)
-				tour_user2 = TournamentsUsers.objects.get(
-					tournament_id=self.tournament_id, user_id=game.user2_id.id
-				)
-				user1 = Users.objects.get(pk=tour_user1.user_id.id) 
-				user2 = Users.objects.get(pk=tour_user2.user_id.id) 
-				tour_user1 = TournamentsUsersSerializer(tour_user1).data
-				tour_user2 = TournamentsUsersSerializer(tour_user2).data
-				tour_user1['user'] = UsersSerializer(user1).data
-				tour_user2['user'] = UsersSerializer(user2).data
-				next_phase_users.extend([tour_user1, tour_user2])
-			
-			# Send the new user pairs for the next phase
-			async_to_sync(self.channel_layer.group_send)(self.tournament_room, {
-				"type": "broadcast", 
-				"message": json.dumps({
-					"event": 'END_PHASE',
-					"data": {
-						'phase': self.tournament['curr_phase'].lower(),
-						'players': next_phase_users
-					}
-				})
-			})
-			
+		if last_phase != 'Final' and last_phase is not None:
 			self.begin_phase(curr_phase_games)
 
 		ic('AFTER', self.tournament['curr_phase'], self.tournament['curr_phase_total_games'], self.tournament['curr_phase_finished_games'])

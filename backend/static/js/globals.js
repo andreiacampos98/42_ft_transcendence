@@ -12,7 +12,7 @@ class TournamentUser {
 			delete this[prop];
 		this[prop] = new WebSocket(url);
 		this[prop].onmessage = (event) => {
-			console.log(JSON.parse(event.data));
+			// console.log(JSON.parse(event.data));
 			onmessage(event);
 		}
 		this[prop].onopen = (event) => console.log(`Opened WS ${url}`, event);
@@ -36,51 +36,13 @@ class Tournament {
 			'final': [],
 		};
 		this.phaseGames = {
-			'quarter-final': [],
-			'semi-final': [],
-			'final': [],
+			'quarter-final': {},
+			'semi-final': {},
+			'final': {},
 		};
 		this.currPhase = null;
 		this.firstPhase = null;
 	}
-	// {
-	// 	"id": 128,
-	// 	"phase": "final",
-	// 	"created_at": "2024-11-06T21:11:59.517443Z",
-	// 	"tournament_id": 74,
-	// 	"game_id": {
-	// 		"id": 132,
-	// 		"type": "Tournament",
-	// 		"start_date": "2024-11-06T21:11:59.514218Z",
-	// 		"duration": 0,
-	// 		"nb_goals_user1": 0,
-	// 		"nb_goals_user2": 0,
-	// 		"created_at": "2024-11-06T21:11:59.515433Z",
-	// 		"winner_id": null,
-	// 		"user1_id": 2,
-	// 		"user2_id": 4
-	// 	},
-	// 	"user1_id": {
-	// 		"id": 2,
-	// 		"username": "bb",
-	// 		"description": null,
-	// 		"email": null,
-	// 		"picture": "/media/default.jpg",
-	// 		"status": "Online",
-	// 		"created_at": "2024-10-31T14:16:32.437708Z",
-	// 		"updated_at": "2024-11-06T21:11:59.366077Z"
-	// 	},
-	// 	"user2_id": {
-	// 		"id": 4,
-	// 		"username": "dd",
-	// 		"description": null,
-	// 		"email": null,
-	// 		"picture": "/media/default.jpg",
-	// 		"status": "Online",
-	// 		"created_at": "2024-10-31T14:18:53.088894Z",
-	// 		"updated_at": "2024-11-06T21:11:59.472840Z"
-	// 	}
-	// }
 
 	onPlayerJoined(players) {
 		this.phasePlayers[this.currPhase] = players;
@@ -92,25 +54,28 @@ class Tournament {
 	}
 
 	onBeginPhase({phase, games}) {
+		console.log(`BEGINNING ${phase}`, games);
+		console.log(`CURRENT PHASE`, this.currPhase);
 		this.currPhase = phase;
-		// this.phaseGames[phase] = games;
-
 		games.forEach(tournamentGame => {
-			let gameInstance = tournamentGame.game_id;
-			this.phaseGames[phase][gameInstance.id] = {};
-			this.phaseGames[phase][gameInstance.id][tournamentGame.user1_id.username] = 0;
-			this.phaseGames[phase][gameInstance.id][tournamentGame.user2_id.username] = 0;
+			let gameID = tournamentGame.game_id.id;
+			this.phaseGames[phase][gameID] = {};
 		});
 		
 		console.log('RECEIVED GAMES', games);
-		console.log(`CURRENT PHASE - ${this.currPhase}`);
-		console.log(`CURRENT PHASE GAMES`, this.phaseGames[this.currPhase]);
-		console.log(this);
+		console.log(this.phaseGames[phase]);
 	}
 
-	onEndPhase({phase, players}) {
-		this.currPhase = phase;
-		this.phasePlayers[phase] = players;
+	onEndPhase({phase, next_phase, players, results}) {
+		console.log(`ENDING (${phase} -> ${next_phase})`);
+		console.log(`CURRENT PHASE`, this.currPhase);
+		results.forEach(game => {
+			this.phaseGames[phase][game.id][game.username1] = game.score1;
+			this.phaseGames[phase][game.id][game.username2] = game.score2;
+		});
+		this.currPhase = next_phase ? next_phase : this.currPhase;
+		this.phasePlayers[next_phase] = players;
+		console.log(this.phaseGames);
 	}
 
 	setFirstPhase(phase) {
@@ -121,7 +86,6 @@ class Tournament {
 	}
 
 	updateUI() {
-		console.log(this);
 		let phaseNames = ['quarter-final', 'semi-final', 'final'];
 		let firstPhaseIndex = phaseNames.indexOf(tournament.firstPhase);
 		let currPhaseIndex = phaseNames.indexOf(this.currPhase);
@@ -130,17 +94,26 @@ class Tournament {
 			if (i < firstPhaseIndex || i > currPhaseIndex)
 				return ;
 			let players = this.phasePlayers[phase];
-			this.updatePlayerSlots(phase, players);
+			let scores = Object
+				.entries(this.phaseGames[phase])
+				.map(([key, gameScore]) => Object.values(gameScore))
+				.flat();
+			this.updatePlayerSlots(phase, players, scores);
 		});
 	}
 
-	updatePlayerSlots(cssSelector, players) {
+	updatePlayerSlots(cssSelector, players, scores) {
 		const query = `.${cssSelector}.player`;
 		const slots = document.querySelectorAll(query);
 		
 		players.forEach((player, i) => {
 			slots[i].querySelector("span.name").textContent = player.alias;
 			slots[i].querySelector("img").src = player.user.picture;
+		});
+		if (cssSelector == 'winner')
+			return ;
+		scores.forEach((nbGoals, i) => {
+			slots[i].querySelector("span.score").textContent = nbGoals;
 		});
 	};
 };

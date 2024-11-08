@@ -12,8 +12,8 @@ user.connectSocket(
 			tournament.onPlayerJoined(data.players);
 		}
 		else if (eventType == 'BEGIN_PHASE') {
-			tournament.onBeginPhase(data);
 			setTimeout(() => {
+				tournament.onBeginPhase(data);
 				user.tournamentGameData = null;
 				for (let i = 0; i < data.games.length; i++) {
 					tourGame = data.games[i];
@@ -33,13 +33,10 @@ user.connectSocket(
 			setTimeout(() => {
 				tournament.onEndPhase(data);
 				tournament.updateUI();
-			}, 1100);
-		}
-		else if (eventType == 'END_TOURNAMENT') {			
-			setTimeout(() => {
-				tournament.updateUI();
-				tournament.updatePlayerSlots('winner', [data.winner]);
-				user.tournamentSocket.close();
+				if (data.winner) {
+					tournament.updatePlayerSlots('winner', [data.winner]);
+					user.tournamentSocket.close();
+				}
 			}, 1100);
 		}
 	}
