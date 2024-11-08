@@ -13,12 +13,13 @@ user.connectSocket(
 		else if (eventType == 'BEGIN_PHASE') {
 			setTimeout(() => {
 				tournament.onBeginPhase(data);
+
 				user.tournamentGameData = null;
-				for (let i = 0; i < data.games.length; i++) {
-					tourGame = data.games[i];
-					if (user.tournamentAlias == tourGame.user1_id.username || user.tournamentAlias == tourGame.user2_id.username)
-						user.tournamentGameData = data.games[i];
-				}
+				data.games.forEach(game => {
+					console.log(user.userID, game);
+					if (user.userID == game.user1_id.id || user.userID == game.user2_id.id)
+						user.tournamentGameData = game;
+				})
 				if (!user.tournamentGameData)
 					return ;
 

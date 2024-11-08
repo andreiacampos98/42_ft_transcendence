@@ -69,7 +69,7 @@ function onCreateButtonClick()
 		} else {
 			alert("Tournament created successfully!");
 			const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
-			console.log(data.data);
+			user.userID = data.data.host_id;
 			user.tournamentAlias = formData.alias;
 			user.tournamentID = tournamentId;
 			history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);

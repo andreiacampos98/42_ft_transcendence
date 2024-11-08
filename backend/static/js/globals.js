@@ -1,5 +1,6 @@
 class TournamentUser {
 	constructor() {
+		this.userID = 0;
 		this.tournamentAlias = '';
 		this.tournamentID = 0;
 		this.tournamentSocket = null;
@@ -40,6 +41,7 @@ class Tournament {
 			'semi-final': {},
 			'final': {},
 		};
+		this.lastPhase = null;
 		this.currPhase = null;
 		this.firstPhase = null;
 	}
@@ -75,10 +77,11 @@ class Tournament {
 			this.phaseGames[phase][game.id][game.username1] = game.score1;
 			this.phaseGames[phase][game.id][game.username2] = game.score2;
 		});
+		this.lastPhase = this.currPhase;
 		this.currPhase = next_phase ? next_phase : this.currPhase;
 		this.phasePlayers[next_phase] = players;
-		console.log(this.phaseGames);
 		this.updateUI();
+		console.log(this.phaseGames);
 	}
 
 	setFirstPhase(phase) {
@@ -92,6 +95,7 @@ class Tournament {
 		let phaseNames = ['quarter-final', 'semi-final', 'final'];
 		let firstPhaseIndex = phaseNames.indexOf(tournament.firstPhase);
 		let currPhaseIndex = phaseNames.indexOf(this.currPhase);
+		let lastPhaseIndex = phaseNames.indexOf(this.lastPhase);
 		
 		phaseNames.forEach((phase, i) => {
 			if (i < firstPhaseIndex || i > currPhaseIndex)
@@ -99,10 +103,11 @@ class Tournament {
 			let players = this.phasePlayers[phase];
 			let scores = Object
 				.entries(this.phaseGames[phase])
-				.map(([key, gameScore]) => Object.values(gameScore))
+				.map(([id, gameScore]) => Object.values(gameScore))
 				.flat();
 			this.updatePlayerSlots(phase, players, scores);
-			this.highlightPlayerPaths(phase, scores);
+			if (i <= lastPhaseIndex)
+				this.highlightPlayerPaths(phase, scores);
 		});
 	}
 
@@ -114,8 +119,12 @@ class Tournament {
 			slots[i].querySelector("span.name").textContent = player.alias;
 			slots[i].querySelector("img").src = player.user.picture;
 		});
-		if (cssSelector == 'winner')
+
+		if(cssSelector == 'winner') {
+			slots[0].querySelector(".score2").classList.add("winner-score-container");
 			return ;
+		}
+
 		scores.forEach((nbGoals, i) => {
 			slots[i].querySelector("span.score").textContent = nbGoals;
 		});
@@ -130,13 +139,13 @@ class Tournament {
 
 		if(cssSelector == 'winner') {
 			playerSlots[0].querySelector(".score2").classList.toggle("winner-score-container");
+			playerSlots[0].querySelector(".score2 img").src="/static/assets/icons/trophy-brown.png";
+			playerSlots[0].classList.add('winner-player');
 			return ;
 		}
 			
 		scores.forEach((score, i) => {
 			if (score == 5){
-				console.log(score, i);
-				console.log(`${cssSelector}-line-${i}`);
 				playerSlots[i].classList.add('winner-player');
 				playerSlots[i].querySelector(".score2").classList.add("winner-score-container");
 				playerSlots[i].querySelector(".score").classList.add("winner-score");
@@ -151,7 +160,7 @@ class Tournament {
 				);
 			}
 		});
-		
+		console.log(`.${cssSelector}-line`);
 		document.querySelectorAll(`.${cssSelector}-line`).forEach(line => 
 			line.classList.add('winner-path')
 		);
