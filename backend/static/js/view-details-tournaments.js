@@ -50,7 +50,7 @@ async function detailTournamentGames(button) {
 		</div>
 		`;
 	
-	data.forEach(game => {
+	data.games.forEach(game => {
 		const gameBlock = document.createElement('div');
 		gameBlock.classList.add('match-container2');
 		gameBlock.id = `game-${game.game.id}`; 

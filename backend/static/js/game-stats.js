@@ -64,11 +64,11 @@ async function loadCharts() {
 	const response = await fetch(`/games/${gameID}/goals`, {
 		method: "GET",
 	});
-	const goals = await response.json();
-	console.log(goals);
+	const data = await response.json();
+	console.log(data);
 
-	const rallyLengths = goals.map((goal) => goal.rally_length);
-	const ballSpeeds = goals.map((goal) => goal.ball_speed);
+	const rallyLengths = data.map((goal) => goal.rally_length);
+	const ballSpeeds = data.map((goal) => goal.ball_speed);
 
 	fillHeatmap(rallyLengths, ballSpeeds);
 	applyGradientToHeatmap();
@@ -82,7 +82,7 @@ async function loadCharts() {
 	gameState[user1ID] = {'score': 0, 'state': []};
 	gameState[user2ID] = {'score': 0, 'state': []};
 
-	goals.forEach((goal) => {
+	data.forEach((goal) => {
 		gameState[goal.user].score++;
 		gameState[user1ID].state.push(gameState[user1ID].score);
 		gameState[user2ID].state.push(gameState[user2ID].score);

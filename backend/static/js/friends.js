@@ -44,7 +44,7 @@ async function toggleFriendsDrawer(user_id) {
 	} else {
 		localStorage.setItem('access_token', data.access_token);
 	}
-    var friends = data.map((entry) => {
+    var friends = data.friends.map((entry) => {
 		if (entry.user1_id.id == user_id)
 			return entry.user2_id;
 		else

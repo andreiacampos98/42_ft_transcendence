@@ -1,17 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          mutation.addedNodes.forEach((node) => {
-            if (node.nodeType === 1 && !node["htmx-internal-data"]) {
-              htmx.process(node)
-            }
-          })
-        })
-      });
-    observer.observe(document, {childList: true, subtree: true});
-})
-
-
 async function removeNotification(notificationId, listItem){
     let token = localStorage.getItem("access_token");
     const userId = document.querySelector('button[onclick="getNotifications()"]').getAttribute('data-user-id');
@@ -69,7 +55,7 @@ async function getNotifications() {
 	const notificationList = document.getElementById('notificationList');
 	notificationList.innerHTML = '';  // Clear existing notifications
 
-	data.forEach(notification => {
+	data.notifications.forEach(notification => {
 		const listItem = document.createElement('li');
 		listItem.classList.add('notif-li');
 

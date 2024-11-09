@@ -507,7 +507,7 @@ def delete_user_notification(request, user_id, notif_id):
 			'message': 'Notification deleted.',
 			'access_token': new_token,
 		}
-		return JsonResponse(response_data, status=204)
+		return JsonResponse(response_data, status=200)
 	return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
 
@@ -527,7 +527,7 @@ def update_notification(request, notif_id):
 			'message': 'Status of notification updated.',
 			'access_token': new_token,
 		}
-		return JsonResponse(response_data, status=204)
+		return JsonResponse(response_data, status=200)
 	return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
 #! --------------------------------------- User Stats ---------------------------------------
@@ -1030,7 +1030,7 @@ def tournament_leave(request, tournament_id, user_id):
 		'message': f'User {user_tour.alias} left the tournament.',
 		'access_token': new_token,
 	}
-	return JsonResponse(response_data, status=204)
+	return JsonResponse(response_data, status=200)
 
 #@csrf_exempt
 def tournament_list_users(request, tournament_id):
@@ -1089,7 +1089,7 @@ def tournament_list_games(request, tournament_id):
 		except Exception as e:
 			return JsonResponse({'message': 'An error occurred', 'error': str(e), 'access_token': new_token}, status=500)
 
-	return JsonResponse(tgames_list, safe=False)
+	return JsonResponse({'games': tgames_list, 'access_token': new_token}, safe=False)
 
 
 

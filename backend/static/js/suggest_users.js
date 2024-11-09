@@ -32,9 +32,9 @@ async function getSuggestions() {
 	}
 
 	suggestionsBox.innerHTML = ''; 
-	suggestionsBox.style.display = data.length ? 'block' : 'none'; 
+	suggestionsBox.style.display = data.data.length ? 'block' : 'none'; 
 
-	data.forEach(user => {
+	data.data.forEach(user => {
 		console.log(user);
 		const userBlock = document.createElement('div');
 		userBlock.classList.add('user-block');
