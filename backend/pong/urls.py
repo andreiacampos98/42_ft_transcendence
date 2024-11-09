@@ -16,6 +16,7 @@ urlpatterns = [
     #! Pages
     path('', views.loginview, name="login"),
     path('verifyemail/', views.verifyemail, name="email"),
+    path('verifyemail/resendcode', views.send_code_verify_email, name='resend-code'),
     path('otp/', views.otp_view, name='otp'),
     path('otpmethod/', views.otp_method, name='otp-method'),
     path('home/', views.home, name="home"),
@@ -111,6 +112,7 @@ urlpatterns = [
     path('api/token/blacklist/', jwt_views.TokenBlacklistView.as_view(), name='token_blacklist'), 
 
     path('tokencheck/', views.check_token, name='token-check'),
+
     #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
     path('debug/games/<int:game_id>', views.get_game, name='debug-get-game'),

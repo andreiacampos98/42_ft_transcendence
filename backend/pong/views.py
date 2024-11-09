@@ -107,7 +107,33 @@ def user_detail(request, pk):
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
-
+def send_code_verify_email(request):
+	if(request.method == 'POST'):
+		try:
+			data = json.loads(request.body) 
+			email = data.get('email', '')
+			if not email:
+				return JsonResponse({'message': 'There is no value'}, status=400)
+		except json.JSONDecodeError:
+			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
+		totp=pyotp.TOTP(pyotp.random_base32(), interval=120)
+		code = totp.now()
+		if request.session.get('email_secret_key') is not None:
+			del request.session['email_secret_key']
+		if request.session.get('email_valid_date') is not None:
+			del request.session['email_valid_date']
+		request.session['email_secret_key'] = totp.secret
+		valid_date = datetime.now() + timedelta(minutes=2) # data ate quando o codigo e valido
+		request.session['email_valid_date'] = str(valid_date) 
+		ic(code)
+		send_mail(
+			'Email Verification',
+			f'Please use the following code to verify the email: {code}',
+			settings.EMAIL_HOST_USER,
+			[email],
+			fail_silently=False,
+		)
+		return JsonResponse({'message': 'Code sent.'}, status=200)
 
 def user_create(request):
 	if request.method == 'POST':
@@ -138,46 +164,36 @@ def user_create(request):
 		if not username.isalnum():
 			return JsonResponse({'message': 'Username must be alphanumeric.'}, status=400)
 
-		totp=pyotp.TOTP(pyotp.random_base32(), interval=120)
-		code = totp.now()
-		if request.session.get('email_secret_key') is not None:
-			del request.session['email_secret_key']
-		if request.session.get('email_valid_date') is not None:
-			del request.session['email_valid_date']
-		request.session['email_secret_key'] = totp.secret
-		valid_date = datetime.now() + timedelta(minutes=2) # data ate quando o codigo e valido
-		request.session['email_valid_date'] = str(valid_date) 
-		send_mail(
-			'Email Verification',
-			f'Please use the following code to verify the email: {code}',
-			settings.EMAIL_HOST_USER,
-			[email],
-			fail_silently=False,
-		)
+		send_code_verify_email(request)
 		return JsonResponse({'message': 'Email sent to verify the email'}, status=200)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 def verifyemail(request):
 	if request.method == 'POST':
-		code = request.POST.get('code')
 		try:
 			data = json.loads(request.body) 
 			email = data.get('email')
+			code = data.get('code')
 			password1 = data.get('password')
 			username = data.get('username')
 			ic(email)
+			ic(code)
 		except json.JSONDecodeError:
 			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
 		email_secret_key = request.session.get('email_secret_key')
 		email_valid_date = request.session.get('email_valid_date')
 
 		if email_secret_key and email_valid_date is not None:
-			valid_date = datetime.fromisoformat(email_valid_date)
-			if valid_date > datetime.now():
-				totp = pyotp.TOTP(email_secret_key, interval=120)
-				ic(totp)
-				ic(totp.verify(code))
-				if totp.verify(code):
+			valid_date1 = datetime.fromisoformat(email_valid_date)
+			ic(email_secret_key)
+			ic(email_valid_date)
+			ic(valid_date1)
+			ic(datetime.now())
+			if valid_date1 > datetime.now():
+				totp1 = pyotp.TOTP(email_secret_key, interval=120)
+				ic(totp1)
+				ic(totp1.verify(code))
+				if totp1.verify(code):
 					myuser = Users.objects.create_user(username=username, password=password1)
 					myuser.email = email
 					myuser.save()
@@ -196,12 +212,15 @@ def verifyemail(request):
 						response = JsonResponse({
 							'message': 'Your account has been successfully created and you are now logged in.',
 							'username': myuser.username,
+							'redirect': True,
 							'access_token': user_tokens.get('access'),
 							'refresh_token': user_tokens.get('refresh')
 						}, status=201)
 						
-						del request.session['email_secret_key']
-						del request.session['email_valid_date']
+						if request.session.get('email_secret_key') is not None:
+							del request.session['email_secret_key']
+						if request.session.get('email_valid_date') is not None:
+							del request.session['email_valid_date']
 						response.set_cookie(
 							'refresh_token',
 							user_tokens.get('refresh'),

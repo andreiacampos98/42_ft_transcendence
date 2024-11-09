@@ -3,6 +3,7 @@
 async function submitCode(event) {
     event.preventDefault(); 
     let formData = {};
+    formData.code = document.getElementById('code').value,
     formData.email = s_email
     formData.username = s_username;
     formData.password = s_password;
@@ -30,4 +31,16 @@ async function submitCode(event) {
         document.getElementById('errorMessage').textContent = errorData.error;  
         document.getElementById('errorMessage').style.display = 'block';
     }
+}
+
+async function resend_code_email(){
+    let formData = {};
+    formData.email = s_email;
+    const response = await fetch(`/verifyemail/resendcode`, {
+            method: 'POST',
+            body: JSON.stringify(formData),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }); 
 }
