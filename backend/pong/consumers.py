@@ -139,6 +139,7 @@ class TournamentConsumer(WebsocketConsumer):
 
 		# Join all phase winners
 		next_phase_users, last_phase_scores = [], []
+		ic(last_phase, curr_phase)
 		for tour_game in last_phase_games:
 			winnerID = tour_game.game_id.winner_id.id
 			
