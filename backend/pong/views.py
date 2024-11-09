@@ -224,7 +224,7 @@ def verifyemail(request):
 							'access_token': user_tokens.get('access'),
 							'refresh_token': user_tokens.get('refresh')
 						}, status=201)
-						
+						ic(user_tokens.get('refresh'))
 						if request.session.get('email_secret_key') is not None:
 							del request.session['email_secret_key']
 						if request.session.get('email_valid_date') is not None:
@@ -233,7 +233,7 @@ def verifyemail(request):
 							'refresh_token',
 							user_tokens.get('refresh'),
 							httponly=True, 
-							secure=True, 
+							secure=False, 
 							samesite='Lax'   
 						)
 						return response
@@ -1298,7 +1298,7 @@ def signin42(request):
 # 				'refresh_token',
 # 				user_tokens.get('refresh'),
 # 				httponly=True, 
-# 				secure=True, 
+# 				secure=False, 
 # 				samesite='Lax'
 # 			)
 
@@ -1338,7 +1338,7 @@ def signin42(request):
 # 				'refresh_token',
 # 				user_tokens.get('refresh'),
 # 				httponly=True, 
-# 				secure=True, 
+# 				secure=False, 
 # 				samesite='Lax'
 # 			)
 
@@ -1523,7 +1523,7 @@ def loginview(request):
 				'refresh_token',
 				user_tokens.get('refresh'),
 				httponly=True, 
-				secure=True, 
+				secure=False, 
 				samesite='Lax'
 			)
 
@@ -1565,7 +1565,7 @@ def otp_view(request):
 							'refresh_token',
 							user_tokens.get('refresh'),
 							httponly=True, 
-							secure=True, 
+							secure=False, 
 							samesite='Lax'   
 						)
 
