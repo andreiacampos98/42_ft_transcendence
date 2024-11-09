@@ -100,7 +100,7 @@ urlpatterns = [
     path('home42/', views.login42, name='login42'),
 
     #! 2FA
-    path('toggle-2fa/<int:user_id>', views.toogle2fa, name='toogle-2fa'),
+    path('toggle-2fa/<int:user_id>', views.toggle2fa, name='toggle-2fa'),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/verify/', jwt_views.TokenVerifyView.as_view(), name='token_verify'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),

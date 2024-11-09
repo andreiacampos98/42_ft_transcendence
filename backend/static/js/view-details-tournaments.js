@@ -25,6 +25,7 @@ async function detailTournamentGames(button) {
 	});
 	const data = await response.json();
 	if (!response.ok && response.status != 401) {
+		localStorage.setItem('access_token', data.access_token);
 		console.error(data.message);
 		return ;
 	}
@@ -34,6 +35,8 @@ async function detailTournamentGames(button) {
 		htmx.ajax('GET', `/`, {
 			target: '#main'
 		});
+	} else {
+		localStorage.setItem('access_token', data.access_token);
 	}
 	const gameList = detailsDiv;
 	gameList.innerHTML = `

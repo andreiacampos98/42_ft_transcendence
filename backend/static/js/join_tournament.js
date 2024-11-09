@@ -4,11 +4,9 @@ document.querySelectorAll('.open-register-tournament-modal').forEach(button => {
         console.log(tournamentId)
         var userId = document.getElementById('registration').getAttribute('data-user-id');
         
-        // Defina o atributo do ID do torneio no botão de confirmação dentro do modal
         var confirmButton = document.getElementById('registration');
         confirmButton.setAttribute('data-tournament-id', tournamentId);
         
-        // Agora abra o modal
         var modal = document.getElementById('modal');
         modal.style.display = 'block';
     });
@@ -63,6 +61,7 @@ async function registerTournament() {
         if (response.ok) {
             localStorage.setItem('alias', formData.alias);
             localStorage.setItem('tournament_id', tournamentId);
+            localStorage.setItem('access_token', data.access_token);
             history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
             htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
                 target: '#main'  
@@ -75,6 +74,7 @@ async function registerTournament() {
             });
         } else {
             alert("Registration failed: " + (data.message || 'Unknown error'));
+            localStorage.setItem('access_token', data.access_token);
         }
     } catch (error) {
         console.error('Error:', error);

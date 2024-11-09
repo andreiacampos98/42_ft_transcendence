@@ -67,8 +67,9 @@ async function leaveTournament() {
                 "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
             }
         });
-
+        const data = await response.json()
         if (response.ok) {
+            localStorage.setItem('access_token', data.access_token);
             socket.send(JSON.stringify({}));
             history.pushState(null, '', `/tournaments/`);
             htmx.ajax('GET', `/tournaments/`, {
@@ -80,6 +81,8 @@ async function leaveTournament() {
             htmx.ajax('GET', `/`, {
                 target: '#main'
             });
+        } else{
+            localStorage.setItem('access_token', data.access_token);
         }
     } catch (error) {
         console.error('Error:', error);

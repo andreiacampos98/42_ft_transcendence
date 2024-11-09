@@ -35,8 +35,10 @@ async function getChangePassword() {
 	});
 	const data = await response.json();
 
-	if (!response.ok && response.status != 401)
+	if (!response.ok && response.status != 401){
+		localStorage.setItem('access_token', data.access_token);
 		alert(data.message);
+	}
 	else if (!response.ok && response.status == 401) {
 		alert("As your session has expired, you will be logged out.");
 		history.pushState(null, '', `/`);
@@ -45,7 +47,7 @@ async function getChangePassword() {
 		});
 	}
 	else {
-		// Create the modal pop-up
+		localStorage.setItem('access_token', data.access_token);
 		modal.style.display = "none";
 		var modal3 = document.getElementById("modal3");
 		modal3.style.display = "block";

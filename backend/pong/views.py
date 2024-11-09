@@ -56,16 +56,23 @@ total_phase_matches = dict(zip(
 
 
 def validate_token(request):
+	ic(request.headers.get("Authorization", "Authorization header missing"))
 	jwt_authenticator = JWTAuthentication()
 
 	try:
+		ic('BEFORE')
 		auth_result = jwt_authenticator.authenticate(request)
+		ic(auth_result)
+		ic('MIDDLE')
 		if auth_result is None:
 			return None
+		ic('AFTER')
 		user, validated_token = auth_result 
 		return user
-	except (InvalidToken, TokenError):
-		return None
+	except InvalidToken as e:
+		ic("Token inválido:", str(e))
+	except Exception as e:
+		ic("Erro desconhecido:", str(e))
 
 
 def refresh_token(request):
@@ -88,13 +95,14 @@ def check_token(request):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	token_valid = validate_token(request)
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
 			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
-	return JsonResponse({'message': 'The token is valid.'}, status=200)
+	return JsonResponse({'message': 'The token is valid.', 'access_token': new_token}, status=200)
 
 
 #! --------------------------------------- Users ---------------------------------------
@@ -240,7 +248,7 @@ def verifyemail(request):
 
 def user_update(request, pk):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '').replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -258,7 +266,7 @@ def user_update(request, pk):
 				validate_email(email)
 				user.email=email
 			except ValidationError:
-				return JsonResponse({'message': 'Invalid email format.'}, status=400)
+				return JsonResponse({'message': 'Invalid email format.', 'access_token': new_token}, status=400)
 
 		if 'picture' in request.FILES:
 			user.picture = request.FILES['picture']
@@ -276,7 +284,7 @@ def user_update(request, pk):
 	
 		new_username = data.get('username', None)
 		if Users.objects.filter(username=new_username).exists() and user.username != new_username:
-			return JsonResponse({'message': 'Username already exists.'}, status=400)
+			return JsonResponse({'message': 'Username already exists.', 'access_token': new_token}, status=400)
 
 		description = data.get('description', None)
 
@@ -286,14 +294,14 @@ def user_update(request, pk):
 			user.description = description
 		user.save()
 		ic("Aqui1")
-		return JsonResponse({'message': 'User updated.', }, status=201)
+		return JsonResponse({'message': 'User updated.', 'access_token': new_token }, status=201)
 	else:
-		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
+		return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
 
 def user_password(request, pk):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '').replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -306,29 +314,29 @@ def user_password(request, pk):
 		new_password2 = request.POST.get('password2')
 
 		if not user.check_password(old_password):
-			return JsonResponse({'message': 'Old password is incorrect.'}, status=400)
+			return JsonResponse({'message': 'Old password is incorrect.', 'access_token': new_token}, status=400)
 
 		if not new_password1:
-			return JsonResponse({'message': 'New password is required.'}, status=400)
+			return JsonResponse({'message': 'New password is required.', 'access_token': new_token}, status=400)
 
 		if user.check_password(new_password1):
-			return JsonResponse({'message': 'New password cannot be the same as the old password.'}, status=400)
+			return JsonResponse({'message': 'New password cannot be the same as the old password.', 'access_token': new_token}, status=400)
 		
 		if new_password1 != new_password2:
-			return JsonResponse({'message': 'Passwords did not match.'}, status=400)
+			return JsonResponse({'message': 'Passwords did not match.', 'access_token': new_token}, status=400)
 
 		user.set_password(new_password1)
 		user.save()
 
 		update_session_auth_hash(request, user)
-		return JsonResponse({'message': 'Password updated successfully', 'redirect_url': reverse('user-profile', args=[user.id])}, status=200)
+		return JsonResponse({'message': 'Password updated successfully', 'access_token': new_token, 'redirect_url': reverse('user-profile', args=[user.id])}, status=200)
 	else:
-		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
+		return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
 
 def search_suggestions(request):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -339,10 +347,12 @@ def search_suggestions(request):
 		users = Users.objects.filter(username__icontains=term)[:5]
 		
 		serializer = UsersSerializer(users, many=True)
-		return JsonResponse(serializer.data, safe=False)
+		response_data = {
+			'access_token': new_token,
+			'data': serializer.data,
+		}
+		return JsonResponse(response_data, safe=False)
 	return JsonResponse([], safe=False)
-
-
 
 def search_users(request):
 	user_id = request.user.id
@@ -361,23 +371,28 @@ def search_users(request):
 
 def get_user_friends(request, user_id):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
-			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+			return JsonResponse({'message': "Invalid refresh token", 'access_token': new_token}, status=401)
 		
 	if request.method == 'GET':
 		friends = Friends.objects.filter(
 			(Q(user1_id=user_id) | Q(user2_id=user_id)) & Q(accepted=True)
 		)
 		serializer = FriendsSerializer(friends, many=True)
-	return JsonResponse(serializer.data, safe=False)
-
+		response_data = {
+            'access_token': new_token,
+            'friends': serializer.data,
+        }
+		return JsonResponse(response_data, safe=False)
+	
+	return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
 def add_remove_friend(request, user1_id, user2_id):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -385,11 +400,11 @@ def add_remove_friend(request, user1_id, user2_id):
 		
 	if request.method == 'POST':
 		if user1_id == user2_id:
-			return JsonResponse({'message': 'Users cannot be friends with themselves.'}, status=400)
+			return JsonResponse({'message': 'Users cannot be friends with themselves.', 'access_token': new_token}, status=400)
 		
 		if Friends.objects.filter(user1_id=user1_id, user2_id=user2_id).exists() or \
 		Friends.objects.filter(user1_id=user2_id, user2_id=user1_id).exists():
-			return JsonResponse({'message': 'Friendship already exists.'}, status=400)
+			return JsonResponse({'message': 'Friendship already exists.', 'access_token': new_token}, status=400)
 
 		user1 = get_object_or_404(Users, id=user1_id)
 		user2 = get_object_or_404(Users, id=user2_id)
@@ -399,6 +414,7 @@ def add_remove_friend(request, user1_id, user2_id):
 		notification.save()
 		response_data = {
 			'message': 'Friendship request sent successfully.',
+			'access_token': new_token,
 			'user1': user1.username,
 			'user2': user2.username,
 			'accepted': friend.accepted
@@ -411,20 +427,21 @@ def add_remove_friend(request, user1_id, user2_id):
 		).first()
 
 		if not friendship:
-			return JsonResponse({'message': 'Friendship does not exist.'}, status=404)
+			return JsonResponse({'message': 'Friendship does not exist.', 'access_token': new_token}, status=404)
 
 		friendship.delete()
 
 		response_data = {
-			'message': 'Friendship deleted successfully.'
+			'message': 'Friendship deleted successfully.', 
+			'access_token': new_token,
 		}
 		return JsonResponse(response_data, status=200)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
+	return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
 
 def accept_friend(request, user1_id, user2_id):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -436,10 +453,10 @@ def accept_friend(request, user1_id, user2_id):
 		).first()
 
 		if not friendship:
-			return JsonResponse({'message': 'Friendship does not exist.'}, status=404)
+			return JsonResponse({'message': 'Friendship does not exist.', 'access_token': new_token}, status=404)
 		
 		if friendship.accepted:
-			return JsonResponse({'message': 'Friendship request has already been accepted.'}, status=400)
+			return JsonResponse({'message': 'Friendship request has already been accepted.', 'access_token': new_token}, status=400)
 		
 		friendship.accepted = True
 		friendship.save()
@@ -448,16 +465,17 @@ def accept_friend(request, user1_id, user2_id):
 		notification = Notifications.objects.create(type='Accepted Friend Request', status='Pending', description=' has accepted your friend request!', user_id = user2, other_user_id = user1)
 		notification.save()
 		response_data = {
-			'message': 'User accept the request.'
+			'message': 'User accept the request.',
+			'access_token': new_token,
 		}
 		return JsonResponse(response_data, status=200)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
+	return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
 #! --------------------------- Notifications ----------------------------------
 
 def get_user_notifications(request, user_id):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -466,31 +484,36 @@ def get_user_notifications(request, user_id):
 	if request.method == 'GET':
 		notifications = Notifications.objects.filter(user_id = user_id)
 		serializer = NotificationsSerializer(notifications, many=True)
-		return JsonResponse(serializer.data, safe=False)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
+		response_data = {
+			'access_token': new_token,
+			'notifications': serializer.data
+		}
+		return JsonResponse(response_data, safe=False)
+	return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
 
 def delete_user_notification(request, user_id, notif_id):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
-			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+			return JsonResponse({'message': "Invalid refresh token", 'access_token': new_token}, status=401)
 
 	if request.method == 'DELETE':
 		notifications = Notifications.objects.filter(Q(user_id = user_id) & Q( id = notif_id))
 		notifications.delete()
 		response_data = {
-			'message': 'Notification deleted.'
+			'message': 'Notification deleted.',
+			'access_token': new_token,
 		}
 		return JsonResponse(response_data, status=204)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
+	return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
 
 def update_notification(request, notif_id):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -501,10 +524,11 @@ def update_notification(request, notif_id):
 		notifications.status = 'Read'
 		notifications.save()
 		response_data = {
-			'message': 'Status of notification updated.'
+			'message': 'Status of notification updated.',
+			'access_token': new_token,
 		}
 		return JsonResponse(response_data, status=204)
-	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
+	return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
 #! --------------------------------------- User Stats ---------------------------------------
 
@@ -824,7 +848,7 @@ def get_game(request, game_id):
 
 def tournament_create(request):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -832,32 +856,32 @@ def tournament_create(request):
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method != 'POST':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method})
+		return JsonResponse({'message': 'Method not allowed', 'access_token': new_token, 'method': request.method})
 
 	try:
 		data = json.loads(request.body.decode('utf-8'))
 	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON'}, status=400)
+		return JsonResponse({'message': 'Invalid JSON', 'access_token': new_token}, status=400)
 	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
+		return JsonResponse({'message': f'Missing key: {str(e)}', 'access_token': new_token}, status=400)
 	
 	name = data.get('name', '')
 	nickname = data.get('alias', '')
 
 	if name == '':
-		return JsonResponse({'message': 'The name is blank'}, status=400)
+		return JsonResponse({'message': 'The name is blank', 'access_token': new_token}, status=400)
 	if nickname == '':
-		return JsonResponse({'message': 'The nickname is blank'}, status=400)
+		return JsonResponse({'message': 'The nickname is blank', 'access_token': new_token}, status=400)
 
 	if len(name) > 64:
-		return JsonResponse({'message': 'The name of the tournament is too long.'}, status=400)
+		return JsonResponse({'message': 'The name of the tournament is too long.', 'access_token': new_token}, status=400)
 	
 	if len(nickname) > 64:
-		return JsonResponse({'message': 'The nickname is too long.'}, status=400)
+		return JsonResponse({'message': 'The nickname is too long.', 'access_token': new_token}, status=400)
 
 	tour_serializer = TournamentsSerializer(data=data)
 	if not tour_serializer.is_valid():
-		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_serializer.errors}, status=400)
+		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_serializer.errors, 'access_token': new_token}, status=400)
 
 	tournament = tour_serializer.save()
 	user_data = {
@@ -868,13 +892,13 @@ def tournament_create(request):
 
 	tour_user_serializer = TournamentsUsersSerializer(data=user_data)
 	if not tour_user_serializer.is_valid():
-		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_user_serializer.errors}, status=400)
+		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_user_serializer.errors, 'access_token': new_token}, status=400)
 	tour_user_serializer.save()
 	ic(data['host_id'])
 	user= Users.objects.get(pk=data['host_id'])
 	user.status = "Playing"
 	user.save()
-	return JsonResponse({'data': tour_serializer.data}, status=201)
+	return JsonResponse({'data': tour_serializer.data, 'access_token': new_token}, status=201)
 
 
 def tournament_list(request):
@@ -909,7 +933,7 @@ def tournament_update(request, tournament_id):
 
 def tournament_join(request, tournament_id, user_id):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -917,27 +941,27 @@ def tournament_join(request, tournament_id, user_id):
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 
 	if request.method != 'POST':	
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'access_token': new_token}, status=405)
 
 	try:
 		data = json.loads(request.body.decode('utf-8'))
 	except json.JSONDecodeError:
-		return JsonResponse({'message': 'Invalid JSON'}, status=400)
+		return JsonResponse({'message': 'Invalid JSON', 'access_token': new_token}, status=400)
 	except KeyError as e:
-		return JsonResponse({'message': f'Missing key: {str(e)}'}, status=400)
+		return JsonResponse({'message': f'Missing key: {str(e)}', 'access_token': new_token}, status=400)
 
 	data['tournament_id'] = tournament_id
 	data['user_id'] = user_id
 	nickname = data.get('alias', '')
 	ic(nickname)
 	if nickname == '':
-		return JsonResponse({'message': 'The nickname is blank'}, status=400)
+		return JsonResponse({'message': 'The nickname is blank', 'access_token': new_token}, status=400)
 	if len(nickname) > 64:
-		return JsonResponse({'message': 'The nickname is too long.'}, status=400)
+		return JsonResponse({'message': 'The nickname is too long.', 'access_token': new_token}, status=400)
 		
 	serializer = TournamentsUsersSerializer(data=data)
 	if not serializer.is_valid():
-		return JsonResponse(serializer.errors, status=400)
+		return JsonResponse({'access_token': new_token}, serializer.errors, status=400)
 
 	serializer.save()
 
@@ -960,7 +984,7 @@ def tournament_join(request, tournament_id, user_id):
 		
 		serializer = GamesSerializer(data=games_data, many=True)
 		if not serializer.is_valid():
-			return JsonResponse(serializer.errors, status=400, safe=False)
+			return JsonResponse({'access_token': new_token}, serializer.errors, status=400, safe=False)
 		
 		games = serializer.save()
 
@@ -977,17 +1001,17 @@ def tournament_join(request, tournament_id, user_id):
 		tournament.save()
 		serializer = TournamentsGamesSerializer(data=tour_games_data, many=True)
 		if not serializer.is_valid():
-			return JsonResponse(serializer.errors, status=400, safe=False)
+			return JsonResponse({'access_token': new_token}, serializer.errors, status=400, safe=False)
 		serializer.save()
 	user = Users.objects.get(pk=user_id)
 	user.status = "Playing"
 	user.save()
-	return JsonResponse({'data': serializer.data}, status=201, safe=False)
+	return JsonResponse({'data': serializer.data, 'access_token': new_token}, status=201, safe=False)
 
 
 def tournament_leave(request, tournament_id, user_id):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -995,7 +1019,7 @@ def tournament_leave(request, tournament_id, user_id):
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method != 'DELETE':	
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'access_token': new_token}, status=405)
 	
 	user_tour = get_object_or_404(TournamentsUsers, tournament_id=tournament_id, user_id=user_id)
 	user_tour.delete()
@@ -1003,7 +1027,8 @@ def tournament_leave(request, tournament_id, user_id):
 	user.status = "Online"
 	user.save()
 	response_data = {
-		'message': f'User {user_tour.alias} left the tournament.'
+		'message': f'User {user_tour.alias} left the tournament.',
+		'access_token': new_token,
 	}
 	return JsonResponse(response_data, status=204)
 
@@ -1027,36 +1052,9 @@ def tournament_list_users(request, tournament_id):
 
 #! --------------------------------------- Tournaments Games ---------------------------------------
 
-# #@csrf_exempt
-# def tournament_list_games(request, tournament_id):
-# 	if request.method != 'GET':
-# 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
-
-# 	tgames = TournamentsGames.objects.filter(tournament_id=tournament_id)
-# 	serializer = TournamentsGamesSerializer(tgames, many=True)
-# 	tgames_list = serializer.data
-
-# 	for tgame in tgames_list:
-# 		game = Games.objects.get(pk=tgame['game_id'])
-# 		serializer = GamesSerializer(game)
-# 		tgame['game'] = serializer.data
-# 		winner = Users.objects.get(pk=game.winner_id) 
-# 		user1 = Users.objects.get(pk=game.user1_id)
-# 		user2 = Users.objects.get(pk=game.user2_id)
-# 		winner_serializer = UsersSerializer(winner)
-# 		user1_serializer = UsersSerializer(user1)
-# 		user2_serializer = UsersSerializer(user2)
-# 		tgame['game']['winner'] = winner_serializer.data
-# 		tgame['game']['user1'] = user1_serializer.data
-# 		tgame['game']['user2'] = user2_serializer.data
-
-
-
-# 	return JsonResponse(tgames_list, safe=False)
-
 def tournament_list_games(request, tournament_id):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -1064,7 +1062,7 @@ def tournament_list_games(request, tournament_id):
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method != 'GET':
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
+		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'access_token': new_token}, status=405)
 
 	tgames = TournamentsGames.objects.filter(tournament_id=tournament_id)
 	serializer = TournamentsGamesSerializer(tgames, many=True)
@@ -1085,11 +1083,11 @@ def tournament_list_games(request, tournament_id):
 
 
 		except Games.DoesNotExist:
-			return JsonResponse({'message': 'Game not found'}, status=404)
+			return JsonResponse({'message': 'Game not found', 'access_token': new_token}, status=404)
 		except Users.DoesNotExist as e:
-			return JsonResponse({'message': 'User not found', 'error': str(e)}, status=404)
+			return JsonResponse({'message': 'User not found', 'error': str(e), 'access_token': new_token}, status=404)
 		except Exception as e:
-			return JsonResponse({'message': 'An error occurred', 'error': str(e)}, status=500)
+			return JsonResponse({'message': 'An error occurred', 'error': str(e), 'access_token': new_token}, status=500)
 
 	return JsonResponse(tgames_list, safe=False)
 
@@ -1375,9 +1373,9 @@ def send_otp(request):
 	return JsonResponse({'message': 'Code was sent'}, status=200)
 
 
-def toogle2fa(request, user_id):
+def toggle2fa(request, user_id):
 	token_valid = validate_token(request)
-
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -1389,13 +1387,13 @@ def toogle2fa(request, user_id):
 			enabled = data.get('enabled')
 
 		except json.JSONDecodeError:
-			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
+			return JsonResponse({'message': 'Invalid JSON.', 'access_token': new_token}, status=400)
 		ic(enabled)
 		user = Users.objects.get(pk=user_id)
 		user.two_factor = enabled
 		user.save()
-		return JsonResponse({'message': 'User enable/disable two factor authentication.'}, status=200)
-	return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
+		return JsonResponse({'message': 'User enable/disable two factor authentication.', 'access_token': new_token}, status=200)
+	return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'access_token': new_token}, status=405)
 
 
 #! --------------------------------------- Pages ---------------------------------------

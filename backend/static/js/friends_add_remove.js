@@ -16,8 +16,10 @@ async function friends_add(event, userId1, userId2) {
     });
 
 	const data = await response.json();
-	if (!response.ok && response.status != 401)
+	if (!response.ok && response.status != 401){
+        localStorage.setItem('access_token', data.access_token);
 		alert(data.message)
+    }
     else if (!response.ok && response.status == 401) {
 		alert("As your session has expired, you will be logged out.");
 		history.pushState(null, '', `/`);
@@ -25,8 +27,10 @@ async function friends_add(event, userId1, userId2) {
 			target: '#main'
 		});
 	}
-	else
+	else{
+        localStorage.setItem('access_token', data.access_token);
 		window.location.reload();
+    }
 		
     return false;
 }
@@ -44,8 +48,10 @@ async function friends_remove(event, userId1, userId2) {
     });
 
 	const data = await response.json();
-    if (!response.ok && response.status != 401)
+    if (!response.ok && response.status != 401){
+        localStorage.setItem('access_token', data.access_token);
 		alert(data.message)
+    }
     else if (!response.ok && response.status == 401) {
 		alert("As your session has expired, you will be logged out.");
 		history.pushState(null, '', `/`);
@@ -53,8 +59,10 @@ async function friends_remove(event, userId1, userId2) {
 			target: '#main'
 		});
 	}
-	else
+	else{
+        localStorage.setItem('access_token', data.access_token);
 		window.location.reload();
+    }
 	
     return false;
 }

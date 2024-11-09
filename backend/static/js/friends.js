@@ -1,5 +1,4 @@
 function addClassToTopLevelDivs(className) {
-    // Select all div elements that are direct children of the body
     const topLevelDivs = document.body.querySelectorAll(':scope > div');
     topLevelDivs.forEach(div => {
         if (div.id !== 'sidebar') {
@@ -32,6 +31,7 @@ async function toggleFriendsDrawer(user_id) {
 	const data = await response.json();
 	
 	if (!response.ok && response.status != 401) {
+		localStorage.setItem('access_token', data.access_token);
 		console.error(data.message);
 		return ;
 	}
@@ -41,6 +41,8 @@ async function toggleFriendsDrawer(user_id) {
 		htmx.ajax('GET', `/`, {
 			target: '#main'
 		});
+	} else {
+		localStorage.setItem('access_token', data.access_token);
 	}
     var friends = data.map((entry) => {
 		if (entry.user1_id.id == user_id)

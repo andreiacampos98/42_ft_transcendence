@@ -17,6 +17,7 @@ async function getSuggestions() {
 	const data = await response.json();
 	if (!response.ok && response.status != 401) {
 		console.error(`Error getting suggestions: ${data.message}`);
+		localStorage.setItem('access_token', data.access_token);
 		return ;
 	}
 	else if (!response.ok && response.status == 401) {
@@ -26,7 +27,10 @@ async function getSuggestions() {
 			target: '#main'
 		});
 		return;
+	} else {
+		localStorage.setItem('access_token', data.access_token);
 	}
+
 	suggestionsBox.innerHTML = ''; 
 	suggestionsBox.style.display = data.length ? 'block' : 'none'; 
 

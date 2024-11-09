@@ -95,8 +95,10 @@ async function onCreateButtonClick()
         }
     });
 	const data = await response.json();
-	if (!response.ok && response.status != 401)
+	if (!response.ok && response.status != 401){
 		alert(data.message);
+    localStorage.setItem('access_token', data.access_token);
+  }
   else if (!response.ok && response.status == 401) {
     alert("As your session has expired, you will be logged out.");
     history.pushState(null, '', `/`);
@@ -109,6 +111,7 @@ async function onCreateButtonClick()
     console.log(data.data);
     localStorage.setItem('alias', formData.alias);
     localStorage.setItem('tournament_id', tournamentId);
+    localStorage.setItem('access_token', data.access_token);
     history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
     htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
       target: '#main' , 

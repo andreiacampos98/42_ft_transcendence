@@ -15,11 +15,8 @@ function onEditButtonClick() {
             const reader = new FileReader();
 
             reader.onload = function(e) {
-                // Define o src da imagem de pré-visualização
                 document.getElementById('profile-picture-preview').src = e.target.result;
             }
-
-            // Lê o arquivo como uma URL de dados
             reader.readAsDataURL(file);
         } 
     });
@@ -52,8 +49,10 @@ async function onSaveButtonClick(event, userId) {
     });
 	const data = await response.json();
 
-	if (response.status != 201 && response.status != 401)
+	if (response.status != 201 && response.status != 401){
+        localStorage.setItem('access_token', data.access_token);
 		alert(data.message);
+    }
     else if (response.status == 401) {
 		alert("As your session has expired, you will be logged out.");
 		history.pushState(null, '', `/`);
@@ -62,6 +61,7 @@ async function onSaveButtonClick(event, userId) {
 		});
 	}
 	else {
+        localStorage.setItem('access_token', data.access_token);
 		history.pushState(null, '', `/users/${userId}`);
 		htmx.ajax('GET', `/users/${userId}`, {
 			target: '#main'  

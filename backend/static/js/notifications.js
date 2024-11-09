@@ -23,8 +23,10 @@ async function removeNotification(notificationId, listItem){
         }
     });
 	const data = await response.json();
-	if (!response.ok && response.status != 401)
+	if (!response.ok && response.status != 401){
+        localStorage.setItem('access_token', data.access_token);
 		console.error(`Error deleting notification: ${data.message}`);
+    }
     else if(response.status == 401){
         alert("As your session has expired, you will be logged out.");
         history.pushState(null, '', `/`);
@@ -32,8 +34,10 @@ async function removeNotification(notificationId, listItem){
             target: '#main'
         });
     }
-	else
+	else{
+        localStorage.setItem('access_token', data.access_token);
 		listItem.remove();
+    }
 }
 
 
@@ -50,6 +54,7 @@ async function getNotifications() {
 	const data = await response.json();
 
     if (!response.ok && response.status != 401) {
+        localStorage.setItem('access_token', data.access_token);
 		console.error(`Error getting notifications: ${data.message}`);
 		return ;
 	}
@@ -60,7 +65,7 @@ async function getNotifications() {
 			target: '#main'
 		});
 	}
-    
+    localStorage.setItem('access_token', data.access_token);
 	const notificationList = document.getElementById('notificationList');
 	notificationList.innerHTML = '';  // Clear existing notifications
 
@@ -170,8 +175,9 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
                     "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
                 }
             });
-
+            const data_friend = await friendAcceptResponse.json();
             if (!friendAcceptResponse.ok && friendAcceptResponse.status != 401) {
+                localStorage.setItem('access_token', data_friend.access_token);
                 throw new Error(`Error accepting friend request: ${friendAcceptResponse.statusText}`);
             }
             else if(friendAcceptResponse.status == 401){
@@ -182,6 +188,7 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
                 });
             }
             else{
+                localStorage.setItem('access_token', data_friend.access_token);
                 console.log('Friend accept request successful');
                 token = localStorage.getItem("access_token");
                 const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
@@ -191,8 +198,9 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
                         "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
                     }
                 });
-    
+                const data_notification = await notificationUpdateResponse.json();
                 if (!notificationUpdateResponse.ok && notificationUpdateResponse.status != 401) {
+                    localStorage.setItem('access_token', data_notification.access_token);
                     throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
                 }
                 else if(notificationUpdateResponse.status == 401){
@@ -203,6 +211,7 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
                     });
                 }
                 else{
+                    localStorage.setItem('access_token', data_notification.access_token);
                     console.log('Notification update request successful');
                 }
             }
@@ -219,8 +228,9 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
                 },
                 body: JSON.stringify({ status: 'Declined' })
             });
-
+            const data_reponse = await notificationUpdateResponse.json();
             if (!notificationUpdateResponse.ok && notificationUpdateResponse.status != 401) {
+                localStorage.setItem('access_token', data_reponse.access_token);
                 throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
             }
             else if(notificationUpdateResponse.status == 401){
@@ -231,6 +241,7 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
                 });
             }
             else{
+                localStorage.setItem('access_token', data_reponse.access_token);
                 console.log('Notification decline request successful');
             }
         }
@@ -277,8 +288,9 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                     "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
                 }
             });
-
+            const data_friend = await friendAcceptResponse.json();
             if (!friendAcceptResponse.ok && friendAcceptResponse.status != 401) {
+                localStorage.setItem('access_token', data_friend.access_token);
                 throw new Error(`Error accepting friend request: ${friendAcceptResponse.statusText}`);
             }
             else if(friendAcceptResponse.status == 401){
@@ -289,6 +301,7 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                 });
             }
             else{
+                localStorage.setItem('access_token', data_friend.access_token);
                 console.log('Friend accept request successful');
                 token = localStorage.getItem("access_token");
                 const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
@@ -298,8 +311,9 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                         "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
                     }
                 });
-
+                const data_notification = await notificationUpdateResponse.json();
                 if (!notificationUpdateResponse.ok && notificationUpdateResponse.status != 401) {
+                    localStorage.setItem('access_token', data_notification.access_token);
                     throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
                 }
                 else if(notificationUpdateResponse.status == 401){
@@ -310,7 +324,7 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                     });
                 }
                 else{
-
+                    localStorage.setItem('access_token', data_notification.access_token);
                     const declineButton = document.getElementById("decline-friend-button");
                     const acceptButton = document.getElementById("accept-friend-button");
                     const removeFriendButton = document.getElementById("remove-friend-button");
@@ -335,8 +349,9 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                 },
                 body: JSON.stringify({ status: 'Declined' })
             });
-
+            const data_reponse = await notificationUpdateResponse.json();
             if (!notificationUpdateResponse.ok && notificationUpdateResponse.status != 401) {
+                localStorage.setItem('access_token', data_reponse.access_token);
                 throw new Error(`Error updating notification: ${notificationUpdateResponse.statusText}`);
             }
             else if(notificationUpdateResponse.status == 401){
@@ -347,7 +362,7 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                 });
             }
             else{
-
+                localStorage.setItem('access_token', data_reponse.access_token);
                 const declineButton = document.getElementById("decline-friend-button");
                 const acceptButton = document.getElementById("accept-friend-button");
                 const addFriendButton = document.getElementById("add-friend-button");
