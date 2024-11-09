@@ -8,6 +8,7 @@
     <div class="login-container">
         <div class="login-container2">
             <h4 class="title"><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
+            <p>A code was sent to your email {{ user.email }}</p>
             <form id="otpForm" method="POST" onsubmit="return submitOtp(event);">
                 <div class="input-group">
                     <label for="otp">Code: </label>

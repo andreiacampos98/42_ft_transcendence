@@ -1350,7 +1350,11 @@ def login42(request):
 
 #! --------------------------------------- 2FA ---------------------------------------
 
-def send_otp(request, info):
+def send_otp(request):
+	username = request.session['username']
+	user = Users.objects.get(username=username)
+	if not user:
+		return JsonResponse({'message': 'There is no user'}, status=400)
 	totp=pyotp.TOTP(pyotp.random_base32(), interval=120) #a password e valida durante 120 segundos
 	otp = totp.now()
 	if request.session.get('otp_secret_key') is not None:
@@ -1365,9 +1369,10 @@ def send_otp(request, info):
 		'Email Verification OTP',
 		f'Your OTP for email verification is: {otp}',
 		settings.EMAIL_HOST_USER,
-		[info],
+		[user.email],
 		fail_silently=False,
 	)
+	return JsonResponse({'message': 'Code was sent'}, status=200)
 
 
 def toogle2fa(request, user_id):
@@ -1423,6 +1428,7 @@ def loginview(request):
 			user.save()
 			if user.two_factor:
 				request.session['username'] = username
+				send_otp(request)
 				response_data = {
 					'message': 'You have successfully logged in.',
 					'username': user.username,
@@ -1459,21 +1465,6 @@ def loginview(request):
 
 	return render(request, 'pages/login.html')
 
-#@csrf_exempt
-def otp_method(request):
-	if(request.method == 'POST'):
-		try:
-			data = json.loads(request.body) 
-			info = data.get('info', '')
-			if not info:
-				return JsonResponse({'message': 'There is no value'}, status=400)
-		except json.JSONDecodeError:
-			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
-		
-		send_otp(request, info)
-		return JsonResponse({'message': 'Code sent.'}, status=200)
-
-	return render(request, 'pages/otp_method.html')
 
 #@csrf_exempt
 def otp_view(request):

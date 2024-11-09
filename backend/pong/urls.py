@@ -18,7 +18,6 @@ urlpatterns = [
     path('verifyemail/', views.verifyemail, name="email"),
     path('verifyemail/resendcode', views.send_code_verify_email, name='resend-code'),
     path('otp/', views.otp_view, name='otp'),
-    path('otpmethod/', views.otp_method, name='otp-method'),
     path('home/', views.home, name="home"),
     path('gamelocal/', views.gamelocal, name="gamelocal"),
     path('gameonline/', views.gameonline, name="gameonline"),
@@ -102,17 +101,13 @@ urlpatterns = [
 
     #! 2FA
     path('toggle-2fa/<int:user_id>', views.toogle2fa, name='toogle-2fa'),
-    path('otp/', views.otp_view, name='otp'),
-    path('otpmethod/', views.otp_method, name='opt-method'),
-
-
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/verify/', jwt_views.TokenVerifyView.as_view(), name='token_verify'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/blacklist/', jwt_views.TokenBlacklistView.as_view(), name='token_blacklist'), 
 
     path('tokencheck/', views.check_token, name='token-check'),
-
+    path('2fa/resendcode/', views.send_otp, name='resende-code-2fa'),
     #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
     path('debug/games/<int:game_id>', views.get_game, name='debug-get-game'),

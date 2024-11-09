@@ -34,8 +34,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 	console.log(data);
 
 	if (data.data.hasOwnProperty('otp')) {
-		history.pushState(null, '', `/otpmethod/`);
-		htmx.ajax('GET', `/otpmethod/`, {
+		history.pushState(null, '', `/otp/`);
+		htmx.ajax('GET', `/otp/`, {
 			target: '#main',
 		});
 	} else {
