@@ -1244,11 +1244,107 @@ def signin42(request):
 		client_id = settings.CLIENT_ID_A
 		uri = f'http://{request.get_host()}/home42/'
 		authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={uri}'
-		ic(authorization_url)
 		return HttpResponseRedirect(authorization_url)
 	
 	except Exception as e:
 		return HttpResponseRedirect('/') 
+
+# def login42(request):
+# 	authorization_code = request.GET.get('code')
+	
+# 	if authorization_code is None:
+# 		return JsonResponse({'error': 'Authorization code missing'}, status=400)
+
+# 	access_token = get_access_token(request.get_host(), authorization_code)
+# 	if access_token is None:
+# 		return JsonResponse({'error': 'Failed to get access token'}, status=400)
+
+
+# 	user_info = get_user_info(access_token)
+# 	if not user_info:
+# 		return JsonResponse({'error': 'Failed to get user info'}, status=400)
+
+
+# 	request.session['access_token'] = access_token
+# 	request.session['user_info'] = user_info
+
+# 	username = user_info.get('login')
+# 	id42 = user_info.get('id')
+	
+
+# 	searchuser = Users.objects.filter(user_42=id42)
+	
+
+# 	if searchuser.exists():
+# 		user = searchuser.first()
+# 		user = authenticate(username=user.username, password="password")
+# 		if user is not None:
+# 			user_tokens = user.tokens()
+# 			user.status = "Online"
+# 			user.save()
+# 			login(request, user)
+
+# 			response_data = {
+# 				'message': 'You are now logged in.',
+# 				'username': user.username,
+# 				'access_token': user_tokens.get('access'),
+# 				'refresh_token': user_tokens.get('refresh'),
+# 				'redirect_url': 'home'  # A URL para redirecionar após o login
+# 			}
+
+# 			response = JsonResponse(response_data, status=201)
+
+# 			response.set_cookie(
+# 				'refresh_token',
+# 				user_tokens.get('refresh'),
+# 				httponly=True, 
+# 				secure=True, 
+# 				samesite='Lax'
+# 			)
+
+# 			return response 
+			
+# 	else:
+# 		i = 0
+# 		original_username = username 
+# 		while Users.objects.filter(username=username).exists():
+# 			i += 1
+# 			username = f"{original_username}{i}"
+
+# 		myuser = Users.objects.create_user(username=username, password="password")
+# 		myuser.user_42 = id42
+# 		myuser.email = user_info.get('email')
+# 		myuser.picture = user_info.get('image', {}).get('versions', {}).get('medium')
+# 		myuser.save()
+
+# 		UserStats.objects.create(user_id=myuser)
+
+# 		user = authenticate(username=username, password="password")
+# 		if user is not None:
+# 			myuser.status = "Online"
+# 			myuser.save()
+# 			login(request, user)
+# 			response_data = {
+# 				'message': 'You are now logged in.',
+# 				'username': user.username,
+# 				'access_token': user_tokens.get('access'),
+# 				'refresh_token': user_tokens.get('refresh'),
+# 				'redirect_url': 'home'
+# 			}
+			
+# 			response = JsonResponse(response_data, status=201)
+
+# 			response.set_cookie(
+# 				'refresh_token',
+# 				user_tokens.get('refresh'),
+# 				httponly=True, 
+# 				secure=True, 
+# 				samesite='Lax'
+# 			)
+
+# 			return response
+
+# 	return JsonResponse({'error': 'User login failed'}, status=400)
 
 def login42(request):
 	authorization_code = request.GET.get('code')
@@ -1260,21 +1356,18 @@ def login42(request):
 	if access_token is None:
 		return JsonResponse({'error': 'Failed to get access token'}, status=400)
 
-
 	user_info = get_user_info(access_token)
 	if not user_info:
 		return JsonResponse({'error': 'Failed to get user info'}, status=400)
-
 
 	request.session['access_token'] = access_token
 	request.session['user_info'] = user_info
 
 	username = user_info.get('login')
 	id42 = user_info.get('id')
-	
 
+	# Verifique se o usuário já existe no banco de dados
 	searchuser = Users.objects.filter(user_42=id42)
-	
 
 	if searchuser.exists():
 		user = searchuser.first()
@@ -1285,32 +1378,21 @@ def login42(request):
 			user.save()
 			login(request, user)
 
-			response_data = {
-				'message': 'You are now logged in.',
-				'username': user.username,
-				'access_token': user_tokens.get('access'),
-				'refresh_token': user_tokens.get('refresh'),
-				'redirect_url': 'home'
-			}
-			
-			response = JsonResponse(response_data, status=201)
+			# Criação da URL com os parâmetros necessários para redirecionar o frontend
+			# redirect_url = f"{settings.BASE_URL}/home?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home"
+			redirect_url = request.build_absolute_uri(reverse('home') + f"?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home")
 
-			response.set_cookie(
-				'refresh_token',
-				user_tokens.get('refresh'),
-				httponly=True, 
-				secure=True, 
-				samesite='Lax'
-			)
-
-			return redirect('home')
+			# Redireciona o usuário para a URL com os tokens
+			return HttpResponseRedirect(redirect_url)
 	else:
+		# Caso o usuário não exista, crie um novo
 		i = 0
 		original_username = username 
 		while Users.objects.filter(username=username).exists():
 			i += 1
 			username = f"{original_username}{i}"
 
+		# Criação do novo usuário
 		myuser = Users.objects.create_user(username=username, password="password")
 		myuser.user_42 = id42
 		myuser.email = user_info.get('email')
@@ -1324,25 +1406,13 @@ def login42(request):
 			myuser.status = "Online"
 			myuser.save()
 			login(request, user)
-			response_data = {
-				'message': 'You are now logged in.',
-				'username': user.username,
-				'access_token': user_tokens.get('access'),
-				'refresh_token': user_tokens.get('refresh'),
-				'redirect_url': 'home'
-			}
-			
-			response = JsonResponse(response_data, status=201)
 
-			response.set_cookie(
-				'refresh_token',
-				user_tokens.get('refresh'),
-				httponly=True, 
-				secure=True, 
-				samesite='Lax'
-			)
+			# Criação da URL com os parâmetros necessários para redirecionar o frontend
+			# redirect_url = f"{settings.BASE_URL}/home?message=User%20created%20and%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home"
+			redirect_url = request.build_absolute_uri(reverse('home') + f"?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home")
 
-			return response
+			# Redireciona o usuário para a URL com os tokens
+			return HttpResponseRedirect(redirect_url)
 
 	return JsonResponse({'error': 'User login failed'}, status=400)
 

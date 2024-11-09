@@ -96,7 +96,7 @@ urlpatterns = [
 
     #! Oauth2.0
     path('userinfo', views.get_user_info, name='user-info'),
-    path('signin42', views.signin42, name='signin42'),
+    path('signin42/', views.signin42, name='signin42'),
     path('home42/', views.login42, name='login42'),
 
     #! 2FA

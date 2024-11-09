@@ -4,6 +4,7 @@
 {% block body %}
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
     <script defer src="{% static 'js/signup.js' %}"></script>
+    <script defer src="{% static 'js/login42.js' %}"></script>
     <div class="login-container">
         <div class="login-container2">
             <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
@@ -38,7 +39,9 @@
                 <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
                 <div id="login42">
                     <a href="{% url 'signin42' %}">
-                        <button type="submit2"><img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42</button>
+                        <button type="submit2">
+                            <img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42
+                        </button>
                     </a>
                 </div>
                 <p> Do you already have an account? <a class="sign-up" 
