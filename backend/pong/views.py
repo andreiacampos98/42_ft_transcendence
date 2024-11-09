@@ -1303,7 +1303,7 @@ def login42(request):
 				samesite='Lax'
 			)
 
-			return response
+			return redirect('home')
 	else:
 		i = 0
 		original_username = username 
