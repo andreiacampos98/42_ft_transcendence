@@ -493,6 +493,37 @@ def accept_friend(request, user1_id, user2_id):
 		return JsonResponse(response_data, status=200)
 	return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
+
+def decline_friend(request, user1_id, user2_id):
+	token_valid = validate_token(request)
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
+	if token_valid is None:
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
+		if new_token is None:
+			ic("invalid token")
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
+		
+	if request.method == 'PATCH':
+		friendship = Friends.objects.filter(
+			(Q(user1_id=user1_id, user2_id=user2_id) | Q(user1_id=user2_id, user2_id=user1_id))
+		).first()
+
+		if not friendship:
+			return JsonResponse({'message': 'Friendship does not exist.', 'access_token': new_token}, status=404)
+			
+		friendship.delete()
+		user1 = get_object_or_404(Users, id=user1_id)
+		user2 = get_object_or_404(Users, id=user2_id)
+		notification = Notifications.objects.create(type='Accepted Friend Request', status='Pending', description=' has decline your friend request!', user_id = user2, other_user_id = user1)
+		notification.save()
+		response_data = {
+			'message': 'User decline the request.',
+			'access_token': new_token,
+		}
+		return JsonResponse(response_data, status=200)
+	return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
+
 #! --------------------------- Notifications ----------------------------------
 
 def get_user_notifications(request, user_id):
