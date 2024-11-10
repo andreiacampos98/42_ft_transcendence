@@ -28,7 +28,7 @@ async function submitCode(event) {
         }
     } else {
         const errorData = await response.json();
-        document.getElementById('errorMessage').textContent = errorData.error;  
+        document.getElementById('errorMessage').textContent = errorData.message;  
         document.getElementById('errorMessage').style.display = 'block';
     }
 }

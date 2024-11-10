@@ -1,38 +1,27 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from rest_framework.exceptions import NotAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import InvalidToken
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-from django.contrib import messages
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
 from rest_framework.parsers import JSONParser 
 from django.urls import reverse
 from django.core.mail import send_mail
 
-from django.contrib.auth.hashers import make_password 
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from datetime import datetime
 from django.utils import timezone
 from datetime import timedelta
-from urllib.parse import quote, unquote
+from urllib.parse import unquote
 from django.db.models.functions import TruncDay
-import os
 import pyotp
-import json, requests, os
+import json, requests
 from icecream import ic
 from .models import Users
-import pprint  
-import socket
 # Since we want to create an API endpoint for reading, creating, and updating 
 # Company objects, we can use Django Rest Framework mixins for such actions.
-from rest_framework import status
 
 from django.db.models import Q, Count, Case, When, IntegerField
 from django.http import JsonResponse, HttpResponseRedirect
@@ -95,8 +84,8 @@ def check_token(request):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
+	token_valid = validate_token(request)	
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
-	token_valid = validate_token(request)
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -202,6 +191,8 @@ def verifyemail(request):
 				ic(totp1)
 				ic(totp1.verify(code))
 				if totp1.verify(code):
+					if Users.objects.filter(username=username).exists():
+						return JsonResponse({'message': 'Username already exists! Please try another username.'}, status=400)
 					myuser = Users.objects.create_user(username=username, password=password1)
 					myuser.email = email
 					myuser.save()
@@ -237,18 +228,18 @@ def verifyemail(request):
 							samesite='Lax'   
 						)
 						return response
-					return JsonResponse({'error': 'Can\'t create the user'}, status=400)
+					return JsonResponse({'message': 'Can\'t create the user'}, status=400)
 				else:
-					return JsonResponse({'error': 'Invalid code'}, status=400)
+					return JsonResponse({'message': 'Invalid code'}, status=400)
 			else:
-				return JsonResponse({'error': 'Code has expired'}, status=400)
+				return JsonResponse({'message': 'Code has expired'}, status=400)
 		else:
-			return JsonResponse({'error': 'Ups, something went wrong'}, status=400)
+			return JsonResponse({'message': 'Ups, something went wrong'}, status=400)
 	return render(request, 'pages/verifyemail.html')
 
 def user_update(request, pk):
 	token_valid = validate_token(request)
-	new_token = request.headers['Authorization'].replace('Bearer ', '').replace('Bearer ', '')
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -301,7 +292,7 @@ def user_update(request, pk):
 
 def user_password(request, pk):
 	token_valid = validate_token(request)
-	new_token = request.headers['Authorization'].replace('Bearer ', '').replace('Bearer ', '')
+	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
 		new_token = refresh_token(request)
 		if new_token is None:
@@ -1085,9 +1076,9 @@ def tournament_list_games(request, tournament_id):
 		except Games.DoesNotExist:
 			return JsonResponse({'message': 'Game not found', 'access_token': new_token}, status=404)
 		except Users.DoesNotExist as e:
-			return JsonResponse({'message': 'User not found', 'error': str(e), 'access_token': new_token}, status=404)
+			return JsonResponse({'message': 'User not found', 'message': str(e), 'access_token': new_token}, status=404)
 		except Exception as e:
-			return JsonResponse({'message': 'An error occurred', 'error': str(e), 'access_token': new_token}, status=500)
+			return JsonResponse({'message': 'An error occurred', 'message': str(e), 'access_token': new_token}, status=500)
 
 	return JsonResponse({'games': tgames_list, 'access_token': new_token}, safe=False)
 
@@ -1249,116 +1240,19 @@ def signin42(request):
 	except Exception as e:
 		return HttpResponseRedirect('/') 
 
-# def login42(request):
-# 	authorization_code = request.GET.get('code')
-	
-# 	if authorization_code is None:
-# 		return JsonResponse({'error': 'Authorization code missing'}, status=400)
-
-# 	access_token = get_access_token(request.get_host(), authorization_code)
-# 	if access_token is None:
-# 		return JsonResponse({'error': 'Failed to get access token'}, status=400)
-
-
-# 	user_info = get_user_info(access_token)
-# 	if not user_info:
-# 		return JsonResponse({'error': 'Failed to get user info'}, status=400)
-
-
-# 	request.session['access_token'] = access_token
-# 	request.session['user_info'] = user_info
-
-# 	username = user_info.get('login')
-# 	id42 = user_info.get('id')
-	
-
-# 	searchuser = Users.objects.filter(user_42=id42)
-	
-
-# 	if searchuser.exists():
-# 		user = searchuser.first()
-# 		user = authenticate(username=user.username, password="password")
-# 		if user is not None:
-# 			user_tokens = user.tokens()
-# 			user.status = "Online"
-# 			user.save()
-# 			login(request, user)
-
-# 			response_data = {
-# 				'message': 'You are now logged in.',
-# 				'username': user.username,
-# 				'access_token': user_tokens.get('access'),
-# 				'refresh_token': user_tokens.get('refresh'),
-# 				'redirect_url': 'home'  # A URL para redirecionar após o login
-# 			}
-
-# 			response = JsonResponse(response_data, status=201)
-
-# 			response.set_cookie(
-# 				'refresh_token',
-# 				user_tokens.get('refresh'),
-# 				httponly=True, 
-# 				secure=False, 
-# 				samesite='Lax'
-# 			)
-
-# 			return response 
-			
-# 	else:
-# 		i = 0
-# 		original_username = username 
-# 		while Users.objects.filter(username=username).exists():
-# 			i += 1
-# 			username = f"{original_username}{i}"
-
-# 		myuser = Users.objects.create_user(username=username, password="password")
-# 		myuser.user_42 = id42
-# 		myuser.email = user_info.get('email')
-# 		myuser.picture = user_info.get('image', {}).get('versions', {}).get('medium')
-# 		myuser.save()
-
-# 		UserStats.objects.create(user_id=myuser)
-
-# 		user = authenticate(username=username, password="password")
-# 		if user is not None:
-# 			myuser.status = "Online"
-# 			myuser.save()
-# 			login(request, user)
-# 			response_data = {
-# 				'message': 'You are now logged in.',
-# 				'username': user.username,
-# 				'access_token': user_tokens.get('access'),
-# 				'refresh_token': user_tokens.get('refresh'),
-# 				'redirect_url': 'home'
-# 			}
-			
-# 			response = JsonResponse(response_data, status=201)
-
-# 			response.set_cookie(
-# 				'refresh_token',
-# 				user_tokens.get('refresh'),
-# 				httponly=True, 
-# 				secure=False, 
-# 				samesite='Lax'
-# 			)
-
-# 			return response
-
-# 	return JsonResponse({'error': 'User login failed'}, status=400)
-
 def login42(request):
 	authorization_code = request.GET.get('code')
 	
 	if authorization_code is None:
-		return JsonResponse({'error': 'Authorization code missing'}, status=400)
+		return JsonResponse({'message': 'Authorization code missing'}, status=400)
 
 	access_token = get_access_token(request.get_host(), authorization_code)
 	if access_token is None:
-		return JsonResponse({'error': 'Failed to get access token'}, status=400)
+		return JsonResponse({'message': 'Failed to get access token'}, status=400)
 
 	user_info = get_user_info(access_token)
 	if not user_info:
-		return JsonResponse({'error': 'Failed to get user info'}, status=400)
+		return JsonResponse({'message': 'Failed to get user info'}, status=400)
 
 	request.session['access_token'] = access_token
 	request.session['user_info'] = user_info
@@ -1403,6 +1297,7 @@ def login42(request):
 
 		user = authenticate(username=username, password="password")
 		if user is not None:
+			user_tokens = myuser.tokens()
 			myuser.status = "Online"
 			myuser.save()
 			login(request, user)
@@ -1414,7 +1309,7 @@ def login42(request):
 			# Redireciona o usuário para a URL com os tokens
 			return HttpResponseRedirect(redirect_url)
 
-	return JsonResponse({'error': 'User login failed'}, status=400)
+	return JsonResponse({'message': 'User login failed'}, status=400)
 
 #! --------------------------------------- 2FA ---------------------------------------
 
@@ -1542,6 +1437,10 @@ def otp_view(request):
 		otp_secret_key = request.session.get('otp_secret_key')
 		otp_valid_date = request.session.get('otp_valid_date')
 
+		ic(otp)
+		ic(otp_secret_key)
+		ic(otp_valid_date)
+
 		if otp_secret_key and otp_valid_date is not None:
 			valid_date = datetime.fromisoformat(otp_valid_date)
 			if valid_date > datetime.now():
@@ -1571,11 +1470,11 @@ def otp_view(request):
 
 					return response
 				else:
-					return JsonResponse({'error': 'Invalid one-time password'}, status=400)
+					return JsonResponse({'message': 'Invalid one-time password'}, status=400)
 			else:
-				return JsonResponse({'error': 'One-time password has expired'}, status=400)
+				return JsonResponse({'message': 'One-time password has expired'}, status=400)
 		else:
-			return JsonResponse({'error': 'Ups, something went wrong'}, status=400)
+			return JsonResponse({'message': 'Ups, something went wrong'}, status=400)
 
 	return render(request, 'pages/otp.html')
 

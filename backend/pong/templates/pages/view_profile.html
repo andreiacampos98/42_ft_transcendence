@@ -200,7 +200,7 @@
 						</h5>
 						<h5 class="text-block d-flex">{{ joined_date }}</h5>
 					</div>
-					{% if is_own_profile %}
+					{% if is_own_profile and user_view.user_42 is None %}
 						<div class="two-factor d-flex justify-content-between align-items-center" style="padding-top: 10px;">
 							<h5 class="text-block d-flex" style="font-weight: bolder; font-size: medium;"> 
 								Enable 2FA (2-Factor Authentication)
