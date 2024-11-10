@@ -1,22 +1,22 @@
 async function checkTokenBeforeNavigation(event) {
     let token = localStorage.getItem("access_token");
-    const response = await fetch(`/tokencheck/`, {
+    const response = await fetch(`/checktoken/`, {
         method: 'GET',
         headers: {
-            "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
+            "Authorization": token ? `Bearer ${token}` : "",
         }
     });
-    const data = await response.json();
-	if (!response.ok && response.status != 401){
-        localStorage.setItem("access_token", data.access_token); 
-		console.error(`Error checking token.`);
+
+    if (response.ok) {
+        const data = await response.json();
+        if (data.access_token) {
+            localStorage.setItem("access_token", data.access_token);
+        }
+    } else {
+        alert("Your session has expired. Redirecting to login.");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        // Redirect to login page
+        window.location.href = '/';
     }
-    else if(response.status == 401){
-        alert("As your session has expired, you will be logged out.");
-        history.pushState(null, '', `/`);
-        htmx.ajax('GET', `/`, {
-            target: '#main'
-        });
-    }
-    localStorage.setItem("access_token", data.access_token); 
 }

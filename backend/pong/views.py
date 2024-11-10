@@ -1,6 +1,11 @@
 from django.shortcuts import render, get_object_or_404
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from django.urls import reverse
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView
+
 from rest_framework_simplejwt.exceptions import InvalidToken
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -45,54 +50,60 @@ total_phase_matches = dict(zip(
 
 
 def validate_token(request):
-	ic(request.headers.get("Authorization", "Authorization header missing"))
-	jwt_authenticator = JWTAuthentication()
-
-	try:
-		ic('BEFORE')
-		auth_result = jwt_authenticator.authenticate(request)
-		ic(auth_result)
-		ic('MIDDLE')
-		if auth_result is None:
-			return None
-		ic('AFTER')
-		user, validated_token = auth_result 
-		return user
-	except InvalidToken as e:
-		ic("Token inválido:", str(e))
-	except Exception as e:
-		ic("Erro desconhecido:", str(e))
+    """Validates the access token in the request headers."""
+    jwt_authenticator = JWTAuthentication()
+    try:
+        auth_result = jwt_authenticator.authenticate(request)
+        if auth_result is None:
+            return None
+        user, validated_token = auth_result
+        return user
+    except InvalidToken as e:
+        ic("Invalid Token:", str(e))
+    except Exception as e:
+        ic("Unknown error:", str(e))
 
 
-def refresh_token(request):
-	refresh_url = reverse('token_refresh')
-	refresh_token = request.COOKIES.get('refresh_token')
-	ic(refresh_token)
-	ic(refresh_url)
-	response = requests.post(
-		request.build_absolute_uri(refresh_url),
-		data={'refresh': refresh_token}
-	)
-
-	if response.status_code == 200:
-		ic(response.json()['access'])
-		return response.json()['access']  
-	return None
+def refresh_access_token(refresh_token):
+    """Refreshes the access token using Django's JWT logic."""
+    try:
+        refresh = RefreshToken(refresh_token)
+        new_access_token = str(refresh.access_token)
+        return new_access_token
+    except Exception as e:
+        ic("Failed to refresh token:", str(e))
+        return None
 
 
+@api_view(['GET'])
 def check_token(request):
-	if request.method != 'GET':
-		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
-
-	token_valid = validate_token(request)	
-	new_token = request.headers['Authorization'].replace('Bearer ', '')
-	if token_valid is None:
-		new_token = refresh_token(request)
-		if new_token is None:
-			ic("invalid token")
-			return JsonResponse({'message': "Invalid refresh token"}, status=401)
-	return JsonResponse({'message': 'The token is valid.', 'access_token': new_token}, status=200)
-
+    jwt_authenticator = JWTAuthentication()
+    token_valid = None
+    
+    # Step 1: Attempt to authenticate the token
+    try:
+        auth_result = jwt_authenticator.authenticate(request)
+        if auth_result:
+            user, validated_token = auth_result
+            token_valid = True 
+    except Exception as e:
+        # Token is likely invalid
+        token_valid = False
+    
+    # Step 2: Refresh the token if invalid
+    if not token_valid:
+        refresh_token_value = request.COOKIES.get('refresh_token')
+        
+        if refresh_token_value:
+            refresh = RefreshToken(refresh_token_value)
+            new_access_token = str(refresh.access_token)
+            response_data = {'access_token': new_access_token}
+            return Response(response_data)
+        else:
+            return Response({'error': 'Refresh token not found or expired.'}, status=401)
+    
+    # Step 3: If the token is valid, return a confirmation response
+    return Response({'message': 'The token is valid.'})
 
 #! --------------------------------------- Users ---------------------------------------
 
@@ -237,11 +248,13 @@ def verifyemail(request):
 			return JsonResponse({'message': 'Ups, something went wrong'}, status=400)
 	return render(request, 'pages/verifyemail.html')
 
+
 def user_update(request, pk):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
 			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
@@ -294,8 +307,10 @@ def user_password(request, pk):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
+			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 
 	if request.method == 'POST':
@@ -329,8 +344,10 @@ def search_suggestions(request):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
+			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	term = request.GET.get('term', '')
@@ -364,9 +381,11 @@ def get_user_friends(request, user_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			return JsonResponse({'message': "Invalid refresh token", 'access_token': new_token}, status=401)
+			ic("invalid token")
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'GET':
 		friends = Friends.objects.filter(
@@ -385,8 +404,10 @@ def add_remove_friend(request, user1_id, user2_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
+			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'POST':
@@ -434,8 +455,10 @@ def accept_friend(request, user1_id, user2_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
+			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'PATCH':
@@ -468,8 +491,10 @@ def get_user_notifications(request, user_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
+			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'GET':
@@ -487,9 +512,11 @@ def delete_user_notification(request, user_id, notif_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			return JsonResponse({'message': "Invalid refresh token", 'access_token': new_token}, status=401)
+			ic("invalid token")
+			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 
 	if request.method == 'DELETE':
 		notifications = Notifications.objects.filter(Q(user_id = user_id) & Q( id = notif_id))
@@ -506,8 +533,10 @@ def update_notification(request, notif_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
+			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 
 	if request.method == 'PATCH':
@@ -841,7 +870,8 @@ def tournament_create(request):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
 			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
@@ -926,7 +956,8 @@ def tournament_join(request, tournament_id, user_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
 			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
@@ -1004,7 +1035,8 @@ def tournament_leave(request, tournament_id, user_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
 			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
@@ -1047,7 +1079,8 @@ def tournament_list_games(request, tournament_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
 			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
@@ -1342,8 +1375,10 @@ def toggle2fa(request, user_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
 	if token_valid is None:
-		new_token = refresh_token(request)
+		refresh_token = request.COOKIES.get('refresh_token')
+		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
+			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'POST':
