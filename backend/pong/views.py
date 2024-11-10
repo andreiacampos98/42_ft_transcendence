@@ -75,35 +75,43 @@ def refresh_access_token(refresh_token):
         return None
 
 
-@api_view(['GET'])
 def check_token(request):
-    jwt_authenticator = JWTAuthentication()
-    token_valid = None
-    
-    # Step 1: Attempt to authenticate the token
-    try:
-        auth_result = jwt_authenticator.authenticate(request)
-        if auth_result:
-            user, validated_token = auth_result
-            token_valid = True 
-    except Exception as e:
-        # Token is likely invalid
-        token_valid = False
-    
-    # Step 2: Refresh the token if invalid
-    if not token_valid:
-        refresh_token_value = request.COOKIES.get('refresh_token')
-        
-        if refresh_token_value:
-            refresh = RefreshToken(refresh_token_value)
-            new_access_token = str(refresh.access_token)
-            response_data = {'access_token': new_access_token}
-            return Response(response_data)
-        else:
-            return Response({'error': 'Refresh token not found or expired.'}, status=401)
-    
-    # Step 3: If the token is valid, return a confirmation response
-    return Response({'message': 'The token is valid.'})
+	if request.method == 'GET':
+		ic("check")
+		jwt_authenticator = JWTAuthentication()
+		token_valid = None
+
+		# Step 1: Attempt to authenticate the token
+		try:
+			auth_result = jwt_authenticator.authenticate(request)
+			if auth_result:
+				user, validated_token = auth_result
+				token_valid = True 
+		except Exception as e:
+			# Token is likely invalid
+			token_valid = False
+		ic(token_valid)
+		# Step 2: Refresh the token if invalid
+		if not token_valid:
+			ic(token_valid)
+			ic("aqui1")
+			refresh_token_value = request.COOKIES.get('refresh_token')
+			
+			if refresh_token_value:
+				try:
+					ic("aqui")
+					refresh = RefreshToken(refresh_token_value)
+					new_access_token = str(refresh.access_token)
+					response_data = {'access_token': new_access_token}
+					return JsonResponse(response_data, status=200)
+				except Exception as e:
+					return JsonResponse({'message': 'Failed to refresh token.'}, status=401)
+			else:
+				return JsonResponse({'message': 'Refresh token not found or expired.'}, status=401)
+
+		# Step 3: If the token is valid, return a confirmation response
+		return JsonResponse({'message': 'The token is valid.'}, status=200)
+	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
 #! --------------------------------------- Users ---------------------------------------
 
