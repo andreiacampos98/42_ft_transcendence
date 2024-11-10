@@ -1718,8 +1718,8 @@ def profile(request, id):
 	graph = win_rate_nb_games_day(request, user_profile.id)
 	graph_send = json.loads(graph.content)
 	
-	games = Games.objects.filter(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id),
-		).exclude(type="Tournament").order_by('-created_at')
+	games = Games.objects.filter((Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id))
+		).exclude(duration=0).exclude(type="Tournament").order_by('-created_at')
 
 	if games.count() != 0:
 		last_game_date = games.first().created_at
