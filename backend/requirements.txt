@@ -11,3 +11,10 @@ django-bootstrap4
 channels_redis
 requests
 python-dotenv
+django-crispy-forms
+crispy-bootstrap4
+django-otp
+pyotp
+djangorestframework_simplejwt
+PyJWT
+django-cors-headers

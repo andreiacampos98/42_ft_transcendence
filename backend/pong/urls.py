@@ -1,19 +1,23 @@
 from django.urls import path, include, re_path
+from rest_framework_simplejwt import views as jwt_views
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from rest_framework.routers import DefaultRouter
-from . import views
 from . import consumers
-
+from . import views
 # Routers provide an easy way of automatically determining the URL conf.
 #router = DefaultRouter()
 #router.register('users', UsersViewSet)
+
 
 
 urlpatterns = [
 
     #! Pages
     path('', views.loginview, name="login"),
+    path('verifyemail/', views.verifyemail, name="email"),
+    path('verifyemail/resendcode', views.send_code_verify_email, name='resend-code'),
+    path('otp/', views.otp_view, name='otp'),
     path('home/', views.home, name="home"),
     path('gamelocal/', views.gamelocal, name="gamelocal"),
     path('gameonline/', views.gameonline, name="gameonline"),
@@ -92,9 +96,17 @@ urlpatterns = [
 
     #! Oauth2.0
     path('userinfo', views.get_user_info, name='user-info'),
-    path('signin42', views.signin42, name='signin42'),
+    path('signin42/', views.signin42, name='signin42'),
     path('home42/', views.login42, name='login42'),
-    
+
+    #! 2FA
+    path('toggle-2fa/<int:user_id>', views.toggle2fa, name='toggle-2fa'),
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/verify/', jwt_views.TokenVerifyView.as_view(), name='token_verify'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/blacklist/', jwt_views.TokenBlacklistView.as_view(), name='token_blacklist'), 
+    path('checktoken/', views.check_token, name='check_token'),
+    path('2fa/resendcode/', views.send_otp, name='resende-code-2fa'),
     #! Debug
     path('tournaments', views.tournament_list, name='tournament-list'),
     path('debug/games/<int:game_id>', views.get_game, name='debug-get-game'),

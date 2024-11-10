@@ -9,10 +9,13 @@
             <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
             <h3 class="title" id="nice" >Welcome to our platform</h3>
             <form id="signupForm">
-                {% csrf_token %}
                 <div class="input-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" placeholder="Email" required>
                 </div>
                 <div class="input-group password-group">
                     <label id= "password2" for="password">New Password</label>
@@ -35,7 +38,9 @@
                 <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
                 <div id="login42">
                     <a href="{% url 'signin42' %}">
-                        <button type="submit2"><img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42</button>
+                        <button type="submit2">
+                            <img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42
+                        </button>
                     </a>
                 </div>
                 <p> Do you already have an account? <a class="sign-up" 
@@ -45,7 +50,7 @@
                     hx-push-url="true"        
                     >Log in</a></p>
                 <br>
-                <h6>© 42 Porto 2024</h6>
+                <h6 style="margin-bottom:0px">© 42 Porto 2024</h6>
             </div>
         </div>
     </div>

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta 
 
 from dotenv import load_dotenv
 
@@ -41,8 +42,8 @@ SECRET_KEY = 'django-insecure-b4amhal1@gob1$prnqgr*chry7pneej76qsy^p+5$m!w&#$qyy
 DEBUG = True
 
 
-LOGOUT_REDIRECT_URL = "login"
-LOGIN_REDIRECT_URL = ''
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 
 ALLOWED_HOSTS = ['*']
@@ -58,12 +59,13 @@ SESSION_SAVE_EVERY_REQUEST = True  # Salva a sessão em cada request, opcional
 SESSION_COOKIE_SECURE = False  # Deve ser True em produção, requer HTTPS
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Define se a sessão expira ao fechar o navegador
 
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = True
+
 # Application definition
 
 INSTALLED_APPS = [
     'daphne',
+    'crispy_forms',
+    'crispy_bootstrap4',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -72,6 +74,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework', #django rest framework
     'rest_framework_swagger',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_static',
     'drf_yasg',
     "pong",
     'bootstrap4',
@@ -80,11 +88,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_otp.middleware.OTPMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -131,15 +140,18 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = { 
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    # ]
-    #  For a quick way to limit permissions to authenticated users, we add the following to our settings file:
-    # 'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',)
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' 
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=60),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 
 # Password validation
@@ -190,7 +202,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'andreiacampos98.15@gmail.com'
-EMAIL_HOST_PASSWORD = 'nfvzbxadhvgzfgpq'
+EMAIL_HOST_PASSWORD = 'uwgk hbmf sera vxch'
 
 
 # Default primary key field type

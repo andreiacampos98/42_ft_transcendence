@@ -4,11 +4,9 @@ document.querySelectorAll('.open-register-tournament-modal').forEach(button => {
         console.log(tournamentId)
         var userId = document.getElementById('registration').getAttribute('data-user-id');
         
-        // Defina o atributo do ID do torneio no botão de confirmação dentro do modal
         var confirmButton = document.getElementById('registration');
         confirmButton.setAttribute('data-tournament-id', tournamentId);
         
-        // Agora abra o modal
         var modal = document.getElementById('modal');
         modal.style.display = 'block';
     });
@@ -30,22 +28,18 @@ window.onclick = function(event) {
   }
 }
 
-// fazer fetch(tournaments/<int:tournament_id>/users/<int:user_id>/join)
-//com a resposta do fetch anterior vou enviar para socket atraves do send ou fetch(ws/tournaments/${tournament_id})
-
 async function registerTournament() {
+    let token = localStorage.getItem("access_token");
     var tournamentId = document.getElementById("registration").getAttribute("data-tournament-id");
     var userId = document.getElementById("registration").getAttribute("data-user-id");
     const checkbox = document.getElementById('use-usernamejoin-checkbox');
 
     var alias;
-    if(checkbox.checked)
-    {
+    if(checkbox.checked){
       alias = document.getElementById("nickname-input-join").getAttribute('data-user-username');
     } else {
       alias = document.getElementById("nickname-input-join").value;
     }
-    // Prepare form data and send via fetch API
     var formData = {
         "alias": alias
     };
@@ -57,7 +51,7 @@ async function registerTournament() {
             body: JSON.stringify(formData),
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
             }
         })
         const data = await response.json();
@@ -67,12 +61,20 @@ async function registerTournament() {
         if (response.ok) {
             localStorage.setItem('alias', formData.alias);
             localStorage.setItem('tournament_id', tournamentId);
+            localStorage.setItem('access_token', data.access_token);
             history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
             htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
                 target: '#main'  
             });
+        } else if (!response.ok && response.status == 401) {
+            alert("As your session has expired, you will be logged out.");
+            history.pushState(null, '', `/`);
+            htmx.ajax('GET', `/`, {
+                target: '#main'
+            });
         } else {
             alert("Registration failed: " + (data.message || 'Unknown error'));
+            localStorage.setItem('access_token', data.access_token);
         }
     } catch (error) {
         console.error('Error:', error);

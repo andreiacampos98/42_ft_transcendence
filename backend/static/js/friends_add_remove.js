@@ -1,55 +1,68 @@
-function friends_add(event, userId1, userId2) {
+async function friends_add(event, userId1, userId2) {
     event.preventDefault(); 
+    let token = localStorage.getItem("access_token");
 
-    fetch(`/friends/${userId1}/${userId2}`, {
+    const response = await fetch(`/friends/${userId1}/${userId2}`, {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
         },
         body: JSON.stringify({
             'user1_id': userId1,
             'user2_id': userId2
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (JSON.stringify(data.data) === '{}') {
-            alert(data.message);
-        } else {
-            alert(data.message);
-            window.location.reload();
-            // Optionally, you might want to update the UI here
-        }
-    })
-    .catch(error => console.error('Error:', error));
+    });
 
-    return false; // Prevent form submission
+	const data = await response.json();
+	if (!response.ok && response.status != 401){
+        localStorage.setItem('access_token', data.access_token);
+		alert(data.message)
+    }
+    else if (!response.ok && response.status == 401) {
+		alert("As your session has expired, you will be logged out.");
+		history.pushState(null, '', `/`);
+		htmx.ajax('GET', `/`, {
+			target: '#main'
+		});
+	}
+	else{
+        localStorage.setItem('access_token', data.access_token);
+		window.location.reload();
+    }
+		
+    return false;
 }
 
-function friends_remove(event, userId1, userId2) {
+async function friends_remove(event, userId1, userId2) {
     event.preventDefault(); 
-    fetch(`/friends/${userId1}/${userId2}`, {
+    let token = localStorage.getItem("access_token");
+    const response = await fetch(`/friends/${userId1}/${userId2}`, {
         method: 'DELETE',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (JSON.stringify(data.data) === '{}') {
-            alert(data.message);
-        } else {
-            alert(data.message);
-            window.location.reload();
-            // Optionally, you might want to update the UI here
-            // For example, you might remove the friend from the UI or refresh the friend list
-        }
-    })
-    .catch(error => console.error('Error:', error));
+    });
 
-    return false; // Prevent form submission
+	const data = await response.json();
+    if (!response.ok && response.status != 401){
+        localStorage.setItem('access_token', data.access_token);
+		alert(data.message)
+    }
+    else if (!response.ok && response.status == 401) {
+		alert("As your session has expired, you will be logged out.");
+		history.pushState(null, '', `/`);
+		htmx.ajax('GET', `/`, {
+			target: '#main'
+		});
+	}
+	else{
+        localStorage.setItem('access_token', data.access_token);
+		window.location.reload();
+    }
+	
+    return false;
 }

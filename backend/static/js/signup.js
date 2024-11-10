@@ -16,40 +16,38 @@ function togglereconfirmButton() {
     togglereconfirmImage.src = type === 'password' ? "/static/assets/icons/eyeopen.png" : "/static/assets/icons/eyeclosed(1).png";
     togglereconfirmImage.alt = type === 'password' ? 'Show Password' : 'Hide Password';
 }
+var s_email;
+var s_username;
+var s_password;
 
-document.getElementById('signupForm').addEventListener('submit', function(event) {
+document.getElementById('signupForm').addEventListener('submit', async function(event) {
     event.preventDefault(); 
 
     const formData = {
         username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
         password: document.getElementById('password').value,
         reconfirm: document.getElementById('reconfirm').value
     };
-
-    fetch(`/users/create`, {
+    s_email = formData.email;
+    s_username = formData.username;
+    s_password = formData.password;
+    const response = await fetch(`/users/create`, {
         method: 'POST',
         body: JSON.stringify(formData),
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
-    })
-    .then(response => response.json()) 
-    .then(data => {
-        if (JSON.stringify(data.data) === '{}') {
-            console.log('Login in failed');
-            errorMessage.textContent = data.message;
-            errorMessage.style.display = 'block';
-        } else {
-            console.log('Login in successful');
-            htmx.ajax('GET', `/home/`, {
-                target: '#main'  
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        errorMessage.textContent = 'An unexpected error occurred. Please try again later.';
-        errorMessage.style.display = 'block';
     });
+	const data = await response.json();
+	if (!response.ok) {
+		console.log('Login in failed');
+		errorMessage.textContent = data.message;
+		errorMessage.style.display = 'block';
+		return ;
+	}
+    history.pushState(null, '', `/verifyemail/`);
+	htmx.ajax('GET', `/verifyemail/`, {
+		target: '#main'  
+	});
 });

@@ -15,11 +15,8 @@ function onEditButtonClick() {
             const reader = new FileReader();
 
             reader.onload = function(e) {
-                // Define o src da imagem de pré-visualização
                 document.getElementById('profile-picture-preview').src = e.target.result;
             }
-
-            // Lê o arquivo como uma URL de dados
             reader.readAsDataURL(file);
         } 
     });
@@ -38,27 +35,36 @@ function onCancelButtonClick() {
     document.getElementById("open-change-password-modal").style.display = "block";
 }
 
-function onSaveButtonClick(event, userId) {
+async function onSaveButtonClick(event, userId) {
     event.preventDefault(); 
     const formData = new FormData(document.getElementById("edit-profile-form"));
+    let token = localStorage.getItem("access_token");
 
-    fetch(`/users/${userId}/update`, {
+    const response = await fetch(`/users/${userId}/update`, {
         method: "POST",
         body: formData,
         headers: {
-            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (JSON.stringify(data.data) === '{}') {
-            alert(data.message);
-        } else {
-            history.pushState(null, '', `/users/${userId}`);
-            htmx.ajax('GET', `/users/${userId}`, {
-                target: '#main'  
-            });
-        }
-    })
-    .catch(error => console.error('Error:', error));
+    });
+	const data = await response.json();
+
+	if (response.status != 201 && response.status != 401){
+        localStorage.setItem('access_token', data.access_token);
+		alert(data.message);
+    }
+    else if (response.status == 401) {
+		alert("As your session has expired, you will be logged out.");
+		history.pushState(null, '', `/`);
+		htmx.ajax('GET', `/`, {
+			target: '#main'
+		});
+	}
+	else {
+        localStorage.setItem('access_token', data.access_token);
+		history.pushState(null, '', `/users/${userId}`);
+		htmx.ajax('GET', `/users/${userId}`, {
+			target: '#main'  
+		});
+	}
 }
