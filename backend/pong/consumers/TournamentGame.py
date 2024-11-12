@@ -39,12 +39,12 @@ class TournamentGameConsumer(WebsocketConsumer):
 		handlers = {
 			'UPDATE': 'send.update.paddle.message',
 			'SYNC': 'send.ball.sync.message',
-			'FINISH': 'send.end.game.message'
+			'GAME_END': 'send.end.game.message'
 		}
 		data = json.loads(text_data)
 		event = data['event']
 
-		if event == 'FINISH':
+		if event == 'GAME_END':
 			game_data = data['data']
 			del game_data['id']
 			tournament_update_game_helper(self.tournament_id, self.game_id, game_data)

@@ -68,7 +68,7 @@ export class RemoteGameController extends AbstractGameController {
 				this.players[data.id].move(data.y);
 			else if (event == 'SYNC')
 				this.ball.sync(data.ball);
-			else if (event == 'FINISH'){
+			else if (event == 'GAME_END'){
 				this.gameSocket.close();
 				setTimeout(() => {
 					htmx.ajax('GET', `/tournaments/ongoing/${user.tournamentID}`, {
@@ -109,7 +109,7 @@ export class RemoteGameController extends AbstractGameController {
 		console.log('SENDING DATA TO SERVER...');
 
 		this.gameSocket.send(JSON.stringify({
-			'event': 'FINISH',
+			'event': 'GAME_END',
 			'data': results
 		}));
 		
@@ -117,7 +117,7 @@ export class RemoteGameController extends AbstractGameController {
 			return ;
 
 		this.tournamentSocket.send(JSON.stringify({
-			'event': 'FINISH',
+			'event': 'GAME_END',
 			'data': results
 		}));
 	}

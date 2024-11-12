@@ -66,11 +66,7 @@ export class AbstractGameController extends THREE.Group {
 			return ;
 
 		this.cleanArena();
-		
-		if ((this.type == "Remote" && this.stats.winner.id == CURR_PLAYER_ID) || 
-			(this.type != "Remote" && this.stats.isGameOver())){
-			this.sendGameResults();
-		}
+		this.sendGameResults();
 	}
 
 	cleanArena() {
