@@ -45,12 +45,15 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	async def disconnect(self, code):
 		#! IMPORTANT Use tournament_leave handler to remote the user from the database
-		# if self.tournament and self.user.id in self.tournament['users']:
-		# 	del self.tournament['users'][self.user.id]
 
-		# if self.tournament_id in self.active_tournaments and len(self.tournament['users']) == 0:
-		# 	del self.active_tournaments[self.tournament_id]
+		users = self.get_cache(f'{self.tournament_channel}_users')
+		del users[f'{self.user.id}']
+		self.set_cache(f'{self.tournament_channel}_users', users)
+		
+		me = users[f'{self.user.id}']
 
+		if me['game_channel']:
+			await self.channel_layer.group_discard(me['game_channel'], self.channel_name)
 		await self.channel_layer.group_discard(self.tournament_channel, self.channel_name)
 		return await super().disconnect(code)
 	
@@ -84,7 +87,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			'curr_phase_finished_games': 0
 		}
 
-		if not self.redis.exists(f'tournament_{self.tournament_id}'):
+		if not self.redis.exists(self.tournament_channel):
 			self.set_cache(self.tournament_channel, self.tournament_state)
 
 		tour_user = await self.get_tournament_user(self.user.id)
