@@ -4,10 +4,9 @@ from ..models import Tournaments, TournamentsGames, TournamentsUsers, Users
 from ..serializers import GamesSerializer, TournamentsGamesSerializer, TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
 
-from asgiref.sync import async_to_sync, sync_to_async
-from channels.generic.websocket import AsyncWebsocketConsumer
 from django_redis import get_redis_connection
-from django.core.cache import cache
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
 
 phase_after = dict(zip(
 	['Last 16', 'Quarter-final', 'Semi-final', 'Final'], 
@@ -28,16 +27,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		self.user = self.scope['user']
 		self.redis = get_redis_connection('default')
 		self.tournament_id = self.scope["url_route"]["kwargs"]["tournament_id"]
+		self.tournament = await self.get_tournament()
 
-		# user = await TournamentsUsers.objects.get(user_id=self.user.id)
-		# user_data = TournamentsUsersSerializer().data
+		users = await self.get_tournament_users()
 
-		data = {
-			'name': f"user_{self.user.id}"
-		}
+		data = self.redis.set(f"users_{self.tournament_id}", json.dumps(users))
+		data = self.redis.get(f"users_{self.tournament_id}").decode('UTF-8')
 
-		data = self.redis.get(f"user_{self.user.id}").decode('UTF-8')
-		ic(data)
 		await self.send(text_data=data)
 
 		# self.tournament_room = f'tournament_{self.scope["url_route"]["kwargs"]["tournament_id"]}'
@@ -103,7 +99,17 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def broadcast(self, event):		
 		await self.send(text_data=event["message"])
 	
+	@database_sync_to_async
+	def get_tournament(self):
+		return Tournaments.objects.get(pk=self.tournament_id)
+	
+	@database_sync_to_async
+	def get_tournament_users(self):
+		users = TournamentsUsers.objects.filter(tournament_id=self.tournament_id)
+		return TournamentsUsersSerializer(users, many=True).data
 
+
+	
 	# def is_full(self):
 	# 	return len(self.tournament['users']) == self.tournament['instance'].capacity
 	
