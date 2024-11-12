@@ -49,6 +49,8 @@ class Tournament {
 	onPlayerJoined({phase, players}) {
 		this.setFirstPhase(phase);
 		this.phasePlayers[this.currPhase] = players;
+		console.log(phase, players);
+		console.log(this.currPhase, this.phasePlayers);
 		this.updateUI();
 	}
 	

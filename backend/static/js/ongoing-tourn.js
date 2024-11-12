@@ -7,7 +7,7 @@ user.connectSocket(
 		const message = JSON.parse(event.data);
 		const { event: eventType, data } = message;
 
-		if (eventType == 'USER_JOINED') {			
+		if (eventType == 'PLAYER_JOINED') {			
 			tournament.onPlayerJoined(data);
 		}
 		else if (eventType == 'BEGIN_PHASE') {
