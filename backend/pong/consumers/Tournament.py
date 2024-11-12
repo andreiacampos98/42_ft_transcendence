@@ -45,16 +45,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	async def disconnect(self, code):
 		#! IMPORTANT Use tournament_leave handler to remote the user from the database
-
 		users = self.get_cache(f'{self.tournament_channel}_users')
-		del users[f'{self.user.id}']
-		self.set_cache(f'{self.tournament_channel}_users', users)
-		
 		me = users[f'{self.user.id}']
 
 		if me['game_channel']:
 			await self.channel_layer.group_discard(me['game_channel'], self.channel_name)
 		await self.channel_layer.group_discard(self.tournament_channel, self.channel_name)
+
+		del users[f'{self.user.id}']
+		self.set_cache(f'{self.tournament_channel}_users', users)
+
 		return await super().disconnect(code)
 	
 
@@ -67,7 +67,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 
 	# ! ============================== MESSAGING ===============================
-
+g
 	async def broadcast(self, event):		
 		await self.send(text_data=event["message"])
 	
