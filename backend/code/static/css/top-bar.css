@@ -1,0 +1,104 @@
+.top-bar {
+    width: 100%;
+    padding: 15px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #1A3141;
+    transition: filter 0.3s ease, transform 0.3s ease;
+
+}
+
+.search-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60vw; /* Adjust width as needed */
+}
+
+.search-container input {
+    width: 100%; /* Adjust width to leave space for icon */
+    padding: 10px;
+    border: 1px solid #1D2731;
+    border-radius: 5px;
+    background-color: #1D2731;
+    outline: none; /* Remove default focus outline */
+    color: #FFFFFF;
+}
+
+#searchButton {
+    position: absolute;
+    right: 10px; /* Adjust as needed */
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#searchButton img {
+    width: 20px; /* Adjust icon size as needed */
+    height: 20px;
+}
+
+#suggestions {
+    position: absolute;
+    width: 100%; 
+    z-index: 1000; 
+    display: block;
+	padding-top: 4px;
+	padding-bottom: 4px;
+    top: 100%;
+    left: 0;
+	background-color: #1D2731;
+	color: #f2f2f2;
+    border: 1px solid #336181;
+	overflow-y: none;
+    overflow-x: hidden;
+	border-radius: 5px;
+}
+
+.suggestion-name {
+	font-weight: inherit;
+	font-size: medium;
+	margin: 0;
+}
+
+.suggestion-pic {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	object-fit: cover;
+	margin-right: 4px;
+}
+
+.top-right {
+    margin-left: auto; /* Ensures this section is pushed to the far right */
+    margin-right: 45px;
+}
+
+.bell-icon {
+    margin-right: 32px;
+    cursor: pointer;
+	width: 28px;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+	object-fit: cover;
+}
+
+
+.user-block {
+	padding: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+
+}
+
+.user-block:hover {
+    cursor: pointer;
+    background-color: #e0e0e07c;
+    transform: scale(1.002);
+}

@@ -1,4 +1,5 @@
 django
+gunicorn
 tzdata
 psycopg2-binary
 Pillow

@@ -1,0 +1,57 @@
+.search {
+    flex-direction: row;
+    flex-wrap: wrap; 
+
+}
+.square {
+    margin: 5px;           /* Space between squares */
+	padding: 8px;
+    flex-direction: column; /* Align content center */
+    text-decoration: none;
+    color: #f2f2f2;
+	margin-right: 20px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.square:hover {
+    cursor: pointer;
+    background-color: #e0e0e07c;
+    transform: scale(1.002);
+}
+
+.name {
+	font-weight: inherit;
+    font-size: inherit;
+    width: inherit;
+    /* overflow-x: scroll;
+	overflow-y: hidden*/
+    white-space: nowrap;
+    overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.search-results {
+    font-weight: bolder;
+    text-align: left;
+}
+
+.search-results, .nbr-results {
+    color: #f2f2f2;
+}
+
+.nbr-results {
+	font-weight: inherit;
+}
+.sub-results {
+    flex-direction: row;
+    margin-bottom: 20px;
+	padding-top: 10px;
+}
+
+.circular-image {
+    width: 100px;          /* Sets the width to 60px */
+    height: 130px;         /* Ensures the height is the same, making it a square */
+	object-fit: cover;
+    display: block;       /* Removes extra spacing below the image */
+	margin-bottom: 8px;
+}
