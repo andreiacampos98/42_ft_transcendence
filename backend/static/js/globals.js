@@ -13,7 +13,7 @@ class TournamentUser {
 			delete this[prop];
 		this[prop] = new WebSocket(url);
 		this[prop].onmessage = (event) => {
-			// console.log(JSON.parse(event.data));
+			console.log(JSON.parse(event.data));
 			onmessage(event);
 		}
 		this[prop].onopen = (event) => console.log(`Opened WS ${url}`, event);

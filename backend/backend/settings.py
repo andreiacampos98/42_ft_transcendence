@@ -50,6 +50,8 @@ APPEND_SLASH = False
 
 # Use the default session backend
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Banco de dados para armazenar sessões
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
 
 # Ensure sessions are saved and managed properly
 SESSION_SAVE_EVERY_REQUEST = True  # Salva a sessão em cada request, opcional
@@ -71,10 +73,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework', #django rest framework
-    'rest_framework_swagger',
-    'drf_yasg',
+	'django_redis',
     "pong",
-    'bootstrap4',
 ]
 
 MIDDLEWARE = [
@@ -203,6 +203,17 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": [('redis-container', 6380)],
+			"capacity": 1000,
         },
     },
+}
+
+CACHES = {
+	'default': {
+		'BACKEND': 'django_redis.cache.RedisCache',
+		'LOCATION': 'redis://redis-container:6380',
+		"OPTIONS": {
+			"CLIENT_CLASS": "django_redis.client.DefaultClient",
+		},
+	},
 }

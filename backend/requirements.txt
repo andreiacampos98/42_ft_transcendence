@@ -1,13 +1,11 @@
 django
+django-redis
 tzdata
 psycopg2-binary
 Pillow
-django-rest-swagger
 setuptools
-drf-yasg
 icecream
 djangorestframework
-django-bootstrap4
 channels_redis
 requests
 python-dotenv

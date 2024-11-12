@@ -3,7 +3,9 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from rest_framework.routers import DefaultRouter
 from . import views
-from . import consumers
+from .consumers.Tournament import TournamentConsumer
+from .consumers.RemoteGame import RemoteGameQueueConsumer
+from .consumers.TournamentGame import TournamentGameConsumer
 
 # Routers provide an easy way of automatically determining the URL conf.
 #router = DefaultRouter()
@@ -105,7 +107,7 @@ urlpatterns = [
 ] 
 
 websocket_urlpatterns = [
-    path('ws/tournaments/<int:tournament_id>', consumers.TournamentConsumer.as_asgi()),
-    path('ws/tournaments/<int:tournament_id>/games/<int:game_id>', consumers.TournamentGameConsumer.as_asgi()),
-    path('ws/games/remote/queue', consumers.RemoteGameQueueConsumer.as_asgi()),
+    path('ws/tournaments/<int:tournament_id>', TournamentConsumer.as_asgi()),
+    path('ws/tournaments/<int:tournament_id>/games/<int:game_id>', TournamentGameConsumer.as_asgi()),
+    path('ws/games/remote/queue', RemoteGameQueueConsumer.as_asgi()),
 ]
