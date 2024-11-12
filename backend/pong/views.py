@@ -34,6 +34,8 @@ from django.http import JsonResponse, HttpResponseRedirect
 from .models import Users, Friends, Notifications, TournamentsUsers
 from .serializers import *
 
+from channels.db import database_sync_to_async
+
 phase_shifts = dict(zip(
 	['Last 16', 'Quarter-final', 'Semi-final'], 
 	['Quarter-final', 'Semi-final', 'Final']

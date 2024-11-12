@@ -4,6 +4,7 @@ from ..models import Tournaments, TournamentsGames, TournamentsUsers, Users
 from ..serializers import GamesSerializer, TournamentsGamesSerializer, TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
 
+from asgiref.sync import sync_to_async
 from django_redis import get_redis_connection
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -35,18 +36,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_add(self.tournament_channel, self.channel_name)
 
 		# Create cache in redis about tournament (if it does not exist) and about the user
-		self.create_tournament_cache()
-		await self.create_user_cache()
+		await self.create_cache()
 		await self.broadcast_player_list()
 
-	
-		if self.is_full():
-			self.start_tournament()
-
-			# ! ===========================================================================
+		ic(self.is_tournament_full())
+		if self.is_tournament_full():
+			await self.begin_phase(self.tournament_state['curr_phase'], True)
 		
-		ic(self.get_cache(self.tournament_channel))
-
 
 	async def disconnect(self, code):
 		#! IMPORTANT Use tournament_leave handler to remote the user from the database
@@ -106,17 +102,22 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		return TournamentsUsersSerializer(users, many=True).data
 
+	def get_tournament_phase_games(self, phase):
+		return TournamentsGames.objects.filter(
+			tournament_id=self.tournament_id, phase=phase
+		)
+	
 	# ! ============================= REDIS ACCESS =============================
 
 	def get_cache(self, key):
-		return json.loads(self.redis.get(key).decode('UTF-8'))
+		data = self.redis.get(key)
+		return json.loads(data.decode('UTF-8')) if data else None
 	
 	def set_cache(self, key, value):
 		return self.redis.set(key, json.dumps(value))
 	
-	def create_tournament_cache(self):
+	async def create_cache(self):
 		self.tournament_state = {
-			'users': {},
 			'curr_phase': phase_of[self.tournament_instance.capacity],
 			'curr_phase_total_games': self.tournament_instance.capacity // 2,
 			'curr_phase_finished_games': 0
@@ -125,31 +126,31 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		if not self.redis.exists(f'tournament_{self.tournament_id}'):
 			self.set_cache(self.tournament_channel, self.tournament_state)
 
-	async def create_user_cache(self):
 		tour_user = await self.get_tournament_user(self.user.id)
 
-		tournament_data = self.get_cache(f'tournament_{self.tournament_id}')
-		tournament_data['users'][self.user.id] = {
+		tournament_users_data = self.get_cache(f'{self.tournament_channel}_users')
+		if tournament_users_data is None:
+			tournament_users_data = {}
+
+		tournament_users_data[self.user.id] = {
 			'id': self.user.id,
 			'username': self.user.username,
 			'channel_name': self.channel_name,
 			'tour_user': tour_user
 		}
-		self.set_cache(self.tournament_channel, tournament_data)
-
+		self.set_cache(f'{self.tournament_channel}_users', tournament_users_data)
 
 	# ! ===========================================================================
 
-	def is_full(self):
-		nb_users = len(self.get_cache(self.tournament_channel)['users'])
-		return nb_users == self.tournament_instance.capacity
-	
-	def start_tournament(self):
-		first_phase_games = tournament_init_phase(self.tournament_id)
-		self.begin_phase(first_phase_games)
+	def is_tournament_full(self):
+		tournament_users = self.get_cache(f'{self.tournament_channel}_users')
+		ic(len(tournament_users))
+		ic(len(tournament_users.values()))
+		ic(self.tournament_instance.capacity)
+		return len(tournament_users) == self.tournament_instance.capacity
 
 	async def broadcast_player_list(self):
-		users_data = self.get_cache(f'tournament_{self.tournament_id}')['users']
+		users_data = self.get_cache(f'{self.tournament_channel}_users')
 		users = list(map(lambda x: x['tour_user'], users_data.values()))
 
 		# Broadcast current list to all users
@@ -164,6 +165,50 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			})
 		})
 	
+	async def begin_phase(self, phase, is_first_phase=False):
+		# And now pair up the players in their rooms
+		games = None
+		if is_first_phase:
+			games = await sync_to_async(tournament_init_phase)(self.tournament_id)
+		else:
+			games = await self.get_tournament_phase_games(phase)
+
+		players = self.get_cache(f'{self.tournament_channel}_users')
+		ic(players)
+
+		games_data = []
+		for tour_game in games:
+			game_data, p1, p2 = await self.pair_players(tour_game, players)
+			games_data.append(game_data)
+
+			game_room = f'{self.tournament_channel}_game_{tour_game.id}'
+			await self.channel_layer.group_add(game_room, p1['channel_name'])
+			await self.channel_layer.group_add(game_room, p2['channel_name'])
+			
+		await self.channel_layer.group_send(self.tournament_channel, {
+			"type": "broadcast", 
+			"message": json.dumps({
+				'event': 'BEGIN_PHASE',
+				'data': {
+					'phase': self.tournament_state['curr_phase'].lower(),
+					'games': games_data
+				}
+			})
+		})
+
+	@database_sync_to_async
+	def pair_players(self, tour_game, players):
+		ic(players)
+		user1 = players[f'{tour_game.game_id.user1_id.id}']
+		user2 = players[f'{tour_game.game_id.user2_id.id}']
+
+		game_data = TournamentsGamesSerializer(tour_game).data
+		game_data['game_id'] = GamesSerializer(tour_game.game_id).data
+		game_data['user1_id'] = UsersSerializer(tour_game.game_id.user1_id).data
+		game_data['user2_id'] = UsersSerializer(tour_game.game_id.user2_id).data
+		game_data['phase'] = self.tournament_state['curr_phase'].lower()
+
+		return game_data, user1, user2
 	
 
 	# def add_new_tournament_user(self):
@@ -265,37 +310,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	# 	ic('AFTER', self.tournament['curr_phase'], self.tournament['curr_phase_total_games'], self.tournament['curr_phase_finished_games'])
 				
-
-	# def begin_phase(self, phase_games):
-	# 	# And now pair up the players in their rooms
-	# 	games = []
-	# 	for tour_game in phase_games:
-	# 		user1 = self.tournament['users'][tour_game.game_id.user1_id.id]
-	# 		user2 = self.tournament['users'][tour_game.game_id.user2_id.id]
-
-	# 		game_room = f'tournament_{self.tournament_id}_game_{tour_game.id}'
-	# 		user1['game_room'] = user2['game_room'] = game_room
-
-	# 		async_to_sync(self.channel_layer.group_add)(game_room, user1['channel_name'])
-	# 		async_to_sync(self.channel_layer.group_add)(game_room, user2['channel_name'])
-
-	# 		game_data = TournamentsGamesSerializer(tour_game).data
-	# 		game_data['game_id'] = GamesSerializer(tour_game.game_id).data
-	# 		game_data['user1_id'] = UsersSerializer(tour_game.game_id.user1_id).data
-	# 		game_data['user2_id'] = UsersSerializer(tour_game.game_id.user2_id).data
-	# 		game_data['phase'] = self.tournament['curr_phase'].lower()
-	# 		games.append(game_data)
-		
-	# 	async_to_sync(self.channel_layer.group_send)(self.tournament_channel, {
-	# 		"type": "broadcast", 
-	# 		"message": json.dumps({
-	# 			'event': 'BEGIN_PHASE',
-	# 			'data': {
-	# 				'phase': self.tournament['curr_phase'].lower(),
-	# 				'games': games
-	# 			}
-	# 		})
-	# 	})
 
 
 
