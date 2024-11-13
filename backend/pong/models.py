@@ -89,8 +89,8 @@ class Notifications(models.Model):
     def save(self, *args, **kwargs):
         if self.status not in ['Read', 'Pending']:
             raise ValidationError('Status must be one of "[\'Read\', \'Pending\']"')
-        if self.type not in ['Friend Request', 'Accepted Friend Request']:
-            raise ValidationError('Status must be one of "[\'Friend Request\', \'Accepted Friend Request\']"')
+        if self.type not in ['Friend Request', 'Accepted Friend Request', 'Decline Friend Request']:
+            raise ValidationError('Status must be one of "[\'Friend Request\', \'Accepted Friend Request\', \'Decline Friend Request\']"')
 
         super().save(*args, **kwargs)
 
