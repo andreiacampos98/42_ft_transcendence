@@ -942,12 +942,6 @@ def tournament_update_game_helper(tournament_id, game_id, data):
 	player2.score += data['nb_goals_user2'] * 100
 	player2.save()
 
-	if data['nb_goals_user1'] > data['nb_goals_user2']:
-		tour_game.game_id.winner_id = player1.user_id
-	else:
-		tour_game.game_id.winner_id = player2.user_id
-	tour_game.game_id.save()
-
 	curr_phase = tour_game.phase
 	curr_phase_matches = TournamentsGames.objects.filter(
 		phase=curr_phase,
@@ -959,11 +953,6 @@ def tournament_update_game_helper(tournament_id, game_id, data):
 		if match.game_id.winner_id is not None:
 			finished_matches += 1
 	
-	user_stats_update(user2.id, game_id, data)
-	user_stats_update(user1.id, game_id, data)
-	game_stats_create(game_id, data)
-	game_goals_create(game_id, data)
-
 	if finished_matches == total_phase_matches[curr_phase] and curr_phase != 'Final':
 		return advance_tournament_phase(curr_phase, tournament_id)
 	elif finished_matches == total_phase_matches[curr_phase] and curr_phase == 'Final':
