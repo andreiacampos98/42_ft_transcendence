@@ -65,7 +65,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		if event == 'GAME_END':
 			await self.on_game_end(message['data'])
 
-
 	# ! ============================== MESSAGING ===============================
 
 	async def broadcast(self, event):		
@@ -268,9 +267,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			if curr_phase is not None: 
 				await self.begin_phase(phase_after[curr_phase])
 			
-		
-		
-	
 
 	async def begin_phase(self, phase, is_first_phase=False):
 		games = await self.get_tournament_phase_games(phase, is_first_phase)
@@ -280,23 +276,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		games_data = await self.serialize_phase_games(games, players, curr_phase)
 		players_data = await self.create_game_channels(games, players, curr_phase)
-
-
-		# games_data, players_data = [], []
-		# for tour_game in games:
-		# 	game_data, p1, p2 = await self.pair_players(tour_game, players, curr_phase)
-		# 	games_data.append(game_data)
-		# 	players_data.extend([p1['tour_user'], p2['tour_user']])
-
-		# 	game_channel = f'{self.tournament_channel}_game_{tour_game.id}'
-		# 	await self.channel_layer.group_add(game_channel, p1['channel_name'])
-		# 	await self.channel_layer.group_add(game_channel, p2['channel_name'])
-
-		# 	p1['game_channel'] = p2['game_channel'] = game_channel
-
-		# games_data, players_data = await self.pair_phase_players(games)
 	
-			
 		await self.channel_layer.group_send(self.tournament_channel, {
 			"type": "broadcast", 
 			"message": json.dumps({
@@ -332,76 +312,3 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				}
 			})
 		})
-
-
-	
-
-	# def on_game_finish(self, data):
-	# 	ic('BEFORE', self.tournament['curr_phase'], self.tournament['curr_phase_total_games'], self.tournament['curr_phase_finished_games'])
-	# 	self.tournament['curr_phase_finished_games'] += 1
-	# 	winner = None
-		
-	# 	if self.tournament['curr_phase_finished_games'] < self.tournament['curr_phase_total_games']:
-	# 		return 
-		
-	# 	# Replace information about the current phase with the next
-	# 	last_phase = self.tournament['curr_phase']
-	# 	last_phase_games = TournamentsGames.objects.filter(tournament_id=self.tournament_id, phase=last_phase)
-	# 	self.tournament['curr_phase'] = phase_after[last_phase]
-	# 	self.tournament['curr_phase_total_games'] //= 2
-	# 	self.tournament['curr_phase_finished_games'] = 0
-	# 	curr_phase = self.tournament['curr_phase']
-	# 	curr_phase_games = TournamentsGames.objects.filter(tournament_id=self.tournament_id, phase=curr_phase)
-
-	# 	# Join all phase winners
-	# 	next_phase_users, last_phase_scores = [], []
-	# 	ic(last_phase, curr_phase)
-	# 	for tour_game in last_phase_games:
-	# 		winnerID = tour_game.game_id.winner_id.id
-			
-	# 		tour_user = TournamentsUsers.objects.get(tournament_id=self.tournament_id, user_id=winnerID)
-	# 		user = Users.objects.get(pk=tour_user.user_id.id) 
-			
-	# 		tour_user = TournamentsUsersSerializer(tour_user).data
-	# 		tour_user['user'] = UsersSerializer(user).data
-	# 		next_phase_users.append(tour_user)
-
-	# 		username1, username2 = tour_game.game_id.user1_id.username, tour_game.game_id.user2_id.username
-	# 		score1, score2 = tour_game.game_id.nb_goals_user1, tour_game.game_id.nb_goals_user2
-	# 		game_data = {
-	# 			'id': tour_game.game_id.id,
-	# 			'username1': username1,
-	# 			'username2': username2,
-	# 			'score1': score1,
-	# 			'score2': score2,
-	# 		}
-	# 		last_phase_scores.append(game_data)
-
-	# 	if last_phase == 'Final':
-	# 		user = Tournaments.objects.get(pk=self.tournament_id).winner_id
-	# 		winner = TournamentsUsers.objects.get(tournament_id=self.tournament_id, user_id=user.id)
-	# 		winner = TournamentsUsersSerializer(winner).data
-	# 		winner['user'] = UsersSerializer(user).data
-	# 		del self.active_tournaments[self.tournament_id]
-					
-	# 	# Send the new user pairs for the next phase
-	# 	async_to_sync(self.channel_layer.group_send)(self.tournament_channel, {
-	# 		"type": "broadcast", 
-	# 		"message": json.dumps({
-	# 			"event": 'PHASE_END',
-	# 			"data": {
-	# 				'phase': last_phase.lower(),
-	# 				'next_phase': curr_phase.lower() if curr_phase else None,
-	# 				'players': next_phase_users,
-	# 				'results': last_phase_scores,
-	# 				'winner': winner,
-	# 			}
-	# 		})
-	# 	})
-
-	# 	if last_phase != 'Final' and last_phase is not None:
-	# 		self.begin_phase(curr_phase_games)
-				
-
-
-
