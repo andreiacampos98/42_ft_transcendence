@@ -12,7 +12,7 @@ user.connectSocket(
 		}
 		else if (eventType == 'PHASE_START') {
 			setTimeout(() => {
-				tournament.onBeginPhase(data);
+				tournament.onPhaseStart(data);
 
 				user.tournamentGameData = null;
 				data.games.forEach(game => {
@@ -31,7 +31,7 @@ user.connectSocket(
 		}
 		else if (eventType == 'PHASE_END') {
 			setTimeout(() => {
-				tournament.onEndPhase(data);
+				tournament.onPhaseEnd(data);
 				if (data.winner) {
 					tournament.updatePlayerSlots('winner', [data.winner]);
 					user.tournamentSocket.close();

@@ -110,7 +110,7 @@ export class RemoteGameController extends AbstractGameController {
 
 		this.gameSocket.send(JSON.stringify({
 			'event': 'GAME_END',
-			'data': results
+			'data': {}
 		}));
 		
 		if (!this.tournamentSocket)

@@ -143,27 +143,48 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		return TournamentsUsersSerializer(users, many=True).data
 
 	@database_sync_to_async
-	def get_tournament_phase_games(self, phase):
-		return TournamentsGames.objects.filter(
-			tournament_id=self.tournament_id, phase=phase
-		)
-	
+	def get_tournament_phase_games(self, phase, is_first_phase):
+		if is_first_phase:
+			return tournament_init_phase(self.tournament_id)
+		else:
+			return TournamentsGames.objects.filter(
+				tournament_id=self.tournament_id, phase=phase
+			)
+
+	async def create_game_channels(self, games, players, phase):
+		players_data = []
+		for tour_game in games:
+			p1 = players[f'{tour_game.game_id.user1_id.id}']
+			p2 = players[f'{tour_game.game_id.user2_id.id}']
+
+			game_channel = f'{self.tournament_channel}_game_{tour_game.id}'
+			p1['game_channel'] = p2['game_channel'] = game_channel
+			
+			await self.channel_layer.group_add(game_channel, p1['channel_name'])
+			await self.channel_layer.group_add(game_channel, p2['channel_name'])
+
+			players_data.extend([p1['tour_user'], p2['tour_user']])
+
+		self.set_cache(f'{self.tournament_channel}_players', players)
+		return players_data
+
 	@database_sync_to_async
-	def pair_players(self, tour_game, players, tournament_state):
-		user1 = players[f'{tour_game.game_id.user1_id.id}']
-		user2 = players[f'{tour_game.game_id.user2_id.id}']
+	def serialize_phase_games(self, games, players, phase):
+		games_data = []
 
-		game_data = TournamentsGamesSerializer(tour_game).data
-		game_data['game_id'] = GamesSerializer(tour_game.game_id).data
-		game_data['user1_id'] = UsersSerializer(tour_game.game_id.user1_id).data
-		game_data['user2_id'] = UsersSerializer(tour_game.game_id.user2_id).data
-		game_data['phase'] = tournament_state['curr_phase'].lower()
+		for tour_game in games:
+			game_data = TournamentsGamesSerializer(tour_game).data
+			game_data['game_id'] = GamesSerializer(tour_game.game_id).data
+			game_data['user1_id'] = UsersSerializer(tour_game.game_id.user1_id).data
+			game_data['user2_id'] = UsersSerializer(tour_game.game_id.user2_id).data
+			game_data['phase'] = phase.lower()
+			games_data.append(game_data)
 
-		return game_data, user1, user2
+		return games_data
+	
 	
 	@database_sync_to_async
 	def store_last_phase_results(self, phase):
-		#! I need to update the games given the phase results
 		tournament_games = self.get_cache(f'{self.tournament_channel}_games')
 
 		ic('UPDATING GAMES')
@@ -243,40 +264,47 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		all_players_confirmed = all([p['has_finished_playing'] for p in players.values()])
 		if all_players_confirmed:
 			await self.end_phase()
-			# await self.begin_phase(phase_after[curr_phase])
+
+			if curr_phase is not None: 
+				await self.begin_phase(phase_after[curr_phase])
+			
+		
+		
 	
 
 	async def begin_phase(self, phase, is_first_phase=False):
-		# And now pair up the players in their rooms
-		games = None
-		if is_first_phase:
-			games = await sync_to_async(tournament_init_phase)(self.tournament_id)
-		else:
-			games = await self.get_tournament_phase_games(phase)
+		games = await self.get_tournament_phase_games(phase, is_first_phase)
 
-		games_data = []
+		curr_phase = self.get_cache(self.tournament_channel)['curr_phase']
 		players = self.get_cache(f'{self.tournament_channel}_players')
-		tournament_state = self.get_cache(self.tournament_channel)
 
-		for tour_game in games:
-			game_data, p1, p2 = await self.pair_players(tour_game, players, tournament_state)
-			games_data.append(game_data)
+		games_data = await self.serialize_phase_games(games, players, curr_phase)
+		players_data = await self.create_game_channels(games, players, curr_phase)
 
-			game_channel = f'{self.tournament_channel}_game_{tour_game.id}'
-			await self.channel_layer.group_add(game_channel, p1['channel_name'])
-			await self.channel_layer.group_add(game_channel, p2['channel_name'])
 
-			p1['game_channel'] = p2['game_channel'] = game_channel
+		# games_data, players_data = [], []
+		# for tour_game in games:
+		# 	game_data, p1, p2 = await self.pair_players(tour_game, players, curr_phase)
+		# 	games_data.append(game_data)
+		# 	players_data.extend([p1['tour_user'], p2['tour_user']])
 
-		self.set_cache(f'{self.tournament_channel}_players', players)
+		# 	game_channel = f'{self.tournament_channel}_game_{tour_game.id}'
+		# 	await self.channel_layer.group_add(game_channel, p1['channel_name'])
+		# 	await self.channel_layer.group_add(game_channel, p2['channel_name'])
+
+		# 	p1['game_channel'] = p2['game_channel'] = game_channel
+
+		# games_data, players_data = await self.pair_phase_players(games)
+	
 			
 		await self.channel_layer.group_send(self.tournament_channel, {
 			"type": "broadcast", 
 			"message": json.dumps({
 				'event': 'PHASE_START',
 				'data': {
-					'phase': tournament_state['curr_phase'].lower(),
-					'games': games_data
+					'phase': curr_phase.lower(),
+					'games': games_data,
+					'players': players_data
 				}
 			})
 		})

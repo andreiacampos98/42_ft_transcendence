@@ -59,21 +59,23 @@ class Tournament {
 		this.updateUI();
 	}
 
-	onBeginPhase({phase, games}) {
-		console.log(`BEGINNING ${phase}`, games);
+	onPhaseStart({phase, games, players}) {
+		console.log(`BEGINNING ${phase}`, games, players);
 		console.log(`CURRENT PHASE`, this.currPhase);
 		this.currPhase = phase;
 		games.forEach(tournamentGame => {
 			let gameID = tournamentGame.game_id.id;
 			this.phaseGames[phase][gameID] = {};
 		});
-		
-		console.log('RECEIVED GAMES', games);
-		console.log(this.phaseGames[phase]);
+
+		console.log(this.phasePlayers);
+
+		this.phasePlayers[phase] = players;
+		this.updateUI();
 	}
 
-	onEndPhase({phase, next_phase, players, results}) {
-		console.log(`ENDING (${phase} -> ${next_phase})`);
+	onPhaseEnd({phase, next_phase, results}) {
+		console.log(`ENDING (${phase} -> ${next_phase})`, results);
 		console.log(`CURRENT PHASE`, this.currPhase);
 		results.forEach(game => {
 			this.phaseGames[phase][game.id][game.username1] = game.score1;
@@ -81,7 +83,6 @@ class Tournament {
 		});
 		this.lastPhase = this.currPhase;
 		this.currPhase = next_phase ? next_phase : this.currPhase;
-		this.phasePlayers[next_phase] = players;
 		this.updateUI();
 		console.log(this.phaseGames);
 	}
