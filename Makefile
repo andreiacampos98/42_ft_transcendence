@@ -1,8 +1,8 @@
 all:
-	docker compose up --build
+	docker compose up
 
 detach:
-	docker compose up --build -d
+	docker compose up -d
 
 django:
 	docker exec -it django-container sh -c 'source /.venv/bin/activate; sh'
@@ -34,6 +34,7 @@ down:
 ps:
 	docker compose ps
 
-re: down all
+re: down
+	docker compose up --build
 
 .SILENT:
