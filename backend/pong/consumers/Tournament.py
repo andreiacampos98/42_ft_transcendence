@@ -248,7 +248,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send(self.tournament_channel, {
 			"type": "broadcast", 
 			"message": json.dumps({
-				'event': 'BEGIN_PHASE',
+				'event': 'PHASE_START',
 				'data': {
 					'phase': tournament_state['curr_phase'].lower(),
 					'games': games_data
@@ -263,14 +263,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		tournament_state['curr_phase_total_games'] //= 2
 		tournament_state['curr_phase_finished_games'] = 0
 		self.set_cache(self.tournament_channel, tournament_state)
-		ic('END_PHASE', tournament_state)
+		ic('PHASE_END', tournament_state)
 
 		results, winner = await self.get_last_phase_results(tournament_state['last_phase']) 
 
 		await self.channel_layer.group_send(self.tournament_channel, {
 			"type": "broadcast", 
 			"message": json.dumps({
-				"event": 'END_PHASE',
+				"event": 'PHASE_END',
 				"data": {
 					'phase': tournament_state['last_phase'].lower(),
 					'next_phase': tournament_state['curr_phase'].lower() if tournament_state['curr_phase'] else None,
@@ -335,7 +335,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	# 	async_to_sync(self.channel_layer.group_send)(self.tournament_channel, {
 	# 		"type": "broadcast", 
 	# 		"message": json.dumps({
-	# 			"event": 'END_PHASE',
+	# 			"event": 'PHASE_END',
 	# 			"data": {
 	# 				'phase': last_phase.lower(),
 	# 				'next_phase': curr_phase.lower() if curr_phase else None,

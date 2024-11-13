@@ -10,7 +10,7 @@ user.connectSocket(
 		if (eventType == 'PLAYER_JOINED') {			
 			tournament.onPlayerJoined(data);
 		}
-		else if (eventType == 'BEGIN_PHASE') {
+		else if (eventType == 'PHASE_START') {
 			setTimeout(() => {
 				tournament.onBeginPhase(data);
 
@@ -29,7 +29,7 @@ user.connectSocket(
 				});
 			}, 2100);
 		}
-		else if (eventType == 'END_PHASE') {
+		else if (eventType == 'PHASE_END') {
 			setTimeout(() => {
 				tournament.onEndPhase(data);
 				if (data.winner) {
