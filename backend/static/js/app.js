@@ -1,4 +1,5 @@
 var currRoute = '';
+var lastRoute = '';
 
 const routeScripts = {
 	'/tournaments/': ['tournament', 'join_tournament'],
@@ -25,10 +26,13 @@ const appendScripts = (route) => {
 };
 
 const mutationsCallback = (mutations) => {
+	if (window.location.pathname.startsWith('/tournaments/ongoing/'))
+		tournament.updateUI();
 	// Ignore second set of mutations
-	if (currRoute == window.location.pathname)
+	if (currRoute == window.location.pathname || lastRoute.startsWith('/tournaments/ongoing/'))
 		return ;
 	
+	lastRoute = currRoute;
 	currRoute = window.location.pathname;
 	
 	Object.keys(routeScripts).forEach(key => {

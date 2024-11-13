@@ -158,12 +158,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 			game_channel = f'{self.tournament_channel}_game_{tour_game.id}'
 			p1['game_channel'] = p2['game_channel'] = game_channel
+			p1['has_finished_playing'] = p2['has_finished_playing'] = False 
 			
 			await self.channel_layer.group_add(game_channel, p1['channel_name'])
 			await self.channel_layer.group_add(game_channel, p2['channel_name'])
 
 			players_data.extend([p1['tour_user'], p2['tour_user']])
-
+		
 		self.set_cache(f'{self.tournament_channel}_players', players)
 		return players_data
 
@@ -264,7 +265,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		if all_players_confirmed:
 			await self.end_phase()
 
-			if curr_phase is not None: 
+			if curr_phase != 'Final' and not None: 
 				await self.begin_phase(phase_after[curr_phase])
 			
 
@@ -276,6 +277,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		games_data = await self.serialize_phase_games(games, players, curr_phase)
 		players_data = await self.create_game_channels(games, players, curr_phase)
+
+		players = {k:v for k,v in players.items() if not v['has_finished_playing']}
+		self.set_cache(f'{self.tournament_channel}_players', players)
 	
 		await self.channel_layer.group_send(self.tournament_channel, {
 			"type": "broadcast", 
@@ -290,12 +294,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		})
 
 	async def end_phase(self):
+		# Update the phase
 		tournament_state = self.get_cache(self.tournament_channel)
 		tournament_state['last_phase'] = tournament_state['curr_phase']
 		tournament_state['curr_phase'] = phase_after[tournament_state['last_phase']]
 		tournament_state['curr_phase_total_games'] //= 2
 		tournament_state['curr_phase_finished_games'] = 0
 		self.set_cache(self.tournament_channel, tournament_state)
+		
 		ic('PHASE_END', tournament_state)
 
 		results, winner = await self.store_last_phase_results(tournament_state['last_phase']) 

@@ -69,8 +69,9 @@ export class RemoteGameController extends AbstractGameController {
 			else if (event == 'SYNC')
 				this.ball.sync(data.ball);
 			else if (event == 'GAME_END'){
-				this.gameSocket.close();
 				setTimeout(() => {
+					this.gameSocket.close();
+					history.pushState(null, '', `/tournaments/ongoing/${user.tournamentID}`);
 					htmx.ajax('GET', `/tournaments/ongoing/${user.tournamentID}`, {
 						target: '#main'  
 					});
