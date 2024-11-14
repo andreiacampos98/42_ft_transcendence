@@ -65,9 +65,8 @@ function onCreateButtonClick()
 	.then(response => response.json())
 	.then(data => {
 		if (JSON.stringify(data.data) === '{}') {
-			
+			alert(data.message);
 		} else {
-			alert("Tournament created successfully!");
 			const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
 			user.userID = data.data.host_id;
 			user.tournamentAlias = formData.alias;
