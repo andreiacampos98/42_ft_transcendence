@@ -125,6 +125,8 @@ class Tournament {
 
 		if(cssSelector == 'winner') {
 			slots[0].querySelector(".score2").classList.add("winner-score-container");
+			slots[0].classList.add('winner-player');
+			document.querySelector(".score2 img").src="/static/assets/icons/trophy-brown.png";
 			return ;
 		}
 
@@ -139,13 +141,6 @@ class Tournament {
 
 		if (this.firstPhase == this.currPhase)
 			return ;
-
-		if(cssSelector == 'winner') {
-			playerSlots[0].querySelector(".score2").classList.toggle("winner-score-container");
-			document.querySelector(".score2 img").src="/static/assets/icons/trophy-brown.png";
-			playerSlots[0].classList.add('winner-player');
-			return ;
-		}
 			
 		scores.forEach((score, i) => {
 			if (score == 5){
@@ -163,7 +158,6 @@ class Tournament {
 				);
 			}
 		});
-		console.log(`.${cssSelector}-line`);
 		document.querySelectorAll(`.${cssSelector}-line`).forEach(line => 
 			line.classList.add('winner-path')
 		);

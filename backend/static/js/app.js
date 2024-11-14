@@ -26,15 +26,20 @@ const appendScripts = (route) => {
 };
 
 const mutationsCallback = (mutations) => {
-	if (window.location.pathname.startsWith('/tournaments/ongoing/'))
-		tournament.updateUI();
+	console.log(window.location.pathname);
 	// Ignore second set of mutations
-	if (currRoute == window.location.pathname || lastRoute.startsWith('/tournaments/ongoing/'))
+	if (currRoute == window.location.pathname)
 		return ;
 	
 	lastRoute = currRoute;
 	currRoute = window.location.pathname;
-	
+
+	if (currRoute.startsWith('/tournaments/ongoing/'))
+		tournament.updateUI();
+
+	if (currRoute.startsWith('/tournaments/ongoing/') && lastRoute.startsWith('/gametournament'))
+		return ;
+
 	Object.keys(routeScripts).forEach(key => {
 		if (currRoute.startsWith(key)) {
 			console.log('Current route: ', key);
