@@ -4,7 +4,6 @@ from ..models import Tournaments, TournamentsGames, TournamentsUsers, Users
 from ..serializers import GamesSerializer, TournamentsGamesSerializer, TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
 
-from asgiref.sync import sync_to_async
 from django_redis import get_redis_connection
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -21,8 +20,7 @@ phase_of = dict(zip(
 
 
 class TournamentConsumer(AsyncWebsocketConsumer):
-	# active_tournaments = {}
-
+	
 	async def connect(self):
 		await self.accept()
 		self.user = self.scope['user']

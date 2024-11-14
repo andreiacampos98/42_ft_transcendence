@@ -1,7 +1,4 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django_redis import get_redis_connection
-from channels.db import database_sync_to_async
-
 from icecream import ic
 import json
 
@@ -35,21 +32,10 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 		return await super().disconnect(code)
 	
 	async def receive(self, text_data=None):
-		data = json.loads(text_data)
-		event = data['event']
-
-		handlers = {
-			'GAME_END': self.on_game_end
-		}
-
-		if event in handlers:
-			await handlers[event](data)
-			
 		await self.channel_layer.group_send(self.game_channel, {
 			"type": "broadcast",
 			"message": text_data
 		})
-
 
 	# ! ============================== MESSAGING ===============================
 
@@ -57,7 +43,3 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=event["message"])
 
 	# ! ============================= DATABASE ACCESS ==========================
-
-	@database_sync_to_async
-	def on_game_end(self, data):
-		pass
