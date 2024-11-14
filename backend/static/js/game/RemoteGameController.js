@@ -68,15 +68,6 @@ export class RemoteGameController extends AbstractGameController {
 				this.players[data.id].move(data.y);
 			else if (event == 'SYNC')
 				this.ball.sync(data.ball);
-			else if (event == 'GAME_END'){
-				setTimeout(() => {
-					this.gameSocket.close();
-					history.pushState(null, '', `/tournaments/ongoing/${user.tournamentID}`);
-					htmx.ajax('GET', `/tournaments/ongoing/${user.tournamentID}`, {
-						target: '#main'  
-					});
-				}, 1000);
-			}
 		}
 
 		this.gameSocket.onerror = (ev) => {
@@ -113,6 +104,7 @@ export class RemoteGameController extends AbstractGameController {
 			'event': 'GAME_END',
 			'data': {}
 		}));
+		this.gameSocket.close();
 		
 		if (!this.tournamentSocket)
 			return ;
@@ -121,5 +113,12 @@ export class RemoteGameController extends AbstractGameController {
 			'event': 'GAME_END',
 			'data': results
 		}));
+
+		setTimeout(() => {
+			history.pushState(null, '', `/tournaments/ongoing/${user.tournamentID}`);
+			htmx.ajax('GET', `/tournaments/ongoing/${user.tournamentID}`, {
+				target: '#main'  
+			});
+		}, 1000);
 	}
 }
