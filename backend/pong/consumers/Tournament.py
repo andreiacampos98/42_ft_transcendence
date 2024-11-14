@@ -44,17 +44,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		
 
 	async def disconnect(self, code):
+		players = self.get_cache(f'{self.tournament_channel}_players')
+		player_id = f'{self.user.id}'
+
+		if player_id in players:			
+			del players[player_id]
+			self.set_cache(f'{self.tournament_channel}_players', players)
+
 		#! IMPORTANT Use tournament_leave handler to remote the user from the database
-		users = self.get_cache(f'{self.tournament_channel}_players')
-		me = users[f'{self.user.id}']
-
-		if me['game_channel']:
-			await self.channel_layer.group_discard(me['game_channel'], self.channel_name)
-		await self.channel_layer.group_discard(self.tournament_channel, self.channel_name)
-
-		del users[f'{self.user.id}']
-		self.set_cache(f'{self.tournament_channel}_players', users)
-
 		return await super().disconnect(code)
 	
 
@@ -133,13 +130,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def get_tournament_users(self):
-		users = TournamentsUsers.objects.filter(tournament_id=self.tournament_id)
+		tour_users = TournamentsUsers.objects.filter(tournament_id=self.tournament_id)
 
-		for tour_user in users:
+		for tour_user in tour_users:
 			user_data = Users.objects.get(pk=tour_user['user_id']) 
 			tour_user['user'] = UsersSerializer(user_data).data
 
-		return TournamentsUsersSerializer(users, many=True).data
+		return TournamentsUsersSerializer(tour_users, many=True).data
 
 	@database_sync_to_async
 	def get_tournament_phase_games(self, phase, is_first_phase):
@@ -150,7 +147,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				tournament_id=self.tournament_id, phase=phase
 			)
 
-	async def create_game_channels(self, games, players, phase):
+	async def create_game_channels(self, games, players):
 		players_data = []
 		for tour_game in games:
 			p1 = players[f'{tour_game.game_id.user1_id.id}']
@@ -169,7 +166,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		return players_data
 
 	@database_sync_to_async
-	def serialize_phase_games(self, games, players, phase):
+	def serialize_phase_games(self, games, phase):
 		games_data = []
 
 		for tour_game in games:
@@ -211,8 +208,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			winner = TournamentsUsersSerializer(winner).data
 			winner['user'] = UsersSerializer(user).data
 
-			# ! Maybe remove the tournament from cache?
-
 		return last_phase_scores, winner
 	
 
@@ -225,8 +220,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	async def broadcast_player_list(self):
 		curr_phase = self.get_cache(self.tournament_channel)['curr_phase']
-		users_data = self.get_cache(f'{self.tournament_channel}_players')
-		users = list(map(lambda x: x['tour_user'], users_data.values()))
+		players = self.get_cache(f'{self.tournament_channel}_players')
+		users_data = list(map(lambda x: x['tour_user'], players.values()))
 
 		# Broadcast current list to all users
 		await self.channel_layer.group_send(self.tournament_channel, {
@@ -235,7 +230,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				'event': 'PLAYER_JOINED',
 				'data': {
 					'phase': curr_phase.lower(),
-					'players': users
+					'players': users_data
 				}
 			})
 		})
@@ -275,8 +270,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		curr_phase = self.get_cache(self.tournament_channel)['curr_phase']
 		players = self.get_cache(f'{self.tournament_channel}_players')
 
-		games_data = await self.serialize_phase_games(games, players, curr_phase)
-		players_data = await self.create_game_channels(games, players, curr_phase)
+		games_data = await self.serialize_phase_games(games, curr_phase)
+		players_data = await self.create_game_channels(games, players)
 
 		players = {k:v for k,v in players.items() if not v['has_finished_playing']}
 		self.set_cache(f'{self.tournament_channel}_players', players)
