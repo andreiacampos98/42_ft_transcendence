@@ -30,20 +30,7 @@ class TournamentUser {
 
 class Tournament {
 	constructor() {
-		this.id = 0;
-		this.phasePlayers = {
-			'quarter-final': [],
-			'semi-final': [],
-			'final': [],
-		};
-		this.phaseGames = {
-			'quarter-final': {},
-			'semi-final': {},
-			'final': {},
-		};
-		this.lastPhase = null;
-		this.currPhase = null;
-		this.firstPhase = null;
+		this.reset();
 	}
 
 	onPlayerJoined({phase, players}) {
@@ -74,7 +61,7 @@ class Tournament {
 		this.updateUI();
 	}
 
-	onPhaseEnd({phase, next_phase, results}) {
+	onPhaseEnd({phase, next_phase, results, winner=null}) {
 		console.log(`ENDING (${phase} -> ${next_phase})`, results);
 		console.log(`CURRENT PHASE`, this.currPhase);
 		results.forEach(game => {
@@ -84,7 +71,33 @@ class Tournament {
 		this.lastPhase = this.currPhase;
 		this.currPhase = next_phase ? next_phase : this.currPhase;
 		this.updateUI();
+
+		if (winner)
+			this.onTournamentEnd(winner);
 		console.log(this.phaseGames);
+	}
+
+	onTournamentEnd(winner){
+		this.updatePlayerSlots('winner', [winner]);
+		this.reset();
+		user.tournamentSocket.close();
+	}
+
+	reset(){
+		this.id = 0;
+		this.phasePlayers = {
+			'quarter-final': [],
+			'semi-final': [],
+			'final': [],
+		};
+		this.phaseGames = {
+			'quarter-final': {},
+			'semi-final': {},
+			'final': {},
+		};
+		this.lastPhase = null;
+		this.currPhase = null;
+		this.firstPhase = null;
 	}
 
 	setFirstPhase(phase) {
@@ -135,8 +148,8 @@ class Tournament {
 		});
 	};
 
-	highlightPlayerPaths(cssSelector, scores) {
-		const query = `.${cssSelector}.player`;
+	highlightPlayerPaths(phase, scores) {
+		const query = `.${phase}.player`;
 		const playerSlots = document.querySelectorAll(query);
 
 		if (this.firstPhase == this.currPhase)
@@ -147,20 +160,18 @@ class Tournament {
 				playerSlots[i].classList.add('winner-player');
 				playerSlots[i].querySelector(".score2").classList.add("winner-score-container");
 				playerSlots[i].querySelector(".score").classList.add("winner-score");
-				document.querySelectorAll(`.${cssSelector}-line-${i}`).forEach(line => 
-					line.classList.add("winner-path")
+				document.querySelectorAll(`.${phase}-line-${i}`).forEach(l => 
+					l.classList.add("winner-path")
 				);
 			}
 			else {
 				playerSlots[i].classList.add('loser-player');
-				document.querySelectorAll(`.${cssSelector}-line-${i}`).forEach(line => 
-					line.classList.add("loser-path")
+				document.querySelectorAll(`.${phase}-line-${i}`).forEach(l => 
+					l.classList.add("loser-path")
 				);
 			}
 		});
-		document.querySelectorAll(`.${cssSelector}-line`).forEach(line => 
-			line.classList.add('winner-path')
-		);
+		document.querySelectorAll(`.${phase}-line`).forEach(l => l.classList.add('winner-path'));
 	}
 };
 

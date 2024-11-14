@@ -32,10 +32,6 @@ user.connectSocket(
 		else if (eventType == 'PHASE_END') {
 			setTimeout(() => {
 				tournament.onPhaseEnd(data);
-				if (data.winner) {
-					tournament.updatePlayerSlots('winner', [data.winner]);
-					user.tournamentSocket.close();
-				}
 			}, 1100);
 		}
 	}

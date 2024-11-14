@@ -68,7 +68,6 @@ async function registerTournament() {
 		console.log(response);
         if (response.ok) {
 			console.log(data.data);
-			user.tournamentAlias = formData.alias;
 			user.tournamentID = tournamentId;
 			user.userID = data.data.user_id;
 			console.log(user.userID);
