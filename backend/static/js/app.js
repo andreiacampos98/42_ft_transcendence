@@ -2,6 +2,7 @@ var currRoute = '';
 var lastRoute = '';
 
 const routeScripts = {
+	'/tournaments/ongoing/': ['ongoing-tourn'],
 	'/tournaments/': ['tournament', 'join_tournament'],
 	'/users/': [
 		'https://cdn.jsdelivr.net/npm/apexcharts',
@@ -12,7 +13,6 @@ const routeScripts = {
 		'tab-recent-matches', 
 		'view-details-tournaments',
 	],
-	'/tournaments/ongoing/': ['ongoing-tourn'],
 };
 
 
@@ -26,7 +26,6 @@ const appendScripts = (route) => {
 };
 
 const mutationsCallback = (mutations) => {
-	console.log(window.location.pathname);
 	// Ignore second set of mutations
 	if (currRoute == window.location.pathname)
 		return ;
@@ -35,16 +34,17 @@ const mutationsCallback = (mutations) => {
 	currRoute = window.location.pathname;
 
 	if (currRoute.startsWith('/tournaments/ongoing/'))
-		tournament.updateUI();
+		myTournament.updateUI();
+	// else if (currRoute.startsWith('/tournaments/ongoing/') && lastRoute.startsWith('/gametournament'))
+	// 	return ;
 
-	if (currRoute.startsWith('/tournaments/ongoing/') && lastRoute.startsWith('/gametournament'))
-		return ;
-
-	Object.keys(routeScripts).forEach(key => {
+	Object.keys(routeScripts).every(key => {
 		if (currRoute.startsWith(key)) {
 			console.log('Current route: ', key);
 			appendScripts(key);
+			return false;
 		}
+		return true;
 	})
 };
 
@@ -61,5 +61,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	observeHTML();
 	mutationsCallback();
 });
+
+window.addEventListener('htmx:beforeRequest', (event) => {
+	if (!myUser.isInTournament(currRoute))
+		return ;
+	event.preventDefault();
+	document.getElementById('leave-tournament-button').click();
+})
 
 

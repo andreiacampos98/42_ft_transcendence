@@ -68,8 +68,8 @@ function onCreateButtonClick()
 			alert(data.message);
 		} else {
 			const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
-			user.userID = data.data.host_id;
-			user.tournamentID = tournamentId;
+			myUser.userID = data.data.host_id;
+			myUser.tournamentID = tournamentId;
 			history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
 			htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
 				target: '#main' , 

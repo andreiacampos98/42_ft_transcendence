@@ -10,7 +10,7 @@ class TournamentUser {
 
 	connectSocket(prop, url, onmessage) {
 		if (this[prop])
-			delete this[prop];
+			return ;
 		this[prop] = new WebSocket(url);
 		this[prop].onmessage = (event) => {
 			console.log(JSON.parse(event.data));
@@ -25,7 +25,40 @@ class TournamentUser {
 			console.log(`Closed WS ${url}`, event);
 			this[prop] = null;	
 		};
-	}	
+	}
+
+	disconnectSocket(prop) {
+		this[prop].close();
+		delete this[prop];
+		this[prop] = null;
+	}
+	
+	isInTournament(currRoute) {
+		return (this.tournamentSocket != null && 
+			(currRoute.startsWith('/tournaments/ongoing/') 
+				|| currRoute.startsWith('/gametournament'))
+		);
+	}
+
+	async leaveTournament() {	
+		try {
+			const response = await fetch(`/tournaments/${this.tournamentID}/users/${this.userID}/leave`, {
+				method: 'DELETE',
+			});
+	
+			if (response.ok) {
+				myUser.disconnectSocket('tournamentSocket');
+				myTournament.reset();
+				history.pushState(null, '', `/tournaments/`);
+				htmx.ajax('GET', `/tournaments/`, {
+					target: '#main'  
+				});
+			}
+		} catch (error) {
+			console.error('Error:', error);
+			alert('An error occurred: ' + error.message);
+		}
+	}
 };
 
 class Tournament {
@@ -80,7 +113,7 @@ class Tournament {
 	onTournamentEnd(winner){
 		this.updatePlayerSlots('winner', [winner]);
 		this.reset();
-		user.tournamentSocket.close();
+		myUser.tournamentSocket.close();
 	}
 
 	reset(){
@@ -109,7 +142,7 @@ class Tournament {
 
 	updateUI() {
 		let phaseNames = ['quarter-final', 'semi-final', 'final'];
-		let firstPhaseIndex = phaseNames.indexOf(tournament.firstPhase);
+		let firstPhaseIndex = phaseNames.indexOf(myTournament.firstPhase);
 		let currPhaseIndex = phaseNames.indexOf(this.currPhase);
 		let lastPhaseIndex = phaseNames.indexOf(this.lastPhase);
 		
@@ -175,5 +208,5 @@ class Tournament {
 	}
 };
 
-let user = new TournamentUser();
-let tournament = new Tournament();
+let myUser = new TournamentUser();
+let myTournament = new Tournament();

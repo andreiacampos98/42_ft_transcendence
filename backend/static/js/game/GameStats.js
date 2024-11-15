@@ -6,7 +6,7 @@
 /*   By: nunomiguel533 <nunomiguel533@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/11/08 13:13:16 by nunomiguel5      ###   ########.fr       */
+/*   Updated: 2024/11/15 11:35:45 by nunomiguel5      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,11 +148,11 @@ export class GameStats {
 	}
 
 	storeTournamentGameScore() {
-		const currPhase = tournament.currPhase;
+		const currPhase = myTournament.currPhase;
 		const p1 = this.player1.username;
 		const p2 = this.player2.username;
 		
-		tournament.phaseGames[currPhase][this.gameID][p1] = this.score[p1];
-		tournament.phaseGames[currPhase][this.gameID][p2] = this.score[p2];
+		myTournament.phaseGames[currPhase][this.gameID][p1] = this.score[p1];
+		myTournament.phaseGames[currPhase][this.gameID][p2] = this.score[p2];
 	}
 }

@@ -10,7 +10,7 @@
 					<h1 class="tourn-title">{{ tournament_name }}</h1>
 					<h3 class="tourn-status">Waiting for players to enter...</h3>
 				</div>
-				<button style="margin-bottom: 10px; border: none; background: none; margin-left: auto;" class="change modal-button" id="leave-tournament" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
+				<button style="margin-bottom: 10px; border: none; background: none; margin-left: auto;" class="change modal-button" id="leave-tournament-button" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
 					<img src="{% static 'assets/icons/leave-tournament.png' %}" alt="Leave Tournament">
 				</button>
 			</div>
@@ -19,7 +19,7 @@
                     <h3 style="padding-top: 10px;">Leave Tournament</h3>
 					<p>You're about to quit the tournament. Are you sure?</p>
 					<div style="width: 100%;" class="bottom-buttons d-flex justify-content-between">
-						<button style="margin-top: 0;" class="change modal-button" id="leaver" onclick="leaveTournament()" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
+						<button style="margin-top: 0;" class="change modal-button" id="leaver" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
 							<span class="change-b" id="change">Yes, I am.</span>
 						</button>
 						<button style="margin-top: 0; border: none;" class="cancel modal-button" id="cancel">Go back</button>
@@ -340,4 +340,5 @@
 				{% endif %}
 			</div>
         </div>
+
 {% endblock %}

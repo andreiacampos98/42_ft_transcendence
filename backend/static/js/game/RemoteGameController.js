@@ -115,8 +115,8 @@ export class RemoteGameController extends AbstractGameController {
 		}));
 
 		setTimeout(() => {
-			history.pushState(null, '', `/tournaments/ongoing/${user.tournamentID}`);
-			htmx.ajax('GET', `/tournaments/ongoing/${user.tournamentID}`, {
+			history.pushState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
+			htmx.ajax('GET', `/tournaments/ongoing/${myUser.tournamentID}`, {
 				target: '#main'  
 			});
 		}, 1000);
