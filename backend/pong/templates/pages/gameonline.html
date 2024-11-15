@@ -13,6 +13,11 @@
 		<div id="score">0&nbsp;:&nbsp;0</div>
 		<div id="p2"></div>
 	</div>
+	<div id="loader-container" class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+		<div id="loader" >
+		</div>
+		<div id="loading-message">Connecting ...</div>
+	</div>
 </div>
 
 <script type="module">
@@ -23,6 +28,9 @@
 
 	let gameSocket = new WebSocket(`ws://${window.location.host}/ws/games/remote/queue`);
 	gameSocket.onmessage = (event) => {
+		document.getElementById('loader-container').remove();
+		document.getElementById('canvas-container').style.color = '#FFF';
+		document.getElementById('scoreboard').style.color = '#FFF';
 		const { player1, player2, ball, gameID } = JSON.parse(event.data);
 
 		let app = new MyApp();

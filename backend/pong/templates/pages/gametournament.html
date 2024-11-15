@@ -13,6 +13,11 @@
 		<div id="score">0&nbsp;:&nbsp;0</div>
 		<div id="p2"></div>
 	</div>
+	<div id="loader-container" class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+		<div id="loader" >
+		</div>
+		<div id="loading-message">Connecting ...</div>
+	</div>
 </div>
 
 <script type="module">
@@ -27,6 +32,10 @@
 		'gameSocket',
 		`ws://${window.location.host}/ws/tournaments/${tourID}/games/${gameInstance.id}`,
 		(event) => {
+			document.getElementById('loader-container').remove();
+			document.getElementById('canvas-container').style.color = '#FFF';
+			document.getElementById('scoreboard').style.color = '#FFF';
+			
 			let app = new MyApp();
 			app.init({ 
 				player1Data: {'id': p1.id, 'username': p1.username},

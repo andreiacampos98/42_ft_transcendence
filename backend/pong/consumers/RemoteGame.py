@@ -90,12 +90,12 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		handlers = {
 			'UPDATE': 'send.update.paddle.message',
 			'SYNC': 'send.ball.sync.message',
-			'FINISH': 'send.end.game.message'
+			'GAME_END': 'send.end.game.message'
 		}
 		data = json.loads(text_data)
 		event = data['event']
 
-		if event == 'FINISH':
+		if event == 'GAME_END':
 			game_data = data['data']
 			game_id = game_data['id']
 			del game_data['id']
