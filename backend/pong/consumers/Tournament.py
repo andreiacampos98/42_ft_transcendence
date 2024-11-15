@@ -247,7 +247,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		return last_phase_scores, winner
 	
-
 	# ! ===========================================================================
 
 	def is_tournament_full(self):
