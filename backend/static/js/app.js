@@ -68,10 +68,10 @@ window.addEventListener('htmx:beforeRequest', (event) => {
 	let nextRoute = event.detail.pathInfo.finalPath;
 	if (!myUser.attemptedToLeaveTournament(currRoute, nextRoute))
 		return ;
-	
+
 	event.preventDefault();
 	if (!currRoute.startsWith('/gametournament'))
 		document.getElementById('leave-tournament-button').click();
-})
+});
 
 
