@@ -8,6 +8,9 @@ myUser.connectSocket(
 		if (eventType == 'PLAYER_JOINED') {			
 			myTournament.onPlayerJoined(data);
 		}
+		else if (eventType == 'PLAYER_LEFT') {			
+			myTournament.onPlayerLeft(data);
+		}
 		else if (eventType == 'PHASE_START') {
 			setTimeout(() => {
 				myTournament.onPhaseStart(data);

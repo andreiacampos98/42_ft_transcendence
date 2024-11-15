@@ -28,36 +28,30 @@ class TournamentUser {
 	}
 
 	disconnectSocket(prop) {
+		if (!this[prop] || this[prop].readyState != WebSocket.OPEN)
+			return ;
 		this[prop].close();
 		delete this[prop];
 		this[prop] = null;
 	}
 	
-	isInTournament(currRoute) {
-		return (this.tournamentSocket != null && 
-			(currRoute.startsWith('/tournaments/ongoing/') 
-				|| currRoute.startsWith('/gametournament'))
+	attemptedToLeaveTournament(currRoute, nextRoute) {
+		return (this.tournamentSocket != null 
+			&& !nextRoute.startsWith('/tournaments/ongoing/')
+			&& !nextRoute.startsWith('/gametournament')
+			&& (currRoute.startsWith('/tournaments/ongoing/') 
+			|| currRoute.startsWith('/gametournament'))
 		);
 	}
 
-	async leaveTournament() {	
-		try {
-			const response = await fetch(`/tournaments/${this.tournamentID}/users/${this.userID}/leave`, {
-				method: 'DELETE',
-			});
-	
-			if (response.ok) {
-				myUser.disconnectSocket('tournamentSocket');
-				myTournament.reset();
-				history.pushState(null, '', `/tournaments/`);
-				htmx.ajax('GET', `/tournaments/`, {
-					target: '#main'  
-				});
-			}
-		} catch (error) {
-			console.error('Error:', error);
-			alert('An error occurred: ' + error.message);
-		}
+	async leaveTournament() {
+		myUser.disconnectSocket('tournamentSocket');
+		myUser.disconnectSocket('gameSocket');
+		myTournament.reset();
+		history.pushState(null, '', `/tournaments/`);
+		htmx.ajax('GET', `/tournaments/`, {
+			target: '#main'  
+		});
 	}
 };
 
@@ -69,13 +63,14 @@ class Tournament {
 	onPlayerJoined({phase, players}) {
 		this.setFirstPhase(phase);
 		this.phasePlayers[this.currPhase] = players;
-		console.log(phase, players);
-		console.log(this.currPhase, this.phasePlayers);
+		console.log('TOURNAMENT PLAYERS', this.phasePlayers);
 		this.updateUI();
 	}
 	
-	onPlayerLeft(player) {
-		delete this.players[player.id];
+	onPlayerLeft({players}) {
+		this.phasePlayers[this.currPhase] = players;
+		console.log('TOURNAMENT PLAYERS', this.phasePlayers);
+		this.resetFirstPhaseUI();
 		this.updateUI();
 	}
 
@@ -113,7 +108,7 @@ class Tournament {
 	onTournamentEnd(winner){
 		this.updatePlayerSlots('winner', [winner]);
 		this.reset();
-		myUser.tournamentSocket.close();
+		myUser.disconnectSocket('tournamentSocket');
 	}
 
 	reset(){
@@ -138,6 +133,14 @@ class Tournament {
 			return ;
 		this.firstPhase = phase;
 		this.currPhase = phase;
+	}
+
+	resetFirstPhaseUI() {
+		const playerSlots = document.querySelectorAll(`.${this.firstPhase}.player`);
+		playerSlots.forEach((slot, i) => {
+			slot.querySelector("span.name").textContent = `Player ${i}`;
+			slot.querySelector("img").src = '/static/assets/icons/avatar.png'
+		});
 	}
 
 	updateUI() {

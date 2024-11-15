@@ -21,11 +21,9 @@
 	const { 
 		user1_id: p1 , user2_id: p2, 
 		game_id: gameInstance, tournament_id: tourID 
-	} = user.tournamentGameData;
+	} = myUser.tournamentGameData;
 	
-	console.log('User: ', user);
-
-	user.connectSocket(
+	myUser.connectSocket(
 		'gameSocket',
 		`ws://${window.location.host}/ws/tournaments/${tourID}/games/${gameInstance.id}`,
 		(event) => {
@@ -33,8 +31,8 @@
 			app.init({ 
 				player1Data: {'id': p1.id, 'username': p1.username},
 				player2Data: {'id': p2.id, 'username': p2.username},
-				gameSocket: user.gameSocket,
-				tournamentSocket: user.tournamentSocket,
+				gameSocket: myUser.gameSocket,
+				tournamentSocket: myUser.tournamentSocket,
 				gameType: "Tournament",
 				gameID: gameInstance.id,
 			});

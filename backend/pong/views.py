@@ -785,20 +785,13 @@ def tournament_join(request, tournament_id, user_id):
 	return JsonResponse({'data': serializer.data}, status=201, safe=False)
 
 
-@csrf_exempt
-def tournament_leave(request, tournament_id, user_id):
-	if request.method != 'DELETE':	
-		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
-	
+@database_sync_to_async
+def tournament_leave(tournament_id, user_id):	
 	user_tour = get_object_or_404(TournamentsUsers, tournament_id=tournament_id, user_id=user_id)
 	user_tour.delete()
 	user = Users.objects.get(pk=user_id)
 	user.status = "Online"
 	user.save()
-	response_data = {
-		'message': f'User {user_tour.alias} left the tournament.'
-	}
-	return JsonResponse(response_data, status=204)
 
 @csrf_exempt
 def tournament_list_users(request, tournament_id):

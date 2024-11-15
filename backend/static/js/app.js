@@ -57,16 +57,21 @@ const observeHTML = () => {
 	observer.observe(targetNode, config);
 };
 
+// Detecs navigation to inject the JS scripts linked to that route
 window.addEventListener('DOMContentLoaded', (event) => {
 	observeHTML();
 	mutationsCallback();
 });
 
+//Handles attempts from a player to navigate away from an ongoing tournament
 window.addEventListener('htmx:beforeRequest', (event) => {
-	if (!myUser.isInTournament(currRoute))
+	let nextRoute = event.detail.pathInfo.finalPath;
+	if (!myUser.attemptedToLeaveTournament(currRoute, nextRoute))
 		return ;
+	
 	event.preventDefault();
-	document.getElementById('leave-tournament-button').click();
+	if (!currRoute.startsWith('/gametournament'))
+		document.getElementById('leave-tournament-button').click();
 })
 
 

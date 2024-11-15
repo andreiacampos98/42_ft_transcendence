@@ -1,5 +1,5 @@
 import json
-from ..views import tournament_init_phase, tournament_update_game_helper
+from ..views import tournament_init_phase, tournament_leave, tournament_update_game_helper
 from ..models import Tournaments, TournamentsGames, TournamentsUsers, Users
 from ..serializers import GamesSerializer, TournamentsGamesSerializer, TournamentsUsersSerializer, UsersSerializer
 from icecream import ic
@@ -27,7 +27,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		self.redis = get_redis_connection('default')
 		self.tournament_id = self.scope["url_route"]["kwargs"]["tournament_id"]
 		self.tournament_channel = f'tournament_{self.tournament_id}'
-		self.tournament_instance = await self.get_tournament()
+		self.tournament_capacity = (await self.get_tournament()).capacity
 
 		# Add user to the tournament wide channel
 		await self.channel_layer.group_add(self.tournament_channel, self.channel_name)
@@ -42,14 +42,35 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		
 
 	async def disconnect(self, code):
+		# Remove the player from cache
 		players = self.get_cache(f'{self.tournament_channel}_players')
 		player_id = f'{self.user.id}'
 
 		if player_id in players:			
 			del players[player_id]
 			self.set_cache(f'{self.tournament_channel}_players', players)
+		
+		# Remove the tournament while the tournament hasn't started yet
+		tournament = await self.get_tournament()
+		
+		if tournament.status == 'Open':
+			await tournament_leave(self.tournament_id, self.user.id)
+			ic(f'LEFT: {self.user.username} from tournament {tournament.id} while "{tournament.status}"')
 
-		#! IMPORTANT Use tournament_leave handler to remote the user from the database
+			players = list(map(lambda x: x['tour_user'], players.values()))
+
+			await self.channel_layer.group_send(self.tournament_channel, {
+				"type": "broadcast", 
+				"message": json.dumps({
+					'event': 'PLAYER_LEFT',
+					'data': {
+						'players': players
+					}
+				})
+			})
+
+		ic(f'DISCONNECT: {self.user.username} from tournament {tournament.id} while "{tournament.status}"')
+		
 		return await super().disconnect(code)
 	
 
@@ -59,6 +80,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		if event == 'GAME_END':
 			await self.on_game_end(message['data'])
+		elif event == 'LEAVE':
+			tournament = await self.get_tournament()
+			await self.leave_tournament(tournament)
 
 	# ! ============================== MESSAGING ===============================
 
@@ -77,8 +101,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def create_cache(self):
 		tournament_state = {
 			'last_phase': None, 
-			'curr_phase': phase_of[self.tournament_instance.capacity],
-			'curr_phase_total_games': self.tournament_instance.capacity // 2,
+			'curr_phase': phase_of[self.tournament_capacity],
+			'curr_phase_total_games': self.tournament_capacity // 2,
 			'curr_phase_finished_games': 0
 		}
 
@@ -112,6 +136,31 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	# ! ============================= DATABASE ACCESS ==========================
 
+	async def leave_tournament(self, tournament):
+		if tournament.status == 'Open':
+			await tournament_leave(self.tournament_id, self.user.id)
+			ic(f'LEFT: {self.user.username} from tournament {tournament.id} while "{tournament.status}"')
+
+			players = self.get_cache(f'{self.tournament_channel}_players')
+			del players[f'{self.user.id}']
+			self.set_cache(f'{self.tournament_channel}_players', players)
+
+			players_data = list(map(lambda x: x['tour_user'], players.values()))
+
+			await self.channel_layer.group_send(self.tournament_channel, {
+				"type": "broadcast", 
+				"message": json.dumps({
+					'event': 'PLAYER_LEFT',
+					'data': {
+						'players': players_data
+					}
+				})
+			})
+
+		ic(f'DISCONNECT: {self.user.username} from tournament {tournament.id} while "{tournament.status}"')
+		await super().disconnect()
+
+
 	@database_sync_to_async
 	def get_tournament(self):
 		return Tournaments.objects.get(pk=self.tournament_id)
@@ -125,16 +174,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		data['user'] = UsersSerializer(user).data
 
 		return data
-
-	@database_sync_to_async
-	def get_tournament_users(self):
-		tour_users = TournamentsUsers.objects.filter(tournament_id=self.tournament_id)
-
-		for tour_user in tour_users:
-			user_data = Users.objects.get(pk=tour_user['user_id']) 
-			tour_user['user'] = UsersSerializer(user_data).data
-
-		return TournamentsUsersSerializer(tour_users, many=True).data
 
 	@database_sync_to_async
 	def get_tournament_phase_games(self, phase, is_first_phase):
@@ -213,7 +252,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	def is_tournament_full(self):
 		tournament_users = self.get_cache(f'{self.tournament_channel}_players')
-		return len(tournament_users) == self.tournament_instance.capacity
+		return len(tournament_users) == self.tournament_capacity
 
 
 	async def broadcast_player_list(self):
