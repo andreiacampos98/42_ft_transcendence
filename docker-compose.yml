@@ -29,6 +29,7 @@ services:
         image: nginx
         volumes:
             - ./backend/static:/static
+            - ./backend/media:/media
         ports:
             - "443:443"
         networks:

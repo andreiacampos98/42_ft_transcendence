@@ -1,0 +1,283 @@
+{% extends 'navs.html' %}
+{% load static %}
+{% load custom_filters %}
+
+   
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'css/tournament.css' %}">
+<script defer src="{% static 'js/tournament.js' %}"></script>
+<script defer src="{% static 'js/join_tournament.js' %}"></script>
+<div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
+    <div class="main" style="padding-block: 56px; padding-inline: 72px">
+        <div class="top d-flex justify-content-between align-items-flex-start">
+            <div class="leaderboard d-flex">
+                <div class="topic d-flex align-items-center">
+                    <img class="icon" src="{% static 'assets/icons/laurel.png' %}" alt="laurel">
+                    <span class="icon-title3">Leaderboard</span>
+                </div>
+                <div class="results d-flex justify-content-center align-items-center">
+                    {% if top_users|length > 0 %}
+                        <div class="profile-winner">
+                            <a class="side-menu_a" 
+                                hx-get="{% url 'user-profile' top_users.0.user.id %}"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true">
+                                {% if "http" in top_users.0.user.picture %}
+                                    <img class="profile-pic2 first" src="{{ top_users.0.user.picture|urlunquote|slice:'7:' }}" alt="Profile a">
+                                {% else %}
+                                    <img class="profile-pic2 first" src="{{ top_users.0.user.picture }}" alt="Profile">
+                                {% endif %}
+                                <div class="friend-info">
+                                    <h4 class="first2" >#1 {{ top_users.0.user.username }}</h4>
+                                    <span class="victories">{{ top_users.0.nb_tournaments_won }} tournaments won</span>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="profile-winner">
+							<img  class="profile-pic2 first" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                            <div class="friend-info">
+								<h4 class="first2" >#1 ???</h4>
+                                <span class="victories">??? tournaments won</span>
+                            </div>
+						</div>
+                    {% endif %}
+                    {% if top_users|length > 1 %}
+                        <div class="profile-winner">
+                            <a class="side-menu_a" 
+                                hx-get="{% url 'user-profile' top_users.1.user.id %}"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true">
+                                {% if "http" in top_users.1.user.picture %}
+                                    <img class="profile-pic2 second" src="{{ top_users.1.user.picture|urlunquote|slice:'7:' }}" alt="Profile a">
+                                {% else %}
+                                    <img class="profile-pic2 second" src="{{ top_users.1.user.picture }}" alt="Profile">
+                                {% endif %}
+                                <div class="friend-info">
+                                    <h4 class="second2" >#2 {{ top_users.1.user.username }}</h4>
+                                    <span class="victories">{{ top_users.1.nb_tournaments_won }} tournaments won</span>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="profile-winner">
+                            <img  class="profile-pic2 second" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="second2" >#2 ???</h4>
+                                <span class="victories">??? tournaments won</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if top_users|length > 2 %}
+                        <div class="profile-winner">
+                            <a class="side-menu_a" 
+                                hx-get="{% url 'user-profile' top_users.2.user.id %}"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true">
+                                {% if "http" in top_users.2.user.picture %}
+                                    <img class="profile-pic2 third" src="{{ top_users.2.user.picture|urlunquote|slice:'7:' }}" alt="Profile a">
+                                {% else %}
+                                    <img class="profile-pic2 third" src="{{ top_users.2.user.picture }}" alt="Profile">
+                                {% endif %}
+                                <div class="friend-info">
+                                    <h4 class="third2" >#3 {{ top_users.2.user.username }}</h4>
+                                    <span class="victories">{{ top_users.2.nb_tournaments_won }} tournaments won</span>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="profile-winner">
+                            <img  class="profile-pic2 third" src="{% static 'assets/icons/avatar.png' %}" alt="Profile">
+                            <div class="friend-info">
+                                <h4 class="third2" >#3 ???</h4>
+                                <span class="victories">??? tournaments won</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="stats d-flex">
+                <div class="topic d-flex  align-items-center">
+                    <img class="icon" src="{% static 'assets/icons/chart.png' %}" alt="chart">
+                    <span class="icon-title3">Your Stats</span>
+                </div>
+                <div class="stats2 d-flex align-items-center justify-content-between">
+                    <div class="stat  d-flex align-items-center justify-content-space-around podium">
+                        <img  class="stat-img" src="{% static 'assets/icons/leaderboard.png' %}" alt="Current Rank">
+                        <span class="under-title">Current Rank</span>
+                        <span class="rank">{{ current_place }}</span>
+                    </div>
+                    <div class="stat  d-flex align-items-center justify-content-space-around played">
+                        <img  class="stat-img" src="{% static 'assets/icons/pingpong-full.png' %}" alt="Nbr games">
+                        <span class="under-title">Played Tournaments</span>
+                        <span class="rank">{{ stats.nb_tournaments_played }}</span>
+                    </div>
+                    <div class="stat  d-flex align-items-center justify-content-space-around tournament-won">
+                        <img  class="stat-img" src="{% static 'assets/icons/trophy.png' %}" alt="Nbr tournament">
+                        <span class="under-title">Won Tournaments</span>
+                        <span class="rank">{{ stats.nb_tournaments_won }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+		<div id="modal2" class="m">
+			<div class="m-content">
+				<h3 >New Tournament</h3>
+				<div class="form-div d-flex justify-content-center">
+					<form id="create-tournament-form" method="POST">
+						<div class="create-tournament-form d-flex justify-content-between">
+
+							{% csrf_token %}
+							<div class="new-tournament-modal d-flex" id="name-modal">
+								<label for="new-tournament-name">Tournament Name</label>
+								<input class="tournament-modal" type="text" id="new-tournament-name" name="tournament-name" required placeholder=" Ex: Pong World Cup">
+							</div>
+							<div class="new-tournament-modal" id="nbr-modal">
+								<label for="numPlayers">No. of Players</label>
+								<select id="numPlayers" name="numPlayers" required>
+									<option value="4">4 Players</option>
+									<option value="8">8 Players</option>
+									<option value="16">16 Players</option>
+								</select>
+							</div>
+						</div>
+						<div class="nickname1">
+							<label for="nickname-input">Tournament Nickname</label>
+							<input class="pass-input" type="text" id="nickname-input-create" name="nickname" placeholder="Insert your nickname here" data-user-username="{{ user.username }}">
+							<div id="nick-confirm" class="d-flex">
+								<input type="checkbox" id="use-username-checkbox"  name="use_username">
+								<label id="nick-denial" for="use-username-checkbox">No thanks, I'll use my username instead.</label>
+							</div>
+						</div>
+
+					</form>
+				</div>
+				<div class="bottom-buttons d-flex justify-content-between">
+
+					<button style="margin-bottom: 10px;" class="change modal-button" id="create-tournament" onclick="onCreateButtonClick()" data-user-id="{{ user_id }}">
+						<span class="change-b" id="change">Create</span>
+					</button>
+					<button style="margin-bottom: 10px; border: none;" class="cancel modal-button" id="cancel-create-tournament">Go back</button>
+				</div>
+			</div>
+		</div>
+		
+		<!--  -->
+        <div class="bot" style="min-width: 850px;">
+			<div class="avail-tournaments d-flex justify-content-between">
+				<div class="topic d-flex align-items-center">
+					<img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="tournament">
+                    <span class="icon-title3">Available Tournaments</span>
+                </div>
+                <div class="tournament-button">
+					<button class=" d-flex align-items-center tournament2" id="tournament-creater">
+						<img id="plus-icon" src="{% static 'assets/icons/plus.png' %}" alt="plus">
+                       	<span>Create tournament</span>
+                    </button>
+                </div>
+            </div>
+            <div class="tournament-avail d-flex">
+                <div class="table-head d-flex justify-content-between align-items-center">
+                    <div class="table-title">Name</div>
+                    <div class="table-title">Status</div>
+                    <div class="table-title">Host</div>
+                    <div class="table-title">Players registered</div>
+                    <div class="table-title">Action</div>
+                </div>
+                <div class="table">
+                    {% for tournament, num_players in tournaments %}
+                        <div class="table-content d-flex justify-content-between align-items-center">
+                            <div id="name" class="table-info2">{{ tournament.name }}</div>
+                            <div id="status" class="table-info2 status-tourn">{{ tournament.status }}</div>
+                            <div id="host" class="table-info2">{{ tournament.host_id }}</div>
+                            <div id="player-nbr" class="table-info2">{{ num_players }}/{{ tournament.capacity }}</div>
+                            <div class="table-info2">
+                                {% if num_players < tournament.capacity %}
+                                <button class="open-register-tournament-modal" data-tournament-id="{{ tournament.id }}">
+                                    <span class="change-b" id="change">
+										Register
+                                    </span>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+						{% endfor %}
+				</div>
+			</div>
+			<!-- <div id="modal2" class="m">
+				<div class="m-content">
+					<h3 >New Tournament</h3>
+					<div class="form-div d-flex justify-content-center">
+						<form id="create-tournament-form" method="POST">
+							<div class="create-tournament-form d-flex justify-content-between">
+	
+								{% csrf_token %}
+								<div class="new-tournament-modal d-flex" id="name-modal">
+									<label for="new-tournament-name">Tournament Name</label>
+									<input class="tournament-modal" type="text" id="new-tournament-name" name="tournament-name" required placeholder=" Ex: Pong World Cup">
+								</div>
+								<div class="new-tournament-modal" id="nbr-modal">
+									<label for="numPlayers">No. of Players</label>
+									<select id="numPlayers" name="numPlayers" required>
+										<option value="4">4 Players</option>
+										<option value="8">8 Players</option>
+										<option value="16">16 Players</option>
+									</select>
+								</div>
+							</div>
+							<div class="nickname1">
+								<label for="nickname-input">Tournament Nickname</label>
+								<input class="pass-input" type="text" id="nickname-input-create" name="nickname" placeholder=" Insert your nickname here">
+								<div id="nick-confirm" class="d-flex">
+									<button id="checkmark" class="align-items-center justify-content-center">✓</button>
+									<p id="nick-denial">No thanks, I'll use my username instead.</p>
+								</div>
+							</div>
+	
+						</form>
+					</div>
+					<div class="bottom-buttons d-flex justify-content-between">
+
+						<button style="margin-bottom: 10px;" class="change modal-button" id="create-tournament" onclick="getCreateTournament()" data-user-id="{{ user_id }}">
+							<span class="change-b" id="change">Create</span>
+						</button>
+						<button style="margin-bottom: 10px; border: none;" class="cancel modal-button" id="cancel-create-tournament">Go back</button>
+					</div>
+				</div>
+			</div> -->
+            <div id="modal" class="m">
+                <div class="m-content">
+                    <h3>Tournament Registration</h3>
+                    <div class="form-div d-flex justify-content-center">
+                        <form id="tournament-register-form" class="d-flex" method="POST">
+							<div class="create-tournament-form d-flex justify-content-between">
+							<!--<p>You're about to register in a tournament. Please specify a nickname to use within the tournament.</p>-->
+                            {% csrf_token %}
+							</div>
+
+                            <label for="nickname-input">Tournament Nickname</label>
+                          
+                            <input class="pass-input" type="text" id="nickname-input-join" name="nickname" required  placeholder="Insert your nickname here" data-user-username="{{ user.username }}">
+                            <div id="nick-confirm" class="d-flex">
+                                <input type="checkbox" id="use-usernamejoin-checkbox"  name="use_username" class="align-items-center justify-content-center" class="checkmark">
+                                <label id="nick-denial" for="use-username-checkbox">No thanks, I'll use my username instead.</label>
+                            </div>
+                        </form>
+                    </div>
+					<div class="bottom-buttons d-flex justify-content-between">
+
+						<button style="margin-bottom: 10px;" class="change modal-button" id="registration" onclick="registerTournament()" data-tournament-id="{{ tournament.id }}" data-user-id="{{ user_id }}">
+							<span class="change-b" id="change">Confirm</span>
+						</button>
+						<button style="margin-bottom: 10px; border: none;" class="cancel modal-button" id="cancel-register-tournament">Go back</button>
+					</div>
+            	</div>
+        	</div>
+    	</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'navs.html' %}
+{% load static %}
+
+{% block main_content %}
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+    <div class="main-content d-flex justify-content-center align-items-center non_compressed" style="padding-left: 50px;" id="main-content">
+        <div class="main">
+            {% if searched %}
+				{% if numbers == 0 %}
+                <div class="d-flex justify-content-center align-items-center flex-column" style="position: fixed; top: 50%; left: 50%; transform: translate(-45%, -50%);">
+                    <img src="{% static 'assets/icons/error.png' %}" alt="0 found">
+                    <h3 class="search-results">Nothing Found</h3>
+                    <div class="sub-results d-flex align-items-start">
+                        <h6 class="nbr-results">No users were found using <span style="font-weight: bold;">"{{ searched }}"</span> Typing less characters can achieve more results.</span>
+				    	</h6>
+                    </div>
+                </div>
+                {% else %}
+                    <h3 class="search-results">Search Results</h3>
+                    <div class="sub-results d-flex align-items-start">
+                        <h6 class="nbr-results">Your search for <span style="font-weight: bold;">"{{ searched }}"</span> has retrieved <span style="font-weight: bold;">{{ numbers}}</span> 
+				    		{% if numbers == 1 %}
+				    			result.
+				    		{% else %}
+				    			results.
+				    		{% endif %}
+				    	</h6>
+                    </div>
+                    <div class="search d-flex">
+                        {% for users in userss %}
+                            <a  class="square d-flex align-items-center justify-content-between" hx-get="{% url 'user-profile' users.id %}"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true">
+                                {% if "http" in users.picture.url %}
+                                    <img class="circular-image" src="{{ users.picture }}" alt="Profile">
+                                {% else %}
+                                    <img class="circular-image" src="{{ users.picture.url }}" alt="Profile">
+                                {% endif %}
+                                <h3 class="name">{{ users.username }}</h3>
+                            </a>
+                        {% endfor %}           
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+
+
+

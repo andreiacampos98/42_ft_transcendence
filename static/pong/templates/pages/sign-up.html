@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <script defer src="{% static 'js/signup.js' %}"></script>
+    <div class="login-container">
+        <div class="login-container2">
+            <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
+            <h3 class="title" id="nice" >Welcome to our platform</h3>
+            <form id="signupForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="input-group password-group">
+                    <label id= "password2" for="password">New Password</label>
+                    <input type="password" id="password" name="password" placeholder="Password"  required>
+                    <button type="button" id="togglePassword" onclick="togglePasswordVisibility()">
+                        <img id="togglePasswordImage" src="{% static 'assets/icons/eyeopen.png' %}">
+                    </button>
+                </div>
+				<div class="input-group password-group">
+                    <label id= "reconfirm2" for="reconfirm">Confirm New Password</label>
+                    <input type="password" id="reconfirm" name="reconfirm" placeholder="Password"  required>
+                    <button type="button" id="togglereconfirm" onclick="togglereconfirmButton()">
+                        <img id="togglereconfirmImage" src="{% static 'assets/icons/eyeopen.png' %}">
+                    </button>
+                </div>
+                <p id="errorMessage" class="error-message"></p>
+                <button type="submit">Sign in</button>
+            </form>
+            <div class="bottom">
+                <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
+                <div id="login42">
+                    <a href="{% url 'signin42' %}">
+                        <button type="submit2">
+                            <img src="{% static 'assets/icons/42logosmall.png' %}"> Sign in with 42
+                        </button>
+                    </a>
+                </div>
+                <p> Do you already have an account? <a class="sign-up" 
+                    hx-get="{% url 'login' %}"
+                    hx-trigger="click"
+                    hx-target="#main"
+                    hx-push-url="true"        
+                    >Log in</a></p>
+                <br>
+                <h6 style="margin-bottom:0px">© 42 Porto 2024</h6>
+            </div>
+        </div>
+    </div>
+{% endblock %}

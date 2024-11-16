@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/scroll.css' %}">
+    <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
+    <link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
+    <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
+	<link rel="stylesheet" href="{% static 'css/modals.css' %}">
+	<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script defer src="{% static 'js/navs.js' %}"></script>
+    <script defer src="{% static 'js/suggest_users.js' %}"></script>
+    <script defer src="{% static 'js/friends.js' %}"></script>
+    <script defer src="{% static 'js/friend-block.js' %}"></script>
+    <script defer src="{% static 'js/notifications.js' %}"></script>
+    <script defer src="{% static 'js/signout.js' %}"></script>
+    <script defer src="{% static 'js/token.js' %}"></script>
+    
+    <main id="MainPage" style="padding: 70px;">
+        {% block main_content %}
+        {% endblock %}
+    </main>
+    {% if user.is_authenticated %}
+		{% block friend-bar %}
+            <button class="toggle-button" id="toggle-button" onclick="toggleFriendsDrawer('{{user_id}}')">
+                <img src="{% static 'assets/icons/puxador.png' %}">
+            </button>
+            <div class="sidebar" id="sidebar"></div>
+        {% endblock %}
+
+        {% block top-bar %}
+        <div class="top-bar d-flex justify-content-between align-items-center">
+            <form  
+                hx-get="{% url 'search-users' %}"
+                hx-trigger="submit"
+                hx-target="#main"
+                hx-push-url="true"
+                onclick="checkTokenBeforeNavigation(event)"
+                id="searchForm">
+                <div class="search-container d-flex align-items-center">
+                    <input type="text" autocomplete="off" placeholder="Search for players..." name="searched" id="search" onkeyup="getSuggestions()">
+                    <button type="submit" id="searchButton">
+                        <img id="search-icon" src="{% static 'assets/icons/binoculars.png' %}">
+                    </button>
+                    <div style="display: none;" id="suggestions" ></div>    
+                </div>
+            </form>
+            <div class="top-right d-flex align-items-center">
+                <button style="background: none; border: none;" onclick="getNotifications()" data-user-id="{{ user.id }}">
+                    <img class="bell-icon" src="{% static 'assets/icons/Doorbell.png' %}">
+                </button>
+                
+                <!-- Popup Modal -->
+                <div id="modal-notif" class="m">
+					<div class="m-content2 d-flex align-items-center flex-column" id="inner-modal">
+                        <ul id="notificationList"></ul>
+                    </div>
+                </div>
+            
+                <div id="notifications" ></div>
+                <a  hx-get="{% url 'user-profile' user.id %}"
+                    hx-trigger="click"
+                    hx-target="#main"
+                    hx-push-url="true"
+                    onclick="checkTokenBeforeNavigation(event)">
+                    {% if "http" in user.picture.url %}
+                        <img class="profile-pic" src="{{ user.picture }}" alt="Profile">
+                    {% else %}
+                        <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
+                    {% endif %}
+                </a>
+            </div>
+            
+        </div>
+        {% endblock %}
+        
+        {% block side-menu %}
+            <div class="left-div d-flex align-items-center" id="left-div">
+                <button class="select-item d-flex align-items-center expandable-section" onclick="toggleLeftDiv()">
+                    <img class="icon2" src="{% static 'assets/icons/logo2.png' %}" alt="Ping Pong">
+                    <span class="icon-title2 bold">Pong Game</span>
+                </button>
+                <div class="selects d-flex justify-content-center">
+                    <button class="select-item d-flex align-items-center">
+                        <a class="side-menu_a" 
+                            hx-get="{% url 'home' %}"
+                            hx-trigger="click"
+                            hx-target="#main"
+                            hx-push-url="true"
+                            onclick="checkTokenBeforeNavigation(event)">
+                            <!-- data-url="{% url 'home' %}" data-page="home" 
+                            data-icon="{% static 'assets/icons/pong.png' %}" 
+                            data-highlight="{% static 'assets/icons/pong-highlight.png' %}" 
+                            onclick="loadPage(event)"> -->
+                            {% if page == "home" %}
+                                <img class="icon" id="highlight-icon1" src="{% static 'assets/icons/pong-highlight.png' %}" alt="Ping Pong">
+                                <span class="icon-title" id="highlight-span1">Singles</span>
+                            {% else %}
+                                <img class="icon" src="{% static 'assets/icons/pong.png' %}" alt="Ping Pong">
+                                <span class="icon-title">Singles</span>
+                            {% endif %}
+                        </a>
+                    </button>
+                    <button class="select-item d-flex align-items-center">
+                        <a class="side-menu_a"  
+                            hx-get="{% url 'tournaments' %}"
+                            hx-trigger="click"
+                            hx-target="#main"
+                            hx-push-url="true"
+                            onclick="checkTokenBeforeNavigation(event)">
+                            <!-- data-url="{% url 'tournaments' %}" data-page="tournaments" data-icon="{% static 'assets/icons/tournament.png' %}" data-highlight="{% static 'assets/icons/tournament-highlight.png' %}" onclick="loadPage(event)"> -->
+                            {% if page == "tournament" %}
+                                <img class="icon" id="highlight-icon2" src="{% static 'assets/icons/tournament-highlight.png' %}" alt="Ping Pong">
+                                <span class="icon-title" id="highlight-span2">Tournaments</span>
+                            
+                            {% else %}
+                                <img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="Tournament">
+                                <span class="icon-title">Tournaments</span>
+                            {% endif %}
+                        </a>
+                    </button>
+                    <button class="select-item d-flex align-items-center">
+                        <a class="side-menu_a" 
+                            hx-get="{% url 'user-profile' user.id %}"
+                            hx-trigger="click"
+                            hx-target="#main"
+                            hx-push-url="true"
+                            onclick="checkTokenBeforeNavigation(event)">
+                            <!-- data-url="{% url 'user-profile' user.id %}" data-page="profile" data-icon="{% static 'assets/icons/profile.png' %}" data-highlight="{% static 'assets/icons/profile-highlight.png' %}" onclick="loadPage(event)"> -->
+                            {% if page == "profile" %}
+                                <img class="icon" id="highlight-icon3" src="{% static 'assets/icons/profile-highlight.png' %}" alt="Ping Pong">
+                                <span class="icon-title" id="highlight-span3">User</span>
+                            {% else %}
+                                <img class="icon" src="{% static 'assets/icons/profile.png' %}" alt="User">
+                                <span class="icon-title">User</span>
+                            {% endif %}
+                        </a>
+                    </button>
+                    <button class="select-item d-flex align-items-center logout-icon" onclick="onSignout()">
+                        <img class="logout-img" src="{% static 'assets/icons/logout.png' %}" alt="logout">
+                        <span class="icon-title">Logout</span>
+                    </button>
+                </div>
+            </div>
+        {% endblock %}
+
+        
+    {% endif %}
+        
+
+{% endblock %}
