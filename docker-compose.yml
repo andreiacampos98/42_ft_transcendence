@@ -7,9 +7,6 @@ services:
         image: django
         volumes:
             - ./backend:/code
-            - ./static:/code/static
-        ports:
-            - "8002:8002"
         networks:
             - Transcendence
         depends_on:
@@ -28,8 +25,7 @@ services:
             dockerfile: Dockerfile
         image: nginx
         volumes:
-            - ./backend/static:/static
-            - ./backend/media:/media
+            - ./backend:/code
         ports:
             - "443:443"
         networks:
@@ -38,7 +34,7 @@ services:
             - django
         env_file:
             - .env
-
+        restart: on-failure
 
     postgres:
         container_name: postgres-container
@@ -59,6 +55,7 @@ services:
           interval: 3s
           timeout: 5s
           retries: 5
+        restart: on-failure
 
     pgadmin4:
         container_name: pgadmin4-container
