@@ -14,13 +14,16 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		await self.accept()
 		self.user = self.scope['user']
 		self.redis = get_redis_connection('default')
-		self.host_channel = f'room_of_host_{self.user.id}'
+		self.game_channel = f'room_of_host_{self.user.id}'
 
 		await self.queue_up()
 	
 	async def disconnect(self, code):
-		if self.user.id in self.queue:
-			del self.queue[self.user.id]
+		# if self.user.id in self.queue:
+		# 	del self.queue[self.user.id]
+		self.hashmap_del_cache(self.user.id)
+		for key in self.hashmap_getall_cache():
+			ic(key, self.hashmap_get_cache(key))
 		return await super().disconnect(code)
 	
 	async def receive(self, text_data=None):
@@ -30,7 +33,7 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		if event == 'GAME_END':
 			await self.on_game_end(message['data'])
 
-		await self.channel_layer.group_send( self.host_channel, {
+		await self.channel_layer.group_send( self.game_channel, {
 			"type": "broadcast",
 			"message": text_data
 		})
@@ -41,13 +44,18 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		await self.send(event['message'])
 
 	# ! ============================= REDIS ACCESS =============================
-
-	def get_cache(self, key):
-		data = self.redis.get(key)
-		return json.loads(data.decode('UTF-8')) if data else None
 	
-	def set_cache(self, key, value):
-		return self.redis.set(key, json.dumps(value))
+	def hashmap_getall_cache(self):
+		return [json.loads(key.decode('UTF-8')) for key in self.redis.hgetall('remote_game_queue')]
+
+	def hashmap_get_cache(self, key):
+		return json.loads(self.redis.hget('remote_game_queue', key).decode('UTF-8'))
+
+	def hashmap_set_cache(self, key, value):
+		return self.redis.hset('remote_game_queue', key, json.dumps(value))
+
+	def hashmap_del_cache(self, key):
+		return self.redis.hdel('remote_game_queue', key)
 
 	# ! ============================= DATABASE ACCESS ==========================
 
@@ -76,37 +84,26 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		(a 'waiting room') to allow another player to join in
 		"""
 
-		# ! WAS IN THE MIDDLE OF PLACING GAMES IN REDIS BUT NOTICED
-		# ! THAT IT'S BETTER IF I DONT REPLACE THE WHOLE CACHE WHEN A GAME IS 
-		# ! ELIMINATED. SO THE BEST COURSE IS TO CREATE A VARIABLE WITH THE KEYS
-		# ! FOR THE REMOTE GAMES AND CREATE KEY VALUES FOR EACH GAME
-
-		# ! EXAMPLE
-		# ! 'remote_games_available': ['remote_host_1', 'remote_host_2', 'remote_host_3']
-		# ! 'remote_host_1': {...}
-		# ! 'remote_host_2': {...}
-		# ! 'remote_host_3': {...}
-		# ! PAIR WITH SOMEONE AND REMOVE IT FROM THE CACHE AND THE 'remote_games_available'
-
-
-		queue = {}
-		if self.redis.exists('remote_games_queue'):
-			queue = self.get_cache('remote_games_queue')
-		if self.user.id in queue:
+		available_rooms = self.hashmap_getall_cache()
+		for key in available_rooms:
+			ic(key, self.hashmap_get_cache(key))
+		if self.user.id in available_rooms:
+			ic(f'{self.user.id} - {self.user.username} already in the waiting rooms')
 			return
-		if len(queue) != 0:
-			return await self.pair_player(queue)
+		if self.redis.hlen('remote_game_queue') > 0:
+			ic(f'Pairing {self.user.id} - {self.user.username}')
+			await self.pair_player(available_rooms[0])
+		else:
+			user_data = {
+				'id': self.user.id,
+				'username': self.scope['user'].username,
+				'game_channel': self.game_channel,
+				'channel_name': self.channel_name
+			}
+			self.hashmap_set_cache(self.user.id, user_data)
 
-		queue[self.user.id] = {
-			'id': self.user.id,
-			'username': self.scope['user'].username,
-			'game_channel': self.host_channel,
-			'channel_name': self.channel_name
-		}
-		
-		self.set_cache('remote_games_queue', queue)
 
-	async def pair_player(self, queue):
+	async def pair_player(self, host_room_id):
 		""" 
 		Since the queue is not empty, this means there is already at least
 		1 waiting room. We add the current player to the waiting room and 
@@ -117,18 +114,16 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		curr_player = {
 			'id': self.user.id,
 			'username': self.scope['user'].username,
-			'game_channel': self.host_channel
+			'game_channel': self.game_channel
 		}
+		host_player = self.hashmap_get_cache(host_room_id)
+		game = await self.create_new_game(host_player['id'])
 
-		host_id = list(queue.keys())[0]
-		host_player = queue[host_id]
-		game = await self.create_new_game(host_id)
+		self.game_channel = host_player['game_channel']
 
-		self.host_channel = f'remote_game_host_{host_id}'
-
-		await self.channel_layer.group_add(self.host_channel, self.channel_name)
-		await self.channel_layer.group_add(self.host_channel, host_player['channel_name'])
-		await self.channel_layer.group_send(self.host_channel, {
+		await self.channel_layer.group_add(self.game_channel, self.channel_name)
+		await self.channel_layer.group_add(self.game_channel, host_player['channel_name'])
+		await self.channel_layer.group_send(self.game_channel, {
 			"type": "broadcast", 
 			"message": json.dumps({
 				'gameID': game['id'],
@@ -142,5 +137,4 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 				}
 			})
 		})
-		del queue[host_id]
-		self.set_cache('remote_games_queue', queue)
+		self.hashmap_del_cache(host_player['id'])

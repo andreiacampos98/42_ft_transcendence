@@ -11,8 +11,8 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 		await self.accept()
 		self.user = self.scope['user']
 		self.game_id = self.scope["url_route"]["kwargs"]["game_id"]
-		self.tournament_id = self.scope["url_route"]["kwargs"]["tournament_id"]
 		self.game_channel = f'tour_{self.tournament_id}_game_{self.game_id}'
+		self.tournament_id = self.scope["url_route"]["kwargs"]["tournament_id"]
 
 		await self.channel_layer.group_add(self.game_channel, self.channel_name)
 
