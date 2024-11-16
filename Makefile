@@ -7,6 +7,9 @@ detach:
 django:
 	docker exec -it django-container sh -c 'source /.venv/bin/activate; sh'
 
+nginx:
+	docker exec -it nginx-container sh
+
 migrations:
 	docker exec -it django-container sh -c \
 		'source /.venv/bin/activate; \

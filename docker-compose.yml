@@ -30,11 +30,13 @@ services:
         volumes:
             - ./backend/static:/static
         ports:
-            - "80:80"
+            - "443:443"
         networks:
             - Transcendence
         depends_on: 
             - django
+        env_file:
+            - .env
 
 
     postgres:
