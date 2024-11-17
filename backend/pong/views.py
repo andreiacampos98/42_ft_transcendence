@@ -1243,11 +1243,12 @@ def tournament_update_game(request, tournament_id, game_id):
 
 
 def get_access_token(host, code):
+	uri = f'https://localhost/home42/'
 	response = requests.post(settings.TOKEN_URL_A, data={
 		'grant_type': 'authorization_code',
 		'client_id': settings.CLIENT_ID_A,
 		'client_secret': settings.CLIENT_SECRET_A,
-		'redirect_uri': f'http://{host}/home42/',
+		'redirect_uri': uri,
 		'code': code,
 	})
 	ic(response.text)
@@ -1274,7 +1275,7 @@ def get_user_info(token):
 def signin42(request):
 	try:
 		client_id = settings.CLIENT_ID_A
-		uri = f'http://{request.get_host()}/home42/'
+		uri = request.build_absolute_uri('/home42/')
 		authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={uri}'
 		return HttpResponseRedirect(authorization_url)
 	
