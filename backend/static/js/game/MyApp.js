@@ -46,6 +46,7 @@ export class MyApp  {
 				player1Data: player1Data, 
 				player2Data: player2Data,
 				gameSocket: gameSocket,
+				gameType: gameType,
 				tournamentSocket: tournamentSocket,
 				gameID: gameID,
 			});

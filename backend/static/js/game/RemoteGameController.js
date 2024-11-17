@@ -6,12 +6,14 @@ import { AbstractGameController } from './AbstractGameController.js';
 
 
 export class RemoteGameController extends AbstractGameController {
-	constructor({ player1Data, player2Data, gameID, gameSocket, tournamentSocket=null }) {
-		super({type: "Remote"});
+	constructor({ player1Data, player2Data, gameID, gameType, gameSocket, tournamentSocket=null }) {
+		super({type: gameType});
 
-		this.players = {};
 		this.gameSocket = gameSocket;
 		this.tournamentSocket = tournamentSocket;
+		this.player1 = null;
+		this.player2 = null;
+		this.players = {};
 		
 		this.registerKeybinds();
 		this.registerSocketEvents();
