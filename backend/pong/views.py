@@ -1243,12 +1243,11 @@ def tournament_update_game(request, tournament_id, game_id):
 
 
 def get_access_token(host, code):
-	uri = f'https://localhost/home42/'
 	response = requests.post(settings.TOKEN_URL_A, data={
 		'grant_type': 'authorization_code',
 		'client_id': settings.CLIENT_ID_A,
 		'client_secret': settings.CLIENT_SECRET_A,
-		'redirect_uri': uri,
+		'redirect_uri': f'https://{host}/home42/',
 		'code': code,
 	})
 	ic(response.text)
@@ -1257,6 +1256,7 @@ def get_access_token(host, code):
 		access_token = token_data.get('access_token')
 		ic(access_token)
 		return access_token
+	
 	else:
 		return None
 

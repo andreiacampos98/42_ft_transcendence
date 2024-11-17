@@ -64,7 +64,7 @@ async function detailTournamentGames(button) {
 		user1ProfilePic.alt = `${game.game.user1.username}'s profile picture`;
 
 		if (game.game.user1.picture.includes('http')) 
-			user1ProfilePic.src = decodeURIComponent(game.game.user1.picture.slice(7));
+			user1ProfilePic.src = `https://${decodeURIComponent(game.game.user1.picture.slice(14))}`;
 		else 
 			user1ProfilePic.src = game.game.user1.picture; 
 		
@@ -85,7 +85,7 @@ async function detailTournamentGames(button) {
 		user2ProfilePic.alt = `${game.game.user2.username}'s profile picture`;
 
 		if (game.game.user2.picture.includes('http')) 
-			user2ProfilePic.src = decodeURIComponent(game.game.user2.picture.slice(7));
+			user2ProfilePic.src = `https://${decodeURIComponent(game.game.user2.picture.slice(14))}`;
 		else 
 			user2ProfilePic.src = game.game.user2.picture; 
 

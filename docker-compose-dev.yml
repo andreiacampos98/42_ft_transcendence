@@ -1,0 +1,94 @@
+services:
+    django:
+        container_name: django-container
+        build:
+            context: ./backend
+            dockerfile: Dockerfile-dev
+        image: django
+        volumes:
+            - ./backend:/code
+        networks:
+            - Transcendence
+        depends_on:
+            postgres:
+              condition: service_healthy
+            redis:
+              condition: service_started
+        ports:
+            - "8002:8002"
+            - "8089:8089"
+        env_file:
+            - .env
+        restart: on-failure
+
+    nginx:
+        container_name: nginx-container
+        build:
+            context: ./nginx
+            dockerfile: Dockerfile
+        image: nginx
+        volumes:
+            - ./backend:/code
+        ports:
+            - "443:443"
+        networks:
+            - Transcendence
+        depends_on: 
+            - django
+        env_file:
+            - .env
+        restart: on-failure
+
+    postgres:
+        container_name: postgres-container
+        build:
+            context: ./postgres
+            dockerfile: Dockerfile
+        image: postgres
+        volumes:
+            - ./data:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        networks:
+            - Transcendence 
+        env_file:
+            - .env
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U anaraujo"]
+          interval: 3s
+          timeout: 5s
+          retries: 5
+        restart: on-failure
+
+    pgadmin4:
+        container_name: pgadmin4-container
+        image: pgadmin4
+        build:
+            context: ./pgadmin
+            dockerfile: Dockerfile
+        restart: always
+        env_file:
+            - .env
+        networks:
+            - Transcendence
+        ports:
+            - "8080:8080"
+        depends_on:
+            - postgres
+
+    redis:
+        container_name: redis-container
+        image: redis
+        build:
+            context: ./redis
+            dockerfile: Dockerfile
+        restart: always
+        networks:
+            - Transcendence
+        ports:
+            - "6379:6379"
+
+networks:
+    Transcendence:
+        name: Transcendence
+        driver: bridge

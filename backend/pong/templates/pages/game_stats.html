@@ -14,7 +14,7 @@
             <div class="profile-head d-flex align-items-center justify-content-center">
                 <div class="d-flex align-items-center justify-content-center flex-column">
                     {% if "http" in game.user1_id.picture %}
-                        <img class="profile-medium" src="{{ game.user1_id.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                        <img class="profile-medium" src="https://{{ game.user1_id.picture|urlunquote|slice:'14:' }}" alt="Profile">
                     {% else %}
                         <img class="profile-medium" src="{{ game.user1_id.picture }}" alt="Profile">
                     {% endif %}
@@ -33,7 +33,7 @@
                 </div>
                 <div class="d-flex align-items-center justify-content-center flex-column">
                     {% if "http" in game.user2_id.picture %}
-                        <img class="profile-medium" src="{{ game.user2_id.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                        <img class="profile-medium" src="https://{{ game.user2_id.picture|urlunquote|slice:'14:' }}" alt="Profile">
                     {% else %}
                         <img class="profile-medium" src="{{ game.user2_id.picture }}" alt="Profile">
                     {% endif %}
@@ -174,7 +174,7 @@
                         <div class="record-info d-flex justify-content-between align-items-center">
                             <div class="img-tit d-flex align-items-center">
                                 {% if "http" in stats.gdo_user.picture %}
-                                    <img class="profile-medium" src="{{ stats.gdo_user.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                                    <img class="profile-medium" src="https://{{ stats.gdo_user.picture|urlunquote|slice:'14:' }}" alt="Profile">
                                 {% else %}
                                     <img class="profile-medium" src="{{ stats.gdo_user.picture }}" alt="Profile">
                                 {% endif %}
@@ -189,7 +189,7 @@
                         <div class="record-info d-flex justify-content-between align-items-center">
                             <div class="img-tit d-flex align-items-center">
                                 {% if "http" in stats.mcg_user.picture %}
-                                    <img class="profile-medium" src="{{ stats.mcg_user.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                                    <img class="profile-medium" src="https://{{ stats.mcg_user.picture|urlunquote|slice:'14:' }}" alt="Profile">
                                 {% else %}
                                     <img class="profile-medium" src="{{ stats.mcg_user.picture }}" alt="Profile">
                                 {% endif %}
@@ -204,7 +204,7 @@
                         <div class="record-info d-flex justify-content-between align-items-center">
                             <div class="img-tit d-flex align-items-center">
                                 {% if "http" in stats.bg_user.picture %}
-                                    <img class="profile-medium" src="{{ stats.bg_user.picture|urlunquote|slice:'7:' }}" alt="Profile">
+                                    <img class="profile-medium" src="https://{{ stats.bg_user.picture|urlunquote|slice:'14:' }}" alt="Profile">
                                 {% else %}
                                     <img class="profile-medium" src="{{ stats.bg_user.picture }}" alt="Profile">
                                 {% endif %}

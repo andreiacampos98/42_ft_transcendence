@@ -1,5 +1,8 @@
 all:
-	docker compose up --build
+	docker compose up
+
+dev: 
+	docker compose -f docker-compose-dev.yml up
 
 detach:
 	docker compose up --build -d
@@ -34,10 +37,14 @@ prune:
 
 down:
 	docker compose down
-
+	docker compose -f docker-compose-dev.yml down
+	
 ps:
 	docker compose ps
 
 re: down all
+
+re-dev: down
+	docker compose -f docker-compose-dev.yml up --build
 
 .SILENT:

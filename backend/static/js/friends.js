@@ -70,7 +70,7 @@ async function toggleFriendsDrawer(user_id) {
 
 		const uri = friend.picture;
 		if (friend.picture.includes('http')) 
-			profilePic.src = decodeURIComponent(uri.slice(7))
+			profilePic.src = `https://${decodeURIComponent(uri.slice(14))}`
 		else 
 			profilePic.src = friend.picture;
 

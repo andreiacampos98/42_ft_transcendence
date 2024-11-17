@@ -82,7 +82,6 @@
 			<div class="side-profile d-flex align-items-center">
 				<div id="change-info1">
 					{% if "http" in user_view.picture.url %}
-						<span>aqui</span>
 						<img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture }}" alt="Profile">
 					{% else %}
 						<img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="Profile">
@@ -474,7 +473,7 @@
 												hx-target="#main"
 												hx-push-url="true">
 												{% if "http" in  tour.tournament.winner_id.picture.url %}
-													<img class="profile-pic" src="{{ tour.tournament.winner_id.picture.url|urlunquote|slice:'7:' }}" alt="Profile">
+													<img class="profile-pic" src="https://{{ tour.tournament.winner_id.picture.url|urlunquote|slice:'14:' }}" alt="Profile">
 												{% else %}
 													<img class="profile-pic" src="{{ tour.tournament.winner_id.picture }}" alt="Profile">
 												{% endif %}

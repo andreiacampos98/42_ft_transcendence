@@ -39,7 +39,7 @@ USER_INFO_URL_A=os.getenv("USER_INFO_URL")
 SECRET_KEY = 'django-insecure-b4amhal1@gob1$prnqgr*chry7pneej76qsy^p+5$m!w&#$qyy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 LOGOUT_REDIRECT_URL = 'login'

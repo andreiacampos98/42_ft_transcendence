@@ -68,7 +68,7 @@ async function getNotifications() {
 		
 		const uri = notification.other_user_id.picture;
 		if (notification.other_user_id.picture.includes('http')) 
-			profilePic.src = decodeURIComponent(uri.slice(7))
+			profilePic.src = `https://${decodeURIComponent(uri.slice(14))}`
 		else 
 			profilePic.src = notification.other_user_id.picture;
 		
