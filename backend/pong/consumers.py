@@ -55,6 +55,8 @@ class RemoteGameQueueConsumer(WebsocketConsumer):
 		self.room_name = ''
 		self.game_id = 0
 
+		ic(self.user.id, self.user.username)
+
 		# if the queue is empty: (no room available)
 		#	- create a new channel_name and add it to the object
 		# 	- push the new object alongside the channel name to the queue

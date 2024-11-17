@@ -11,7 +11,7 @@ const setupGame = (data) => {
 };
 
 const remoteHandler = () => {
-	let socket = new WebSocket(`wss://${window.location.host}:8089/wss/games/remote/queue`, 'wss');
+	let socket = new WebSocket(`wss://${window.location.host}/wss/games/remote/queue`);
 	socket.onmessage = (event) => {
 		const { player1, player2, ball, gameID } = JSON.parse(event.data);
 		setupGame({
