@@ -49,6 +49,9 @@ LOGIN_URL = 'login'
 ALLOWED_HOSTS = ['*']
 APPEND_SLASH = False
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SECURE_SSL_REDIRECT = True
 # Use the default session backend
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Banco de dados para armazenar sessões
 

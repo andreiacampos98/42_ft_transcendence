@@ -28,6 +28,6 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 
 
 application = ProtocolTypeRouter({
-  'https': django_asgi_app,
+  'http': django_asgi_app,
   'websocket': AuthMiddlewareStack(URLRouter(pong.urls.websocket_urlpatterns))
 })
