@@ -24,7 +24,7 @@
                                 hx-target="#main"
                                 hx-push-url="true">
                                 {% if "http" in top_users.0.user.picture %}
-                                    <img class="profile-pic2 first" src="{{ top_users.0.user.picture|urlunquote|slice:'7:' }}" alt="Profile a">
+                                    <img class="profile-pic2 first" src="https://{{ top_users.0.user.picture|urlunquote|slice:'14:' }}" alt="Profile a">
                                 {% else %}
                                     <img class="profile-pic2 first" src="{{ top_users.0.user.picture }}" alt="Profile">
                                 {% endif %}
@@ -51,7 +51,7 @@
                                 hx-target="#main"
                                 hx-push-url="true">
                                 {% if "http" in top_users.1.user.picture %}
-                                    <img class="profile-pic2 second" src="{{ top_users.1.user.picture|urlunquote|slice:'7:' }}" alt="Profile a">
+                                    <img class="profile-pic2 second" src="https://{{ top_users.1.user.picture|urlunquote|slice:'14:' }}" alt="Profile a">
                                 {% else %}
                                     <img class="profile-pic2 second" src="{{ top_users.1.user.picture }}" alt="Profile">
                                 {% endif %}
@@ -78,7 +78,9 @@
                                 hx-target="#main"
                                 hx-push-url="true">
                                 {% if "http" in top_users.2.user.picture %}
-                                    <img class="profile-pic2 third" src="{{ top_users.2.user.picture|urlunquote|slice:'7:' }}" alt="Profile a">
+                                    <!-- <img class="profile-pic2 third" src="{{ top_users.2.user.picture }}" alt="Profile a">
+                                    <img class="profile-pic2 third" src="{{ top_users.2.user.picture|urlunquote }}" alt="Profile a"> -->
+                                    <img class="profile-pic2 third" src="https://{{ top_users.2.user.picture|urlunquote|slice:'14:' }}" alt="Profile a">
                                 {% else %}
                                     <img class="profile-pic2 third" src="{{ top_users.2.user.picture }}" alt="Profile">
                                 {% endif %}

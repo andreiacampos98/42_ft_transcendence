@@ -3,7 +3,7 @@ services:
         container_name: django-container
         build:
             context: ./backend
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile-dev
         image: django
         volumes:
             - ./backend:/code

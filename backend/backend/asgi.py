@@ -7,25 +7,27 @@ For more information on this file, see
 https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 """
 
-import os
+# import os
+# from chat.routing import ws_urlpatternsication(),
+#         "websocket": AuthMiddlewareStack(
+#             # PresenceConsumer.as_asgi()
+#             URLRouter(pong.urls.websocket_urlpatterns)
+#         ),
+#     }
+# )
 
+import os, django
 from django.core.asgi import get_asgi_application
-from channels.routing import ProtocolTypeRouter, URLRouter # <- Add this
-from channels.auth import AuthMiddlewareStack # <- Add this
-from pong.consumers import TournamentConsumer # <- Add this
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+django.setup()
+django_asgi_app = get_asgi_application()
 
 import pong.urls
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
 
 
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
-
-application = ProtocolTypeRouter(
-    {
-        "http": get_asgi_application(),
-        "websocket": AuthMiddlewareStack(
-            # PresenceConsumer.as_asgi()
-            URLRouter(pong.urls.websocket_urlpatterns)
-        ),
-    }
-)
+application = ProtocolTypeRouter({
+  'http': django_asgi_app,
+  'websocket': AuthMiddlewareStack(URLRouter(pong.urls.websocket_urlpatterns))
+})

@@ -1278,7 +1278,7 @@ def get_access_token(host, code):
 		'grant_type': 'authorization_code',
 		'client_id': settings.CLIENT_ID_A,
 		'client_secret': settings.CLIENT_SECRET_A,
-		'redirect_uri': f'http://{host}/home42/',
+		'redirect_uri': f'https://{host}/home42/',
 		'code': code,
 	})
 	ic(response.text)
@@ -1287,6 +1287,7 @@ def get_access_token(host, code):
 		access_token = token_data.get('access_token')
 		ic(access_token)
 		return access_token
+	
 	else:
 		return None
 
@@ -1305,7 +1306,7 @@ def get_user_info(token):
 def signin42(request):
 	try:
 		client_id = settings.CLIENT_ID_A
-		uri = f'http://{request.get_host()}/home42/'
+		uri = request.build_absolute_uri('/home42/')
 		authorization_url = f'https://api.intra.42.fr/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={uri}'
 		return HttpResponseRedirect(authorization_url)
 	

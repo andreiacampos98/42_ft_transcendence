@@ -118,6 +118,6 @@ urlpatterns = [
 ] 
 
 websocket_urlpatterns = [
-    path('ws/tournaments/<int:tournament_id>', consumers.TournamentConsumer.as_asgi()),
-    path('ws/games/remote/queue', consumers.RemoteGameQueueConsumer.as_asgi()),
+    path('wss/tournaments/<int:tournament_id>', consumers.TournamentConsumer.as_asgi()),
+    path('wss/games/remote/queue', consumers.RemoteGameQueueConsumer.as_asgi()),
 ]

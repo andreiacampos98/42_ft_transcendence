@@ -1,4 +1,5 @@
 django
+gunicorn
 tzdata
 psycopg2-binary
 Pillow
@@ -8,6 +9,7 @@ drf-yasg
 icecream
 djangorestframework
 django-bootstrap4
+channels
 channels_redis
 requests
 python-dotenv
