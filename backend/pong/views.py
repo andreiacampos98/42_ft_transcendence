@@ -1296,12 +1296,16 @@ def profile(request, id):
 	games = Games.objects.filter(Q(user1_id=user_profile.id) | Q(user2_id=user_profile.id),
 		).exclude(type="Tournament").order_by('-created_at')
 
+	no_week_games = True
 	if len(games) > 0:
 		last_game_date = games.first().created_at
 		today = datetime.today()
 		monday = today - timedelta(days=today.weekday())
 		monday = monday.astimezone(last_game_date.tzinfo)
-	
+		no_week_games = last_game_date.day < monday.day
+	ic(last_game_date)
+	ic(monday)
+	ic(len(games))
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -1315,7 +1319,7 @@ def profile(request, id):
 		'games': games,
 		'tours': user_tournaments,
 		'stats': stats,
-		'no_week_games': last_game_date < monday if len(games) > 0 else True,
+		'no_week_games': no_week_games,
 		'goals_scored_suffered_ratio': goals_scored_suffered_ratio,
 		'graph': graph_send,
 		'page': 'profile' if is_own_profile else 'else'
