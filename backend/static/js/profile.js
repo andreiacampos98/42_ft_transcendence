@@ -61,6 +61,7 @@ async function loadDonutChart() {
 	var options = {
 		chart: {
 			type: 'donut',
+			id: 'donut',
 			offsetX: -110,
 			offsetY: 10,    
 			height: 200, 
@@ -111,8 +112,16 @@ async function loadDonutChart() {
 			enabled: false        
 		}
 	};
-	var chart = new ApexCharts(document.getElementById("chart1"), options);
-	chart.render();
+	if (!charts['donut']) {
+		charts['donut'] = new ApexCharts(document.querySelector('#chart1'), options);
+		console.log(charts['donut'].el)
+	}
+	else {
+		charts['donut'].el = document.querySelector('#chart1');
+		console.log(charts['donut'].el)
+	}
+	
+	charts['donut'].render();
 }
 
 async function loadBarLineChart() {
@@ -154,6 +163,7 @@ async function loadBarLineChart() {
 	var options = {
 		chart: {
 			type: 'line',
+			id: 'bar-line',
 			height: 350,
 			stacked: false,
 			toolbar: {
@@ -237,8 +247,12 @@ async function loadBarLineChart() {
 		}
 	};
 	
-	var chart = new ApexCharts(document.querySelector("#chart2"), options);
-	chart.render();
+	if (!charts['bar-line']) 
+		charts['bar-line'] = new ApexCharts(document.querySelector('#chart2'), options);
+	else 
+		charts['bar-line'].el = document.querySelector('#chart2');
+	
+	charts['bar-line'].render();
 }
 
 

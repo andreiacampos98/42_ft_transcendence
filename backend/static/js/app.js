@@ -4,6 +4,7 @@ var lastRoute = '';
 const routeScripts = {
 	'/tournaments/ongoing/': ['ongoing-tourn'],
 	'/tournaments/': ['tournament', 'join_tournament'],
+	// '/games/': ['game-stats'],
 	'/users/': [
 		'https://cdn.jsdelivr.net/npm/apexcharts',
 		'profile', 
@@ -15,12 +16,13 @@ const routeScripts = {
 	],
 };
 
-
 const appendScripts = (route) => {
 	routeScripts[route].forEach(file => {		
 		let script = document.createElement('script');
 		script.src = file.startsWith('https') ? file : `/static/js/${file}.js`;
 		console.log(script.src);
+		script.onload = () => console.log(`${file} loaded successfully`);
+		script.onerror = (e) => console.error(`Error loading script ${file}:`, e);
 		document.body.appendChild(script);
 	});
 };
@@ -65,10 +67,6 @@ const handleTournamentLeave = (event) => {
 		document.getElementById('leave-tournament-button').click();
 };
 
-const handleRemoteGameLeave = (event) => {
-	
-};
-
 // Detecs navigation to inject the JS scripts linked to that route
 window.addEventListener('DOMContentLoaded', (event) => {
 	observeHTML();
@@ -84,4 +82,10 @@ window.addEventListener('htmx:beforeRequest', (event) => {
 		myUser.disconnectSocket('gameSocket');
 });
 
+//! ============================ GLOBAL VARIABLES ============================
 
+let charts = {
+	'donut': null,
+	'bar-line': null,
+	'line': null
+};

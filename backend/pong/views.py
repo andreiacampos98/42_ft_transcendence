@@ -1303,9 +1303,7 @@ def profile(request, id):
 		monday = today - timedelta(days=today.weekday())
 		monday = monday.astimezone(last_game_date.tzinfo)
 		no_week_games = last_game_date.day < monday.day
-	ic(last_game_date)
-	ic(monday)
-	ic(len(games))
+
 	context = {
 		'friends': friends,
 		'user_id': user_id,
