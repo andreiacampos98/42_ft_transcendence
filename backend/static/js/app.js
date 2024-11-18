@@ -36,7 +36,7 @@ const mutationsCallback = (mutations) => {
 	currRoute = window.location.pathname;
 
 	if (currRoute.startsWith('/tournaments/ongoing/'))
-		myTournament.updateUI();
+		myTournament.updateUI({isPhaseOver: false});
 	// else if (currRoute.startsWith('/tournaments/ongoing/') && lastRoute.startsWith('/gametournament'))
 	// 	return ;
 

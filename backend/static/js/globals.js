@@ -71,29 +71,38 @@ class Tournament {
 		this.setFirstPhase(phase);
 		this.phasePlayers[this.currPhase] = players;
 		console.log('TOURNAMENT PLAYERS', this.phasePlayers);
-		this.updateUI();
+		this.updateUI({});
 	}
 	
 	onPlayerLeft({players}) {
 		this.phasePlayers[this.currPhase] = players;
 		console.log('TOURNAMENT PLAYERS', this.phasePlayers);
 		this.resetFirstPhaseUI();
-		this.updateUI();
+		this.updateUI({});
 	}
 
 	onPhaseStart({phase, games, players}) {
 		console.log(`BEGINNING ${phase}`, games, players);
 		console.log(`CURRENT PHASE`, this.currPhase);
 		this.currPhase = phase;
-		games.forEach(tournamentGame => {
-			let gameID = tournamentGame.game_id.id;
+		games.forEach(tourGame => {
+			let gameID = tourGame.game_id.id;
+			let user1 = tourGame.user1_id.username;
+			let user2 = tourGame.user2_id.username;
 			this.phaseGames[phase][gameID] = {};
+			this.phaseGames[phase][gameID][user1] = 0;
+			this.phaseGames[phase][gameID][user2] = 0;
 		});
 
 		console.log(this.phasePlayers);
 
 		this.phasePlayers[phase] = players;
-		this.updateUI();
+		this.updateUI({});
+	}
+
+	onGameEnd(gameID, p1, p2, scores) {
+		this.phaseGames[this.currPhase][gameID][p1] = scores[p1];
+		this.phaseGames[this.currPhase][gameID][p2] = scores[p2];
 	}
 
 	onPhaseEnd({phase, next_phase, results, winner=null}) {
@@ -105,7 +114,7 @@ class Tournament {
 		});
 		this.lastPhase = this.currPhase;
 		this.currPhase = next_phase ? next_phase : this.currPhase;
-		this.updateUI();
+		this.updateUI({});
 
 		if (winner)
 			this.onTournamentEnd(winner);
@@ -140,6 +149,7 @@ class Tournament {
 			return ;
 		this.firstPhase = phase;
 		this.currPhase = phase;
+		this.lastPhase = phase;
 	}
 
 	resetFirstPhaseUI() {
@@ -150,12 +160,13 @@ class Tournament {
 		});
 	}
 
-	updateUI() {
+	updateUI({isPhaseOver=true}) {
 		let phaseNames = ['quarter-final', 'semi-final', 'final'];
 		let firstPhaseIndex = phaseNames.indexOf(myTournament.firstPhase);
 		let currPhaseIndex = phaseNames.indexOf(this.currPhase);
 		let lastPhaseIndex = phaseNames.indexOf(this.lastPhase);
-		
+
+		console.log(firstPhaseIndex, currPhaseIndex, lastPhaseIndex);
 		phaseNames.forEach((phase, i) => {
 			if (i < firstPhaseIndex || i > currPhaseIndex)
 				return ;
@@ -164,16 +175,19 @@ class Tournament {
 				.entries(this.phaseGames[phase])
 				.map(([id, gameScore]) => Object.values(gameScore))
 				.flat();
+			console.log(phase, players, scores);
+			console.log(window.location.pathname);
 			this.updatePlayerSlots(phase, players, scores);
 			if (i <= lastPhaseIndex)
-				this.highlightPlayerPaths(phase, scores);
+				this.highlightPlayerPaths(phase, scores, isPhaseOver);
 		});
 	}
 
 	updatePlayerSlots(cssSelector, players, scores) {
 		const query = `.${cssSelector}.player`;
 		const slots = document.querySelectorAll(query);
-
+		
+		console.log(query, players, scores, slots);
 		players.forEach((player, i) => {
 			slots[i].querySelector("span.name").textContent = player.alias;
 			slots[i].querySelector("img").src = player.user.picture;
@@ -191,12 +205,9 @@ class Tournament {
 		});
 	};
 
-	highlightPlayerPaths(phase, scores) {
+	highlightPlayerPaths(phase, scores, isPhaseOver) {
 		const query = `.${phase}.player`;
 		const playerSlots = document.querySelectorAll(query);
-
-		if (this.firstPhase == this.currPhase)
-			return ;
 			
 		scores.forEach((score, i) => {
 			if (score == 5){
@@ -207,14 +218,13 @@ class Tournament {
 					l.classList.add("winner-path")
 				);
 			}
-			else {
+			else if (isPhaseOver) {
 				playerSlots[i].classList.add('loser-player');
 				document.querySelectorAll(`.${phase}-line-${i}`).forEach(l => 
 					l.classList.add("loser-path")
 				);
 			}
 		});
-		document.querySelectorAll(`.${phase}-line`).forEach(l => l.classList.add('winner-path'));
 	}
 };
 

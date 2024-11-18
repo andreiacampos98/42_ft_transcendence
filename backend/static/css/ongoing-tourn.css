@@ -170,8 +170,8 @@
 }
 
 .winner-player, .winner-path {
-	background-color: #F8D082;
-	transition: all 0.5s ease;
+	background-color: #F8D082 !important;
+	transition: all 0.5s ease !important;
 }
 
 .loser-player {
