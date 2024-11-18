@@ -8,11 +8,20 @@
 			<div class="tourn-header d-flex align-items-center">
 				<div class="tourn-info d-flex flex-column">
 					<h1 class="tourn-title">{{ tournament_name }}</h1>
-					<h3 class="tourn-status">Waiting for players to enter...</h3>
+					<span class="tourn-status">
+						{% if tournament.status == 'Open' %}
+						Waiting for players to enter...
+						{% elif tournament.status == 'Ongoing' %}
+						Waiting for phase games to finish...
+						{% endif %}
+					</span>
+
 				</div>
+				{% if tournament.status == 'Open' %}
 				<button style="margin-bottom: 10px; border: none; background: none; margin-left: auto;" class="change modal-button" id="leave-tournament-button" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
 					<img src="{% static 'assets/icons/leave-tournament.png' %}" alt="Leave Tournament">
 				</button>
+				{% endif %}
 			</div>
 			<div id="modal" class="m">
                 <div class="m-content d-flex align-items-center flex-column">

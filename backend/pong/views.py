@@ -1213,6 +1213,7 @@ def ongoingtournaments(request, tournament_id):
 	context = {
 		'user_id': user_id,
 		'friends': friends,
+		'tournament': TournamentsSerializer(tournament).data,
 		'tournament_id': tournament_id,
 		'tournament_size': tournament.capacity,
 		'tournament_name': tournament.name

@@ -95,7 +95,7 @@ class Tournament {
 		});
 
 		console.log(this.phasePlayers);
-
+		document.querySelector('.tourn-status').textContent = `The ${this.currPhase} phase is ongoing.`;
 		this.phasePlayers[phase] = players;
 		this.updateUI({});
 	}
@@ -122,6 +122,8 @@ class Tournament {
 	}
 
 	onTournamentEnd(winner){
+		document.querySelector('.tourn-status').textContent = 'This tournament is over.';
+		document.querySelector('.tourn-status').style.color = '#F8D082';
 		this.updatePlayerSlots('winner', [winner]);
 		this.reset();
 		myUser.disconnectSocket('tournamentSocket');
