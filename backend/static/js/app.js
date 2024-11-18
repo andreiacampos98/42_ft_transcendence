@@ -66,11 +66,7 @@ const handleTournamentLeave = (event) => {
 };
 
 const handleRemoteGameLeave = (event) => {
-	myUser.disconnectSocket('gameSocket');
-	history.pushState(null, '', `/home/`);
-	htmx.ajax('GET', `/home/`, {
-		target: '#main'  
-	});
+	
 };
 
 // Detecs navigation to inject the JS scripts linked to that route
@@ -85,7 +81,7 @@ window.addEventListener('htmx:beforeRequest', (event) => {
 	if (myUser.attemptedToLeaveTournament(currRoute, nextRoute))
 		handleTournamentLeave(event);
 	else if (myUser.attemptedToLeaveRemoteGame(currRoute, nextRoute))
-		handleRemoteGameLeave(event);
+		myUser.disconnectSocket('gameSocket');
 });
 
 
