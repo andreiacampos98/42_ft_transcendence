@@ -1,11 +1,11 @@
-class TournamentUser {
+class User {
 	constructor() {
 		this.userID = 0;
 		this.tournamentAlias = '';
 		this.tournamentID = 0;
+		this.tournamentGameData = null;
 		this.tournamentSocket = null;
 		this.gameSocket = null;
-		this.tournamentGameData = null;
 	}
 
 	connectSocket(prop, url, onmessage) {
@@ -43,8 +43,15 @@ class TournamentUser {
 			|| currRoute.startsWith('/gametournament'))
 		);
 	}
+	
+	attemptedToLeaveRemoteGame(currRoute, nextRoute) {
+		return (this.gameSocket != null 
+			&& !nextRoute.startsWith('/gameonline')
+			&& currRoute.startsWith('/gameonline')
+		);
+	}
 
-	async leaveTournament() {
+	leaveTournament() {
 		myUser.disconnectSocket('tournamentSocket');
 		myUser.disconnectSocket('gameSocket');
 		myTournament.reset();
@@ -211,5 +218,5 @@ class Tournament {
 	}
 };
 
-let myUser = new TournamentUser();
+let myUser = new User();
 let myTournament = new Tournament();

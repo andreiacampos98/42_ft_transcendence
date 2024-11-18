@@ -57,6 +57,22 @@ const observeHTML = () => {
 	observer.observe(targetNode, config);
 };
 
+//! ============================ EVENT LISTENERS / HANDLERS ============================
+
+const handleTournamentLeave = (event) => {
+	event.preventDefault();
+	if (!currRoute.startsWith('/gametournament'))
+		document.getElementById('leave-tournament-button').click();
+};
+
+const handleRemoteGameLeave = (event) => {
+	myUser.disconnectSocket('gameSocket');
+	history.pushState(null, '', `/home/`);
+	htmx.ajax('GET', `/home/`, {
+		target: '#main'  
+	});
+};
+
 // Detecs navigation to inject the JS scripts linked to that route
 window.addEventListener('DOMContentLoaded', (event) => {
 	observeHTML();
@@ -66,12 +82,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
 //Handles attempts from a player to navigate away from an ongoing tournament
 window.addEventListener('htmx:beforeRequest', (event) => {
 	let nextRoute = event.detail.pathInfo.finalPath;
-	if (!myUser.attemptedToLeaveTournament(currRoute, nextRoute))
-		return ;
-
-	event.preventDefault();
-	if (!currRoute.startsWith('/gametournament'))
-		document.getElementById('leave-tournament-button').click();
+	if (myUser.attemptedToLeaveTournament(currRoute, nextRoute))
+		handleTournamentLeave(event);
+	else if (myUser.attemptedToLeaveRemoteGame(currRoute, nextRoute))
+		handleRemoteGameLeave(event);
 });
 
 

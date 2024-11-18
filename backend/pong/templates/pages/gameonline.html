@@ -22,25 +22,24 @@
 <script type="module">
 	import { MyApp } from '/static/js/game/MyApp.js';
 
-	const userID = document.getElementById('metadata').getAttribute('data-user-id');
-	const username = document.getElementById('metadata').getAttribute('data-username');
+	myUser.connectSocket(
+		'gameSocket',
+		`ws://${window.location.host}/ws/games/remote/queue`,
+		(event) => {
+			document.getElementById('loader-container').remove();
+			document.getElementById('canvas-container').style.color = '#FFF';
+			document.getElementById('scoreboard').style.color = '#FFF';
+			const { player1, player2, ball, gameID } = JSON.parse(event.data);
 
-	let gameSocket = new WebSocket(`ws://${window.location.host}/ws/games/remote/queue`);
-	gameSocket.onmessage = (event) => {
-		document.getElementById('loader-container').remove();
-		document.getElementById('canvas-container').style.color = '#FFF';
-		document.getElementById('scoreboard').style.color = '#FFF';
-		const { player1, player2, ball, gameID } = JSON.parse(event.data);
-
-		let app = new MyApp();
-		app.init({player1Data: player1, 
-			player2Data: player2,
-			gameSocket: gameSocket, 
-			gameType: "Remote",
-			gameID: gameID,
-			ballDirection: ball.direction,
-		});
-		app.render();
-	}
+			let app = new MyApp();
+			app.init({player1Data: player1, 
+				player2Data: player2,
+				gameSocket: myUser.gameSocket, 
+				gameType: "Remote",
+				gameID: gameID,
+				ballDirection: ball.direction,
+			});
+			app.render();
+	})
 </script>
 {% endblock %}
