@@ -18,6 +18,7 @@ clean:
 		data/  \
 		backend/backend/__pycache__/  \
 		backend/pong/__pycache__/ \
+		backend/pong/consumers/__pycache__/ \
 		backend/pong/migrations/__pycache__/ \
 		backend/pong/templatetags/__pycache__/ \
 		backend/pong/migrations/*_initial.py \
