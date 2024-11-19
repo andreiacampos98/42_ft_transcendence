@@ -30,7 +30,7 @@
 	
 	myUser.connectSocket(
 		'gameSocket',
-		`ws://${window.location.host}/ws/tournaments/${tourID}/games/${gameInstance.id}`,
+		`wss://${window.location.host}/wss/tournaments/${tourID}/games/${gameInstance.id}`,
 		(event) => {
 			document.getElementById('loader-container').remove();
 			document.getElementById('canvas-container').style.color = '#FFF';

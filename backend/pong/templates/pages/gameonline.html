@@ -24,7 +24,7 @@
 
 	myUser.connectSocket(
 		'gameSocket',
-		`wss://${window.location.host}/ws/games/remote/queue`,
+		`wss://${window.location.host}/wss/games/remote/queue`,
 		(event) => {
 			document.getElementById('loader-container').remove();
 			document.getElementById('canvas-container').style.color = '#FFF';

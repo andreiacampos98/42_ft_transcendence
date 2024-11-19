@@ -1,6 +1,6 @@
 myUser.connectSocket(
 	'tournamentSocket', 
-	`wss://${window.location.host}/ws/tournaments/${myUser.tournamentID}`, 
+	`wss://${window.location.host}/wss/tournaments/${myUser.tournamentID}`, 
 	(event) => {
 		const message = JSON.parse(event.data);
 		const { event: eventType, data } = message;

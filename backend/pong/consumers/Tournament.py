@@ -35,7 +35,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		# Create cache in redis about tournament (if it does not exist) and about the user
 		await self.create_cache()
 		await self.broadcast_player_list()
-
+		
+		ic(self.get_cache(self.tournament_channel))
 		if self.is_tournament_full():
 			first_phase = self.get_cache(self.tournament_channel)['curr_phase']
 			await self.begin_phase(first_phase, True)
