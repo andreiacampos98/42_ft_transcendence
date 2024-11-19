@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { Ball } from './Ball.js';
 import { Arena } from './Arena.js';
 
-const CURR_PLAYER_ID = document.getElementById('game-engine').getAttribute('data-user-id');
+const CURR_PLAYER_ID = document.getElementById('metadata').getAttribute('data-user-id');
 
 export class AbstractGameController extends THREE.Group {
 	constructor ({ type }) {
@@ -33,10 +33,9 @@ export class AbstractGameController extends THREE.Group {
 		});
 	}
 
-	build({ ballDirection, onPaddleHit=null }) {
+	build({ onPaddleHit=null }) {
 		this.arena = new Arena({});
 		this.ball = new Ball({ 
-			direction: ballDirection, 
 			onPaddleHit: onPaddleHit 
 		});
 
@@ -67,14 +66,7 @@ export class AbstractGameController extends THREE.Group {
 			return ;
 
 		this.cleanArena();
-		
-		if ((this.type == "Remote" && this.stats.winner.id == CURR_PLAYER_ID) || 
-			(this.type != "Remote" && this.stats.isGameOver())){
-			console.log(this.type == "Remote" && this.stats.winner.id == CURR_PLAYER_ID);
-			console.log(this.type != "Remote" && this.stats.isGameOver());
-			console.log(this.type, CURR_PLAYER_ID)
-			this.sendGameResults();
-		}
+		this.sendGameResults();
 	}
 
 	cleanArena() {

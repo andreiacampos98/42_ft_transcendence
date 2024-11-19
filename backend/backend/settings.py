@@ -54,6 +54,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 # Use the default session backend
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Banco de dados para armazenar sessões
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
 
 # Ensure sessions are saved and managed properly
 SESSION_SAVE_EVERY_REQUEST = True  # Salva a sessão em cada request, opcional
@@ -66,8 +68,9 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Define se a sessão expira ao fechar 
 # Application definition
 
 INSTALLED_APPS = [
+    "pong",
     'daphne',
-    'crispy_forms',
+	'django_redis',
     'crispy_bootstrap4',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -76,16 +79,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework', #django rest framework
-    'rest_framework_swagger',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'corsheaders',
     'django_otp',
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
-    'drf_yasg',
-    "pong",
-    'bootstrap4',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -219,7 +218,18 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('redis-container', 6379)],
+            "hosts": [('redis-container', 6380)],
+			"capacity": 1000,
         },
     },
+}
+
+CACHES = {
+	'default': {
+		'BACKEND': 'django_redis.cache.RedisCache',
+		'LOCATION': 'redis://redis-container:6380',
+		"OPTIONS": {
+			"CLIENT_CLASS": "django_redis.client.DefaultClient",
+		},
+	},
 }

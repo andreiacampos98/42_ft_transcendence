@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block body %}
-    <link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/scroll.css' %}">
-    <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
-    <link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
-    <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
+	<link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
+	<link rel="stylesheet" href="{% static 'css/scroll.css' %}">
+	<link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
+	<link rel="stylesheet" href="{% static 'css/friend-bar.css' %}">
+	<link rel="stylesheet" href="{% static 'css/friend-block.css' %}">
+	<link rel="stylesheet" href="{% static 'css/notifications.css' %}">
 	<link rel="stylesheet" href="{% static 'css/modals.css' %}">
 	<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -87,6 +87,7 @@
                     <button class="select-item d-flex align-items-center">
                         <a class="side-menu_a" 
                             hx-get="{% url 'home' %}"
+							hx-swap="outerHTML"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true"
@@ -107,6 +108,7 @@
                     <button class="select-item d-flex align-items-center">
                         <a class="side-menu_a"  
                             hx-get="{% url 'tournaments' %}"
+							hx-swap="outerHTML"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true"
@@ -125,6 +127,7 @@
                     <button class="select-item d-flex align-items-center">
                         <a class="side-menu_a" 
                             hx-get="{% url 'user-profile' user.id %}"
+							hx-swap="outerHTML"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true"

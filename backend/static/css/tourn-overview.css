@@ -61,7 +61,7 @@
 }
 
 .tourn-status {
-	color: #8E8E8E;
+	color: #F8D082;
 	font-size: medium;
 }
 
@@ -110,7 +110,7 @@
 .main-core {
     background-color: #13232e;
 	width: 225px;
-    height: 50px;
+    height: 52px;
     border-radius: 8px;
 }
 
@@ -137,16 +137,16 @@
 .score {
     font-size: 20px;
     font-weight: bold;
-    color: #ccc;
+    color: #ccc;            			        <h1 class="group">Group B</h1>
+
 }
 
 .line-h {
     position: relative;
-    width: 100%;
+    width: 113px;
     height: 4px;
     background-color: #ccc;
-    left: 40%;
-    /* transform: translateX(-50%); */
+    left: 98%;
     z-index: -1;
     transition: background-color 0.3s ease;
     top: -77px;
@@ -158,34 +158,25 @@
     height: 58px;
     background-color: #ccc;
     left: 140%;
-    /* transform: translateX(-50%); */
-    /* z-index: -1; */
-    /* transition: background-color 0.3s ease; */
     top: 57px;
 }
 
 .u {
     position: absolute;
     width: 4px;
-    height: 58px;
+    height: 52px;
     background-color: #ccc;
     left: 140%;
-    /* transform: translateX(-50%); */
-    /* z-index: -1; */
-    /* transition: background-color 0.3s ease; */
-    top: 57px;
+    top: 58px;
 }
 
 .d {
     position: absolute;
     width: 4px;
-    height: 62px;
+    height: 61px;
     background-color: #ccc;
     left: 140%;
-    /* transform: translateX(-50%); */
-    /* z-index: -1; */
-    /* transition: background-color 0.3s ease; */
-    top: 113px;
+    top: 112px;
 }
 .line-h2 {
     position: relative;
@@ -193,11 +184,11 @@
     height: 4px;
     background-color: #ccc;
     left: 140%;
-    /* transform: translateX(-50%); */
     z-index: -1;
     transition: background-color 0.3s ease;
     top: -29px;
 }
+
 
 .round-1 .matchup .line {
     top: 25%;
@@ -210,5 +201,30 @@
 .round-3 .matchup .line {
     top: 50%;
     height: 50%;
-    
+}
+
+.winner-score-container {
+	background-color: #F8D082;
+    border-radius: 0px 8px 8px 0px;
+	transition: all 0.3s ease;
+}
+
+.winner-score {
+	color: #A48955;
+	transition: all 0.3s ease;
+}
+
+.winner-player, .winner-path {
+	background-color: #F8D082;
+	transition: all 0.3s ease;
+}
+
+.loser-player {
+	opacity: 50%;
+	transition: all 0.3s ease;
+}
+
+.loser-path {
+	background-color: #888888;
+	transition: all 0.3s ease;
 }

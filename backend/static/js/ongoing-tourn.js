@@ -1,99 +1,50 @@
+myUser.connectSocket(
+	'tournamentSocket', 
+	`wss://${window.location.host}/ws/tournaments/${myUser.tournamentID}`, 
+	(event) => {
+		const message = JSON.parse(event.data);
+		const { event: eventType, data } = message;
+
+		if (eventType == 'PLAYER_JOINED') {			
+			myTournament.onPlayerJoined(data);
+		}
+		else if (eventType == 'PLAYER_LEFT') {			
+			myTournament.onPlayerLeft(data);
+		}
+		else if (eventType == 'PHASE_START') {
+			setTimeout(() => {
+				myTournament.onPhaseStart(data);
+
+				myUser.tournamentGameData = null;
+				data.games.forEach(game => {
+					console.log(myUser.userID, game);
+					if (myUser.userID == game.user1_id.id || myUser.userID == game.user2_id.id)
+						myUser.tournamentGameData = game;
+				})
+				if (!myUser.tournamentGameData)
+					return ;
+
+				history.pushState(null, '', `/gametournament/`);
+				htmx.ajax('GET', `/gametournament/`, {
+					target: '#main'  
+				});
+			}, 2100);
+		}
+		else if (eventType == 'PHASE_END') {
+			setTimeout(() => {
+				myTournament.onPhaseEnd(data);
+			}, 1100);
+		}
+	}
+);
+
+
 // ==================================================================
-const tournamentId = localStorage.getItem('tournament_id');
-console.log(tournamentId);
-
-socket = new WebSocket(`wss://${window.location.host}/wss/tournaments/${tournamentId}`);
-socket.onopen = (event) => {
-    console.log('Socket opening', event);
-    socket.send(JSON.stringify({
-        'alias': localStorage.getItem('alias'),
-        'tournament_id': localStorage.getItem('tournament_id'),
-    }));
-};
-
-socket.onmessage = (event) => {
-    const players = JSON.parse(event.data);
-    const playerSlots = document.querySelectorAll(".player");
-
-    console.log('WebSocket message received:', players);
-
-    players.forEach((player, i) => {
-        playerSlots[i].querySelector("span.name").textContent = player.alias
-        playerSlots[i].querySelector("img").src = player.user.picture
-        // place image on the slot as well
-    });
-    
-    return false;
-};
-
-socket.onerror = (error) => {
-    console.error('WebSocket error:', error);
-};
-
-socket.onclose = (event) => {
-    console.log('Socket closed', event);
-};
-
-
-// ==================================================================
-
-function updateRound2Player(elementId, player) {
-    const element = document.getElementById(elementId);
-    element.querySelector('.name').innerText = player.name;
-    element.querySelector('.score').innerText = player.score;
-    element.querySelector('.icon').src = player.icon;
-}
-
-function updateRound3Player(elementId, player) {
-    const element = document.getElementById(elementId);
-    element.querySelector('.name').innerText = player.name;
-    element.querySelector('.score').innerText = player.score;
-    element.querySelector('.icon').src = player.icon;
-
-    // Highlight the final winner
-    element.style.borderColor = '#28a745';
-    element.style.backgroundColor = '#d4edda';
-}
-
-async function leaveTournament() {
-    let token = localStorage.getItem("access_token");
-    var tournamentId = document.getElementById("leave-tournament").getAttribute("data-tournament-id");
-    var userId = document.getElementById("leave-tournament").getAttribute("data-user-id");
-
-    try {
-        const response =  await fetch(`/tournaments/${tournamentId}/users/${userId}/leave`, {
-            method: 'DELETE',
-            headers: {
-                "Authorization": localStorage.getItem("access_token") ? `Bearer ${token}` : null,
-            }
-        });
-        const data = await response.json()
-        if (response.ok) {
-            localStorage.setItem('access_token', data.access_token);
-            socket.send(JSON.stringify({}));
-            history.pushState(null, '', `/tournaments/`);
-            htmx.ajax('GET', `/tournaments/`, {
-                target: '#main'  
-            });
-        } else if (!response.ok && response.status == 401) {
-            alert("As your session has expired, you will be logged out.");
-            history.pushState(null, '', `/`);
-            htmx.ajax('GET', `/`, {
-                target: '#main'
-            });
-        } else{
-            localStorage.setItem('access_token', data.access_token);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred: ' + error.message);
-    }
-}
 
 // Get the modal
 var modal = document.getElementById("modal");
 // Get the button that opens the modal
-var btn = document.getElementById("leave-tournament");
+var btn = document.getElementById("leave-tournament-button");
 // Get the  element that closes the modal
 
 var goback = document.getElementById("cancel");
@@ -112,3 +63,5 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 }
+
+document.getElementById('leaver').onclick = (event) => myUser.leaveTournament();

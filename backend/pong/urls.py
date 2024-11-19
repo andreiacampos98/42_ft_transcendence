@@ -3,8 +3,11 @@ from rest_framework_simplejwt import views as jwt_views
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from rest_framework.routers import DefaultRouter
-from . import consumers
 from . import views
+from .consumers.Tournament import TournamentConsumer
+from .consumers.RemoteGame import RemoteGameQueueConsumer
+from .consumers.TournamentGame import TournamentGameConsumer
+
 # Routers provide an easy way of automatically determining the URL conf.
 #router = DefaultRouter()
 #router.register('users', UsersViewSet)
@@ -21,6 +24,7 @@ urlpatterns = [
     path('home/', views.home, name="home"),
     path('gamelocal/', views.gamelocal, name="gamelocal"),
     path('gameonline/', views.gameonline, name="gameonline"),
+    path('gametournament/', views.gametournament, name="gametournament"),
 
     path('tournaments/', views.tournaments, name="tournaments"),
     path('tournaments/ongoing/<int:tournament_id>', views.ongoingtournaments, name="ongoingtournaments"),
@@ -86,7 +90,7 @@ urlpatterns = [
 	#! Tournaments
     path('tournaments/create', views.tournament_create, name='tournament-create'),
     path('tournaments/<int:tournament_id>/users/<int:user_id>/join', views.tournament_join, name='tournament-join'),
-    path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournament-leave'),
+    # path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournament-leave'),
     path('tournaments/<int:tournament_id>', views.tournament_update, name='tournament-update'),
     path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournament-list-users'),
     # path('tournaments/<int:tournament_id>/advance', views.tournament_advance_phase, name='tournament-advance-phase'),
@@ -114,10 +118,10 @@ urlpatterns = [
     path('debug/games/goals', views.game_goals_all, name='game-goals-all'),
     path('debug/games/<int:game_id>/stats', views.game_stats, name='debug-game-stats'),
     path('debug/games/stats', views.game_stats_all, name='debug-game-stats-all'),
-    
 ] 
 
 websocket_urlpatterns = [
-    path('wss/tournaments/<int:tournament_id>', consumers.TournamentConsumer.as_asgi()),
-    path('wss/games/remote/queue', consumers.RemoteGameQueueConsumer.as_asgi()),
+    path('wss/tournaments/<int:tournament_id>', TournamentConsumer.as_asgi()),
+    path('wss/tournaments/<int:tournament_id>/games/<int:game_id>', TournamentGameConsumer.as_asgi()),
+    path('wss/games/remote/queue', RemoteGameQueueConsumer.as_asgi()),
 ]
