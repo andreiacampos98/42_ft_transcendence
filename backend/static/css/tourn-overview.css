@@ -206,25 +206,25 @@
 .winner-score-container {
 	background-color: #F8D082;
     border-radius: 0px 8px 8px 0px;
-	transition: all 0.3s ease;
+	transition: all 0.5s ease;
 }
 
 .winner-score {
 	color: #A48955;
-	transition: all 0.3s ease;
+	transition: all 0.5s ease;
 }
 
 .winner-player, .winner-path {
 	background-color: #F8D082;
-	transition: all 0.3s ease;
+	transition: all 0.5s ease;
 }
 
 .loser-player {
 	opacity: 50%;
-	transition: all 0.3s ease;
+	transition: all 0.5s ease;
 }
 
 .loser-path {
-	background-color: #888888;
-	transition: all 0.3s ease;
+	background-color: #2b3d4f;
+	transition: all 0.5s ease;
 }

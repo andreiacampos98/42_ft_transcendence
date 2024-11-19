@@ -1095,6 +1095,16 @@ def tournament_list_users(request, tournament_id):
 		
 	return JsonResponse(tour_users, safe=False)
 
+def list_user_tournaments(user_id):
+	user_tourn_accs = TournamentsUsers.objects.filter(user_id=user_id)
+	user_tourns = []
+
+	for acc in user_tourn_accs: 
+		tournament = Tournaments.objects.get(pk=acc.tournament_id.id)
+		user_tourns.append(tournament)
+
+	return zip(user_tourns, user_tourn_accs)
+
 #! --------------------------------------- Tournaments Games ---------------------------------------
 
 def tournament_list_games(request, tournament_id):
@@ -1159,7 +1169,6 @@ def tournament_list_user_games(request, user_id):
 
 	return JsonResponse(user_tour_games, status=200, safe=False)
 
-#auxiliar function
 def tournament_list_user(request, user_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -1690,8 +1699,7 @@ def profile(request, id):
 		friendship_status = None
 
 	user = get_object_or_404(Users, id=id)
-	tournament_response = tournament_list_user(request, user_profile.id)
-	user_tournaments = json.loads(tournament_response.content)
+	tournaments = list_user_tournaments(id)
 	stats_response = user_stats(request, user_profile.id)
 	stats = json.loads(stats_response.content)
 	if stats['nb_goals_suffered'] != 0:
@@ -1711,7 +1719,7 @@ def profile(request, id):
 		monday = today - timedelta(days=today.weekday())
 		monday = monday.astimezone(last_game_date.tzinfo)
 		no_week_games = last_game_date.day < monday.day
-
+	
 	context = {
 		'friends': friends,
 		'user_id': user_id,
@@ -1723,7 +1731,7 @@ def profile(request, id):
 		'me': me,
 		'notification': notification,
 		'games': games,
-		'tours': user_tournaments,
+		'tours': tournaments,
 		'stats': stats,
 		'no_week_games': no_week_games,
 		'goals_scored_suffered_ratio': goals_scored_suffered_ratio,
