@@ -972,7 +972,6 @@ def tournament_list(request):
 	return JsonResponse(serializer.data, safe=False, status=400)
 
 
-#@csrf_exempt
 def tournament_update(request, tournament_id):
 	if request.method != 'PATCH':	
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -1031,7 +1030,6 @@ def tournament_init_phase(tournament_id):
 	
 	return serializer.save()
 
-@csrf_exempt
 def tournament_join(request, tournament_id, user_id):
 	token_valid = validate_token(request)
 	new_token = request.headers['Authorization'].replace('Bearer ', '')
@@ -1080,7 +1078,6 @@ def tournament_leave(tournament_id, user_id):
 	user.status = "Online"
 	user.save()
 
-#@csrf_exempt
 def tournament_list_users(request, tournament_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
@@ -1142,7 +1139,6 @@ def tournament_list_games(request, tournament_id):
 
 
 
-#@csrf_exempt
 def tournament_list_user_games(request, user_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -1164,7 +1160,6 @@ def tournament_list_user_games(request, user_id):
 	return JsonResponse(user_tour_games, status=200, safe=False)
 
 #auxiliar function
-#@csrf_exempt
 def tournament_list_user(request, user_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
@@ -1227,7 +1222,6 @@ def tournament_update_game_helper(tournament_id, game_id, data):
 
 	return JsonResponse(data, status=200)
 
-@csrf_exempt
 def tournament_update_game(request, tournament_id, game_id):
 	if request.method != 'POST':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method, 'data': {}}, status=405)
@@ -1480,7 +1474,6 @@ def loginview(request):
 	return render(request, 'pages/login.html')
 
 
-#@csrf_exempt
 def otp_view(request):
 	if request.method == 'POST':
 		otp = request.POST.get('otp')		
@@ -1826,7 +1819,6 @@ def calculate_placements(tournament_id):
 	return JsonResponse(serializer.data, status=200, safe=False)
 
 
-#@csrf_exempt
 def delete_profile(request, id):
 	if request.method =='DELETE':
 		Users.objects.filter(id=id).delete()
