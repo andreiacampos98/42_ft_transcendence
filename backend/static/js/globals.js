@@ -192,7 +192,11 @@ class Tournament {
 		console.log(query, players, scores, slots);
 		players.forEach((player, i) => {
 			slots[i].querySelector("span.name").textContent = player.alias;
-			slots[i].querySelector("img").src = player.user.picture;
+			let uri = player.user.picture;
+			if (uri.includes('http')) 
+				slots[i].querySelector("img").src = `https://${decodeURIComponent(uri).slice(14)}`;
+			else 
+				slots[i].querySelector("img").src = uri;
 		});
 
 		if(cssSelector == 'winner') {
