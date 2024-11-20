@@ -7,6 +7,7 @@ import { Axis } from './Axis.js';
 import { LocalGameController } from './LocalGameController.js';
 import { REFRESH_RATE } from './macros.js';
 import { RemoteGameController } from './RemoteGameController.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
 
 
 var frameID;
@@ -27,7 +28,7 @@ export class MyApp  {
         this.controls = null;
 		this.gui = null;
 		this.gameController = null;
-		this.activateControls = false;
+		this.activateControls = true;
 
 		this.canvas = document.querySelector('#canvas-container');
     }
@@ -39,7 +40,7 @@ export class MyApp  {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
-		// this.scene.add(new Axis(this));
+		this.scene.add(new Axis(this));
 
 		if (gameType == "Remote" || gameType == "Tournament"){
 			this.gameController = new RemoteGameController({ 
@@ -58,7 +59,37 @@ export class MyApp  {
 		}
 		this.scene.add(this.gameController);
 
-		this.light = new THREE.PointLight('#FFFFFF', 1000);
+		const loader = new OBJLoader();
+		const files = ['beak_bake',  'black',  'button_base_front',  'button_base_top',  'buttons',  'duck_body_bake',  'led_001_rainbow',  'metal_fake_screen']
+		const texLoader = new THREE.TextureLoader();
+		const textures = {};
+		files.forEach(file => textures[file] = texLoader.load(`/static/assets/textures/${file}.png`))
+		loader.load(
+			'/static/assets/models/arcade.obj',
+			(object) => {
+				// console.log(object.children);
+				const [leds, arcade, logo_42, leds_42, buttons, ducks] = object.children;
+				// object.children[0].material[0] = new THREE.MeshPhongMaterial({map: });``
+				console.log([leds, arcade, logo_42, leds_42, buttons, ducks]);
+				leds.material = new THREE.MeshPhongMaterial({map: textures['led_001_rainbow']});
+				arcade.material[0] = new THREE.MeshPhongMaterial({map: textures['black']});
+				arcade.material[1] = new THREE.MeshPhongMaterial({map: textures['button_base_top']});
+				arcade.material[2] = new THREE.MeshPhongMaterial({map: textures['button_base_front']});
+				arcade.material[3] = new THREE.MeshPhongMaterial({map: textures['metal_fake_screen']});
+				arcade.material[4] = new THREE.MeshBasicMaterial({color: '#000000'});
+
+				leds_42.material = new THREE.MeshPhongMaterial({map: textures['led_001_rainbow']});
+				
+				buttons.material = new THREE.MeshPhongMaterial({map: textures['buttons']});
+				
+				ducks.material[0] = new THREE.MeshLambertMaterial({color: '#000000'});
+				ducks.material[1] = new THREE.MeshPhongMaterial({map: textures['duck_body_bake']});
+				ducks.material[2] = new THREE.MeshPhongMaterial({map: textures['beak_bake']});
+				
+				this.scene.add(object);
+			}
+		);
+		this.light = new THREE.PointLight('#FFFFFF', 50);
 		this.light.position.set(0, 0, 5);
 		this.scene.add(this.light);
 
@@ -74,7 +105,7 @@ export class MyApp  {
         document.body.appendChild(this.stats.dom);
 		
 		const lightFolder = this.gui.addFolder('Light');
-        lightFolder.add(this.light, 'intensity', 0, 1000).name("Intensity");
+        lightFolder.add(this.light, 'intensity', 0, 50).name("Intensity");
         lightFolder.add(this.light.position, 'x', -30, 30).name("X");
         lightFolder.add(this.light.position, 'y', -30, 30).name("Y");
         lightFolder.add(this.light.position, 'z', -30, 30).name("Z");
@@ -82,6 +113,12 @@ export class MyApp  {
 		const orbitFolder = this.gui.addFolder('Mouse Controls');
         orbitFolder.add(this, 'activateControls', false).name("Active")
 			.onChange((value) => this.setActivateControls(value));
+
+		const arenaFolder = this.gui.addFolder('Arena Controls');
+        arenaFolder.add(this.gameController.arena.position, 'x', -30, 30).name("X");
+        arenaFolder.add(this.gameController.arena.position, 'y', -30, 30).name("Y");
+        arenaFolder.add(this.gameController.arena.position, 'z', -30, 30).name("Z");
+
 		
         this.renderer = new THREE.WebGLRenderer({antialias:true});
         this.renderer.setPixelRatio( this.canvas.clientWidth / this.canvas.clientHeight );
@@ -103,7 +140,7 @@ export class MyApp  {
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
         const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 50 )
-        perspective1.position.set(0, 0, 35);
+        perspective1.position.set(0, 0, 2);
         this.cameras['Perspective'] = perspective1;
     }
 

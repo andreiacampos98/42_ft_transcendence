@@ -1,6 +1,6 @@
-export const BALL_START_SPEED = 0.6;
+export const BALL_START_SPEED = 0.001;
 export const BALL_SPEEDUP_FACTOR = 0.06;
-export const BALL_RADIUS = 1.25;
+export const BALL_RADIUS = 0.01;
 
 export const DIRECTION = Object.freeze({
 	UP: 1,
@@ -14,9 +14,9 @@ export const PADDLE_SEMI_HEIGHT = 3.75;
 export const PADDLE_SPEED = 3.5;
 export const PADDLE_OFFSET_X = 7;
 
-export const ARENA_SEMI_HEIGHT = 20;
-export const ARENA_SEMI_LENGTH = 30;
-export const ARENA_SEMI_DEPTH = 0.25;
+export const ARENA_SEMI_HEIGHT = 0.15;
+export const ARENA_SEMI_LENGTH = 0.2;
+export const ARENA_SEMI_DEPTH = 0.01;
 
 export const MAX_GOALS = 5;
 
