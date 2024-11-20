@@ -1,3 +1,5 @@
+var t_email;
+
 function togglePasswordVisibility() {
     const passwordInput = document.getElementById('password');
     const togglePasswordImage = document.getElementById('togglePasswordImage');
@@ -34,6 +36,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 	console.log(data);
 
 	if (data.data.hasOwnProperty('otp')) {
+		t_email = data.email;
+		console.log(t_email, data.email);
 		history.pushState(null, '', `/otp/`);
 		htmx.ajax('GET', `/otp/`, {
 			target: '#main',

@@ -124,6 +124,8 @@ h6 {
 
 .sign-up:hover {
     text-decoration: underline;
+	cursor: pointer;
+
 }
 
 #forgot:hover {

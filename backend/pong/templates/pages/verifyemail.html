@@ -3,6 +3,7 @@
 
 {% block body %}
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <link rel="stylesheet" href="{% static 'css/verify.css' %}">
     <script defer src="{% static 'js/verifyemail.js' %}"></script>
     <div class="login-container">
         <div class="login-container2">
@@ -10,16 +11,33 @@
             <h3 class="title" id="nice" >Welcome to our platform</h3>
             <form id="verifyForm" method="POST" onsubmit="return submitCode(event);">
                 <div class="input-group">
-                    <label for="code">Code</label>
-                    <input type="text" id="code" name="code" placeholder="Code" required>
+                    <label for="code">Code:</label>
+                    <div class="code-input d-flex align-items-center">
+                        <input type="text" maxlength="1" id="digit1" oninput="handleInput(this, 'digit2')" onpaste="handlePaste(event)">
+                        -
+                        <input type="text" maxlength="1" id="digit2" oninput="handleInput(this, 'digit3')">
+                        -
+                        <input type="text" maxlength="1" id="digit3" oninput="handleInput(this, 'digit4')">
+                        -
+                        <input type="text" maxlength="1" id="digit4" oninput="handleInput(this, 'digit5')">
+                        -
+                        <input type="text" maxlength="1" id="digit5" oninput="handleInput(this, 'digit6')">
+                        -
+                        <input type="text" maxlength="1" id="digit6" oninput="handleInput(this)">
+                    </div>
+                    
+                      <!-- Hidden input to store the full code -->
+                      <input type="hidden" id="code" name="code" required>
+
                 </div>
                 <p>If you didn't receive your code, please 
-                    <a onclick="resend_code_email()" style="color: blue;">click here</a> to resend the code
+                    <a class="resend" onclick="resend_code_email()" style="color: blue;">click here</a> to resend the code
                 </p>
                 <p id="errorMessage" class="error-message"></p>
                 <button type="submit">Sign in</button>
             </form>
             <div class="bottom">
+                <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
                 <h6>© 42 Porto 2024</h6>
             </div>
         </div>
