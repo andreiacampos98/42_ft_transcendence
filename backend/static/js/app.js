@@ -16,19 +16,32 @@ const routeScripts = {
 	],
 };
 
-const appendScripts = (route) => {
+const appendScripts = () => {
+	let route;
+
+	Object.keys(routeScripts).every(key => {
+		if (currRoute.startsWith(key)) {
+			console.log('Current route: ', key);
+			route = key;
+			// appendScripts(key);
+			return false;
+		}
+		return true;
+	});
+
+	console.log('ROUTE ', route)
+	console.log('SCRIPTS ', routeScripts[route])
+
 	routeScripts[route].forEach(file => {		
 		let script = document.createElement('script');
 		script.src = file.startsWith('https') ? file : `/static/js/${file}.js`;
-		console.log(script.src);
-		script.onload = () => console.log(`${file} loaded successfully`);
-		script.onerror = (e) => console.error(`Error loading script ${file}:`, e);
 		document.body.appendChild(script);
 	});
 };
 
 const mutationsCallback = (mutations) => {
 	// Ignore second set of mutations
+	console.log(lastRoute, currRoute, window.location.pathname)
 	if (currRoute == window.location.pathname)
 		return ;
 	
@@ -39,15 +52,8 @@ const mutationsCallback = (mutations) => {
 		myTournament.updateUI({isPhaseOver: false});
 	// else if (currRoute.startsWith('/tournaments/ongoing/') && lastRoute.startsWith('/gametournament'))
 	// 	return ;
-
-	Object.keys(routeScripts).every(key => {
-		if (currRoute.startsWith(key)) {
-			console.log('Current route: ', key);
-			appendScripts(key);
-			return false;
-		}
-		return true;
-	})
+	appendScripts();
+	
 };
 
 const observeHTML = () => {

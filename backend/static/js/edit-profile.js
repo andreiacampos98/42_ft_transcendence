@@ -39,6 +39,7 @@ async function onSaveButtonClick(event, userId) {
     event.preventDefault(); 
     const formData = new FormData(document.getElementById("edit-profile-form"));
     let token = localStorage.getItem("access_token");
+	console.log(document.getElementById("edit-profile-form"));
 
     const response = await fetch(`/users/${userId}/update`, {
         method: "POST",
@@ -62,9 +63,9 @@ async function onSaveButtonClick(event, userId) {
 	}
 	else {
         localStorage.setItem('access_token', data.access_token);
-		history.pushState(null, '', `/users/${userId}`);
+		history.replaceState(null, '', `/users/${userId}`);
 		htmx.ajax('GET', `/users/${userId}`, {
 			target: '#main'  
-		});
+		}).then(() => appendScripts());
 	}
 }
