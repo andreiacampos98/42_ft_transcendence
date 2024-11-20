@@ -17,7 +17,7 @@ const routeScripts = {
 };
 
 const appendScripts = () => {
-	let route;
+	let route = null;
 
 	Object.keys(routeScripts).every(key => {
 		if (currRoute.startsWith(key)) {
@@ -28,6 +28,9 @@ const appendScripts = () => {
 		}
 		return true;
 	});
+
+	if (!route)
+		return ;
 
 	console.log('ROUTE ', route)
 	console.log('SCRIPTS ', routeScripts[route])
