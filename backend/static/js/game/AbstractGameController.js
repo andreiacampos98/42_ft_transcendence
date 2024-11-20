@@ -39,8 +39,6 @@ export class AbstractGameController extends THREE.Group {
 			onPaddleHit: onPaddleHit 
 		});
 
-		this.arena.position.set(0, 0.65, 0.1);
-
 		this.add(this.arena);
 		this.add(this.player1.paddle);
 		this.add(this.player2.paddle);

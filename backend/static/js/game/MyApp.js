@@ -86,9 +86,17 @@ export class MyApp  {
 				ducks.material[1] = new THREE.MeshPhongMaterial({map: textures['duck_body_bake']});
 				ducks.material[2] = new THREE.MeshPhongMaterial({map: textures['beak_bake']});
 				
+				this.arcade = object;
+				this.arcade.position.set(0, -0.646, -0.1);
 				this.scene.add(object);
+				const arcadeFolder = this.gui.addFolder('Arcade Controls');
+				arcadeFolder.add(this.arcade.position, 'x', -30, 30).name("X");
+				arcadeFolder.add(this.arcade.position, 'y', -30, 30).name("Y");
+				arcadeFolder.add(this.arcade.position, 'z', -30, 30).name("Z");
 			}
 		);
+		this.ledTextures = [textures['led_001_rainbow']];
+
 		this.light = new THREE.PointLight('#FFFFFF', 50);
 		this.light.position.set(0, 0, 5);
 		this.scene.add(this.light);
@@ -139,8 +147,8 @@ export class MyApp  {
     initCameras() {
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
-        const perspective1 = new THREE.PerspectiveCamera( 75, aspect, 0.1, 50 )
-        perspective1.position.set(0, 0, 2);
+        const perspective1 = new THREE.PerspectiveCamera( 50, aspect, 0.1, 50 )
+        perspective1.position.set(0, 0, 1);
         this.cameras['Perspective'] = perspective1;
     }
 
@@ -186,6 +194,7 @@ export class MyApp  {
             this.renderer.setSize( window.innerWidth, window.innerHeight );
         }
     }
+	// Store references to the LED textures
 
     /**
     * the main render function. Called in a requestAnimationFrame loop
@@ -197,9 +206,9 @@ export class MyApp  {
 			
 			if (this.controls != null)
 				this.controls.update();
+			
 			this.gameController.update();
 			this.renderer.render(this.scene, this.activeCamera);
-			
 			frameID = requestAnimationFrame( this.render.bind(this) );
 			
 			this.lastCameraName = this.activeCameraName;

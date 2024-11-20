@@ -87,15 +87,16 @@ export class Ball extends THREE.Object3D {
 		if (minX.end < maxX.start || minY.end < maxY.start)
 			return ;
 
-		//! - Change ball speed according to the speed of the paddle at the time
 		if (isPlayer) {
 			this.position.x = paddle.position.x + PADDLE_SEMI_LENGTH + this.radius;
 			this.speed.x += BALL_SPEEDUP_FACTOR;
+			this.speed.y += BALL_SPEEDUP_FACTOR * (Math.random()); // Adjust Y speed
 			this.direction.x = DIRECTION.RIGHT;
 		}
 		else {
 			this.position.x = paddle.position.x - PADDLE_SEMI_LENGTH - this.radius;
 			this.speed.x += BALL_SPEEDUP_FACTOR;
+			this.speed.y += BALL_SPEEDUP_FACTOR * (Math.random()); // Adjust Y speed
 			this.direction.x = DIRECTION.LEFT;
 		}	
 
