@@ -1,23 +1,12 @@
 {% extends 'navs.html' %}
 {% load static %}
 
-{% block head %}
+{% block main_content %}
 <link rel="stylesheet" href="{% static 'css/game/game.css' %}">
 <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
-<script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.156.1/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.156.1/examples/jsm/"
-      }
-    }
-  </script>
-{% endblock %}
-
-
-{% block main_content %}
 <div class="main-content non_compressed" id="main-content">
-	<div id="canvas-container"></div>
+	<span id='metadata' data-user-id="{{ user.id }}" data-username="{{ user.username }}"></span>
+	<div id="canvas-container" style="width: 100%; height: 100%; z-index: -100;"></div>
 	<div id="camera"></div>
 	<div id="scoreboard" class="d-flex justify-content-center align-items-center">
 		<div id="p1"></div>
@@ -26,6 +15,22 @@
 	</div>
 </div>
 
-<script id="game-engine" type="module" src="{% static 'js/game/main.js' %}" 
-	data-user-id="{{ user.id }}" data-username="{{ user.username }}" game-type="Local"></script>
+<script type="module">
+	import { MyApp } from '/static/js/game/MyApp.js';
+
+	document.getElementById('canvas-container').style.color = '#FFF';
+	document.getElementById('scoreboard').style.color = '#FFF';
+
+	const userID = document.getElementById('metadata').getAttribute('data-user-id');
+	const username = document.getElementById('metadata').getAttribute('data-username');
+
+	let app = new MyApp();
+	app.init({ 
+		player1Data: {'id': userID, 'username': username},
+		player2Data: {'id': '', 'username': 'Anonymous'},
+		gameType: 'Local' 
+	});
+	app.render();
+</script>
+
 {% endblock %}

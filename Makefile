@@ -5,7 +5,7 @@ dev:
 	docker compose -f docker-compose-dev.yml up
 
 detach:
-	docker compose up --build -d
+	docker compose up -d
 
 django:
 	docker exec -it django-container sh -c 'source /.venv/bin/activate; sh'
@@ -24,6 +24,7 @@ clean:
 		data/  \
 		backend/backend/__pycache__/  \
 		backend/pong/__pycache__/ \
+		backend/pong/consumers/__pycache__/ \
 		backend/pong/migrations/__pycache__/ \
 		backend/pong/templatetags/__pycache__/ \
 		backend/pong/migrations/*_initial.py \
@@ -42,7 +43,8 @@ down:
 ps:
 	docker compose ps
 
-re: down all
+re: down
+	docker compose up --build
 
 re-dev: down
 	docker compose -f docker-compose-dev.yml up --build

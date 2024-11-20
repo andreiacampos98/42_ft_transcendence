@@ -35,25 +35,25 @@ export class MyApp  {
     /**
      * initializes the application
      */
-    init({player1Data, player2Data, socket=null, gameType, gameID=null, ballDirection}) {
+    init({player1Data, player2Data, gameSocket, tournamentSocket, gameType, gameID=null}) {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
 		// this.scene.add(new Axis(this));
 
-		if (gameType == "Remote"){
+		if (gameType == "Remote" || gameType == "Tournament"){
 			this.gameController = new RemoteGameController({ 
 				player1Data: player1Data, 
 				player2Data: player2Data,
-				socket: socket, 
+				gameSocket: gameSocket,
+				gameType: gameType,
+				tournamentSocket: tournamentSocket,
 				gameID: gameID,
-				ballDirection: ballDirection
 			});
 		} else {
 			this.gameController = new LocalGameController({ 
 				player1Data: player1Data, 
 				player2Data: player2Data,
-				ballDirection: ballDirection
 			});
 		}
 		this.scene.add(this.gameController);
@@ -169,11 +169,7 @@ export class MyApp  {
 			this.stats.end();
 		}).bind(this);
 
-		timeoutID = setTimeout(updateCallback, REFRESH_RATE);
+		if (window.location.pathname.startsWith('/game'))
+			timeoutID = setTimeout(updateCallback, REFRESH_RATE);
     }
 }
-
-window.addEventListener('popstate', function(event) {	
-    if (confirm("You're about to leave the game! Are you sure?!"))
-		this.window.cancelAnimationFrame(frameID);
-});

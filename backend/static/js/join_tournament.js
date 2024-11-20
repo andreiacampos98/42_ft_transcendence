@@ -12,7 +12,6 @@ document.querySelectorAll('.open-register-tournament-modal').forEach(button => {
     });
 });
 
-
 var goback = document.getElementById("cancel-register-tournament");
 
 
@@ -55,13 +54,9 @@ async function registerTournament() {
             }
         })
         const data = await response.json();
-        console.log(data)
-        console.log("aqui")
-        console.log(data.data)
         if (response.ok) {
-            localStorage.setItem('alias', formData.alias);
-            localStorage.setItem('tournament_id', tournamentId);
-            localStorage.setItem('access_token', data.access_token);
+			myUser.tournamentID = tournamentId;
+			myUser.userID = data.data.user_id;
             history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);
             htmx.ajax('GET', `/tournaments/ongoing/${tournamentId}`, {
                 target: '#main'  
