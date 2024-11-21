@@ -40,27 +40,19 @@ export class Application  {
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
 		this.scene.add(new Axis(this));
-		
-		this.light = new THREE.PointLight('#FFFFFF', 5);
-		this.light.position.set(0, 0, 5);
-		this.scene.add(this.light);
-
-		this.pointLightHelper = new THREE.PointLightHelper(this.light);
-		this.scene.add(this.pointLightHelper);	
 
 		this.gui = new GUI({ autoPlace: false });
 		this.gui.domElement.id = 'gui';
 		document.getElementById('main-content').appendChild(this.gui.domElement);
 
+		this.scene.add(new THREE.AmbientLight(0xFF00FF, 0.7));
+		this.grid = new THREE.GridHelper(100, 100, 0x00FFFF, 0x00FFFF);
+		this.grid.position.y = -0.7;
+		this.scene.add(this.grid);
+
 		this.stats = new Stats();
         this.stats.showPanel(0);
         document.body.appendChild(this.stats.dom);
-		
-		const lightFolder = this.gui.addFolder('Light');
-        lightFolder.add(this.light, 'intensity', 0, 50).name("Intensity");
-        lightFolder.add(this.light.position, 'x', -30, 30).name("X");
-        lightFolder.add(this.light.position, 'y', -30, 30).name("Y");
-        lightFolder.add(this.light.position, 'z', -30, 30).name("Z");
 
 		const orbitFolder = this.gui.addFolder('Mouse Controls');
         orbitFolder.add(this, 'activateControls', false).name("Active")
