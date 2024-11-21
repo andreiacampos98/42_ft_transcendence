@@ -6,3 +6,4 @@ backend/pong/templatetags/__pycache__/
 /data
 
 .vscode/
+*.pem
