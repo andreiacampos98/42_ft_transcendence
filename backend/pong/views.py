@@ -345,6 +345,11 @@ def user_password(request, pk):
 		if new_password1 != new_password2:
 			return JsonResponse({'message': 'Passwords did not match.', 'access_token': new_token}, status=400)
 
+		try:
+			validate_password(new_password1)
+		except ValidationError as e:
+			return JsonResponse({'message': ' '.join(e)}, status=400)
+		
 		user.set_password(new_password1)
 		user.save()
 
