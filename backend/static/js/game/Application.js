@@ -4,9 +4,10 @@ import  Stats  from 'three/addons/libs/stats.module.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Axis } from './objects/Axis.js';
 import { LocalGameController } from './controllers/LocalGameController.js';
-import { REFRESH_RATE } from './macros.js';
 import { RemoteGameController } from './controllers/RemoteGameController.js';
-import { Arcade } from './objects/Arcade.js';
+import { REFRESH_RATE } from './macros.js';
+import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
 
 var frameID;
@@ -20,7 +21,6 @@ export class Application  {
      */
     constructor() {
         this.scene = null;
-        this.cameras = [];
 
         // other attributes
         this.renderer = null;
@@ -45,7 +45,7 @@ export class Application  {
 		this.gui.domElement.id = 'gui';
 		document.getElementById('main-content').appendChild(this.gui.domElement);
 
-		this.scene.add(new THREE.AmbientLight(0xFF00FF, 0.7));
+		this.scene.add(new THREE.AmbientLight(0xFFFFFF, 0.7));
 		this.grid = new THREE.GridHelper(100, 100, 0x00FFFF, 0x00FFFF);
 		this.grid.position.y = -0.7;
 		this.scene.add(this.grid);
@@ -63,9 +63,48 @@ export class Application  {
         this.renderer.setClearColor("#000000");
         this.renderer.setSize( this.canvas.clientWidth, this.canvas.clientHeight );
 
-        this.initCameras();
-        this.setActiveCamera('Perspective')
+        this.initCamera();
+		this.loadAssets((object) => {
+			this.arcadeModel = object;
+			this.initGameController(player1Data, player2Data, gameType, gameID);
+			this.render();
+		});
+		
+		this.canvas.appendChild( this.renderer.domElement );
+    }
 
+	loadAssets(callback) {
+		const objLoader = new OBJLoader();
+		const texLoader = new THREE.TextureLoader();
+		const files = ['duck_beak', 'rug', 'button_base_front', 'button_base_top', 'buttons', 'duck_body', 'rainbow_leds', 'metal_fake_screen'];
+		const textures = Object.fromEntries(files.map(x => [x, texLoader.load(`/static/assets/textures/${x}.png`)]));
+
+		objLoader.load(
+			'/static/assets/models/arcade.obj',
+			(object) => {
+				const [leds, arcade, _, leds_42, buttons, ducks] = object.children;
+				
+				leds.material = new THREE.MeshBasicMaterial({map: textures['rainbow_leds']});
+				arcade.material[0] = new THREE.MeshPhongMaterial({map: textures['rug']});
+				arcade.material[1] = new THREE.MeshPhongMaterial({map: textures['button_base_top']});
+				arcade.material[2] = new THREE.MeshPhongMaterial({map: textures['button_base_front']});
+				arcade.material[3] = new THREE.MeshPhongMaterial({map: textures['metal_fake_screen']});
+				arcade.material[4] = new THREE.MeshBasicMaterial({color: '#000000'});
+
+				leds_42.material = new THREE.MeshBasicMaterial({map: textures['rainbow_leds']});
+				
+				buttons.material = new THREE.MeshPhongMaterial({map: textures['buttons']});
+				
+				ducks.material[0] = new THREE.MeshLambertMaterial({color: '#000000'});
+				ducks.material[1] = new THREE.MeshLambertMaterial({map: textures['duck_body']});
+				ducks.material[2] = new THREE.MeshLambertMaterial({map: textures['duck_beak']});
+				// this.scene.add(object);
+				callback(object);
+			}
+		);
+	}
+
+	initGameController(player1Data, player2Data, gameType, gameID=null){
 		if (gameType == "Remote" || gameType == "Tournament"){
 			this.gameController = new RemoteGameController({
 				scene: this.scene, 
@@ -83,35 +122,31 @@ export class Application  {
 			});
 		}
 		this.scene.add(this.gameController);
-
-        this.canvas.appendChild( this.renderer.domElement );				
-    }
+	}
 
     /**
      * initializes all the cameras
      */
-    initCameras() {
+    initCamera() {
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
-        const perspective1 = new THREE.PerspectiveCamera( 50, aspect, 0.1, 50 )
-        perspective1.position.set(0, 0, 0.7);
-        this.cameras['Perspective'] = perspective1;
+        this.camera = new THREE.PerspectiveCamera( 50, aspect, 0.1, 50 )
+        this.camera.position.set(5, 5, 1.2);
+		
+		const coords = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
+		new TWEEN.Tween(coords)
+			.to({x: 0, y: 0.15, z: 0.7 }, 1500)
+			.easing(TWEEN.Easing.Cubic.Out)
+			.onUpdate(() =>this.camera.position.set(coords.x, coords.y, coords.z))
+			.start();
     }
 
-    /**
-     * sets the active camera by name
-     * @param {String} cameraName 
-     */
-    setActiveCamera(cameraName) {   
-        this.activeCameraName = cameraName
-        this.activeCamera = this.cameras[this.activeCameraName]
-    }
 
 	setActivateControls(value) {
 		this.activateControls = value;
 
 		if (this.activateControls)
-			this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
+			this.controls = new OrbitControls( this.camera, this.renderer.domElement );
 		else 
 			this.controls = null;
 	}
@@ -121,13 +156,13 @@ export class Application  {
 			return ;
 		
 		if (this.controls === null) {
-			this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
+			this.controls = new OrbitControls( this.camera, this.renderer.domElement );
 			this.controls.enableZoom = true;
 			this.controls.enableDamping = true;
 			this.controls.update();
 		}
 		else {
-			this.controls.object = this.activeCamera
+			this.controls.object = this.camera;
 		}
     }
 
@@ -143,10 +178,10 @@ export class Application  {
 				this.controls.update();
 			
 			this.gameController.update();
-			this.renderer.render(this.scene, this.activeCamera);
+			this.renderer.render(this.scene, this.camera);
 			frameID = requestAnimationFrame( this.render.bind(this) );
+			TWEEN.update();
 			
-			this.lastCameraName = this.activeCameraName;
 			this.stats.end();
 		}).bind(this);
 

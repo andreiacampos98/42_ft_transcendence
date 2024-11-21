@@ -27,7 +27,7 @@ export const LEVER_HEIGHT = 0.07;
 export const LEVER_MAX_ROTATION = Math.PI * 0.2;
 export const LEVER_DEFAULT_ROTATION = Math.PI * 0.05;
 export const LEVER_MIN_ROTATION = -Math.PI * 0.1;
-export const LEVER_ROTATION_STEP = -0.07;
+export const LEVER_ROTATION_STEP = -0.15;
 
 export const MAX_GOALS = 5;
 export const PLAYER_COLOR_1 = 0xCC0000;
