@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { Ball } from './Ball.js';
-import { Arena } from './Arena.js';
+import { Ball } from '../objects/Ball.js';
+import { Arena } from '../objects/Arena.js';
 
 const CURR_PLAYER_ID = document.getElementById('metadata').getAttribute('data-user-id');
 

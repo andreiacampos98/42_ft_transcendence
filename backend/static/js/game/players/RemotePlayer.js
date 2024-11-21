@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { AbstractPlayer } from './AbstractPlayer.js';
-import { PADDLE_SEMI_HEIGHT, ARENA_SEMI_HEIGHT, ARENA_SEMI_DEPTH, PADDLE_SPEED } from './macros.js';
+import { PADDLE_SEMI_HEIGHT, ARENA_SEMI_HEIGHT, ARENA_SEMI_DEPTH, PADDLE_SPEED } from '../macros.js';
 
 export class RemotePlayer extends AbstractPlayer {
 	constructor ({ id, username, x, keybinds=null, onUpdate }) {

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ARENA_SEMI_HEIGHT, ARENA_SEMI_LENGTH, ARENA_SEMI_DEPTH } from './macros.js';
+import { ARENA_SEMI_HEIGHT, ARENA_SEMI_LENGTH, ARENA_SEMI_DEPTH } from '../macros.js';
 
 export class Arena extends THREE.Group {
 	constructor() {

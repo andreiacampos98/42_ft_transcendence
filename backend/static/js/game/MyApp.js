@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import  Stats  from 'three/addons/libs/stats.module.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { Axis } from './Axis.js';
-import { LocalGameController } from './LocalGameController.js';
+import { Axis } from './objects/Axis.js';
+import { LocalGameController } from './controllers/LocalGameController.js';
 import { REFRESH_RATE } from './macros.js';
-import { RemoteGameController } from './RemoteGameController.js';
-import { Arcade } from './Arcade.js';
+import { RemoteGameController } from './controllers/RemoteGameController.js';
+import { Arcade } from './objects/Arcade.js';
 
 
 var frameID;

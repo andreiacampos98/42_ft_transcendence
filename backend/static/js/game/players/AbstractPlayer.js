@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ARENA_SEMI_LENGTH, PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, PADDLE_SEMI_DEPTH } from './macros.js';
+import { PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, PADDLE_SEMI_DEPTH } from '../macros.js';
 
 export class AbstractPlayer {
 	constructor ({id, username, x, keybinds}) {

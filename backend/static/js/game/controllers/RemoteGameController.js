@@ -1,9 +1,7 @@
-import { GameStats } from './GameStats.js';
-import { RemotePlayer } from './RemotePlayer.js';
-import { ARENA_SEMI_LENGTH, PADDLE_OFFSET_X, STANDARD_KEYBINDS } from './macros.js';
+import { GameStats } from '../GameStats.js';
+import { RemotePlayer } from '../players/RemotePlayer.js';
+import { ARENA_SEMI_LENGTH, PADDLE_SEMI_LENGTH, STANDARD_KEYBINDS } from '../macros.js';
 import { AbstractGameController } from './AbstractGameController.js';
-
-
 
 export class RemoteGameController extends AbstractGameController {
 	constructor({ player1Data, player2Data, gameID, gameType, gameSocket, tournamentSocket=null }) {
@@ -45,7 +43,7 @@ export class RemoteGameController extends AbstractGameController {
 			onUpdate: p1ID == currPlayerID ? onUpdate : null,
 			isEnemy: p1ID != currPlayerID,
 			keybinds: p1ID == currPlayerID ? STANDARD_KEYBINDS : null,
-			x: -ARENA_SEMI_LENGTH + PADDLE_OFFSET_X 
+			x: -(ARENA_SEMI_LENGTH*0.8 - PADDLE_SEMI_LENGTH)
 		});
 		this.player2 = new RemotePlayer({ 
 			id: p2ID, 
@@ -53,7 +51,7 @@ export class RemoteGameController extends AbstractGameController {
 			onUpdate: p2ID == currPlayerID ? onUpdate : null,
 			isEnemy: p2ID != currPlayerID,
 			keybinds: p2ID == currPlayerID ? STANDARD_KEYBINDS : null,
-			x: ARENA_SEMI_LENGTH - PADDLE_OFFSET_X 
+			x: ARENA_SEMI_LENGTH*0.8 - PADDLE_SEMI_LENGTH
 		});
 		this.players[this.player1.id] = this.player1;
 		this.players[this.player2.id] = this.player2;

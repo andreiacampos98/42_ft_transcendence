@@ -1,7 +1,7 @@
-import { GameStats } from './GameStats.js';
-import { LocalPlayer } from './LocalPlayer.js';
+import { GameStats } from '../GameStats.js';
+import { LocalPlayer } from '../players/LocalPlayer.js';
 import { AbstractGameController } from './AbstractGameController.js';
-import { PADDLE_OFFSET_X, ARENA_SEMI_LENGTH, STANDARD_KEYBINDS, ALTERNATE_KEYBINDS, PADDLE_SEMI_LENGTH } from './macros.js';
+import { ARENA_SEMI_LENGTH, STANDARD_KEYBINDS, ALTERNATE_KEYBINDS, PADDLE_SEMI_LENGTH } from '../macros.js';
 
 export class LocalGameController extends AbstractGameController {
 	constructor({ player1Data, player2Data }) {
