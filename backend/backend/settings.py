@@ -176,6 +176,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'pong.validators.CustomPasswordValidator',
+    },
 ]
 
 AUTH_USER_MODEL = 'pong.Users'

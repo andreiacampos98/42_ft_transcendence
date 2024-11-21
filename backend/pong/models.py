@@ -11,6 +11,8 @@ class UserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
             raise ValueError('The Username field must be set')
+        if len(username) < 5:
+            raise ValueError('The Username needs to have more than 5 letters')
         if not password:
             raise ValueError('The Password field must be set')
         user = self.model(username=username, **extra_fields)

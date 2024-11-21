@@ -152,6 +152,25 @@ def send_code_verify_email(request):
 		)
 		return JsonResponse({'message': 'Code sent.'}, status=200)
 
+class MockUser:
+    def __init__(self, username, email):
+        self.username = username
+        self.email = email
+        self._meta = self.MockMeta()
+
+    class MockMeta:
+        def get_field(self, field_name):
+            if field_name == 'username':
+                return self.MockField("Username")
+            elif field_name == 'email':
+                return self.MockField("Email")
+            raise AttributeError(f"Unknown field: {field_name}")
+
+        class MockField:
+            def __init__(self, verbose_name):
+                self.verbose_name = verbose_name
+
+			
 def user_create(request):
 	if request.method == 'POST':
 		try:
@@ -166,12 +185,16 @@ def user_create(request):
 
 		if not username or not email or not password1 or not password2:
 			return JsonResponse({'message': 'All fields are required.'}, status=400)
+		
+		if len(username) < 5:
+			return JsonResponse({'message': 'The Username needs to have more than 5 letters.'}, status=400)
 
 		if Users.objects.filter(username=username).exists():
 			return JsonResponse({'message': 'Username already exists! Please try another username.'}, status=400)
 
 		try:
-			validate_password(password1)
+			user_mock = MockUser(username=username, email=email)
+			validate_password(password1, user_mock)
 		except ValidationError as e:
 			return JsonResponse({'message': ' '.join(e)}, status=400)
 
@@ -346,7 +369,7 @@ def user_password(request, pk):
 			return JsonResponse({'message': 'Passwords did not match.', 'access_token': new_token}, status=400)
 
 		try:
-			validate_password(new_password1)
+			validate_password(new_password1, user)
 		except ValidationError as e:
 			return JsonResponse({'message': ' '.join(e)}, status=400)
 		
