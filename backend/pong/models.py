@@ -11,6 +11,8 @@ class UserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
             raise ValueError('The Username field must be set')
+        if len(username) < 5:
+            raise ValueError('The Username needs to have more than 5 letters')
         if not password:
             raise ValueError('The Password field must be set')
         user = self.model(username=username, **extra_fields)
@@ -162,7 +164,7 @@ class UserStats(models.Model):
     nb_games_won = models.IntegerField(default=0)
     nb_goals_scored = models.IntegerField(default=0)
     nb_goals_suffered = models.IntegerField(default=0)
-    max_ball_speed = models.IntegerField(default=0)
+    max_ball_speed = models.FloatField(default=0)
     date_max_ball_speed = models.DateTimeField(null=True)
     max_rally_length = models.IntegerField(default=0)
     date_max_rally_length = models.DateTimeField(null=True)
@@ -192,9 +194,9 @@ class GamesStats(models.Model):
     longer_rally = models.IntegerField(default=0)
     shorter_rally = models.IntegerField(default=0)
     average_rally = models.IntegerField(default=0)
-    max_ball_speed = models.IntegerField(default=0)
-    min_ball_speed = models.IntegerField(default=0)
-    average_ball_speed = models.IntegerField(default=0)
+    max_ball_speed = models.FloatField(default=0)
+    min_ball_speed = models.FloatField(default=0)
+    average_ball_speed = models.FloatField(default=0)
     greatest_deficit_overcome = models.IntegerField(default=0)
     gdo_user = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name='gdo_games')
     most_consecutive_goals = models.IntegerField(default=0)
