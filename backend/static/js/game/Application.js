@@ -41,12 +41,12 @@ export class Application  {
         this.scene.background = new THREE.Color( 0x101010 );
 		this.scene.add(new Axis(this));
 		
-		this.light = new THREE.PointLight('#FFFFFF', 50);
+		this.light = new THREE.PointLight('#FFFFFF', 5);
 		this.light.position.set(0, 0, 5);
 		this.scene.add(this.light);
 
 		this.pointLightHelper = new THREE.PointLightHelper(this.light);
-		// this.scene.add(this.pointLightHelper);	
+		this.scene.add(this.pointLightHelper);	
 
 		this.gui = new GUI({ autoPlace: false });
 		this.gui.domElement.id = 'gui';

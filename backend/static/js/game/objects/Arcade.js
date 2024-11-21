@@ -27,14 +27,14 @@ export class Arcade extends THREE.Object3D {
 				const [leds, arcade, logo_42, leds_42, buttons, ducks] = object.children;
 				console.log([leds, arcade, logo_42, leds_42, buttons, ducks]);
 				
-				leds.material = new THREE.MeshPhongMaterial({map: textures['rainbow_leds'], emissive: true, emissiveIntensity: 100});
+				leds.material = new THREE.MeshBasicMaterial({map: textures['rainbow_leds'], emissive: true, emissiveIntensity: 100});
 				arcade.material[0] = new THREE.MeshPhongMaterial({map: textures['rug']});
 				arcade.material[1] = new THREE.MeshPhongMaterial({map: textures['button_base_top']});
 				arcade.material[2] = new THREE.MeshPhongMaterial({map: textures['button_base_front']});
 				arcade.material[3] = new THREE.MeshPhongMaterial({map: textures['metal_fake_screen']});
 				arcade.material[4] = new THREE.MeshBasicMaterial({color: '#000000'});
 
-				leds_42.material = new THREE.MeshPhongMaterial({map: textures['rainbow_leds']});
+				leds_42.material = new THREE.MeshBasicMaterial({map: textures['rainbow_leds']});
 				
 				buttons.material = new THREE.MeshPhongMaterial({map: textures['buttons']});
 				

@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { BALL_SPEEDUP_FACTOR, BALL_START_SPEED, BALL_RADIUS,
 	PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, DIRECTION, 
-	ARENA_SEMI_DEPTH } from '../macros.js';
+	ARENA_SEMI_DEPTH, BALL_COLOR
+} from '../macros.js';
 
 export class Ball extends THREE.Object3D { 
 	constructor ({ radius, speed, direction=null, onPaddleHit=null }) {
@@ -20,7 +21,7 @@ export class Ball extends THREE.Object3D {
 	build() {
 		this.ball = new THREE.Mesh(
 			new THREE.SphereGeometry(this.radius),
-			new THREE.MeshNormalMaterial()
+			new THREE.MeshBasicMaterial({color: BALL_COLOR})
 		);
 
 		this.add(this.ball);

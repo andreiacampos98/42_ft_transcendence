@@ -19,9 +19,7 @@ export class AbstractPlayer {
 
 		this.paddle = new THREE.Mesh(
 			new THREE.BoxGeometry(length, height, depth),
-			new THREE.MeshPhongMaterial({
-				color: color
-			})
+			new THREE.MeshBasicMaterial({ color: color })
 		);
 		this.paddle.position.x = x;
 	}

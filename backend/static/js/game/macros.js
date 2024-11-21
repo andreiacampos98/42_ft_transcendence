@@ -1,13 +1,14 @@
-export const BALL_START_SPEED = 0.002;
-export const BALL_SPEEDUP_FACTOR = 0.0005;
-export const BALL_RADIUS = 0.01;
-
 export const DIRECTION = Object.freeze({
 	UP: 1,
 	DOWN: -1,
 	LEFT: -1,
 	RIGHT: 1,
 });
+
+export const BALL_START_SPEED = 0.002;
+export const BALL_SPEEDUP_FACTOR = 0.0005;
+export const BALL_RADIUS = 0.01;
+export const BALL_COLOR = 0xFFFFFF;
 
 export const ARENA_SEMI_HEIGHT = 0.143;
 export const ARENA_SEMI_LENGTH = 0.2;
