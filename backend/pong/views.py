@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.core.mail import send_mail
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from datetime import datetime
@@ -168,6 +169,11 @@ def user_create(request):
 
 		if Users.objects.filter(username=username).exists():
 			return JsonResponse({'message': 'Username already exists! Please try another username.'}, status=400)
+
+		try:
+			validate_password(password1)
+		except ValidationError as e:
+			return JsonResponse({'message': ' '.join(e)}, status=400)
 
 		try:
 			validate_email(email)
