@@ -17,7 +17,7 @@ export const PADDLE_SEMI_LENGTH = 0.005;
 export const PADDLE_SEMI_HEIGHT = ARENA_SEMI_LENGTH / 6;
 export const PADDLE_SEMI_DEPTH = 0.01;
 export const PADDLE_SPEED = 0.015;
-export const PADDLE_OFFSET_X = 0.4;
+export const PADDLE_OFFSET = 0.8 * ARENA_SEMI_LENGTH - PADDLE_SEMI_LENGTH;
 
 export const MAX_GOALS = 5;
 

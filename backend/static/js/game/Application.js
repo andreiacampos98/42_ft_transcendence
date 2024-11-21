@@ -14,7 +14,7 @@ var timeoutID;
 /**
  * This class contains the application object
  */
-export class MyApp  {
+export class Application  {
     /**
      * the constructor
      */

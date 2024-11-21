@@ -20,7 +20,7 @@
 </div>
 
 <script type="module">
-	import { MyApp } from '/static/js/game/MyApp.js';
+	import { Application } from '/static/js/game/Application.js';
 
 	myUser.connectSocket(
 		'gameSocket',
@@ -31,7 +31,7 @@
 			document.getElementById('scoreboard').style.color = '#FFF';
 			const { player1, player2, ball, gameID } = JSON.parse(event.data);
 
-			let app = new MyApp();
+			let app = new Application();
 			app.init({player1Data: player1, 
 				player2Data: player2,
 				gameSocket: myUser.gameSocket, 

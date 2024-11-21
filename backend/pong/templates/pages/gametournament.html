@@ -21,7 +21,7 @@
 </div>
 
 <script type="module">
-	import { MyApp } from '/static/js/game/MyApp.js';
+	import { Application } from '/static/js/game/Application.js';
 
 	const { 
 		user1_id: p1 , user2_id: p2, 
@@ -36,7 +36,7 @@
 			document.getElementById('canvas-container').style.color = '#FFF';
 			document.getElementById('scoreboard').style.color = '#FFF';
 			
-			let app = new MyApp();
+			let app = new Application();
 			app.init({ 
 				player1Data: {'id': p1.id, 'username': p1.username},
 				player2Data: {'id': p2.id, 'username': p2.username},

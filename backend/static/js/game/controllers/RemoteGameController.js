@@ -1,6 +1,6 @@
 import { GameStats } from '../GameStats.js';
 import { RemotePlayer } from '../players/RemotePlayer.js';
-import { ARENA_SEMI_LENGTH, PADDLE_SEMI_LENGTH, STANDARD_KEYBINDS } from '../macros.js';
+import { PADDLE_OFFSET, STANDARD_KEYBINDS } from '../macros.js';
 import { AbstractGameController } from './AbstractGameController.js';
 
 export class RemoteGameController extends AbstractGameController {
@@ -43,7 +43,7 @@ export class RemoteGameController extends AbstractGameController {
 			onUpdate: p1ID == currPlayerID ? onUpdate : null,
 			isEnemy: p1ID != currPlayerID,
 			keybinds: p1ID == currPlayerID ? STANDARD_KEYBINDS : null,
-			x: -(ARENA_SEMI_LENGTH*0.8 - PADDLE_SEMI_LENGTH)
+			x: -(PADDLE_OFFSET)
 		});
 		this.player2 = new RemotePlayer({ 
 			id: p2ID, 
@@ -51,7 +51,7 @@ export class RemoteGameController extends AbstractGameController {
 			onUpdate: p2ID == currPlayerID ? onUpdate : null,
 			isEnemy: p2ID != currPlayerID,
 			keybinds: p2ID == currPlayerID ? STANDARD_KEYBINDS : null,
-			x: ARENA_SEMI_LENGTH*0.8 - PADDLE_SEMI_LENGTH
+			x: PADDLE_OFFSET
 		});
 		this.players[this.player1.id] = this.player1;
 		this.players[this.player2.id] = this.player2;
