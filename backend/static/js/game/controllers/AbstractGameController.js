@@ -1,11 +1,10 @@
 import * as THREE from 'three';
 import { Ball } from '../objects/Ball.js';
 import { Arena } from '../objects/Arena.js';
-
-const CURR_PLAYER_ID = document.getElementById('metadata').getAttribute('data-user-id');
+import { Arcade } from '../objects/Arcade.js';
 
 export class AbstractGameController extends THREE.Group {
-	constructor ({ type }) {
+	constructor ({ type, scene, app }) {
 		super();
 
 		this.keybinds = null;
@@ -13,8 +12,11 @@ export class AbstractGameController extends THREE.Group {
 		this.ball = null;
 		this.player1 = null;
 		this.player2 = null;
+		this.arcade = null;
 		this.stats = null;
 		this.type = type;
+		this.scene = scene;
+		this.app = app;
 	}
 
 	registerKeybinds() {
@@ -35,9 +37,8 @@ export class AbstractGameController extends THREE.Group {
 
 	build({ onPaddleHit=null }) {
 		this.arena = new Arena();
-		this.ball = new Ball({ 
-			onPaddleHit: onPaddleHit 
-		});
+		this.ball = new Ball({ onPaddleHit: onPaddleHit });
+		this.arcade = new Arcade(this.scene, this.app);
 
 		this.add(this.arena);
 		this.add(this.player1.paddle);
@@ -53,6 +54,7 @@ export class AbstractGameController extends THREE.Group {
 	update() {
 		this.player1.update(this.keybinds);
 		this.player2.update(this.keybinds);
+		this.arcade.update(this.keybinds);
 
 		if (this.ball == null)
 			return ;

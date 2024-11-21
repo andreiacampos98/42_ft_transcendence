@@ -19,6 +19,14 @@ export const PADDLE_SEMI_DEPTH = 0.01;
 export const PADDLE_SPEED = 0.015;
 export const PADDLE_OFFSET = 0.8 * ARENA_SEMI_LENGTH - PADDLE_SEMI_LENGTH;
 
+export const LEVER_TOP_RADIUS = 0.008;
+export const LEVER_BOTTOM_RADIUS = 0.005;
+export const LEVER_HEIGHT = 0.05;
+export const LEVER_MAX_ROTATION = Math.PI * 0.1;
+export const LEVER_NO_ROTATION = Math.PI * 0.05;
+export const LEVER_MIN_ROTATION = -Math.PI * 0.1;
+
+
 export const MAX_GOALS = 5;
 
 export const FPS = 50;

@@ -14,7 +14,7 @@ var timeoutID;
 /**
  * This class contains the application object
  */
-export class Application  {
+export class MyApp  {
     /**
      * the constructor
      */
@@ -35,11 +35,28 @@ export class Application  {
     /**
      * initializes the application
      */
-    init({player1Data, player2Data, gameType, gameID=null}) {
+    init({player1Data, player2Data, gameSocket, tournamentSocket, gameType, gameID=null}) {
                 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
 		this.scene.add(new Axis(this));
+
+		if (gameType == "Remote" || gameType == "Tournament"){
+			this.gameController = new RemoteGameController({ 
+				player1Data: player1Data, 
+				player2Data: player2Data,
+				gameSocket: gameSocket,
+				gameType: gameType,
+				tournamentSocket: tournamentSocket,
+				gameID: gameID,
+			});
+		} else {
+			this.gameController = new LocalGameController({ 
+				player1Data: player1Data, 
+				player2Data: player2Data,
+			});
+		}
+		this.scene.add(this.gameController);
 		
 		this.light = new THREE.PointLight('#FFFFFF', 50);
 		this.light.position.set(0, 0, 5);
@@ -65,6 +82,12 @@ export class Application  {
 		const orbitFolder = this.gui.addFolder('Mouse Controls');
         orbitFolder.add(this, 'activateControls', false).name("Active")
 			.onChange((value) => this.setActivateControls(value));
+
+		const arenaFolder = this.gui.addFolder('Arena Controls');
+        arenaFolder.add(this.gameController.arena.position, 'x', -30, 30).name("X");
+        arenaFolder.add(this.gameController.arena.position, 'y', -30, 30).name("Y");
+        arenaFolder.add(this.gameController.arena.position, 'z', -30, 30).name("Z");
+
 		
         this.renderer = new THREE.WebGLRenderer({antialias:true});
         this.renderer.setPixelRatio( this.canvas.clientWidth / this.canvas.clientHeight );
@@ -73,24 +96,6 @@ export class Application  {
 
         this.initCameras();
         this.setActiveCamera('Perspective')
-
-		if (gameType == "Remote" || gameType == "Tournament"){
-			this.gameController = new RemoteGameController({
-				scene: this.scene, 
-				player1Data: player1Data, 
-				player2Data: player2Data,
-				gameType: gameType,
-				gameID: gameID,
-			});
-		} else {
-			this.gameController = new LocalGameController({ 
-				scene: this.scene,
-				player1Data: player1Data, 
-				player2Data: player2Data,
-				app: this
-			});
-		}
-		this.scene.add(this.gameController);
 
         this.canvas.appendChild( this.renderer.domElement );
 				
@@ -163,7 +168,7 @@ export class Application  {
 			
 			if (this.controls != null)
 				this.controls.update();
-			
+
 			this.gameController.update();
 			this.renderer.render(this.scene, this.activeCamera);
 			frameID = requestAnimationFrame( this.render.bind(this) );

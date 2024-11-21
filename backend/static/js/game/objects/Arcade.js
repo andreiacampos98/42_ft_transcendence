@@ -1,14 +1,21 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { ALTERNATE_KEYBINDS, LEVER_BOTTOM_RADIUS, LEVER_HEIGHT, 
+	LEVER_MAX_ROTATION, LEVER_MIN_ROTATION, LEVER_TOP_RADIUS, 
+	STANDARD_KEYBINDS } from '../macros.js';
 
 
 export class Arcade extends THREE.Object3D {
-	constructor({scene, position}) {
+	constructor(scene, app) {
 		super();
 		this.scene = scene;
+		this.lever1 = null;
+		this.lever2 = null;
+		this.app = app;
+		this.addLevers();
 		this.build();
-		this.position.set(...position);
+		this.position.set(0, -0.646, -0.1);
 	}
 
 	build() {
@@ -37,10 +44,64 @@ export class Arcade extends THREE.Object3D {
 				ducks.material[0] = new THREE.MeshLambertMaterial({color: '#000000'});
 				ducks.material[1] = new THREE.MeshPhongMaterial({map: textures['duck_body']});
 				ducks.material[2] = new THREE.MeshPhongMaterial({map: textures['duck_beak']});
+				console.log(this.app);
+
+				const leverFolder = this.app.gui.addFolder('Lever Controls');
+				leverFolder.add(this.lever1.position, 'x', -1, 1).name("X");
+				leverFolder.add(this.lever1.position, 'y', -1, 1).name("Y");
+				leverFolder.add(this.lever1.position, 'z', -1, 1).name("Z");
 
 				this.add(object);
 				this.scene.add(this);
 			}
 		);
+	}
+
+	addLevers() {
+		let geometry = new THREE.CylinderGeometry(LEVER_TOP_RADIUS, LEVER_BOTTOM_RADIUS, LEVER_HEIGHT);
+		let material = new THREE.MeshNormalMaterial();
+		let leverBody = new THREE.Mesh(geometry, material);
+
+		geometry = new THREE.SphereGeometry(LEVER_TOP_RADIUS, 32, 32, 0, 2 * Math.PI, 0, 0.5 * Math.PI);
+		let leverHead = new THREE.Mesh(geometry, material);
+		leverHead.position.y = LEVER_HEIGHT / 2;
+		leverHead.position.y += 0.05;
+		leverBody.position.y += 0.05;
+
+		this.lever1 = new THREE.Group();
+		this.lever1.add(leverBody);
+		this.lever1.add(leverHead);
+		this.lever1.position.set(-0.15, -0.17, 0.08);
+		this.lever1.rotation.set(Math.PI * 0.05, 0, 0);
+		this.scene.add(this.lever1);
+		
+		this.lever2 = this.lever1.clone();
+		this.lever2.position.set(0.15, -0.17, 0.08);
+		this.scene.add(this.lever2);
+	}
+
+	update(pressedKeys) {
+		const { up: upKey, down: downKey } = STANDARD_KEYBINDS;
+		const { up: upKey2, down: downKey2 } = ALTERNATE_KEYBINDS;
+
+		if (!this.lever1 || !this.lever2)
+			return ;
+		let step = -0.03;
+		let lever = null;
+
+		if (pressedKeys[upKey] || pressedKeys[downKey])
+			lever = this.lever1;
+		else if (pressedKeys[upKey2] || pressedKeys[downKey2])
+			lever = this.lever2;
+		if (!lever)
+			return ;
+
+		if (pressedKeys[downKey] || pressedKeys[downKey2])
+			step = -step;
+			
+		//! NEED TO MAKE THE ROTATION REVERT IF THE KEYS AREN'T PRESSED
+		lever.rotation.x = Math.min(lever.rotation.x + step, LEVER_MAX_ROTATION);
+		lever.rotation.x = Math.max(lever.rotation.x + step, LEVER_MIN_ROTATION);
+
 	}
 }

@@ -4,11 +4,9 @@ import { PADDLE_OFFSET, STANDARD_KEYBINDS } from '../macros.js';
 import { AbstractGameController } from './AbstractGameController.js';
 
 export class RemoteGameController extends AbstractGameController {
-	constructor({ player1Data, player2Data, gameID, gameType, gameSocket, tournamentSocket=null }) {
-		super({type: gameType});
+	constructor({ player1Data, player2Data, gameID, gameType, scene }) {
+		super({ type: gameType, scene: scene });
 
-		this.gameSocket = gameSocket;
-		this.tournamentSocket = tournamentSocket;
 		this.player1 = null;
 		this.player2 = null;
 		this.players = {};
@@ -24,7 +22,7 @@ export class RemoteGameController extends AbstractGameController {
 		const { id: p2ID, username: p2Username } = player2Data;
 		const currPlayerID = document.getElementById('metadata').getAttribute('data-user-id');
 		const onUpdate = (id, username, targetY) => {
-			this.gameSocket.send(JSON.stringify({
+			myUser.gameSocket.send(JSON.stringify({
 				'event': 'UPDATE',
 				'data': {
 					'id': id,
@@ -61,7 +59,7 @@ export class RemoteGameController extends AbstractGameController {
 	}
 
 	registerSocketEvents(){
-		this.gameSocket.onmessage = (ev) => {
+		myUser.gameSocket.onmessage = (ev) => {
 			const { event, data } = JSON.parse(ev.data);
 			
 			if (event == 'UPDATE')
@@ -70,14 +68,14 @@ export class RemoteGameController extends AbstractGameController {
 				this.ball.sync(data.ball);
 		}
 
-		this.gameSocket.onerror = (ev) => {
+		myUser.gameSocket.onerror = (ev) => {
 			console.error(ev);
 		}
 	}
 
 	build() {
 		const onPaddleHit = () => {
-			this.gameSocket.send(JSON.stringify({
+			myUser.gameSocket.send(JSON.stringify({
 				'event': 'SYNC',
 				'data': {
 					'ball': {
@@ -100,21 +98,21 @@ export class RemoteGameController extends AbstractGameController {
 		console.log(`WINNER:`, this.stats.winner, 'SCORE:', this.stats.score);
 		console.log('SENDING DATA TO SERVER...');
 
-		this.gameSocket.send(JSON.stringify({
+		myUser.gameSocket.send(JSON.stringify({
 			'event': 'GAME_END',
 			'data': results
 		}));
-		this.gameSocket.close();
+		myUser.gameSocket.close();
 		
-		if (!this.tournamentSocket)
+		if (!myUser.tournamentSocket)
 			return ;
 
-		this.tournamentSocket.send(JSON.stringify({
+		myUser.tournamentSocket.send(JSON.stringify({
 			'event': 'GAME_END',
 			'data': results
 		}));
 
-		myTournament.onGameEnd( this.stats.gameID,  this.player1.username,
+		myTournament.onGameEnd( this.stats.gameID, this.player1.username,
 			this.player2.username, this.stats.score );
 		setTimeout(() => {
 			history.pushState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
