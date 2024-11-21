@@ -1349,8 +1349,16 @@ def login42(request):
 			# redirect_url = f"{settings.BASE_URL}/home?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home"
 			redirect_url = request.build_absolute_uri(reverse('home') + f"?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home")
 
+			response = HttpResponseRedirect(redirect_url)
+			response.set_cookie(
+				'refresh_token',
+				user_tokens.get('refresh'),
+				httponly=True, 
+				secure=False, 
+				samesite='Lax'   
+			)
 			# Redireciona o usuário para a URL com os tokens
-			return HttpResponseRedirect(redirect_url)
+			return response
 	else:
 		# Caso o usuário não exista, crie um novo
 		i = 0
@@ -1380,7 +1388,16 @@ def login42(request):
 			redirect_url = request.build_absolute_uri(reverse('home') + f"?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home")
 
 			# Redireciona o usuário para a URL com os tokens
-			return HttpResponseRedirect(redirect_url)
+			response = HttpResponseRedirect(redirect_url)
+			response.set_cookie(
+				'refresh_token',
+				user_tokens.get('refresh'),
+				httponly=True, 
+				secure=False, 
+				samesite='Lax'   
+			)
+			# Redireciona o usuário para a URL com os tokens
+			return response
 
 	return JsonResponse({'message': 'User login failed'}, status=400)
 
