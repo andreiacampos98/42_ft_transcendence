@@ -19,17 +19,18 @@ export const PADDLE_SEMI_DEPTH = 0.01;
 export const PADDLE_SPEED = 0.015;
 export const PADDLE_OFFSET = 0.8 * ARENA_SEMI_LENGTH - PADDLE_SEMI_LENGTH;
 
-export const LEVER_TOP_RADIUS = 0.008;
+export const LEVER_TOP_RADIUS = 0.005;
 export const LEVER_BOTTOM_RADIUS = 0.005;
-export const LEVER_HEIGHT = 0.05;
+export const LEVER_BALL_RADIUS = 0.015;
+export const LEVER_HEIGHT = 0.07;
 export const LEVER_MAX_ROTATION = Math.PI * 0.2;
 export const LEVER_NO_ROTATION = Math.PI * 0.05;
 export const LEVER_MIN_ROTATION = -Math.PI * 0.1;
-export const LEVER_ROTATION_STEP = -0.05;
-
-
+export const LEVER_ROTATION_STEP = -0.07;
 
 export const MAX_GOALS = 5;
+export const PLAYER_COLOR_1 = 0xCC0000;
+export const PLAYER_COLOR_2 = 0x00FFFF;
 
 export const FPS = 50;
 export const REFRESH_RATE = 1000 / FPS;

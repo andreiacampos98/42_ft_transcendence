@@ -102,7 +102,7 @@ export class Application  {
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
         const perspective1 = new THREE.PerspectiveCamera( 50, aspect, 0.1, 50 )
-        perspective1.position.set(0, 0, 1);
+        perspective1.position.set(0, 0, 0.7);
         this.cameras['Perspective'] = perspective1;
     }
 

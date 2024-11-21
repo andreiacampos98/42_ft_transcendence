@@ -5,6 +5,7 @@ import { ALTERNATE_KEYBINDS, LEVER_BOTTOM_RADIUS, LEVER_HEIGHT,
 	LEVER_MAX_ROTATION, LEVER_MIN_ROTATION, LEVER_NO_ROTATION, 
 	LEVER_ROTATION_STEP, LEVER_TOP_RADIUS, STANDARD_KEYBINDS 
 } from '../macros.js';
+import { Lever } from './Lever.js';
 
 export class Arcade extends THREE.Object3D {
 	constructor(scene, app) {
@@ -68,16 +69,19 @@ export class Arcade extends THREE.Object3D {
 		leverHead.position.y += 0.05;
 		leverBody.position.y += 0.05;
 
-		this.lever1 = new THREE.Group();
-		this.lever1.add(leverBody);
-		this.lever1.add(leverHead);
-		this.lever1.position.set(-0.15, -0.17, 0.08);
-		this.lever1.rotation.set(Math.PI * 0.05, 0, 0);
+		this.lever1 = new Lever([-0.14, -0.17, 0.1], null);
+		// this.lever1.add(leverBody);
+		// this.lever1.add(leverHead);
+		// this.lever1.position.set(-0.15, -0.17, 0.08);
+		// this.lever1.rotation.set(Math.PI * 0.05, 0, 0);
 		this.scene.add(this.lever1);
-		
-		this.lever2 = this.lever1.clone();
-		this.lever2.position.set(0.15, -0.17, 0.08);
+
+		this.lever2 = new Lever([0.14, -0.17, 0.1], null);
 		this.scene.add(this.lever2);
+		
+		// this.lever2 = this.lever1.clone();
+		// this.lever2.position.set(0.15, -0.17, 0.08);
+		// this.scene.add(this.lever2);
 	}
 
 	update(pressedKeys) {
