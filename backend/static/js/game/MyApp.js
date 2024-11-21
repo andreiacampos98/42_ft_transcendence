@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import  Stats  from 'three/addons/libs/stats.module.js'
@@ -7,7 +6,7 @@ import { Axis } from './Axis.js';
 import { LocalGameController } from './LocalGameController.js';
 import { REFRESH_RATE } from './macros.js';
 import { RemoteGameController } from './RemoteGameController.js';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
+import { Arcade } from './Arcade.js';
 
 
 var frameID;
@@ -58,45 +57,8 @@ export class MyApp  {
 			});
 		}
 		this.scene.add(this.gameController);
-
-		const loader = new OBJLoader();
-		const files = ['beak_bake',  'black',  'button_base_front',  'button_base_top',  'buttons',  'duck_body_bake',  'led_001_rainbow',  'metal_fake_screen']
-		const texLoader = new THREE.TextureLoader();
-		const textures = {};
-		files.forEach(file => textures[file] = texLoader.load(`/static/assets/textures/${file}.png`))
-		loader.load(
-			'/static/assets/models/arcade.obj',
-			(object) => {
-				// console.log(object.children);
-				const [leds, arcade, logo_42, leds_42, buttons, ducks] = object.children;
-				// object.children[0].material[0] = new THREE.MeshPhongMaterial({map: });``
-				console.log([leds, arcade, logo_42, leds_42, buttons, ducks]);
-				leds.material = new THREE.MeshPhongMaterial({map: textures['led_001_rainbow']});
-				arcade.material[0] = new THREE.MeshPhongMaterial({map: textures['black']});
-				arcade.material[1] = new THREE.MeshPhongMaterial({map: textures['button_base_top']});
-				arcade.material[2] = new THREE.MeshPhongMaterial({map: textures['button_base_front']});
-				arcade.material[3] = new THREE.MeshPhongMaterial({map: textures['metal_fake_screen']});
-				arcade.material[4] = new THREE.MeshBasicMaterial({color: '#000000'});
-
-				leds_42.material = new THREE.MeshPhongMaterial({map: textures['led_001_rainbow']});
-				
-				buttons.material = new THREE.MeshPhongMaterial({map: textures['buttons']});
-				
-				ducks.material[0] = new THREE.MeshLambertMaterial({color: '#000000'});
-				ducks.material[1] = new THREE.MeshPhongMaterial({map: textures['duck_body_bake']});
-				ducks.material[2] = new THREE.MeshPhongMaterial({map: textures['beak_bake']});
-				
-				this.arcade = object;
-				this.arcade.position.set(0, -0.646, -0.1);
-				this.scene.add(object);
-				const arcadeFolder = this.gui.addFolder('Arcade Controls');
-				arcadeFolder.add(this.arcade.position, 'x', -30, 30).name("X");
-				arcadeFolder.add(this.arcade.position, 'y', -30, 30).name("Y");
-				arcadeFolder.add(this.arcade.position, 'z', -30, 30).name("Z");
-			}
-		);
-		this.ledTextures = [textures['led_001_rainbow']];
-
+		this.scene.add(new Arcade({scene: this.scene, position: [0, -0.646, -0.1]}))
+		
 		this.light = new THREE.PointLight('#FFFFFF', 50);
 		this.light.position.set(0, 0, 5);
 		this.scene.add(this.light);
@@ -177,6 +139,7 @@ export class MyApp  {
 		if (this.controls === null) {
 			this.controls = new OrbitControls( this.activeCamera, this.renderer.domElement );
 			this.controls.enableZoom = true;
+			this.controls.enableDamping = true;
 			this.controls.update();
 		}
 		else {

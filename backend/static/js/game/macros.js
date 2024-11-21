@@ -9,7 +9,7 @@ export const DIRECTION = Object.freeze({
 	RIGHT: 1,
 });
 
-export const ARENA_SEMI_HEIGHT = 0.140;
+export const ARENA_SEMI_HEIGHT = 0.143;
 export const ARENA_SEMI_LENGTH = 0.2;
 export const ARENA_SEMI_DEPTH = 0.01;
 
@@ -18,7 +18,6 @@ export const PADDLE_SEMI_HEIGHT = ARENA_SEMI_LENGTH / 6;
 export const PADDLE_SEMI_DEPTH = 0.01;
 export const PADDLE_SPEED = 0.015;
 export const PADDLE_OFFSET_X = 0.4;
-
 
 export const MAX_GOALS = 5;
 
@@ -35,8 +34,7 @@ export const ALTERNATE_KEYBINDS = {
 	'down': 'ArrowDown'
 };
 
-
-//! DEPENDENCY INJECTION TESTING
+//! ================== DEPENDENCY INJECTION TESTING ================== 
 
 export var TEST_GOALS = [
 	{

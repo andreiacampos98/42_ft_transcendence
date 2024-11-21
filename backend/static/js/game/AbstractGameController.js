@@ -34,7 +34,7 @@ export class AbstractGameController extends THREE.Group {
 	}
 
 	build({ onPaddleHit=null }) {
-		this.arena = new Arena({});
+		this.arena = new Arena();
 		this.ball = new Ball({ 
 			onPaddleHit: onPaddleHit 
 		});
