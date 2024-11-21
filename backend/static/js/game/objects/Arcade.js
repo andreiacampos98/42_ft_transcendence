@@ -1,10 +1,6 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import { ALTERNATE_KEYBINDS, LEVER_BOTTOM_RADIUS, LEVER_HEIGHT, 
-	LEVER_MAX_ROTATION, LEVER_MIN_ROTATION, LEVER_NO_ROTATION, 
-	LEVER_ROTATION_STEP, LEVER_TOP_RADIUS, STANDARD_KEYBINDS 
-} from '../macros.js';
 import { Lever } from './Lever.js';
 
 export class Arcade extends THREE.Object3D {
@@ -59,56 +55,16 @@ export class Arcade extends THREE.Object3D {
 	}
 
 	addLevers() {
-		let geometry = new THREE.CylinderGeometry(LEVER_TOP_RADIUS, LEVER_BOTTOM_RADIUS, LEVER_HEIGHT);
-		let material = new THREE.MeshNormalMaterial();
-		let leverBody = new THREE.Mesh(geometry, material);
-
-		geometry = new THREE.SphereGeometry(LEVER_TOP_RADIUS, 32, 32, 0, 2 * Math.PI, 0, 0.5 * Math.PI);
-		let leverHead = new THREE.Mesh(geometry, material);
-		leverHead.position.y = LEVER_HEIGHT / 2;
-		leverHead.position.y += 0.05;
-		leverBody.position.y += 0.05;
-
-		this.lever1 = new Lever([-0.14, -0.17, 0.1], null);
-		// this.lever1.add(leverBody);
-		// this.lever1.add(leverHead);
-		// this.lever1.position.set(-0.15, -0.17, 0.08);
-		// this.lever1.rotation.set(Math.PI * 0.05, 0, 0);
-		this.scene.add(this.lever1);
-
-		this.lever2 = new Lever([0.14, -0.17, 0.1], null);
-		this.scene.add(this.lever2);
-		
-		// this.lever2 = this.lever1.clone();
-		// this.lever2.position.set(0.15, -0.17, 0.08);
-		// this.scene.add(this.lever2);
+		this.lever1 = new Lever([-0.14, -0.17, 0.1]);
+		this.lever2 = new Lever([0.14, -0.17, 0.1]);
+		this.scene.add(this.lever1, this.lever2);	
 	}
 
 	update(pressedKeys) {
-		const { up: upKey, down: downKey } = STANDARD_KEYBINDS;
-		const { up: upKey2, down: downKey2 } = ALTERNATE_KEYBINDS;
-		let step = LEVER_ROTATION_STEP;
-		let lever = null;
-
-		if (!this.lever1 || !this.lever2)
-			return ;
-				
-		if (pressedKeys[upKey] || pressedKeys[downKey])
-			lever = this.lever1;
-		else if (pressedKeys[upKey2] || pressedKeys[downKey2])
-			lever = this.lever2;
-
-		if (pressedKeys[downKey] || pressedKeys[downKey2])
-			step = -step;
-		
-		if (!lever) {
-			this.lever1.rotation.x = this.lerp(this.lever1.rotation.x, LEVER_NO_ROTATION, 0.3);
-			this.lever2.rotation.x = this.lerp(this.lever2.rotation.x, LEVER_NO_ROTATION, 0.3);
-			return ;
-		}
-		
-		const target = Math.min(Math.max(lever.rotation.x + step, LEVER_MIN_ROTATION), LEVER_MAX_ROTATION);
-		lever.rotation.x = this.lerp(lever.rotation.x, target, 0.5);
+		if (this.lever1)
+			this.lever1.update(pressedKeys);
+		if (this.lever2)
+			this.lever2.update(pressedKeys);
 	}
 
 	lerp (start, end, t) {

@@ -24,7 +24,7 @@ export const LEVER_BOTTOM_RADIUS = 0.005;
 export const LEVER_BALL_RADIUS = 0.015;
 export const LEVER_HEIGHT = 0.07;
 export const LEVER_MAX_ROTATION = Math.PI * 0.2;
-export const LEVER_NO_ROTATION = Math.PI * 0.05;
+export const LEVER_DEFAULT_ROTATION = Math.PI * 0.05;
 export const LEVER_MIN_ROTATION = -Math.PI * 0.1;
 export const LEVER_ROTATION_STEP = -0.07;
 

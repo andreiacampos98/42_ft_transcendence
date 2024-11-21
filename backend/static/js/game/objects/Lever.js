@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { ALTERNATE_KEYBINDS, LEVER_BALL_RADIUS, LEVER_BOTTOM_RADIUS, LEVER_HEIGHT, 
-	LEVER_MAX_ROTATION, LEVER_MIN_ROTATION, LEVER_NO_ROTATION, 
+	LEVER_MAX_ROTATION, LEVER_MIN_ROTATION, LEVER_DEFAULT_ROTATION, 
 	LEVER_ROTATION_STEP, LEVER_TOP_RADIUS, PLAYER_COLOR_1, PLAYER_COLOR_2, STANDARD_KEYBINDS 
 } from '../macros.js';
 
 export class Lever extends THREE.Group {
-	constructor(position, keybinds) {
+	constructor(position) {
 		super();
+		this.keybinds = position[0] < 0 ? STANDARD_KEYBINDS : ALTERNATE_KEYBINDS;
 		this.build(position[0]);
 		this.position.set(...position);
 	}
@@ -27,37 +28,27 @@ export class Lever extends THREE.Group {
 
 		this.add(head);
 		this.add(body);
-		this.rotation.set(LEVER_NO_ROTATION, 0, 0);
+		this.rotation.set(LEVER_DEFAULT_ROTATION, 0, 0);
 	}
 
-	// update(pressedKeys) {
-	// 	const { up: upKey, down: downKey } = STANDARD_KEYBINDS;
-	// 	const { up: upKey2, down: downKey2 } = ALTERNATE_KEYBINDS;
-	// 	let step = LEVER_ROTATION_STEP;
-	// 	let lever = null;
+	update (pressedKeys) {
+		const { up, down } = this.keybinds;
 
-	// 	if (!this.lever1 || !this.lever2)
-	// 		return ;
+		let step = LEVER_ROTATION_STEP;
 				
-	// 	if (pressedKeys[upKey] || pressedKeys[downKey])
-	// 		lever = this.lever1;
-	// 	else if (pressedKeys[upKey2] || pressedKeys[downKey2])
-	// 		lever = this.lever2;
+		if (pressedKeys[down]){
+			step = -step;
+		}
+		if (!pressedKeys[up] && !pressedKeys[down]) {
+			this.rotation.x = this.lerp(this.rotation.x, LEVER_DEFAULT_ROTATION, 0.3);
+		}
+		else {
+			const target = Math.min(Math.max(this.rotation.x + step, LEVER_MIN_ROTATION), LEVER_MAX_ROTATION);
+			this.rotation.x = this.lerp(this.rotation.x, target, 0.3);
+		}
+	}
 
-	// 	if (pressedKeys[downKey] || pressedKeys[downKey2])
-	// 		step = -step;
-		
-	// 	if (!lever) {
-	// 		this.lever1.rotation.x = this.lerp(this.lever1.rotation.x, LEVER_NO_ROTATION, 0.3);
-	// 		this.lever2.rotation.x = this.lerp(this.lever2.rotation.x, LEVER_NO_ROTATION, 0.3);
-	// 		return ;
-	// 	}
-		
-	// 	const target = Math.min(Math.max(lever.rotation.x + step, LEVER_MIN_ROTATION), LEVER_MAX_ROTATION);
-	// 	lever.rotation.x = this.lerp(lever.rotation.x, target, 0.5);
-	// }
-
-	// lerp (start, end, t) {
-	// 	return start + (end - start) * t;
-	// }
+	lerp (start, end, t) {
+		return start + (end - start) * t;
+	}
 }
