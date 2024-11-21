@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { ALTERNATE_KEYBINDS, LEVER_BOTTOM_RADIUS, LEVER_HEIGHT, 
-	LEVER_MAX_ROTATION, LEVER_MIN_ROTATION, LEVER_TOP_RADIUS, 
-	STANDARD_KEYBINDS } from '../macros.js';
-
+	LEVER_MAX_ROTATION, LEVER_MIN_ROTATION, LEVER_NO_ROTATION, 
+	LEVER_ROTATION_STEP, LEVER_TOP_RADIUS, STANDARD_KEYBINDS 
+} from '../macros.js';
 
 export class Arcade extends THREE.Object3D {
 	constructor(scene, app) {
@@ -83,25 +83,31 @@ export class Arcade extends THREE.Object3D {
 	update(pressedKeys) {
 		const { up: upKey, down: downKey } = STANDARD_KEYBINDS;
 		const { up: upKey2, down: downKey2 } = ALTERNATE_KEYBINDS;
+		let step = LEVER_ROTATION_STEP;
+		let lever = null;
 
 		if (!this.lever1 || !this.lever2)
 			return ;
-		let step = -0.03;
-		let lever = null;
-
+				
 		if (pressedKeys[upKey] || pressedKeys[downKey])
 			lever = this.lever1;
 		else if (pressedKeys[upKey2] || pressedKeys[downKey2])
 			lever = this.lever2;
-		if (!lever)
-			return ;
 
 		if (pressedKeys[downKey] || pressedKeys[downKey2])
 			step = -step;
-			
-		//! NEED TO MAKE THE ROTATION REVERT IF THE KEYS AREN'T PRESSED
-		lever.rotation.x = Math.min(lever.rotation.x + step, LEVER_MAX_ROTATION);
-		lever.rotation.x = Math.max(lever.rotation.x + step, LEVER_MIN_ROTATION);
+		
+		if (!lever) {
+			this.lever1.rotation.x = this.lerp(this.lever1.rotation.x, LEVER_NO_ROTATION, 0.3);
+			this.lever2.rotation.x = this.lerp(this.lever2.rotation.x, LEVER_NO_ROTATION, 0.3);
+			return ;
+		}
+		
+		const target = Math.min(Math.max(lever.rotation.x + step, LEVER_MIN_ROTATION), LEVER_MAX_ROTATION);
+		lever.rotation.x = this.lerp(lever.rotation.x, target, 0.5);
+	}
 
+	lerp (start, end, t) {
+		return start + (end - start) * t;
 	}
 }

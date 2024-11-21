@@ -92,9 +92,7 @@ export class Application  {
 		}
 		this.scene.add(this.gameController);
 
-        this.canvas.appendChild( this.renderer.domElement );
-				
-        window.addEventListener('resize', this.onResize.bind(this), false );
+        this.canvas.appendChild( this.renderer.domElement );				
     }
 
     /**
@@ -140,18 +138,6 @@ export class Application  {
 			this.controls.object = this.activeCamera
 		}
     }
-
-    /**
-     * the window resize handler
-     */
-    onResize() {
-        if (this.activeCamera !== undefined && this.activeCamera !== null) {
-            this.activeCamera.aspect = window.innerWidth / window.innerHeight;
-            this.activeCamera.updateProjectionMatrix();
-            this.renderer.setSize( window.innerWidth, window.innerHeight );
-        }
-    }
-	// Store references to the LED textures
 
     /**
     * the main render function. Called in a requestAnimationFrame loop
