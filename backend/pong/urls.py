@@ -90,7 +90,6 @@ urlpatterns = [
 	#! Tournaments
     path('tournaments/create', views.tournament_create, name='tournament-create'),
     path('tournaments/<int:tournament_id>/users/<int:user_id>/join', views.tournament_join, name='tournament-join'),
-    # path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournament-leave'),
     path('tournaments/<int:tournament_id>', views.tournament_update, name='tournament-update'),
     path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournament-list-users'),
     # path('tournaments/<int:tournament_id>/advance', views.tournament_advance_phase, name='tournament-advance-phase'),
@@ -118,6 +117,7 @@ urlpatterns = [
     path('debug/games/goals', views.game_goals_all, name='game-goals-all'),
     path('debug/games/<int:game_id>/stats', views.game_stats, name='debug-game-stats'),
     path('debug/games/stats', views.game_stats_all, name='debug-game-stats-all'),
+    path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave_1, name='tournament-leave'),
 ] 
 
 websocket_urlpatterns = [

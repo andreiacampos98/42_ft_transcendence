@@ -51,7 +51,7 @@ async function toggleFriendsDrawer(user_id) {
 			return entry.user1_id;
 	});
 
-	sidebar.innerHTML = '';
+	sidebar.replaceChildren(); 
 
 	friends.forEach((friend) => {
 		console.log(friend);

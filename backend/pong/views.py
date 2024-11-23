@@ -1112,6 +1112,14 @@ def tournament_leave(tournament_id, user_id):
 	user.status = "Online"
 	user.save()
 
+def tournament_leave_1(request, tournament_id, user_id):	
+	user_tour = get_object_or_404(TournamentsUsers, tournament_id=tournament_id, user_id=user_id)
+	user_tour.delete()
+	user = Users.objects.get(pk=user_id)
+	user.status = "Online"
+	user.save()
+	return JsonResponse({'message': 'The user leave the tournament'}, status=201)
+
 def tournament_list_users(request, tournament_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)

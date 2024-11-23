@@ -4,7 +4,7 @@ async function getSuggestions() {
     var suggestionsBox = document.getElementById('suggestions');
 
     if (!input.length) { 
-        suggestionsBox.innerHTML = ''; 
+		suggestionsBox.replaceChildren(); 
         suggestionsBox.style.display = 'none'; 
 		return ;
     }
@@ -31,7 +31,7 @@ async function getSuggestions() {
 		localStorage.setItem('access_token', data.access_token);
 	}
 
-	suggestionsBox.innerHTML = ''; 
+	suggestionsBox.replaceChildren(); 
 	suggestionsBox.style.display = data.data.length ? 'block' : 'none'; 
 
 	data.data.forEach(user => {

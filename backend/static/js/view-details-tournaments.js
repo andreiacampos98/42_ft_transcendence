@@ -39,86 +39,116 @@ async function detailTournamentGames(button) {
 		localStorage.setItem('access_token', data.access_token);
 	}
 	const gameList = detailsDiv;
-	gameList.innerHTML = `
-	<div class="header2 d-flex align-items-center justify-content-evenly">
-			<span class="title" style="width: 100px;"></span>
-			<span class="title">Phase</span>
-			<span class="title">Duration</span>
-			<span class="title">Player 1</span>
-			<span class="title">Score</span>
-			<span class="title">Player 2</span>
-		</div>
-		`;
+	gameList.replaceChildren(); 
+
+	const headerDiv = document.createElement('div');
+	headerDiv.classList.add('header2', 'd-flex', 'align-items-center', 'justify-content-evenly');
 	
+	const headers = ["", "Phase", "Duration", "Player 1", "Score", "Player 2"];
+	const widths = ["100px", null, null, null, null, null]; // Defina as larguras conforme necessário
+	headers.forEach((headerText, index) => {
+		const span = document.createElement('span');
+		span.classList.add('title');
+		if (widths[index]) span.style.width = widths[index];
+		span.textContent = headerText;
+		headerDiv.appendChild(span);
+	});
+	
+	gameList.appendChild(headerDiv);
+
 	data.games.forEach(game => {
 		const gameBlock = document.createElement('div');
 		gameBlock.classList.add('match-container2');
-		gameBlock.id = `game-${game.game.id}`; 
-
-		const user1Link = document.createElement('a');
-		user1Link.href = `/users/${game.game.user1.id}`;
-		user1Link.classList.add('user-link');
-
-		const user1ProfilePic = document.createElement('img');
-		user1ProfilePic.classList.add('profile-pic');
-		user1ProfilePic.alt = `${game.game.user1.username}'s profile picture`;
-
-		if (game.game.user1.picture.includes('http')) 
-			user1ProfilePic.src = `https://${decodeURIComponent(game.game.user1.picture).slice(14)}`;
-		else 
-			user1ProfilePic.src = game.game.user1.picture; 
-		
-		const user1Name = document.createElement('span');
-		user1Name.classList.add('score');
-		user1Name.textContent = game.game.user1.username;
-
-		user1Link.appendChild(user1ProfilePic);
-		user1Link.appendChild(user1Name);
-
-		// Create link for the second user
-		const user2Link = document.createElement('a');
-		user2Link.href = `/users/${game.game.user2.id}`;
-		user2Link.classList.add('user-link');
-
-		const user2ProfilePic = document.createElement('img');
-		user2ProfilePic.classList.add('profile-pic');
-		user2ProfilePic.alt = `${game.game.user2.username}'s profile picture`;
-
-		if (game.game.user2.picture.includes('http')) 
-			user2ProfilePic.src = `https://${decodeURIComponent(game.game.user2.picture).slice(14)}`;
-		else 
-			user2ProfilePic.src = game.game.user2.picture; 
-
-		const user2Name = document.createElement('span');
-		user2Name.classList.add('score');
-		user2Name.textContent = game.game.user2.username;
-
-		user2Link.appendChild(user2ProfilePic);
-		user2Link.appendChild(user2Name);
-		if ( game.game.nb_goals_user1 > game.game.nb_goals_user2) 
-			user1Name.classList.add('tour-game-winner');
-		else 
-			user2Name.classList.add('tour-game-winner');
-		
+		gameBlock.id = `game-${game.game.id}`;
+	
+		const matchBlock2 = document.createElement('div');
+		matchBlock2.classList.add('match-block2', 'd-flex', 'align-items-center');
+	
+		const details = document.createElement('div');
+		details.classList.add('details', 'd-flex', 'align-items-center', 'justify-content-evenly');
+	
+		const phase = document.createElement('span');
+		phase.classList.add('content', 'result');
+		phase.style.marginLeft = "50px";
+		phase.textContent = game.phase;
+	
+		const duration = document.createElement('span');
+		duration.classList.add('content', 'date');
+		duration.textContent = game.game.duration;
+	
+		const createUserLink = (user, scoreClass) => {
+			const userLink = document.createElement('a');
+			userLink.href = `/users/${user.id}`;
+			userLink.classList.add('user-link');
+	
+			// Imagem do usuário
+			const userProfilePic = document.createElement('img');
+			userProfilePic.classList.add('profile-pic');
+			userProfilePic.alt = `${user.username}'s profile picture`;
+			userProfilePic.src = user.picture.includes('http') 
+				? `https://${decodeURIComponent(user.picture).slice(14)}`
+				: user.picture;
+	
+			// Nome do usuário
+			const userName = document.createElement('span');
+			userName.classList.add('score');
+			if (scoreClass) userName.classList.add(scoreClass);
+			userName.textContent = user.username;
+	
+			// Adicionar a imagem e o nome como filhos do hyperlink
+			userLink.appendChild(userProfilePic);
+			userLink.appendChild(userName);
+	
+			return userLink;
+		};
+	
+		const score = document.createElement('span');
+		score.classList.add('content', 'last');
+		score.style.fontWeight = "bold";
+		score.style.paddingRight = "0";
+		score.textContent = `${game.game.nb_goals_user1} - ${game.game.nb_goals_user2}`;
+	
+		// Criando links com imagem e nome para os jogadores
+		const user1LinkElement = createUserLink(
+			game.game.user1,
+			game.game.nb_goals_user1 > game.game.nb_goals_user2 ? 'tour-game-winner' : null
+		);
+	
+		const user2LinkElement = createUserLink(
+			game.game.user2,
+			game.game.nb_goals_user2 > game.game.nb_goals_user1 ? 'tour-game-winner' : null
+		);
+	
+		// Adicionando links ao layout
+		const player1Span = document.createElement('span');
+		player1Span.classList.add('content', 'last');
+		player1Span.style.fontSize = "inherit";
+		player1Span.style.paddingRight = "0";
+		player1Span.appendChild(user1LinkElement); // Append do elemento retornado
+	
+		const player2Span = document.createElement('span');
+		player2Span.classList.add('content', 'last');
+		player2Span.style.fontSize = "inherit";
+		player2Span.style.paddingRight = "0";
+		player2Span.appendChild(user2LinkElement); // Append do elemento retornado
+	
+		details.appendChild(phase);
+		details.appendChild(duration);
+		details.appendChild(player1Span);
+		details.appendChild(score);
+		details.appendChild(player2Span);
+	
+		matchBlock2.appendChild(details);
+		gameBlock.appendChild(matchBlock2);
+	
+		// Adicionar link de detalhes do jogo
 		const gameDetailLink = document.createElement('a');
 		gameDetailLink.href = `/games/${game.game.id}/stats`;
-		gameDetailLink.classList.add('game-link'); 
-
-		gameBlock.innerHTML = `
-			<div class="match-block2 d-flex align-items-center">
-				<div class="details d-flex align-items-center justify-content-evenly">
-					<span class="content result" style="margin-left: 50px;" >${game.phase}</span>
-					<span class="content date">${game.game.duration}</span>
-					<span class="content last" style="font-size: inherit; padding-right: 0;">${user1Link.outerHTML}</span>
-					<span class="content last" style="font-weight: bold; padding-right: 0;">${game.game.nb_goals_user1} - ${game.game.nb_goals_user2}</span>
-					<span class="content last" style="font-size: inherit; padding-right: 0;">${user2Link.outerHTML}</span>
-				</div>
-			</div>
-		`;
-
+		gameDetailLink.classList.add('game-link');
 		gameDetailLink.appendChild(gameBlock);
-		gameList.appendChild(gameDetailLink); 
-	});
+	
+		gameList.appendChild(gameDetailLink);
+	});	
 	detailsDiv.style.display = 'flex';
 	imgElement.src = "/static/assets/icons/return.png";
 }
