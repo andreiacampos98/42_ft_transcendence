@@ -7,12 +7,12 @@ import { LocalGameController } from './controllers/LocalGameController.js';
 import { RemoteGameController } from './controllers/RemoteGameController.js';
 import { REFRESH_RATE } from './macros.js';
 import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 
 var frameID;
 var timeoutID;
+
 /**
  * This class contains the application object
  */
@@ -115,7 +115,7 @@ export class Application  {
 		
 		const coords = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
 		new TWEEN.Tween(coords)
-			.to({x: 0, y: 0.15, z: 0.7 }, 1500)
+			.to({x: 0, y: 0.15, z: 0.7 }, 2000)
 			.easing(TWEEN.Easing.Cubic.Out)
 			.onUpdate(() =>this.camera.position.set(coords.x, coords.y, coords.z))
 			.start();
