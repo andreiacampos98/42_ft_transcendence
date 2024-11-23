@@ -3,6 +3,7 @@ import { Ball } from '../objects/Ball.js';
 import { Arena } from '../objects/Arena.js';
 import { Arcade } from '../objects/Arcade.js';
 
+
 export class AbstractGameController extends THREE.Group {
 	constructor ({ type, scene, app }) {
 		super();
@@ -61,8 +62,8 @@ export class AbstractGameController extends THREE.Group {
 		this.player2.update(this.keybinds);
 		this.arcade.update(this.keybinds);
 
-		if (this.ball == null)
-			return ;
+		if (this.stats.isGameOver())
+			return;
 
 		const scorer = this.ball.move(this);
 		if (scorer != null) {
@@ -70,16 +71,10 @@ export class AbstractGameController extends THREE.Group {
 			this.ball.reset({});
 		}
 		if (!this.stats.isGameOver())
-			return ;
+			return;
 
-		this.cleanArena();
+		this.ball.speed.x = this.ball.speed.y = 0;
 		this.sendGameResults();
-	}
-
-	cleanArena() {
-		this.remove(this.ball);
-		this.ball.dispose();
-		this.ball = null;
 	}
 
 	createPlayers() {}

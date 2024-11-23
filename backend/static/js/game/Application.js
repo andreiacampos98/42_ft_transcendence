@@ -69,6 +69,7 @@ export class Application  {
 			this.arcadeModel = object;
 			this.initGameController(player1Data, player2Data, gameType, gameID);
 			this.render();
+			document.getElementById('scoreboard').style.visibility = 'visible';
 		});
 		
 		this.canvas.appendChild( this.renderer.domElement );
@@ -156,7 +157,6 @@ export class Application  {
 			
 			if (this.controls != null)
 				this.controls.update();
-			
 			this.gameController.update();
 			this.renderer.render(this.scene, this.camera);
 			frameID = requestAnimationFrame( this.render.bind(this) );
