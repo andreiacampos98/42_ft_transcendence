@@ -78,10 +78,11 @@ async function detailTournamentGames(button) {
 	
 		const createUserLink = (user, scoreClass) => {
 			const userLink = document.createElement('a');
-			userLink.href = `/users/${user.id}`;
+
+			userLink.setAttribute('hx-get', `/users/${user.id}`);
+			userLink.setAttribute('hx-target', '#main');
 			userLink.classList.add('user-link');
-	
-			// Imagem do usuário
+			
 			const userProfilePic = document.createElement('img');
 			userProfilePic.classList.add('profile-pic');
 			userProfilePic.alt = `${user.username}'s profile picture`;
@@ -143,7 +144,12 @@ async function detailTournamentGames(button) {
 	
 		// Adicionar link de detalhes do jogo
 		const gameDetailLink = document.createElement('a');
-		gameDetailLink.href = `/games/${game.game.id}/stats`;
+		gameDetailLink.onclick = function() {
+			history.pushState(null, '', `/games/${game.game.id}/stats`);
+			htmx.ajax('GET', `/games/${game.game.id}/stats`, {
+				target: '#main'
+			});
+		};
 		gameDetailLink.classList.add('game-link');
 		gameDetailLink.appendChild(gameBlock);
 	

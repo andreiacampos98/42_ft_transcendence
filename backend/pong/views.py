@@ -1591,15 +1591,6 @@ def otp_view(request):
 	return render(request, 'pages/otp.html')
 
 
-def resetpassword(request):
-	return render(request, 'pages/password_reset.html')
-
-def resetcode(request):
-	return render(request, 'pages/reset_code.html')
-
-def setnewpassword(request):
-	return render(request, 'pages/set_new_password.html')
-
 @login_required
 def home(request):
 	if 'username' in request.session:

@@ -52,7 +52,10 @@ async function getChangePassword() {
 		var modal3 = document.getElementById("modal3");
 		modal3.style.display = "block";
 		document.getElementById("confirm-btn").addEventListener("click", () => {
-			window.location.href = data.redirect_url;
+			history.pushState(null, '', data.redirect_url);
+			htmx.ajax('GET', data.redirect_url, {
+				target: '#main'
+			});
 		});
 	}
 }
