@@ -274,7 +274,7 @@ def verifyemail(request):
 							'refresh_token',
 							user_tokens.get('refresh'),
 							httponly=True, 
-							secure=False, 
+							secure=True, 
 							samesite='Lax'   
 						)
 						return response
@@ -1367,7 +1367,7 @@ def login42(request):
 				'refresh_token',
 				user_tokens.get('refresh'),
 				httponly=True, 
-				secure=False, 
+				secure=True, 
 				samesite='Lax'   
 			)
 			# Redireciona o usuário para a URL com os tokens
@@ -1406,7 +1406,7 @@ def login42(request):
 				'refresh_token',
 				user_tokens.get('refresh'),
 				httponly=True, 
-				secure=False, 
+				secure=True, 
 				samesite='Lax'   
 			)
 			# Redireciona o usuário para a URL com os tokens
@@ -1523,7 +1523,7 @@ def loginview(request):
 				'refresh_token',
 				user_tokens.get('refresh'),
 				httponly=True, 
-				secure=False, 
+				secure=True, 
 				samesite='Lax'
 			)
 
@@ -1568,7 +1568,7 @@ def otp_view(request):
 							'refresh_token',
 							user_tokens.get('refresh'),
 							httponly=True, 
-							secure=False, 
+							secure=True, 
 							samesite='Lax'   
 						)
 

@@ -328,7 +328,7 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                 else if(notificationUpdateResponse.status == 401){
                     alert("As your session has expired, you will be logged out.");
                     history.pushState(null, '', `/`);
-                    htmx.ajax('GET', `/`, {
+                    htmx.ajax('GET', `/notifications/${userId}`, {
                         target: '#main'
                     });
                 }
@@ -343,7 +343,10 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                     if (removeFriendButton) removeFriendButton.style.display = "block";
 
                     console.log('Notification update request successful');
-                    window.location.reload();
+                    history.pushState(null, '', `/`);
+                    htmx.ajax('GET', `/`, {
+                        target: '#main'
+                    });
                 }
             }
         } else if (status === 'decline') {
@@ -407,7 +410,10 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
             }
         }
 
-        window.location.reload();
+        history.pushState(null, '', `/`);
+        htmx.ajax('GET', `/notifications/${userId}`, {
+            target: '#main'
+        });
 
     } catch (error) {
         console.error('Error handling notification action:', error);
