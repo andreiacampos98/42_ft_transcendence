@@ -18,10 +18,10 @@ export class AbstractPlayer {
 		const color = x < 0 ? PLAYER_COLOR_1 : PLAYER_COLOR_2;
 
 		this.paddle = new THREE.Mesh(
-			new THREE.BoxGeometry(length, height, depth),
+			new THREE.PlaneGeometry(length, height),
 			new THREE.MeshBasicMaterial({ color: color })
 		);
-		this.paddle.position.x = x;
+		this.paddle.position.set(x, 0, 0.01);
 	}
 
 	update () {}

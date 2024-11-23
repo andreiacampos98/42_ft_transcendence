@@ -8,6 +8,7 @@ import { RemoteGameController } from './controllers/RemoteGameController.js';
 import { REFRESH_RATE } from './macros.js';
 import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 
 var frameID;
@@ -45,7 +46,7 @@ export class Application  {
 		this.gui.domElement.id = 'gui';
 		document.getElementById('main-content').appendChild(this.gui.domElement);
 
-		this.scene.add(new THREE.AmbientLight(0xFFFFFF, 0.7));
+		this.scene.add(new THREE.AmbientLight(0xFFFFFF, 1));
 		this.grid = new THREE.GridHelper(100, 100, 0x00FFFF, 0x00FFFF);
 		this.grid.position.y = -0.7;
 		this.scene.add(this.grid);
@@ -74,31 +75,10 @@ export class Application  {
     }
 
 	loadAssets(callback) {
-		const objLoader = new OBJLoader();
-		const texLoader = new THREE.TextureLoader();
-		const files = ['duck_beak', 'rug', 'button_base_front', 'button_base_top', 'buttons', 'duck_body', 'rainbow_leds', 'metal_fake_screen'];
-		const textures = Object.fromEntries(files.map(x => [x, texLoader.load(`/static/assets/textures/${x}.png`)]));
-
-		objLoader.load(
-			'/static/assets/models/arcade.obj',
+		new FBXLoader().load(
+			'/static/assets/models/arcade.fbx',
 			(object) => {
-				const [leds, arcade, _, leds_42, buttons, ducks] = object.children;
-				
-				leds.material = new THREE.MeshBasicMaterial({map: textures['rainbow_leds']});
-				arcade.material[0] = new THREE.MeshPhongMaterial({map: textures['rug']});
-				arcade.material[1] = new THREE.MeshPhongMaterial({map: textures['button_base_top']});
-				arcade.material[2] = new THREE.MeshPhongMaterial({map: textures['button_base_front']});
-				arcade.material[3] = new THREE.MeshPhongMaterial({map: textures['metal_fake_screen']});
-				arcade.material[4] = new THREE.MeshBasicMaterial({color: '#000000'});
-
-				leds_42.material = new THREE.MeshBasicMaterial({map: textures['rainbow_leds']});
-				
-				buttons.material = new THREE.MeshPhongMaterial({map: textures['buttons']});
-				
-				ducks.material[0] = new THREE.MeshLambertMaterial({color: '#000000'});
-				ducks.material[1] = new THREE.MeshLambertMaterial({map: textures['duck_body']});
-				ducks.material[2] = new THREE.MeshLambertMaterial({map: textures['duck_beak']});
-				// this.scene.add(object);
+				console.log(object);
 				callback(object);
 			}
 		);
@@ -131,7 +111,7 @@ export class Application  {
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
         this.camera = new THREE.PerspectiveCamera( 50, aspect, 0.1, 50 )
-        this.camera.position.set(5, 5, 1.2);
+        this.camera.position.set(0, 0.5, 0.5);
 		
 		const coords = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
 		new TWEEN.Tween(coords)

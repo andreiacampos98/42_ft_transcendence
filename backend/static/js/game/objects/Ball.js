@@ -20,10 +20,11 @@ export class Ball extends THREE.Object3D {
 
 	build() {
 		this.ball = new THREE.Mesh(
-			new THREE.SphereGeometry(this.radius),
+			new THREE.CircleGeometry(this.radius),
 			new THREE.MeshBasicMaterial({color: BALL_COLOR})
 		);
-
+		this.ball.position.z = 0.01;
+		
 		this.add(this.ball);
 	}
 
