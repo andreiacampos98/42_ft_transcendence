@@ -69,10 +69,10 @@ export class Application  {
 			this.arcadeModel = object;
 			this.initGameController(player1Data, player2Data, gameType, gameID);
 			this.render();
-			document.getElementById('scoreboard').style.visibility = 'visible';
 		});
 		
 		this.canvas.appendChild( this.renderer.domElement );
+		setTimeout(() => document.getElementById('scoreboard').style.visibility = 'visible', 500);
     }
 
 	loadAssets(callback) {
