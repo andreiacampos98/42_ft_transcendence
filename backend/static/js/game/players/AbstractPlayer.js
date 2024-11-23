@@ -6,6 +6,7 @@ export class AbstractPlayer {
 		this.id = id
 		this.username = username;
 		this.keybinds = keybinds;
+		this.picture = null;
 		this.paddle = null;
 
 		this.build(x);

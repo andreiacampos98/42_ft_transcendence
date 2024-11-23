@@ -110,12 +110,12 @@ export class Application  {
     initCamera() {
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
-        this.camera = new THREE.PerspectiveCamera( 50, aspect, 0.1, 50 )
-        this.camera.position.set(0, 0.5, 0.5);
+        this.camera = new THREE.PerspectiveCamera( 30, aspect, 0.1, 50 )
+        this.camera.position.set(0, 0.5, 3);
 		
 		const coords = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
 		new TWEEN.Tween(coords)
-			.to({x: 0, y: 0.15, z: 0.7 }, 2000)
+			.to({x: 0, y: 0.15, z: 1.2 }, 2000)
 			.easing(TWEEN.Easing.Cubic.Out)
 			.onUpdate(() =>this.camera.position.set(coords.x, coords.y, coords.z))
 			.start();

@@ -820,7 +820,12 @@ def game_create_helper(data: dict):
 		user2.status = "Playing"
 		user2.save()
 
-	return JsonResponse(serializer.data, status=201)
+	game_data = serializer.data
+	game_data['user1_id'] = UsersSerializer(Users.objects.get(pk=game_data['user1_id'])).data
+	if game_data['user2_id']:
+		game_data['user2_id'] = UsersSerializer(Users.objects.get(pk=game_data['user2_id'])).data
+
+	return JsonResponse(game_data, status=201)
 
 
 def game_create(request=None):

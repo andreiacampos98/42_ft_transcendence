@@ -50,6 +50,12 @@ export class LocalGameController extends AbstractGameController {
 
 		const gameData = await response.json();
 		this.stats.gameID = gameData.id;
+		this.player1.picture = gameData.user1_id.picture;
+		const p1profile = document.getElementById('p1-img');
+		const p2profile = document.getElementById('p2-img');
+		console.log(this.player1.picture);
+		p1profile.src = gameData.user1_id.picture;
+		p2profile.src = '/static/assets/icons/avatar.png';
 	}
 
 	async sendGameResults() {

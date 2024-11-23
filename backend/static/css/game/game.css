@@ -16,11 +16,12 @@
 }
 
 #scoreboard {
-	color: transparent;
-    height: 50px;
-    width: 100%; 
+	border-radius: 10px 10px 0px 0px;
+	background-color: #000000AA;
+    height: fit-content;
+	width: 100%;
 	position: absolute;
-    top: 36px; 
+	padding: 20px;
 }
 
 #p1 {
@@ -33,13 +34,46 @@
 	text-align: start;
 }
 
-#score {
-	font-size: 32px;
-	font-weight: bold;
+.p1-scored-goal {
+	animation: highlight-p1 0.3s ease-out;
 }
 
-#p1, #p2, #score {
-	width: 300px;
+.p2-scored-goal {
+	animation: highlight-p2 0.3s ease-out;
+}
+
+#p1-score, #p2-score {
+	font-size: 32px;
+	font-weight: bold;
+    border-radius: 8px;
+    padding-inline: 16px;
+    padding-block: 4px;
+    margin-inline: 30px;
+}
+
+#p1-score {
+	background-color: #FF000055;
+	border: 1px solid #880000;
+	margin-right: 8px;
+}
+
+#p2-score {
+	background-color: #00FFFF55;
+	border: 1px solid #008888;
+	margin-left: 8px;
+}
+
+#p1, #p2 {
+	/* width: 300px; */
+	margin-inline: 16px;
+}
+
+#p1-img, #p2-img {
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
+	border-radius: 50%;
+
 }
 
 #loader-container {
@@ -69,10 +103,20 @@
 		radial-gradient(farthest-side, #F8D082 90%, #0000) 10px 15px / 8px 8px content-box, 
 		transparent;
     background-repeat: no-repeat;
-    animation: l3 5s infinite linear;
+    animation: move-paddles 5s infinite linear;
 }
-@keyframes l3 {
+@keyframes move-paddles {
     25% {background-position: 10px 10px, calc(100% - 10px) calc(100% - 10px), calc(100% - 10px) calc(100% - 5px)}
     50% {background-position: 10px calc(100% - 10px), calc(100% - 10px) calc(100% - 10px), 10px calc(100% - 5px)}
     75% {background-position: 10px calc(100% - 10px), calc(100% - 10px) 10px, calc(100% - 10px) 15px}
+}
+
+@keyframes highlight-p1 {
+    0% {background-color: #FFFFFF }
+    100% {background-color: #FF000055 }
+}
+
+@keyframes highlight-p2 {
+    0% {background-color: #FFFFFF }
+    100% {background-color: #00FFFF55 }
 }
