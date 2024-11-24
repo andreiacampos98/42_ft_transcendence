@@ -1,4 +1,5 @@
 import { AbstractPlayer } from './AbstractPlayer.js';
+import { ARENA_SEMI_LENGTH } from './macros.js';
 
 export class AIPlayer extends AbstractPlayer {
 	constructor () {
@@ -23,12 +24,44 @@ export class AIPlayer extends AbstractPlayer {
 
 function	calculate_collisions(ball) {
 
+	t = -1;
+	goals = false;
+	//for upper wall
+	temp = -1 * ball.position.y / ball.direction.y;
+	if (t == -1 && temp > 0){
+		t = temp;
+		goals = false;
+	}
+	//for lower wall
+	temp = (ARENA_SEMI_HEIGHT * 2 - ball.position.y) / ball.direction.y;
+	if ((t == -1 && temp > 0) || ( t != -1 && temp < t && temp > 0)) {
+		t = temp;
+		goals = false;
+	}
+	//for aiwall wall
+	temp = (ARENA_SEMI_LENGTH * 2 - ball.position.x) / ball.direction.x;
+	if ((t == -1 && temp > 0) || ( t != -1 && temp < t && temp > 0)) {
+		t = temp;
+		goals = true;
+	}
+	//for player wall
+	temp = (-1 * ball.position.x) / ball.direction.x;
+	if ((t == -1 && temp > 0) || ( t != -1 && temp < t && temp > 0)) {
+		t = temp;
+		goals = true;
+	}
+	if (t < 0){
+		console.log("Ball outside the arena??");
+		exit(1);
+	}
+	return(goals);
 }
 
 function	get_future_path(ball)
 {
-	while (!ball.collidedWithGoals(arena, player1, player2))
-		calculate_collisions(ball)
+	collidedWithGoals = false;
+	while (!collidedWithGoals)
+		collidedWithGoals = calculate_collisions(ball);
 	return ball_position_at_paddle_position;
 };
 
