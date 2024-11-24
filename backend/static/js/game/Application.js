@@ -31,6 +31,9 @@ export class Application  {
 		this.activateControls = true;
 
 		this.canvas = document.querySelector('#canvas-container');
+		this.framesTimestamps = [];
+		this.currFps = 0;
+
     }
 
     /**
@@ -156,12 +159,13 @@ export class Application  {
     */
     render () {
 		const updateCallback = (() => {
+			let fps = this.calculateFPS();
 			this.stats.begin();
 			this.updateOrbitControls();
 			
 			if (this.controls != null)
 				this.controls.update();
-			this.gameController.update();
+			this.gameController.update(fps);
 			this.renderer.render(this.scene, this.camera);
 			frameID = requestAnimationFrame( this.render.bind(this) );
 			TWEEN.update();
@@ -172,6 +176,15 @@ export class Application  {
 		if (window.location.pathname.startsWith('/game'))
 			timeoutID = setTimeout(updateCallback, REFRESH_RATE);
     }
+
+	calculateFPS() {
+		const now = performance.now();
+		while (this.framesTimestamps.length > 0 && this.framesTimestamps[0] <= now - 1000)
+			this.framesTimestamps.shift();
+	
+		this.framesTimestamps.push(now);
+		return this.framesTimestamps.length;
+	}
 
 	onResize() {
         if (this.activeCamera !== undefined && this.activeCamera !== null) {

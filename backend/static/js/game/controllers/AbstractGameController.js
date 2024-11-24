@@ -56,7 +56,7 @@ export class AbstractGameController extends THREE.Group {
 		this.fillPlayerHUD(this.player2, 'p2');
 	}
 
-	update() {
+	update(fps) {
 		this.player1.update(this.pressedKeys);
 		this.player2.update(this.pressedKeys);
 		this.arcade.update(this.pressedKeys);
@@ -64,7 +64,7 @@ export class AbstractGameController extends THREE.Group {
 		if (this.stats.isGameOver())
 			return;
 
-		const scorer = this.ball.move(this);
+		const scorer = this.ball.move(this, fps);
 		if (scorer != null) {
 			this.stats.registerGoal(scorer, this.ball);
 			this.ball.reset({});
