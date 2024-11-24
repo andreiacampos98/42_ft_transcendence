@@ -1,6 +1,6 @@
 import { GameStats } from '../GameStats.js';
 import { RemotePlayer } from '../players/RemotePlayer.js';
-import { PADDLE_OFFSET, STANDARD_KEYBINDS } from '../macros.js';
+import { ALTERNATE_KEYBINDS, PADDLE_OFFSET, STANDARD_KEYBINDS } from '../macros.js';
 import { AbstractGameController } from './AbstractGameController.js';
 
 export class RemoteGameController extends AbstractGameController {
@@ -28,9 +28,6 @@ export class RemoteGameController extends AbstractGameController {
 					'id': id,
 					'username': username,
 					'y': targetY,
-					'ball': {
-						'position': [...this.ball.position]
-					}
 				}
 			}));
 		}
@@ -49,7 +46,7 @@ export class RemoteGameController extends AbstractGameController {
 			username: p2Username,
 			onUpdate: p2ID == currPlayerID ? onUpdate : null,
 			isEnemy: p2ID != currPlayerID,
-			keybinds: p2ID == currPlayerID ? STANDARD_KEYBINDS : null,
+			keybinds: p2ID == currPlayerID ? ALTERNATE_KEYBINDS : null,
 			x: PADDLE_OFFSET,
 			picture: p2Picture
 		});
@@ -70,9 +67,7 @@ export class RemoteGameController extends AbstractGameController {
 				this.ball.sync(data.ball);
 		}
 
-		myUser.gameSocket.onerror = (ev) => {
-			console.error(ev);
-		}
+		myUser.gameSocket.onerror = (ev) => console.error(ev);
 	}
 
 	build() {

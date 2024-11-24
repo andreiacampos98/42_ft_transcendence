@@ -62,10 +62,9 @@ export class Lever extends THREE.Group {
 		const { up, down } = this.keybinds;
 
 		let step = LEVER_ROTATION_STEP;
-				
-		if (pressedKeys[down]){
+		
+		if (pressedKeys[down])
 			step = -step;
-		}
 		if (!pressedKeys[up] && !pressedKeys[down]) {
 			this.upperLever.rotation.x = 
 				this.lerp(this.upperLever.rotation.x, LEVER_DEFAULT_ROTATION, 0.3);
