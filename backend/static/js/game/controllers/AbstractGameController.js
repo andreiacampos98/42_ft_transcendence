@@ -82,7 +82,9 @@ export class AbstractGameController extends THREE.Group {
 		const playerImage = document.getElementById(`${selector}-img`);
 		const uri = player.picture;
 
-		if (player.picture.includes('http')) 
+		if(!player.picture)
+			return ;
+		else if (player.picture.includes('http')) 
 			playerImage.src = `https://${decodeURIComponent(uri).slice(14)}`
 		else 
 			playerImage.src = uri;
