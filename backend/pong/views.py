@@ -357,6 +357,9 @@ def user_password(request, pk):
 		old_password = request.POST.get('old_password')
 		new_password1 = request.POST.get('password1')
 		new_password2 = request.POST.get('password2')
+		ic(old_password)
+		ic(new_password1)
+		ic(new_password2)
 
 		if not user.check_password(old_password):
 			return JsonResponse({'message': 'Old password is incorrect.', 'access_token': new_token}, status=400)
@@ -377,9 +380,10 @@ def user_password(request, pk):
 		
 		user.set_password(new_password1)
 		user.save()
-
+		ic("user is saved")
 		update_session_auth_hash(request, user)
-		return JsonResponse({'message': 'Password updated successfully', 'access_token': new_token, 'redirect_url': reverse('user-profile', args=[user.id])}, status=200)
+		ic("update")
+		return JsonResponse({'message': 'Password updated successfully', 'access_token': new_token}, status=200)
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 

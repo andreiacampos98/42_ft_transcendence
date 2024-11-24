@@ -22,6 +22,7 @@ window.onclick = function(event) {
 }
 
 async function getChangePassword() {
+	console.log("getChangePassword called");
 	let token = localStorage.getItem("access_token");
 	const userId = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
 	const formData = new FormData(document.getElementById("change-password-form"));
@@ -47,13 +48,14 @@ async function getChangePassword() {
 		});
 	}
 	else {
+		console.log(data.redirect_url);
 		localStorage.setItem('access_token', data.access_token);
 		modal.style.display = "none";
 		var modal3 = document.getElementById("modal3");
 		modal3.style.display = "block";
 		document.getElementById("confirm-btn").addEventListener("click", () => {
-			history.pushState(null, '', data.redirect_url);
-			htmx.ajax('GET', data.redirect_url, {
+			history.pushState(null, '', `/`);
+			htmx.ajax('GET', `/`, {
 				target: '#main'
 			});
 		});
