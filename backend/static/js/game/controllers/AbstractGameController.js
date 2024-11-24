@@ -5,7 +5,7 @@ import { Arcade } from '../objects/Arcade.js';
 
 
 export class AbstractGameController extends THREE.Group {
-	constructor ({ type, scene, app }) {
+	constructor ({ type, app }) {
 		super();
 
 		this.keybinds = null;
@@ -16,7 +16,6 @@ export class AbstractGameController extends THREE.Group {
 		this.arcade = null;
 		this.stats = null;
 		this.type = type;
-		this.scene = scene;
 		this.app = app;
 	}
 
@@ -39,10 +38,10 @@ export class AbstractGameController extends THREE.Group {
 	build({ onPaddleHit=null }) {
 		this.arena = new Arena();
 		this.ball = new Ball({ onPaddleHit: onPaddleHit });
-		this.arcade = new Arcade(this.scene, this.app);
-		this.arcade2 = new Arcade(this.scene, this.app);
+		this.arcade = new Arcade(this.app);
+		this.arcade2 = new Arcade(this.app);
 		this.arcade2.position.x = -0.6;
-		this.arcade3 = new Arcade(this.scene, this.app);
+		this.arcade3 = new Arcade(this.app);
 		this.arcade3.position.x = 0.6;
 
 		this.add(this.arena);

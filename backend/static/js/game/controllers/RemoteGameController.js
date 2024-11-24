@@ -4,8 +4,8 @@ import { PADDLE_OFFSET, STANDARD_KEYBINDS } from '../macros.js';
 import { AbstractGameController } from './AbstractGameController.js';
 
 export class RemoteGameController extends AbstractGameController {
-	constructor({ player1Data, player2Data, gameID, gameType, scene }) {
-		super({ type: gameType, scene: scene });
+	constructor({ player1Data, player2Data, gameID, gameType, app }) {
+		super({ type: gameType, app: app });
 
 		this.player1 = null;
 		this.player2 = null;

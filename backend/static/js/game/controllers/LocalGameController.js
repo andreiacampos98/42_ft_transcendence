@@ -4,8 +4,8 @@ import { AbstractGameController } from './AbstractGameController.js';
 import { PADDLE_OFFSET, STANDARD_KEYBINDS, ALTERNATE_KEYBINDS } from '../macros.js';
 
 export class LocalGameController extends AbstractGameController {
-	constructor({ player1Data, player2Data, scene, app }) {
-		super({type: "Local", scene: scene, app: app});
+	constructor({ player1Data, player2Data, app }) {
+		super({type: "Local", app: app });
 		
 		this.registerKeybinds();
 		this.createPlayers(player1Data, player2Data);

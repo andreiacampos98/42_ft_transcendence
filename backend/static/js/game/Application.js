@@ -37,7 +37,8 @@ export class Application  {
      * initializes the application
      */
     init({player1Data, player2Data, gameType, gameID=null}) {
-                
+		document.getElementById('loader-container').textContent = 'Building 3D scene...';
+
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
 		this.scene.add(new Axis(this));
@@ -69,6 +70,7 @@ export class Application  {
 			this.arcadeModel = object;
 			this.initGameController(player1Data, player2Data, gameType, gameID);
 			this.render();
+			document.getElementById('loader-container').remove();
 		});
 		
 		this.canvas.appendChild( this.renderer.domElement );
@@ -88,11 +90,11 @@ export class Application  {
 	initGameController(player1Data, player2Data, gameType, gameID=null){
 		if (gameType == "Remote" || gameType == "Tournament"){
 			this.gameController = new RemoteGameController({
-				scene: this.scene, 
 				player1Data: player1Data, 
 				player2Data: player2Data,
 				gameType: gameType,
 				gameID: gameID,
+				app: this
 			});
 		} else {
 			this.gameController = new LocalGameController({ 

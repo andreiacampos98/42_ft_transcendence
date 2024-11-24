@@ -10,7 +10,12 @@
 	<div id="camera"></div>
 	<div id="scoreboard" class="d-flex justify-content-center align-items-center">
 		<div id="p1"></div>
-		<div id="score">0&nbsp;:&nbsp;0</div>
+		<img id="p1-img" src="" alt="P1 profile">
+		<div class="d-flex">
+			<div id="p1-score">0</div>
+			<div id="p2-score">0</div>
+		</div>
+		<img id="p2-img" src="" alt="P2 profile">
 		<div id="p2"></div>
 	</div>
 	<div id="loader-container" class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
@@ -32,10 +37,6 @@
 		'gameSocket',
 		`wss://${window.location.host}/wss/tournaments/${tourID}/games/${gameInstance.id}`,
 		(event) => {
-			document.getElementById('loader-container').remove();
-			document.getElementById('canvas-container').style.color = '#FFF';
-			document.getElementById('scoreboard').style.color = '#FFF';
-			
 			let app = new Application();
 			app.init({ 
 				player1Data: {'id': p1.id, 'username': p1.username},
