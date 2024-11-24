@@ -59,9 +59,52 @@ function	calculate_collisions(ball) {
 
 function	get_future_path(ball)
 {
-	collidedWithGoals = false;
-	while (!collidedWithGoals)
-		collidedWithGoals = calculate_collisions(ball);
+	t = -1;
+	goals = false;
+	while (!goals) {
+		//for upper wall
+		temp_ball = ball;
+		temp = -1 * ball.position.y - BALL_RADIUS / ball.direction.y;
+		if (t == -1 && temp > 0){
+			t = temp;
+			goals = false;
+			temp_ball.direction.y *= -1;
+			//position ??
+			
+		}
+		//for lower wall
+		temp = (ARENA_SEMI_HEIGHT * 2 - ball.position.y - BALL_RADIUS) / ball.direction.y;
+		if ((t == -1 && temp > 0) || ( t != -1 && temp < t && temp > 0)) {
+			t = temp;
+			goals = false;
+			temp_ball.direction.y *= -1;
+			//position ??
+			
+		}
+		//for aiwall wall
+		temp = (ARENA_SEMI_LENGTH * 2 - ball.position.x - BALL_RADIUS) / ball.direction.x;
+		if ((t == -1 && temp > 0) || ( t != -1 && temp < t && temp > 0)) {
+			t = temp;
+			goals = true;
+			temp_ball.direction.x *= -1;
+			//position ??
+			
+		}
+		//for player wall
+		temp = (-1 * ball.position.x - BALL_RADIUS) / ball.direction.x;
+		if ((t == -1 && temp > 0) || ( t != -1 && temp < t && temp > 0)) {
+			t = temp;
+			goals = true;
+			temp_ball.direction.x *= -1;
+			//position ??
+			
+		}
+		ball = temp_ball;
+		if (t < 0){
+			console.log("Ball outside the arena??");
+			exit(1);
+		}
+	}
 	return ball_position_at_paddle_position;
 };
 

@@ -5,15 +5,7 @@
 {% block main_content %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 <link rel="stylesheet" href="{% static 'css/match-block.css' %}">
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script defer src="{% static 'js/profile.js' %}" type="module"></script>
 <script defer src="{% static 'js/edit-profile.js' %}"></script>
-<script defer src="{% static 'js/enable2factor.js' %}"></script>
-<script defer src="{% static 'js/change-password.js' %}"></script>
-<script defer src="{% static 'js/friends_add_remove.js' %}"></script>
-<script defer src="{% static 'js/notifications.js' %}"></script>
-<script defer src="{% static 'js/tab-recent-matches.js' %}"></script>
-<script defer src="{% static 'js/view-details-tournaments.js' %}"></script>
 <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content" data-user-view-id="{{ user_view.id }}">
 	<div class="main d-flex" id="main-wrapper">
 		<div class="main d-flex" id="profile-main">
@@ -80,32 +72,43 @@
 				</div>
 			</div>
 			<div class="side-profile d-flex align-items-center">
-				<div id="change-info1">
+				<div id="change-info1" style="width: 324px;">
 					{% if "http" in user_view.picture.url %}
 						<img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture }}" alt="Profile">
 					{% else %}
 						<img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="Profile">
 					{% endif %}
-					<h3 class="description"> {{ user_view.username }} </h3>
+					<button type="button" id="button-inside" style="display:none;" onclick="triggerFileInput()">
+						<img id="profile-picture-preview" src="{% static 'assets/icons/edit1.png' %}" alt="Profile">
+					</button>
+					<h3 id="username-stat" class="description"> {{ user_view.username }} </h3>
 				</div>
-				<span class="friend-block1 d-flex justify-content-center" data-status="{{ user_view.status }}"> {{ user_view.status }} </span>
+				<span id="online-stat" class="friend-block1 justify-content-center" data-status="{{ user_view.status }}"> {{ user_view.status }} </span>
 				<div id="edit-change1" class="edit-change d-flex align-items-center justify-content-center">
 					{% if is_own_profile %}
-						<div class="edit-change d-flex align-items-center justify-content-between">
-							<button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
-								<img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
-								Edit Profile
-							</button>
-
 						{% if user_view.user_42 is None %}
-							<button class="change" id="open-change-password-modal">
-								<span class="change-b d-flex align-items-center" id="change">
-									<img class="small-icon" src="{% static 'assets/icons/password.png' %}">
-									Change Password
-								</span>
-							</button>
+							<div class="edit-change d-flex align-items-center justify-content-between">
+								<button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
+									<img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
+									Edit Profile
+								</button>
+
+								<button class="change" id="open-change-password-modal">
+									<span class="change-b d-flex align-items-center" id="change">
+										<img class="small-icon" src="{% static 'assets/icons/password.png' %}">
+										Change Password
+									</span>
+								</button>
+								
+							</div>
+						{% else %}
+							<div class="edit-change d-flex align-items-center justify-content-center">
+								<button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
+									<img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
+									Edit Profile
+								</button>
+							</div>
 						{% endif %}
-						</div>
 					{% elif is_friend %}
 						{% if friendship_status %}
 							<button class="edit friend-status d-flex align-items-center justify-content-center" id="remove-friend-button">
@@ -138,39 +141,34 @@
 						</form>
 					{% endif %}
 				</div>
-				<div class="save-cancel align-items-center justify-content-between" id="save-cancel" style="display: none;">
-					<button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
-					<button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
-				</div>
-				<form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
-					<input type="file" id="profile-picture-input" name="picture">
-					<div class="email-joined-edit d-flex align-items-center">
+				
+				<form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;width: 360px;">
+					<input type="file" id="profile-picture-input" name="picture" style="display: none;">
+					<div class="email-joined-edit d-flex align-items-start flex-column">
 						<label for="username-input">
-							<h5 class="text-block d-flex"> 
-								<img style="width: 15px; height: 15px;" src="{% static 'assets/icons/profile.png' %}">
+							<h5 class="text-block d-flex" style="color:#FFFFFFC0;font-weight: unset;font-size: x-small;"> 
 								Username
 							</h5>
 						</label>
-						<input style="text-align: right; " type="text" id="username-input" name="username" value="{{ user_view.username }}" required>
+						<input style="text-align: left; " type="text" id="username-input" name="username" value="{{ user_view.username }}" required>
 					</div>
-					<label for="description-input">Description</label>
+					<label style="width: 100%;text-align: left;color: #FFFFFFC0; font-weight: unset;font-size: x-small;" for="description-input">Description</label>
 					{% if user_view.description is None or user_view.description == "" %}
 						<textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50"></textarea>
 					{% else %}
 						<textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50">{{ user_view.description }}</textarea>
 					{% endif %}
 					
-					<div class="email-joined-edit d-flex align-items-center">
+					<div class="email-joined-edit d-flex align-items-start flex-column">
 						<label for="email-input">
-							<h5 class="text-block d-flex" style="color: #FFFFFFC0;"> 
-								<img src="{% static 'assets/icons/at.png' %}">
+							<h5 class="text-block d-flex" style="color: #FFFFFFC0;font-weight: unset;font-size: x-small;"> 
 								Email
 							</h5>
 						</label>
 						{% if user_view.email is None or user_view.email == "" %}
-							<input style="text-align: right; " type="email" id="email-input" name="email" value="" required>
+							<input style="text-align: left; " type="email" id="email-input" name="email" value="" required>
 						{% else %}
-							<input style="text-align: right; " type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
+							<input style="text-align: left; " type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
 						{% endif %}
 					</div>
 				</form>
@@ -216,6 +214,10 @@
 						</h5>
                     {% endif %}
 
+				</div>
+				<div class="save-cancel align-items-center justify-content-between" id="save-cancel" style="display: none;">
+					<button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+					<button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
 				</div>
 			</div>
 		</div>
@@ -270,7 +272,7 @@
 								</div>
 							</div>
 						</div>
-						{% if games|length > 0 %}
+						{% if games|length > 0 or tours|length > 0 %}
 							<div class="donut d-flex justify-content-start">								
 								<h6 class="graph-title" style="color:#fff">Time Spent per Mode</h6>
 								<div id="chart1"></div>
@@ -291,7 +293,7 @@
 								<span>It seems you haven't played this week yet</span>
 							</div>
 						{% else %}
-							<div class="bar-graphs d-flex flex-column align-items-center">
+							<div id="bar-chart-container" class="bar-graphs d-flex flex-column align-items-center">
 								<h6 class="graph-title" style="color:#fff">Win Rate and Games Played / Day </h6>
 								<div id="chart2"></div>
 							</div>
@@ -400,7 +402,7 @@
 											<span class="content score">{{ game.nb_goals_user2 }} - {{ game.nb_goals_user1 }}</span>
 										{% endif %}
 									{% endif %}
-									<div class="content last opponent">
+									<div class="content last opponent justify-content-start">
 										{% if user_view.id == game.user2_id.id %}
 											{% if game.user1_id != NULL %}
 												<a  hx-get="{% url 'user-profile' game.user1_id.id %}"
@@ -453,47 +455,47 @@
 					<span class="title">Winner</span>
 				</div>
 				<div class="match-history-list">
-					{% for tour in tours %}
-						{% if tour.tournament.status == 'Finished' %}
+					{% for tour, user in tours %}
+						{% if tour.status == 'Finished' %}
 								<div class="match-block d-flex align-items-center" class="tournament">
 									<div class="icon">
 										<img src="{% static 'assets/icons/tournament.png' %}" alt="Tournament Icon">
 									</div>
 									<div class="details d-flex align-items-center justify-content-evenly">
 										<span class="content date d-flex flex-column" style="height: 42px; align-items: baseline" id="isoDateDiv1">
-											<div class="date-day">{{ tour.tournament.created_at }}</div>
-											<div  class="date-second">{{ tour.tournament.created_at }}</div>
+											<div class="date-day">{{ tour.created_at|date:"c" }}</div>
+											<div  class="date-second">{{ tour.created_at|date:"c" }}</div>
 										</span>
-										<span class="content duration">{{ tour.tournament.duration }}</span>
-										<span class="content placement"> {{ tour.placement }}</span>
-										<span class="content capacity">{{ tour.tournament.capacity }} players</span>
+										<span class="content duration">{{ tour.duration }}</span>
+										<span class="content placement"> {{ user.placement }}</span>
+										<span class="content capacity">{{ tour.capacity }} players</span>
 										<span class="content last">
-											<a  hx-get="{% url 'user-profile'  tour.tournament.winner_id.id %}"
+											<a  hx-get="{% url 'user-profile'  tour.winner_id.id %}"
 												hx-trigger="click"
 												hx-target="#main"
 												hx-push-url="true">
-												{% if "http" in  tour.tournament.winner_id.picture.url %}
-													<img class="profile-pic" src="https://{{ tour.tournament.winner_id.picture.url|urlunquote|slice:'14:' }}" alt="Profile">
+												{% if "http" in tour.winner_id.picture.url %}
+													<img class="profile-pic" src="https://{{ tour.winner_id.picture.url|urlunquote|slice:'14:' }}" alt="42">
 												{% else %}
-													<img class="profile-pic" src="{{ tour.tournament.winner_id.picture }}" alt="Profile">
+													<img class="profile-pic" src="{{ tour.winner_id.picture.url }}" alt="Profile">
 												{% endif %}
-												<span class="score">{{  tour.tournament.winner_id.username }}</span>
+												<span class="score">{{  tour.winner_id.username }}</span>
 											</a>
 											<div>
-												<a hx-get="{% url 'tournament-stats' tour.tournament.id %}"
+												<a hx-get="{% url 'tournament-stats' tour.id %}"
 													hx-trigger="click"
 													hx-target="#main"
 													hx-push-url="true">
 													<img src="{% static 'assets/icons/detail.png' %}" alt="detail">
 												</a>
-												<button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.tournament.id }}">
+												<button class="toggle-details" onclick="detailTournamentGames(this)" data-tournament-id="{{ tour.id }}">
 													<img src="{% static 'assets/icons/Expand-Arrow.png' %}" alt="Arrow-icon">
 												</button>
 											</div>
 										</span>
 									</div>
 								</div>
-								<div id="details-{{ tour.tournament.id }}" class="tournament-details flex-column" style="display:none;">
+								<div id="details-{{ tour.id }}" class="tournament-details flex-column" style="display:none;">
 									<div class="header d-flex align-items-center justify-content-evenly">
 										<span class="title">Date</span>
 										<span class="title">Duration</span>

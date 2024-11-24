@@ -1,6 +1,9 @@
 function onEditButtonClick() {
 	document.getElementById("save-cancel").style.display = "flex";
 	document.getElementById("edit-change1").style.display = "none";
+    document.getElementById("username-stat").style.display = "none";
+    document.getElementById("button-inside").style.display = "inherit";
+    document.getElementById("online-stat").style.display = "none !important";
 	document.getElementById("edit-change1").classList.remove("d-flex");
     document.getElementById("edit-profile-button").style.display = "none";
     document.getElementById("save-profile-button").style.display = "inline-block";
@@ -24,7 +27,10 @@ function onEditButtonClick() {
 
 function onCancelButtonClick() {
 	document.getElementById("edit-change1").style.display = "flex";
+    document.getElementById("username-stat").style.display = "inherit";
+    document.getElementById("online-stat").style.display = "inherit";
 	document.getElementById("save-cancel").style.display = "none";
+	document.getElementById("button-inside").style.display = "none";
 	document.getElementById("save-cancel").classList.remove("d-flex");
     document.getElementById("edit-profile-button").style.display = "flex";
     document.getElementById("save-profile-button").style.display = "none";
@@ -39,6 +45,7 @@ async function onSaveButtonClick(event, userId) {
     event.preventDefault(); 
     const formData = new FormData(document.getElementById("edit-profile-form"));
     let token = localStorage.getItem("access_token");
+	console.log(document.getElementById("edit-profile-form"));
 
     const response = await fetch(`/users/${userId}/update`, {
         method: "POST",
@@ -62,9 +69,14 @@ async function onSaveButtonClick(event, userId) {
 	}
 	else {
         localStorage.setItem('access_token', data.access_token);
-		history.pushState(null, '', `/users/${userId}`);
+		history.replaceState(null, '', `/users/${userId}`);
 		htmx.ajax('GET', `/users/${userId}`, {
 			target: '#main'  
-		});
+		}).then(() => appendScripts());
 	}
+}
+
+function triggerFileInput() {
+    // Programmatically click the hidden input
+    document.getElementById('profile-picture-input').click();
 }
