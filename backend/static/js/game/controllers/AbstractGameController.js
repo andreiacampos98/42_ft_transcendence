@@ -8,7 +8,7 @@ export class AbstractGameController extends THREE.Group {
 	constructor ({ type, app }) {
 		super();
 
-		this.keybinds = null;
+		this.pressedKeys = null;
 		this.arena = null;
 		this.ball = null;
 		this.player1 = null;
@@ -20,18 +20,18 @@ export class AbstractGameController extends THREE.Group {
 	}
 
 	registerKeybinds() {
-		this.keybinds = {
+		this.pressedKeys = {
 			'w': false, 's': false,
 			'ArrowUp': false, 'ArrowDown': false
 		};
 
 		document.addEventListener('keydown', (event) => {
-			if (event.key in this.keybinds) 
-				this.keybinds[event.key] = true;
+			if (event.key in this.pressedKeys) 
+				this.pressedKeys[event.key] = true;
 		});
 		document.addEventListener('keyup', (event) => {
-			if (event.key in this.keybinds) 
-				this.keybinds[event.key] = false;
+			if (event.key in this.pressedKeys) 
+				this.pressedKeys[event.key] = false;
 		});
 	}
 
@@ -55,9 +55,9 @@ export class AbstractGameController extends THREE.Group {
 	}
 
 	update() {
-		this.player1.update(this.keybinds);
-		this.player2.update(this.keybinds);
-		this.arcade.update(this.keybinds);
+		this.player1.update(this.pressedKeys);
+		this.player2.update(this.pressedKeys);
+		this.arcade.update(this.pressedKeys);
 
 		if (this.stats.isGameOver())
 			return;
