@@ -309,22 +309,9 @@ def user_update(request, pk):
 				validate_email(email)
 				user.email=email
 			except ValidationError:
-				return JsonResponse({'message': 'Invalid email format.', 'access_token': new_token}, status=400)
-
+				return JsonResponse({'message': 'Invalid email format.', 'access_token': new_token}, status=400)	
 		if 'picture' in request.FILES:
 			user.picture = request.FILES['picture']
-		else:
-			if user.picture and "http" in user.picture.url:
-				ic(user.picture.url)
-				uri = user.picture.url
-				adjusted_url = uri[7:] if len(uri) > 7 else uri
-				decoded_url = unquote(adjusted_url)
-				ic(decoded_url)
-				user.picture = decoded_url
-			else:
-				ic(user.picture)
-				data['picture'] = user.picture
-	
 		new_username = data.get('username', None)
 		if Users.objects.filter(username=new_username).exists() and user.username != new_username:
 			return JsonResponse({'message': 'Username already exists.', 'access_token': new_token}, status=400)
@@ -1397,6 +1384,8 @@ def login42(request):
 		myuser.user_42 = id42
 		myuser.email = user_info.get('email')
 		myuser.picture = user_info.get('image', {}).get('versions', {}).get('medium')
+		ic(myuser.picture)
+		ic(myuser.picture.url)
 		myuser.save()
 
 		UserStats.objects.create(user_id=myuser)
