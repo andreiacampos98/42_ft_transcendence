@@ -7,7 +7,10 @@ function onEditButtonClick() {
     document.getElementById("cancel-edit-button").style.display = "inline-block";
     document.getElementById("edit-profile-form").style.display = "block";
     document.getElementById("change-info2").style.display = "none";
-    document.getElementById("open-change-password-modal").style.display = "none";
+    const changePasswordModal = document.getElementById("open-change-password-modal");
+    if (changePasswordModal) {
+        changePasswordModal.style.display = "none";
+    }
 
     document.getElementById('profile-picture-input').addEventListener('change', function(event) {
         const file = event.target.files[0];
@@ -22,7 +25,7 @@ function onEditButtonClick() {
     });
 }
 
-function onCancelButtonClick() {
+function onCancelButtonClick(userId) {
 	document.getElementById("edit-change1").style.display = "flex";
 	document.getElementById("save-cancel").style.display = "none";
 	document.getElementById("save-cancel").classList.remove("d-flex");
@@ -32,7 +35,14 @@ function onCancelButtonClick() {
     document.getElementById("edit-profile-form").style.display = "none";
     document.getElementById("change-info1").style.display = "block";
     document.getElementById("change-info2").style.display = "block";
-    document.getElementById("open-change-password-modal").style.display = "block";
+    const changePasswordModal = document.getElementById("open-change-password-modal");
+    if (changePasswordModal) {
+        changePasswordModal.style.display = "none";
+    }
+    history.replaceState(null, '', `/users/${userId}`);
+    htmx.ajax('GET', `/users/${userId}`, {
+        target: '#main'  
+    }).then(() => appendScripts());
 }
 
 async function onSaveButtonClick(event, userId) {

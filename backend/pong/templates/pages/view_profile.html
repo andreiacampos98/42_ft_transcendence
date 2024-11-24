@@ -72,7 +72,7 @@
 			</div>
 			<div class="side-profile d-flex align-items-center">
 				<div id="change-info1">
-					{% if "http" in user_view.picture.url %}
+					{% if "http" in user_view.picture %}
 						<img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture }}" alt="Profile">
 					{% else %}
 						<img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="Profile">
@@ -131,7 +131,7 @@
 				</div>
 				<div class="save-cancel align-items-center justify-content-between" id="save-cancel" style="display: none;">
 					<button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
-					<button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
+					<button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick('{{ user_id }}')">Go back</button>
 				</div>
 				<form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
 					<input type="file" id="profile-picture-input" name="picture" accept="image/*">

@@ -61,7 +61,7 @@ SESSION_CACHE_ALIAS = 'default'
 SESSION_SAVE_EVERY_REQUEST = True  # Salva a sessão em cada request, opcional
 
 # Secure session settings
-SESSION_COOKIE_SECURE = False  # Deve ser True em produção, requer HTTPS
+SESSION_COOKIE_SECURE = True  # Deve ser True em produção, requer HTTPS
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Define se a sessão expira ao fechar o navegador
 
 
@@ -162,6 +162,10 @@ SIMPLE_JWT = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {
+            'user_attributes': ('username', 'email'),
+            'max_similarity': 0.7,
+            }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
