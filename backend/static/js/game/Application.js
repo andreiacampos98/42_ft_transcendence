@@ -65,7 +65,9 @@ export class Application  {
         this.renderer.setClearColor("#000000");
         this.renderer.setSize( this.canvas.clientWidth, this.canvas.clientHeight );
 
-        this.initCamera();
+		window.addEventListener('resize', this.onResize.bind(this), false );
+
+		this.initCamera();
 		this.loadAssets((object) => {
 			this.arcadeModel = object;
 			this.initGameController(player1Data, player2Data, gameType, gameID);
@@ -169,5 +171,13 @@ export class Application  {
 
 		if (window.location.pathname.startsWith('/game'))
 			timeoutID = setTimeout(updateCallback, REFRESH_RATE);
+    }
+
+	onResize() {
+        if (this.activeCamera !== undefined && this.activeCamera !== null) {
+            this.activeCamera.aspect = window.innerWidth / window.innerHeight;
+            this.activeCamera.updateProjectionMatrix();
+            this.renderer.setSize( window.innerWidth, window.innerHeight );
+        }
     }
 }
