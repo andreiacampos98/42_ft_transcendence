@@ -132,10 +132,13 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 			ic(f'Pairing {self.user.id} - {self.user.username}')
 			await self.pair_player(available_rooms[0])
 		else:
+			ic(self.user.picture)
+			ic(self.user.picture.url)
 			user_data = {
 				'id': self.user.id,
 				'username': self.scope['user'].username,
-				'channel_name': self.channel_name
+				'channel_name': self.channel_name,
+				'picture': self.user.picture.url,
 			}
 			self.set_waiting_room(self.user.id, user_data)
 
@@ -151,6 +154,7 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		curr_player = {
 			'id': self.user.id,
 			'username': self.scope['user'].username,
+			'picture': self.user.picture.url
 		}
 		host_player = self.get_waiting_room(host_room_id)
 		game = await self.create_new_game(host_player['id'])

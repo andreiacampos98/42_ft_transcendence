@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import { PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, PADDLE_SEMI_DEPTH, PLAYER_COLOR_1, PLAYER_COLOR_2 } from '../macros.js';
 
 export class AbstractPlayer {
-	constructor ({id, username, x, keybinds}) {
+	constructor ({ id, username, x, keybinds, picture }) {
 		this.id = id
 		this.username = username;
 		this.keybinds = keybinds;
-		this.picture = null;
+		this.picture = picture;
 		this.paddle = null;
 
 		this.build(x);

@@ -50,10 +50,8 @@ export class AbstractGameController extends THREE.Group {
 		this.add(this.ball);
 		this.add(this.arcade, this.arcade2, this.arcade3);
 
-		const p1display = document.getElementById('p1');
-		const p2display = document.getElementById('p2');
-		p1display.textContent = `${this.player1.username}`;
-		p2display.textContent = `${this.player2.username}`;
+		this.fillPlayerHUD(this.player1, 'p1');
+		this.fillPlayerHUD(this.player2, 'p2');
 	}
 
 	update() {
@@ -74,6 +72,20 @@ export class AbstractGameController extends THREE.Group {
 
 		this.ball.speed.x = this.ball.speed.y = 0;
 		this.sendGameResults();
+	}
+
+	fillPlayerHUD(player, selector) {
+		console.log(player);
+		const playerName = document.getElementById(selector);
+		playerName.textContent = `${player.username}`;
+		
+		const playerImage = document.getElementById(`${selector}-img`);
+		const uri = player.picture;
+
+		if (player.picture.includes('http')) 
+			playerImage.src = `https://${decodeURIComponent(uri).slice(14)}`
+		else 
+			playerImage.src = uri;
 	}
 
 	createPlayers() {}

@@ -3,11 +3,12 @@ import { AbstractPlayer } from './AbstractPlayer.js';
 import { PADDLE_SEMI_HEIGHT, ARENA_SEMI_HEIGHT, ARENA_SEMI_DEPTH, PADDLE_SPEED } from '../macros.js';
 
 export class RemotePlayer extends AbstractPlayer {
-	constructor ({ id, username, x, keybinds=null, onUpdate }) {
+	constructor ({ id, username, x, keybinds=null, picture=null, onUpdate }) {
 		super({
 			id: id, 
 			username: username, 
-			keybinds:keybinds,
+			keybinds: keybinds,
+			picture: picture,
 			x: x
 		});
 		this.onUpdate = onUpdate;

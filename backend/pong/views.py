@@ -284,17 +284,7 @@ def user_update(request, pk):
 
 		if 'picture' in request.FILES:
 			user.picture = request.FILES['picture']
-		else:
-			if user.picture and "http" in user.picture.url:
-				ic(user.picture.url)
-				uri = user.picture.url
-				adjusted_url = uri[7:] if len(uri) > 7 else uri
-				decoded_url = unquote(adjusted_url)
-				ic(decoded_url)
-				user.picture = decoded_url
-			else:
-				ic(user.picture)
-				data['picture'] = user.picture
+		
 	
 		new_username = data.get('username', None)
 		if Users.objects.filter(username=new_username).exists() and user.username != new_username:

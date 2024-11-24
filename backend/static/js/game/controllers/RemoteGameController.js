@@ -18,8 +18,8 @@ export class RemoteGameController extends AbstractGameController {
 	}
 
 	createPlayers(player1Data, player2Data, gameID) {
-		const { id: p1ID, username: p1Username } = player1Data;
-		const { id: p2ID, username: p2Username } = player2Data;
+		const { id: p1ID, username: p1Username, picture: p1Picture } = player1Data;
+		const { id: p2ID, username: p2Username, picture: p2Picture } = player2Data;
 		const currPlayerID = document.getElementById('metadata').getAttribute('data-user-id');
 		const onUpdate = (id, username, targetY) => {
 			myUser.gameSocket.send(JSON.stringify({
@@ -41,7 +41,8 @@ export class RemoteGameController extends AbstractGameController {
 			onUpdate: p1ID == currPlayerID ? onUpdate : null,
 			isEnemy: p1ID != currPlayerID,
 			keybinds: p1ID == currPlayerID ? STANDARD_KEYBINDS : null,
-			x: -(PADDLE_OFFSET)
+			x: -(PADDLE_OFFSET),
+			picture: p1Picture
 		});
 		this.player2 = new RemotePlayer({ 
 			id: p2ID, 
@@ -49,7 +50,8 @@ export class RemoteGameController extends AbstractGameController {
 			onUpdate: p2ID == currPlayerID ? onUpdate : null,
 			isEnemy: p2ID != currPlayerID,
 			keybinds: p2ID == currPlayerID ? STANDARD_KEYBINDS : null,
-			x: PADDLE_OFFSET
+			x: PADDLE_OFFSET,
+			picture: p2Picture
 		});
 		this.players[this.player1.id] = this.player1;
 		this.players[this.player2.id] = this.player2;

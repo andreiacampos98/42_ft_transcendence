@@ -2,11 +2,12 @@ import { AbstractPlayer } from './AbstractPlayer.js';
 import { PADDLE_SEMI_HEIGHT, PADDLE_SPEED, ARENA_SEMI_HEIGHT, ARENA_SEMI_DEPTH } from '../macros.js';
 
 export class LocalPlayer extends AbstractPlayer {
-	constructor ({id=null, username='Local Player', x, keybinds}) {
+	constructor ({id=null, username='Local Player', x, picture=null, keybinds}) {
 		super({
 			id: id,
 			username: username,
 			x: x,
+			picture: picture,
 			keybinds: keybinds
 		});
 	}

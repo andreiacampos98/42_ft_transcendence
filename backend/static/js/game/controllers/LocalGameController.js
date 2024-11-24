@@ -14,20 +14,21 @@ export class LocalGameController extends AbstractGameController {
 	}
 
 	createPlayers(player1Data, player2Data) {
-		const { id: p1ID, username: p1Username } = player1Data;
+		const { id: p1ID, username: p1Username, picture: p1Picture } = player1Data;
 		const { id: p2ID, username: p2Username } = player2Data;
 		
 		this.player1 = new LocalPlayer({ 
 			id: p1ID, 
 			username: p1Username, 
 			x: -(PADDLE_OFFSET),
-			keybinds: STANDARD_KEYBINDS
+			keybinds: STANDARD_KEYBINDS,
+			picture: p1Picture
 		});
 		this.player2 = new LocalPlayer({
 			id: p2ID, 
 			username: p2Username,
 			x: PADDLE_OFFSET,
-			keybinds: ALTERNATE_KEYBINDS
+			keybinds: ALTERNATE_KEYBINDS,
 		});
 
 		this.stats = new GameStats(this.player1, this.player2);
