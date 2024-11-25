@@ -1,7 +1,8 @@
 import * as THREE from 'three';
-import { BALL_SPEEDUP_FACTOR, BALL_START_SPEED, BALL_RADIUS,
+import { BALL_ACCELERATION, BALL_START_SPEED, BALL_RADIUS,
 	PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, DIRECTION, 
-	ARENA_SEMI_DEPTH, BALL_COLOR
+	ARENA_SEMI_DEPTH, BALL_COLOR,
+	FPS
 } from '../macros.js';
 
 export class Ball extends THREE.Object3D { 
@@ -28,11 +29,12 @@ export class Ball extends THREE.Object3D {
 		this.add(this.ball);
 	}
 
-	move(controller, fps) {
+	move(controller, delta) {
+		console.log(delta);
 		const { arena, player1, player2 } = controller;
 
-		this.position.x += this.direction.x * this.speed.x;
-		this.position.y += this.direction.y * this.speed.y;
+		this.position.x += (this.direction.x * this.speed.x * delta);
+		this.position.y += (this.direction.y * this.speed.y * delta);
 		
 		this.collideWithVerticalBounds(arena);
 		this.collideWithPaddle(player1.paddle, true);
@@ -91,14 +93,14 @@ export class Ball extends THREE.Object3D {
 
 		if (isPlayer) {
 			this.position.x = paddle.position.x + PADDLE_SEMI_LENGTH + this.radius;
-			this.speed.x += BALL_SPEEDUP_FACTOR;
-			this.speed.y += BALL_SPEEDUP_FACTOR * (Math.random()); // Adjust Y speed
+			this.speed.x += BALL_ACCELERATION;
+			this.speed.y += BALL_ACCELERATION * (Math.random()); // Adjust Y speed
 			this.direction.x = DIRECTION.RIGHT;
 		}
 		else {
 			this.position.x = paddle.position.x - PADDLE_SEMI_LENGTH - this.radius;
-			this.speed.x += BALL_SPEEDUP_FACTOR;
-			this.speed.y += BALL_SPEEDUP_FACTOR * (Math.random()); // Adjust Y speed
+			this.speed.x += BALL_ACCELERATION;
+			this.speed.y += BALL_ACCELERATION * (Math.random()); // Adjust Y speed
 			this.direction.x = DIRECTION.LEFT;
 		}	
 

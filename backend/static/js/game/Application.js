@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Axis } from './objects/Axis.js';
 import { LocalGameController } from './controllers/LocalGameController.js';
 import { RemoteGameController } from './controllers/RemoteGameController.js';
-import { REFRESH_RATE } from './macros.js';
+import { FPS, REFRESH_RATE } from './macros.js';
 import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
@@ -33,6 +33,7 @@ export class Application  {
 		this.canvas = document.querySelector('#canvas-container');
 		this.framesTimestamps = [];
 		this.currFps = 0;
+		this.gameCanStart = false;
 
     }
 
@@ -51,10 +52,7 @@ export class Application  {
 		document.getElementById('main-content').appendChild(this.gui.domElement);
 
 		this.scene.add(new THREE.AmbientLight(0xFFFFFF, 1));
-		this.grid = new THREE.GridHelper(100, 100, 0x00FFFF, 0x00FFFF);
-		this.grid.position.y = -0.7;
-		this.scene.add(this.grid);
-
+	
 		this.stats = new Stats();
         this.stats.showPanel(0);
         document.body.appendChild(this.stats.dom);
@@ -64,7 +62,7 @@ export class Application  {
 			.onChange((value) => this.setActivateControls(value));
 		
         this.renderer = new THREE.WebGLRenderer({antialias:true});
-        this.renderer.setPixelRatio( this.canvas.clientWidth / this.canvas.clientHeight );
+        this.renderer.setPixelRatio( window.innerWidth / window.innerHeight );
         this.renderer.setClearColor("#000000");
         this.renderer.setSize( this.canvas.clientWidth, this.canvas.clientHeight );
 
@@ -123,10 +121,11 @@ export class Application  {
 		
 		const coords = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
 		new TWEEN.Tween(coords)
-			.to({x: 0, y: 0.15, z: 1.2 }, 2000)
+			.to({x: 0, y: 0.15, z: 1.2 }, 5000)
 			.easing(TWEEN.Easing.Cubic.Out)
 			.onUpdate(() =>this.camera.position.set(coords.x, coords.y, coords.z))
-			.start();
+			.onComplete(() => this.gameCanStart = true)
+			.start()
     }
 
 
@@ -158,14 +157,18 @@ export class Application  {
     * the main render function. Called in a requestAnimationFrame loop
     */
     render () {
+		let then = Date.now();
 		const updateCallback = (() => {
-			let fps = this.calculateFPS();
+			// let fps = this.calculateFPS();
 			this.stats.begin();
 			this.updateOrbitControls();
 			
 			if (this.controls != null)
 				this.controls.update();
-			this.gameController.update(fps);
+			// console.log((Date.now() - then) / 1000);
+			if (this.gameCanStart)
+				this.gameController.update((Date.now() - then) / 1000);
+			then = Date.now();
 			this.renderer.render(this.scene, this.camera);
 			frameID = requestAnimationFrame( this.render.bind(this) );
 			TWEEN.update();
@@ -174,7 +177,21 @@ export class Application  {
 		}).bind(this);
 
 		if (window.location.pathname.startsWith('/game'))
-			timeoutID = setTimeout(updateCallback, REFRESH_RATE);
+			timeoutID = setTimeout(updateCallback, (Math.random() + 2) * REFRESH_RATE);
+
+		// let fps = this.calculateFPS();
+		// this.stats.begin();
+		// this.updateOrbitControls();
+		
+		// if (this.controls != null)
+		// 	this.controls.update();
+		// this.gameController.update(fps);
+		// this.renderer.render(this.scene, this.camera);
+		// if (window.location.pathname.startsWith('/game'))
+		// 	frameID = requestAnimationFrame( this.render.bind(this) );
+		// TWEEN.update();
+		
+		// this.stats.end();
     }
 
 	calculateFPS() {
