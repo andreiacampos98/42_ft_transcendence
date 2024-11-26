@@ -9,6 +9,7 @@
             <button class="main-button">
                 <a 
                 hx-get="{% url 'gamelocal' %}"
+                hx-swap="innerHTML"
                 hx-trigger="click"
                 hx-target="#main"
                 hx-push-url="true">Local</a>
@@ -20,6 +21,7 @@
             <button class="main-button">
                 <a 
                 hx-get="{% url 'gamelocal' %}"
+                hx-swap="innerHTML"
                 hx-trigger="click"
                 hx-target="#main"
                 hx-push-url="true">AI</a>
@@ -31,6 +33,7 @@
             <button class="main-button">
                 <a  
                 hx-get="{% url 'gameonline' %}"
+                hx-swap="innerHTML"
                 hx-trigger="click"
                 hx-target="#main"
                 hx-push-url="true">Online</a>

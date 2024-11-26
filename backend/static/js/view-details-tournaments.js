@@ -147,7 +147,8 @@ async function detailTournamentGames(button) {
 		gameDetailLink.onclick = function() {
 			history.pushState(null, '', `/games/${game.game.id}/stats`);
 			htmx.ajax('GET', `/games/${game.game.id}/stats`, {
-				target: '#main'
+				target: '#main',
+				swap: 'innerHTML'
 			});
 		};
 		gameDetailLink.classList.add('game-link');

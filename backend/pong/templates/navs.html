@@ -35,6 +35,7 @@
         <div class="top-bar d-flex justify-content-between align-items-center">
             <form  
                 hx-get="{% url 'search-users' %}"
+                hx-swap="innerHTML"
                 hx-trigger="submit"
                 hx-target="#main"
                 hx-push-url="true"
@@ -63,6 +64,7 @@
                 <div id="notifications" ></div>
                 <a  hx-get="{% url 'user-profile' user.id %}"
                     hx-trigger="click"
+                    hx-swap="innerHTML"
                     hx-target="#main"
                     hx-push-url="true"
                     onclick="checkTokenBeforeNavigation(event)">
@@ -87,7 +89,7 @@
                     <button class="select-item d-flex align-items-center">
                         <a class="side-menu_a" 
                             hx-get="{% url 'home' %}"
-							hx-swap="outerHTML"
+                            hx-swap="innerHTML"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true"
@@ -108,7 +110,7 @@
                     <button class="select-item d-flex align-items-center">
                         <a class="side-menu_a"  
                             hx-get="{% url 'tournaments' %}"
-							hx-swap="outerHTML"
+							hx-swap="innerHTML"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true"
@@ -127,7 +129,7 @@
                     <button class="select-item d-flex align-items-center">
                         <a class="side-menu_a" 
                             hx-get="{% url 'user-profile' user.id %}"
-							hx-swap="outerHTML"
+							hx-swap="innerHTML"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true"

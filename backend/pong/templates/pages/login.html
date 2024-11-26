@@ -33,6 +33,7 @@
             <div id="firsttime">
                 Your first time? <a class="sign-up"  
                             hx-get="{% url 'signup' %}"
+                            hx-swap="innerHTML"
                             hx-trigger="click"
                             hx-target="#main"
                             hx-push-url="true" >Sign Up now</a>

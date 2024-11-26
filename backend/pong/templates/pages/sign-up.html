@@ -45,6 +45,7 @@
                 </div>
                 <p> Do you already have an account? <a class="sign-up" 
                     hx-get="{% url 'login' %}"
+                    hx-swap="innerHTML"
                     hx-trigger="click"
                     hx-target="#main"
                     hx-push-url="true"        

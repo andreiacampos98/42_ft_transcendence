@@ -52,7 +52,8 @@ async function getSuggestions() {
 		userBlock.onclick = function() {
 			history.pushState(null, '', `/users/${user.id}`);
 			htmx.ajax('GET', `/users/${user.id}`, {
-				target: '#main'  
+				target: '#main',
+				swap: 'innerHTML'
 			});
 		};
 		const pic = document.createElement('img');

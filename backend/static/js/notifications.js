@@ -87,7 +87,8 @@ async function getNotifications() {
         textContent.onclick = function() {
 			history.pushState(null, '', `/users/${notification.other_user_id.id}`);
 			htmx.ajax('GET', `/users/${notification.other_user_id.id}`, {
-				target: '#main'  
+				target: '#main',
+                swap: 'innerHTML'
 			});
 		};
 

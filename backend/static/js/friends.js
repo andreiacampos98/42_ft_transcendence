@@ -88,7 +88,8 @@ async function toggleFriendsDrawer(user_id) {
 		friendBlock.onclick = function() {
 			history.pushState(null, '', `/users/${friend.id}`);
 			htmx.ajax('GET', `/users/${friend.id}`, {
-				target: '#main'
+				target: '#main',
+				swap: 'innerHTML'
 			});
 		};
 
