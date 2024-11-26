@@ -43,6 +43,7 @@ const appendScripts = () => {
 };
 
 const mutationsCallback = (mutations) => {
+	localStorage.removeItem('htmx-history-cache')
 	// Ignore second set of mutations
 	console.log(lastRoute, currRoute, window.location.pathname)
 	if (currRoute == window.location.pathname)
