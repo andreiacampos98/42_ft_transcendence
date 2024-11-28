@@ -41,16 +41,17 @@ export class AbstractGameController extends THREE.Group {
 		this.arena = new Arena();
 		this.ball = new Ball({ onPaddleHit: onPaddleHit });
 		this.arcade = new Arcade(this.app);
-		this.arcade2 = new Arcade(this.app);
-		this.arcade2.position.x = -0.6;
-		this.arcade3 = new Arcade(this.app);
-		this.arcade3.position.x = 0.6;
+		// this.arcade2 = new Arcade(this.app);
+		// this.arcade2.position.x = -0.6;
+		// this.arcade3 = new Arcade(this.app);
+		// this.arcade3.position.x = 0.6;
 
 		this.add(this.arena);
 		this.add(this.player1.paddle);
 		this.add(this.player2.paddle);
 		this.add(this.ball);
-		this.add(this.arcade, this.arcade2, this.arcade3);
+		this.add(this.arcade);
+		// this.add(this.arcade, this.arcade2, this.arcade3);
 
 		this.fillPlayerHUD(this.player1, 'p1');
 		this.fillPlayerHUD(this.player2, 'p2');

@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.core.mail import send_mail
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from datetime import datetime
@@ -153,6 +154,25 @@ def send_code_verify_email(request):
 		)
 		return JsonResponse({'message': 'Code sent.'}, status=200)
 
+class MockUser:
+    def __init__(self, username, email):
+        self.username = username
+        self.email = email
+        self._meta = self.MockMeta()
+
+    class MockMeta:
+        def get_field(self, field_name):
+            if field_name == 'username':
+                return self.MockField("Username")
+            elif field_name == 'email':
+                return self.MockField("Email")
+            raise AttributeError(f"Unknown field: {field_name}")
+
+        class MockField:
+            def __init__(self, verbose_name):
+                self.verbose_name = verbose_name
+
+			
 def user_create(request):
 	if request.method == 'POST':
 		try:
@@ -167,9 +187,18 @@ def user_create(request):
 
 		if not username or not email or not password1 or not password2:
 			return JsonResponse({'message': 'All fields are required.'}, status=400)
+		
+		if len(username) < 5:
+			return JsonResponse({'message': 'The Username needs to have more than 5 letters.'}, status=400)
 
 		if Users.objects.filter(username=username).exists():
 			return JsonResponse({'message': 'Username already exists! Please try another username.'}, status=400)
+
+		try:
+			user_mock = MockUser(username=username, email=email)
+			validate_password(password1, user_mock)
+		except ValidationError as e:
+			return JsonResponse({'message': ' '.join(e)}, status=400)
 
 		try:
 			validate_email(email)
@@ -331,6 +360,11 @@ def user_password(request, pk):
 		if new_password1 != new_password2:
 			return JsonResponse({'message': 'Passwords did not match.', 'access_token': new_token}, status=400)
 
+		try:
+			validate_password(new_password1, user)
+		except ValidationError as e:
+			return JsonResponse({'message': ' '.join(e)}, status=400)
+		
 		user.set_password(new_password1)
 		user.save()
 
@@ -1323,8 +1357,16 @@ def login42(request):
 			# redirect_url = f"{settings.BASE_URL}/home?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home"
 			redirect_url = request.build_absolute_uri(reverse('home') + f"?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home")
 
+			response = HttpResponseRedirect(redirect_url)
+			response.set_cookie(
+				'refresh_token',
+				user_tokens.get('refresh'),
+				httponly=True, 
+				secure=False, 
+				samesite='Lax'   
+			)
 			# Redireciona o usuário para a URL com os tokens
-			return HttpResponseRedirect(redirect_url)
+			return response
 	else:
 		# Caso o usuário não exista, crie um novo
 		i = 0
@@ -1354,7 +1396,16 @@ def login42(request):
 			redirect_url = request.build_absolute_uri(reverse('home') + f"?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home")
 
 			# Redireciona o usuário para a URL com os tokens
-			return HttpResponseRedirect(redirect_url)
+			response = HttpResponseRedirect(redirect_url)
+			response.set_cookie(
+				'refresh_token',
+				user_tokens.get('refresh'),
+				httponly=True, 
+				secure=False, 
+				samesite='Lax'   
+			)
+			# Redireciona o usuário para a URL com os tokens
+			return response
 
 	return JsonResponse({'message': 'User login failed'}, status=400)
 
