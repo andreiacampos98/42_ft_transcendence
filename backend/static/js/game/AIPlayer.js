@@ -1,5 +1,5 @@
 import { AbstractPlayer } from './AbstractPlayer.js';
-import { ARENA_SEMI_LENGTH } from './macros.js';
+import { ARENA_SEMI_HEIGHT, ARENA_SEMI_LENGTH, BALL_RADIUS } from './macros.js';
 
 export class AIPlayer extends AbstractPlayer {
 	constructor () {
@@ -59,18 +59,18 @@ function	calculate_collisions(ball) {
 
 function	get_future_path(ball)
 {
-	t = -1;
 	goals = false;
 	while (!goals) {
-		//for upper wall
+		t = -1;
 		temp_ball = ball;
+		//for upper wall
 		temp = -1 * ball.position.y - BALL_RADIUS / ball.direction.y;
 		if (t == -1 && temp > 0){
 			t = temp;
 			goals = false;
 			temp_ball.direction.y *= -1;
-			//position ??
-			
+			temp_ball.position.y = 0;
+			temp_ball.position.x = t * ball.direction.x + BALL_RADIUS + ball.position.x;
 		}
 		//for lower wall
 		temp = (ARENA_SEMI_HEIGHT * 2 - ball.position.y - BALL_RADIUS) / ball.direction.y;
@@ -78,8 +78,9 @@ function	get_future_path(ball)
 			t = temp;
 			goals = false;
 			temp_ball.direction.y *= -1;
-			//position ??
-			
+			temp_ball.position.y = ARENA_SEMI_HEIGHT * 2;
+			temp_ball.position.x = t * ball.direction.x + BALL_RADIUS + ball.position.x;
+
 		}
 		//for aiwall wall
 		temp = (ARENA_SEMI_LENGTH * 2 - ball.position.x - BALL_RADIUS) / ball.direction.x;
@@ -87,8 +88,8 @@ function	get_future_path(ball)
 			t = temp;
 			goals = true;
 			temp_ball.direction.x *= -1;
-			//position ??
-			
+			temp_ball.position.x = ARENA_SEMI_LENGTH * 2;
+			temp_ball.position.y = t * ball.direction.y + BALL_RADIUS + ball.position.y;
 		}
 		//for player wall
 		temp = (-1 * ball.position.x - BALL_RADIUS) / ball.direction.x;
@@ -96,8 +97,8 @@ function	get_future_path(ball)
 			t = temp;
 			goals = true;
 			temp_ball.direction.x *= -1;
-			//position ??
-			
+			temp_ball.position.x = 0;
+			temp_ball.position.y = t * ball.direction.y + BALL_RADIUS + ball.position.y;
 		}
 		ball = temp_ball;
 		if (t < 0){
