@@ -30,7 +30,7 @@ export class Ball extends THREE.Object3D {
 	}
 
 	move(controller, delta) {
-		console.log(delta);
+		// console.log(delta);
 		const { arena, player1, player2 } = controller;
 
 		this.position.x += (this.direction.x * this.speed.x * delta);

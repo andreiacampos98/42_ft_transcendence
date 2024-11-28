@@ -30,10 +30,8 @@ export class AbstractGameController extends THREE.Group {
 				this.pressedKeys[event.key] = true;
 		});
 		document.addEventListener('keyup', (event) => {
-			if (event.key in this.pressedKeys) {
-				console.log(`Released '${event.key}'`)
+			if (event.key in this.pressedKeys)
 				this.pressedKeys[event.key] = false;
-			}
 		});
 	}
 

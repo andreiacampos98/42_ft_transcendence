@@ -33,7 +33,7 @@ export const MAX_GOALS = 5;
 export const PLAYER_COLOR_1 = 0xCC0000;
 export const PLAYER_COLOR_2 = 0x00FFFF;
 
-export const FPS = 70;
+export const FPS = 144;
 export const REFRESH_RATE = 1000 / FPS;
 
 export const STANDARD_KEYBINDS = {
