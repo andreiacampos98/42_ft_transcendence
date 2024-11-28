@@ -39,6 +39,8 @@ services:
         env_file:
             - .env
         restart: on-failure
+        logging:
+          driver: none
 
     postgres:
         container_name: postgres-container
@@ -87,7 +89,7 @@ services:
         networks:
             - Transcendence
         ports:
-            - "6379:6379"
+            - "6380:6380"
 
 networks:
     Transcendence:

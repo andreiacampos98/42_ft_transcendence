@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 import { AbstractPlayer } from './AbstractPlayer.js';
-import { PADDLE_SEMI_HEIGHT, ARENA_SEMI_HEIGHT, PADDLE_SPEED } from './macros.js';
+import { PADDLE_SEMI_HEIGHT, ARENA_SEMI_HEIGHT, ARENA_SEMI_DEPTH, PADDLE_SPEED } from '../macros.js';
 
 export class RemotePlayer extends AbstractPlayer {
-	constructor ({ id, username, x, keybinds=null, onUpdate }) {
+	constructor ({ id, username, x, keybinds=null, picture=null, onUpdate }) {
 		super({
 			id: id, 
 			username: username, 
-			keybinds:keybinds,
+			keybinds: keybinds,
+			picture: picture,
 			x: x
 		});
 		this.onUpdate = onUpdate;
@@ -24,17 +25,16 @@ export class RemotePlayer extends AbstractPlayer {
 		if (pressedKeys[upKey]) {
 			targetPos.y = Math.min(
 				this.paddle.position.y + PADDLE_SPEED,
-				ARENA_SEMI_HEIGHT - PADDLE_SEMI_HEIGHT
+				ARENA_SEMI_HEIGHT - 2*ARENA_SEMI_DEPTH - PADDLE_SEMI_HEIGHT
 			);
 		}
 		
 		if (pressedKeys[downKey]){
 			targetPos.y = Math.max(
 				this.paddle.position.y - PADDLE_SPEED,
-				-(ARENA_SEMI_HEIGHT - PADDLE_SEMI_HEIGHT)
+				-(ARENA_SEMI_HEIGHT - 2*ARENA_SEMI_DEPTH - PADDLE_SEMI_HEIGHT)
 			);
 		}
-
 		if (pressedKeys[upKey] || pressedKeys[downKey])
 			this.onUpdate(this.id, this.username, targetPos.y);
 	}

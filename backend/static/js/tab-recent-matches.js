@@ -129,13 +129,11 @@ function formatGameDurations() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
-	document.getElementById('tab-games').onclick = () => onGamesClick();
-	document.getElementById('tab-tournaments').onclick = () => onTournamentsClick();
-	document.getElementById('tab-profile').onclick = () => onProfileClick();
+document.getElementById('tab-games').onclick = () => onGamesClick();
+document.getElementById('tab-tournaments').onclick = () => onTournamentsClick();
+document.getElementById('tab-profile').onclick = () => onProfileClick();
 
-	formatTournamentPlacements(); // Converte colocações
-	formatGameDurations(); // Converte durações
-	formatDays(".date-day"); // Converte datas
-	formatRecordsTimestamp(".date-second"); // Converte datas
-});
+formatTournamentPlacements(); // Converte colocações
+formatGameDurations(); // Converte durações
+formatDays(".date-day"); // Converte datas
+formatRecordsTimestamp(".date-second"); // Converte datas

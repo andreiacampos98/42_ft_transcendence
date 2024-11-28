@@ -1,32 +1,47 @@
 {% extends 'navs.html' %}
 {% load static %}
 
-{% block head %}
+{% block main_content %}
 <link rel="stylesheet" href="{% static 'css/game/game.css' %}">
 <link rel="stylesheet" href="{% static 'css/side-menu.css' %}">
-<!-- THREE JS -->
-<script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.156.1/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.156.1/examples/jsm/"
-      }
-    }
-  </script>
-{% endblock %}
-
-
-{% block main_content %}
 <div class="main-content non_compressed" id="main-content">
-	<div id="canvas-container"></div>
+	<span id='metadata' data-user-id="{{ user.id }}" data-username="{{ user.username }}"></span>
+	<div id="canvas-container" style="width: 100%; height: 100%; z-index: -100;"></div>
 	<div id="camera"></div>
 	<div id="scoreboard" class="d-flex justify-content-center align-items-center">
 		<div id="p1"></div>
-		<div id="score">0&nbsp;:&nbsp;0</div>
+		<img id="p1-img" src="{% static 'assets/icons/avatar.png' %}" alt="P1 profile">
+		<div class="d-flex">
+			<div id="p1-score">0</div>
+			<div id="p2-score">0</div>
+		</div>
+		<img id="p2-img" src="{% static 'assets/icons/avatar.png' %}" alt="P2 profile">
 		<div id="p2"></div>
+	</div>
+	<div id="loader-container" class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+		<div id="loader"></div>
+		<div id="loading-message">Connecting ...</div>
 	</div>
 </div>
 
-<script id="game-engine" type="module" src="{% static 'js/game/main.js' %}" 
-	data-user-id="{{ user.id }}" data-username="{{ user.username }}" game-type="Remote"></script>
+<script type="module">
+	import { Application } from '/static/js/game/Application.js';
+
+	myUser.connectSocket(
+		'gameSocket',
+		`wss://${window.location.host}/wss/games/remote/queue`,
+		(event) => {
+			const { player1, player2, ball, gameID } = JSON.parse(event.data);
+
+			let app = new Application();
+			app.init({player1Data: player1, 
+				player2Data: player2,
+				gameSocket: myUser.gameSocket, 
+				gameType: "Remote",
+				gameID: gameID,
+				ballDirection: ball.direction,
+			});
+			app.render();
+	})
+</script>
 {% endblock %}

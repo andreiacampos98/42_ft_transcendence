@@ -58,7 +58,7 @@ async function getSuggestions() {
 		const pic = document.createElement('img');
 		pic.classList.add('suggestion-pic');
 		if (user.picture.includes("http"))
-			pic.src = `https://${decodeURIComponent(user.picture.slice(14))}`;
+			pic.src = `https://${decodeURIComponent(user.picture).slice(14)}`;
 		else
 			pic.src = user.picture;
 		pic.alt = `${user.username}'s profile picture`;

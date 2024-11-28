@@ -1,23 +1,12 @@
 #canvas-container { 
     width: 100%; 
     height: 100%;
-	z-index: -100;
+	position: fixed;
 }
 
 #canvas-container > canvas {
 	border-radius: 8px;
-}
-
-#camera { 
-    position: absolute; 
-    left: 100px; 
-    top: 20px; 
-    width: 100px; 
-    height: 100px; 
-    color: lightgreen; 
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 20px; 
-    z-index: 1000; 
+	display: none;
 }
 
 #gui { 
@@ -27,11 +16,15 @@
 }
 
 #scoreboard {
+	border-radius: 10px 10px 0px 0px;
+	background-color: #000000AA;
 	color: white;
-    height: 50px;
-    width: 100%; 
+    height: fit-content;
+	width: 100%;
 	position: absolute;
-    top: 36px; 
+	padding: 20px;
+	visibility: hidden;
+	transition: visible ease-in 0.5s;
 }
 
 #p1 {
@@ -44,12 +37,89 @@
 	text-align: start;
 }
 
-#score {
-	font-size: 32px;
-	font-weight: bold;
+.p1-scored-goal {
+	animation: highlight-p1 0.3s ease-out;
 }
 
-#p1, #p2, #score {
-	width: 300px;
-	/* background-color: red;	 */
+.p2-scored-goal {
+	animation: highlight-p2 0.3s ease-out;
+}
+
+#p1-score, #p2-score {
+	font-size: 32px;
+	font-weight: bold;
+    border-radius: 8px;
+    padding-inline: 16px;
+    padding-block: 4px;
+    margin-inline: 30px;
+}
+
+#p1-score {
+	background-color: #FF000055;
+	border: 1px solid #880000;
+	margin-right: 8px;
+}
+
+#p2-score {
+	background-color: #00FFFF55;
+	border: 1px solid #008888;
+	margin-left: 8px;
+}
+
+#p1, #p2 {
+	/* width: 300px; */
+	margin-inline: 16px;
+}
+
+#p1-img, #p2-img {
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
+	border-radius: 50%;
+
+}
+
+#loader-container {
+	transition: background-color 0.5s ease;
+	border-top-left-radius: 10px;
+	background-color: #00000055;
+	z-index: -101;
+	position: fixed;
+}
+
+#loading-message {
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+#loader {
+	width: 500px;
+    height: 300px;
+    border: 1px outset #F8D082;
+    margin-block: 16px;
+    position: relative;
+    box-sizing: border-box;
+    padding: 10px;
+    background: 
+		linear-gradient(#F8D082 0 0) 10px 10px / 8px 40px, 
+		linear-gradient(#F8D082 0 0) calc(100% - 10px) 10px / 8px 40px, 
+		radial-gradient(farthest-side, #F8D082 90%, #0000) 10px 15px / 8px 8px content-box, 
+		transparent;
+    background-repeat: no-repeat;
+    animation: move-paddles 5s infinite linear;
+}
+@keyframes move-paddles {
+    25% {background-position: 10px 10px, calc(100% - 10px) calc(100% - 10px), calc(100% - 10px) calc(100% - 5px)}
+    50% {background-position: 10px calc(100% - 10px), calc(100% - 10px) calc(100% - 10px), 10px calc(100% - 5px)}
+    75% {background-position: 10px calc(100% - 10px), calc(100% - 10px) 10px, calc(100% - 10px) 15px}
+}
+
+@keyframes highlight-p1 {
+    0% {background-color: #FFFFFF }
+    100% {background-color: #FF000055 }
+}
+
+@keyframes highlight-p2 {
+    0% {background-color: #FFFFFF }
+    100% {background-color: #00FFFF55 }
 }

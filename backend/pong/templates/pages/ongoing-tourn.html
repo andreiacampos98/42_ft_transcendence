@@ -3,24 +3,32 @@
 
 {% block main_content %}
     <link rel="stylesheet" href="{% static 'css/ongoing-tourn.css' %}">
-    <script defer src="{% static 'js/ongoing-tourn.js' %}"></script>
     <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
 		<div class="main d-flex justify-content-center">
 			<div class="tourn-header d-flex align-items-center">
 				<div class="tourn-info d-flex flex-column">
 					<h1 class="tourn-title">{{ tournament_name }}</h1>
-					<h3 class="tourn-status">Waiting for players to enter...</h3>
+					<span class="tourn-status">
+						{% if tournament.status == 'Open' %}
+						Waiting for players to enter...
+						{% elif tournament.status == 'Ongoing' %}
+						Waiting for phase games to finish...
+						{% endif %}
+					</span>
+
 				</div>
-				<button style="margin-bottom: 10px; border: none; background: none; margin-left: auto;" class="change modal-button" id="leave-tournament" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
+				{% if tournament.status == 'Open' %}
+				<button style="margin-bottom: 10px; border: none; background: none; margin-left: auto;" class="change modal-button" id="leave-tournament-button" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
 					<img src="{% static 'assets/icons/leave-tournament.png' %}" alt="Leave Tournament">
 				</button>
+				{% endif %}
 			</div>
 			<div id="modal" class="m">
                 <div class="m-content d-flex align-items-center flex-column">
                     <h3 style="padding-top: 10px;">Leave Tournament</h3>
 					<p>You're about to quit the tournament. Are you sure?</p>
 					<div style="width: 100%;" class="bottom-buttons d-flex justify-content-between">
-						<button style="margin-top: 0;" class="change modal-button" id="leaver" onclick="leaveTournament()" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
+						<button style="margin-top: 0;" class="change modal-button" id="leaver" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
 							<span class="change-b" id="change">Yes, I am.</span>
 						</button>
 						<button style="margin-top: 0; border: none;" class="cancel modal-button" id="cancel">Go back</button>
@@ -32,7 +40,7 @@
             			<div class="round d-flex align-items-center justify-content-between round-1">
             			    <div class="matchup d-flex align-items-start justify-content-between">
             			        <h1 class="group">Group A</h1>
-            			        <div class="player  d-flex align-items-center" id="player1">
+            			        <div class="semi-final player d-flex align-items-center" id="player1">
 									<div class="main-core d-flex align-items-center">
 										<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 1" class="icon">
 										<span class="name">Player 1</span>
@@ -41,11 +49,11 @@
 										<span class="score">0</span>
 									</div>
             			        </div>
-            			        <div class="line-h"></div>
-								<div class="line-v-d u"></div>
-								<div class="line-v-d d" style="top: 112px;"></div>
-								<div class="line-h2"></div>
-            			        <div class="player  d-flex align-items-center" id="player2">
+            			        <div class="line-h semi-final-line-0"></div>
+								<div class="line-v-d u semi-final-line-0"></div>
+								<div class="line-v-d d semi-final-line-1" style="top: 113px;"></div>
+								<div class="line-h2 semi-final-line-0 semi-final-line-1"></div>
+            			        <div class="semi-final player d-flex align-items-center" id="player2">
 									<div class="main-core d-flex align-items-center"> 
 										<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 2" class="icon">
 										<span class="name">Player 2</span>
@@ -54,11 +62,11 @@
 										<span class="score">0</span>
 									</div>
             			        </div>
-            			        <div class="line-h"></div>
+								<div class="line-h semi-final-line-1"></div>
             			    </div>
             			    <div class="matchup d-flex align-items-start justify-content-between">
             			        <h1 class="group">Group B</h1>
-            			        <div class="player  d-flex align-items-center" id="player3">
+            			        <div class="semi-final player d-flex align-items-center" id="player3">
 									<div class="main-core d-flex align-items-center">
 										<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 3" class="icon">
 										<span class="name">Player 3</span>
@@ -67,13 +75,12 @@
 										<span class="score">0</span>
 									</div>
             			        </div>
-            			        <div class="line-h"></div>
-								<div class="line-v-d u" style="top: 58px;"></div>
-								<div class="line-v-d d"></div>
-								<div class="line-h2"></div>
-            			        <div class="player  d-flex align-items-center" id="player4">
+            			        <div class="line-h semi-final-line-2"></div>
+								<div class="line-v-d u semi-final-line-2" style="top: 58px;"></div>
+								<div class="line-v-d d semi-final-line-3"></div>
+								<div class="line-h2 semi-final-line-2 semi-final-line-3"></div>
+            			        <div class="semi-final player d-flex align-items-center" id="player4">
 									<div class="main-core d-flex align-items-center">
-
 										<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 4" class="icon">
 										<span class="name">Player 4</span>
 									</div>
@@ -81,55 +88,45 @@
 										<span class="score">0</span>
 									</div>
             			        </div>
-            			        <div class="line-h"></div>
+            			        <div class="line-h semi-final-line-3"></div>
             			    </div>
             			</div>
             			<div class="round d-flex align-items-center justify-content-between round-2" style=" height:  453px;position: fixed;left: 489px;top: 82px;">
             			    <div class="matchup d-flex align-items-start justify-content-between">
-            			        <div class="player  d-flex align-items-center" id="semi1">
+            			        <div class="final player d-flex align-items-center" id="semi1">
 									<div class="main-core d-flex align-items-center">
-										<!--{% if name is None %} -->
-										<!--{% else %} -->
-											<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 1" class="icon">
-										<!--{% endif %} -->
+										<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 1" class="icon">
 										<span class="name">Group A Winner</span>
 									</div>
 									<div class="score2">
 										<span class="score">0</span>
 									</div>
             			        </div>
-            			        <div class="line-h" style="top: -128px;"></div>
-								<div class="line-v-d u" style="top: 29px; height: 132px;"></div>
-								<div class="line-v-d d" style="top: 160px;height: 145px;"></div>
-								<div class="line-h2"  style="top: -57px;"></div>
-            			        <div class="player  d-flex align-items-center" id="semi2">
+            			        <div class="line-h final-line-0" style="top: -128px;"></div>
+								<div class="line-v-d u final-line-0" style="top: 30px;height: 127px;"></div>
+								<div class="line-v-d d final-line-1" style="top: 160px;height: 142px;"></div>
+								<div class="line-h2 final-line-0 final-line-1"  style="top: -58px;"></div>
+            			        <div class="final player d-flex align-items-center" id="semi2">
 									<div class="main-core d-flex align-items-center">
-										<!--{% if name is None %} -->
-										<!--{% else %} -->
-											<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 2" class="icon">
-										<!--{% endif %} -->
+										<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 2" class="icon">
 										<span class="name">Group B Winner</span>
 									</div>
 									<div class="score2">
 										<span class="score">0</span>
 									</div>
             			        </div>
-            			        <div class="line-h" style="top: -128px;"></div>
+            			        <div class="line-h final-line-1" style="top: -128px;"></div>
             			    </div>
             			</div>
             			<div class="round d-flex align-items-center justify-content-between round-3" style="position: absolute;left: 962px;">
             			    <div class="matchup d-flex align-items-start justify-content-between">
-            			        <div class="player  d-flex align-items-center" id="final">
+            			        <div class="winner player d-flex align-items-center" id="final">
 									<div class="main-core d-flex align-items-center">
-										<!--{% if name is None %} -->
-										<!--{% else %} -->
-											<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
-										<!--{% endif %} -->
+										<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
 										<span class="name">Tournament Winner</span>
 									</div>
 									<div class="score2">
 										<img src="{% static 'assets/icons/trophy.png' %}" style="width: 20px; height: 20px; margin: 0;" alt="Final Winner" class="icon">
-
 									</div>
 								</div>
 							</div>
@@ -142,7 +139,7 @@
 					<div class="round d-flex align-items-center justify-content-between round-1">
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<h1 class="group">Group A</h1>
-							<div class="player  d-flex align-items-center" id="player1">
+							<div class="quarter-final player d-flex align-items-center" id="player1">
 								<div class="main-core d-flex align-items-center">
 									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 1" class="icon">
 									<span class="name">Player 1</span>
@@ -151,11 +148,11 @@
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h"></div>
-							<div class="line-v-d u" style="top: 58px;"></div>
-							<div class="line-v-d d" style="top: 113px;"></div>
-							<div class="line-h2"></div>
-							<div class="player  d-flex align-items-center" id="player2">
+							<div class="line-h quarter-final-line-0"></div>
+							<div class="line-v-d u quarter-final-line-0" style="top: 58px;"></div>
+							<div class="line-v-d d quarter-final-line-1" style="top: 113px;"></div>
+							<div class="line-h2 quarter-final-line-0 quarter-final-line-1"></div>
+							<div class="quarter-final player d-flex align-items-center" id="player2">
 								<div class="main-core d-flex align-items-center"> 
 									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 2" class="icon">
 									<span class="name">Player 2</span>
@@ -164,11 +161,11 @@
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h"></div>
+							<div class="line-h quarter-final-line-1"></div>
 						</div>
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<h1 class="group">Group B</h1>
-							<div class="player  d-flex align-items-center" id="player3">
+							<div class="quarter-final player d-flex align-items-center" id="player3">
 								<div class="main-core d-flex align-items-center">
 									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 3" class="icon">
 									<span class="name">Player 3</span>
@@ -177,13 +174,12 @@
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h"></div>
-							<div class="line-v-d u" style="top: 57px;"></div>
-							<div class="line-v-d d" style="top: 112px;"></div>
-							<div class="line-h2"></div>
-							<div class="player  d-flex align-items-center" id="player4">
+							<div class="line-h quarter-final-line-2"></div>
+							<div class="line-v-d u quarter-final-line-2" style="top: 58px;"></div>
+							<div class="line-v-d d quarter-final-line-3" style="top: 113px;"></div>
+							<div class="line-h2 quarter-final-line-2 quarter-final-line-3"></div>
+							<div class="quarter-final player d-flex align-items-center" id="player4">
 								<div class="main-core d-flex align-items-center">
-
 									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 4" class="icon">
 									<span class="name">Player 4</span>
 								</div>
@@ -191,75 +187,62 @@
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h"></div>
+							<div class="line-h quarter-final-line-3"></div>
 						</div>
 					</div>
 					<div class="round d-flex align-items-center justify-content-between round-2" style=" height:  453px;position: fixed;left: 489px;top: 82px;">
 						<div class="matchup d-flex align-items-start justify-content-between">
-							<div class="player  d-flex align-items-center" id="semi1">
+							<div class="semi-final player d-flex align-items-center" id="semi1">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 1" class="icon">
-									<!--{% endif %} -->
+									<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 1" class="icon">
 									<span class="name">Group A Winner</span>
 								</div>
 								<div class="score2">
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h" style="top: -128px;"></div>
-							<div class="line-v-d u" style="top: 30px; height: 126px;"></div>
-							<div class="line-v-d d" style="top: 155px;height: 150px;"></div>
-							<div class="line-h2"  style="top: -63px;"></div>
-							<div class="player  d-flex align-items-center" id="semi2">
+							<div class="line-h semi-final-line-0" style="top: -128px;"></div>
+							<div class="line-v-d u semi-final-line-0" style="top: 30px; height: 122px;"></div>
+							<div class="line-v-d d semi-final-line-1" style="top: 156px;height: 145px;"></div>
+							<div class="line-h2 semi-final-line-0 semi-final-line-1"  style="top: -63px;width: 44%"></div>
+							<div class="semi-final player d-flex align-items-center" id="semi2">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 2" class="icon">
-									<!--{% endif %} -->
+									<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 2" class="icon">
 									<span class="name">Group B Winner</span>
 								</div>
 								<div class="score2">
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h" style="top: -128px;"></div>
+							<div class="line-h semi-final-line-1" style="top: -128px;"></div>
 						</div>
 					</div>
 					<div class="round d-flex align-items-center justify-content-between round-3" style="position: absolute;left: 962px;">
 						<div class="matchup d-flex align-items-start justify-content-between">
-							<div class="player  d-flex align-items-center" id="final">
+							<div class="final player d-flex align-items-center" id="final">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
-									<!--{% endif %} -->
+									<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
 									<span class="name">Semi Finals Winner</span>
 								</div>
 								<div class="score2">
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h" style="top: -79px;"></div>
-							<div class="line-v-d u" style="top: 26px; height: 269px;"></div>
-							<div class="line-v-d d" style="top: 294px;height: 270px;"></div>
-							<div class="line-h2"  style="top: 185px;"></div>
+							<div class="line-h final-line-0" style="top: -79px;"></div>
+							<div class="line-v-d u final-line-0" style="top: 26px; height: 268px;"></div>
+							<div class="line-v-d d final-line-1" style="top: 298px;height: 297px;"></div>
+							<div class="line-h2 final-line-0 final-line-1"  style="top: 185px;"></div>
 						</div>
 					</div>
 					<div class="round d-flex align-items-center justify-content-between round-4" style="position: absolute;left: 1444px;top: 469px;">
 						<div class="matchup d-flex align-items-start justify-content-between">
-							<div class="player  d-flex align-items-center" id="final">
+							<div class="winner player d-flex align-items-center" id="final">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
-									<!--{% endif %} -->
+									<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
 									<span class="name">Tournament Winner</span>
 								</div>
 								<div class="score2">
 									<img src="{% static 'assets/icons/trophy.png' %}" style="width: 20px; height: 20px; margin: 0;" alt="Final Winner" class="icon">
-
 								</div>
 							</div>
 						</div>
@@ -269,7 +252,7 @@
 					<div class="round d-flex align-items-center justify-content-between round-1">
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<h1 class="group">Group C</h1>
-							<div class="player  d-flex align-items-center" id="player1">
+							<div class="quarter-final player d-flex align-items-center" id="player1">
 								<div class="main-core d-flex align-items-center">
 									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 1" class="icon">
 									<span class="name">Player 5</span>
@@ -278,11 +261,11 @@
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h"></div>
-							<div class="line-v-d u" style="top: 58px;"></div>
-							<div class="line-v-d d" style="top: 113px;"></div>
-							<div class="line-h2"></div>
-							<div class="player  d-flex align-items-center" id="player2">
+							<div class="line-h quarter-final-line-4"></div>
+							<div class="line-v-d u quarter-final-line-4" style="top: 58px;"></div>
+							<div class="line-v-d d quarter-final-line-5" style="top: 113px;"></div>
+							<div class="line-h2 quarter-final-line-4 quarter-final-line-5"></div>
+							<div class="quarter-final player d-flex align-items-center" id="player2">
 								<div class="main-core d-flex align-items-center"> 
 									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 2" class="icon">
 									<span class="name">Player 6</span>
@@ -291,11 +274,11 @@
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h"></div>
+							<div class="line-h quarter-final-line-5"></div>
 						</div>
 						<div class="matchup d-flex align-items-start justify-content-between">
 							<h1 class="group">Group D</h1>
-							<div class="player  d-flex align-items-center" id="player3">
+							<div class="quarter-final player d-flex align-items-center" id="player3">
 								<div class="main-core d-flex align-items-center">
 									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 3" class="icon">
 									<span class="name">Player 7</span>
@@ -304,13 +287,12 @@
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h"></div>
-							<div class="line-v-d u" style="top: 57px;"></div>
-							<div class="line-v-d d" style="top: 112px;"></div>
-							<div class="line-h2"></div>
-							<div class="player  d-flex align-items-center" id="player4">
+							<div class="line-h quarter-final-line-6"></div>
+							<div class="line-v-d u quarter-final-line-6" style="top: 58px;"></div>
+							<div class="line-v-d d quarter-final-line-7" style="top: 113px;"></div>
+							<div class="line-h2 quarter-final-line-6 quarter-final-line-7"></div>
+							<div class="quarter-final player d-flex align-items-center" id="player4">
 								<div class="main-core d-flex align-items-center">
-
 									<img src="{% static 'assets/icons/avatar.png' %}" alt="Player 4" class="icon">
 									<span class="name">Player 8</span>
 								</div>
@@ -318,65 +300,54 @@
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h"></div>
+							<div class="line-h quarter-final-line-7"></div>
 						</div>
 					</div>
 					<div class="round d-flex align-items-center justify-content-between round-2" style=" height:  453px;position: fixed;left: 489px;top: 82px;">
 						<div class="matchup d-flex align-items-start justify-content-between">
-							<div class="player  d-flex align-items-center" id="semi1">
+							<div class="semi-final player d-flex align-items-center" id="semi1">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 1" class="icon">
-									<!--{% endif %} -->
+									<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 1" class="icon">
 									<span class="name">Group C Winner</span>
 								</div>
 								<div class="score2">
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h" style="top: -128px;"></div>
-							<div class="line-v-d u" style="top: 30px; height: 126px;"></div>
-							<div class="line-v-d d" style="top: 155px;height: 150px;"></div>
-							<div class="line-h2"  style="top: -62px;"></div>
-							<div class="player  d-flex align-items-center" id="semi2">
+							<div class="line-h semi-final-line-2" style="top: -128px;"></div>
+							<div class="line-v-d u semi-final-line-2" style="top: 30px; height: 122px;"></div>
+							<div class="line-v-d d semi-final-line-3" style="top: 156px;height: 145px;"></div>
+							<div class="line-h2 semi-final-line-2 semi-final-line-3"  style="top: -63px; width: 44%"></div>
+							<div class="semi-final player d-flex align-items-center" id="semi2">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 2" class="icon">
-									<!--{% endif %} -->
+									<img src="{% static 'assets/icons/avatar.png' %}" alt="Semi 2" class="icon">
 									<span class="name">Group D Winner</span>
 								</div>
 								<div class="score2">
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h" style="top: -128px;"></div>
+							<div class="line-h semi-final-line-3" style="top: -128px;"></div>
 						</div>
 					</div>
 					<div class="round d-flex align-items-center justify-content-between round-3" style="position: absolute;left: 962px;">
 						<div class="matchup d-flex align-items-start justify-content-between">
-							<div class="player  d-flex align-items-center" id="final">
+							<div class="final player d-flex align-items-center" id="final">
 								<div class="main-core d-flex align-items-center">
-									<!--{% if name is None %} -->
-									<!--{% else %} -->
-										<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
-									<!--{% endif %} -->
+									<img src="{% static 'assets/icons/avatar.png' %}" alt="Final Winner" class="icon">
 									<span class="name">Semi Finals Winner</span>
 								</div>
 								<div class="score2">
 									<span class="score">0</span>
 								</div>
 							</div>
-							<div class="line-h" style="top: -78px;"></div>
+							<div class="line-h final-line-1" style="top: -78px;"></div>
 						</div>
 					</div>
 				</div>
 			</div>
-				{% else %}
-				
 				{% endif %}
-
 			</div>
         </div>
+
 {% endblock %}

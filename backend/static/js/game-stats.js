@@ -1,6 +1,3 @@
-const FAST_BALL_SPEED = 2;
-const HIGH_RALLY_LENGTH = 15;
-
 function interpolateColor(startColor, endColor, factor) {
 	const result = startColor.slice(); // Create a copy of the start color
 	for (let i = 0; i < 3; i++) {
@@ -21,6 +18,8 @@ function applyGradientToHeatmap() {
 	const ballSpeedSquares = document.querySelectorAll('.square-speed'); // Select all divs with class 'square'
 	const startColor = [255, 255, 255]; // RGB for #FFFFFF (white)
 	const endColor = [253, 180, 39];  // RGB for #F8D082 (light orange)
+	const FAST_BALL_SPEED = 2;
+	const HIGH_RALLY_LENGTH = 15;
 
 	rallyLengthSquares.forEach(square => {
 		const value = parseInt(square.textContent); // Get the text inside the div and convert to integer
@@ -92,10 +91,11 @@ async function loadCharts() {
 
 	var options = {
 		chart: {
-		type: 'line',
-		toolbar: {
-			show: false
-		},
+			type: 'line',
+			id: 'line',
+			toolbar: {
+				show: false
+			},
 		},
 		stroke: {
 			curve: 'straight',
@@ -167,11 +167,13 @@ async function loadCharts() {
 		},
 		colors: ['#F8D082', '#336181'],
 	};
+
+	if (!charts['line']) 
+		charts['line'] = new ApexCharts(document.querySelector('#chart3'), options);
+	else 
+		charts['line'].el = document.querySelector('#chart3');
 	
-	var chart = new ApexCharts(document.querySelector("#chart"), options);
-	chart.render();
+	charts['line'].render();
 }
 
 loadCharts();
-
-

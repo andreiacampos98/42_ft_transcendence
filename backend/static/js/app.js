@@ -38,12 +38,6 @@ const appendScripts = () => {
 	routeScripts[route].forEach(file => {		
 		let script = document.createElement('script');
 		script.src = file.startsWith('https') ? file : `/static/js/${file}.js`;
-		script.onload = () => {
-			if (file === 'https://cdn.jsdelivr.net/npm/apexcharts') {
-				console.log('ApexCharts loaded successfully');
-				// Initialize your chart here if needed
-			}
-		};
 		document.body.appendChild(script);
 	});
 };
