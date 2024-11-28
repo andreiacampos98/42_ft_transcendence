@@ -1624,6 +1624,17 @@ def gameonline(request):
 	return render(request,'pages/gameonline.html', context)
 
 @login_required
+def gameai(request):
+	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	user_id = request.user.id
+	context = {
+		'user_id': user_id,
+		'friends': friends,
+	}
+	return render(request,'pages/gameai.html', context)
+
+@login_required
 def gametournament(request):
 	user_id = request.user.id
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))

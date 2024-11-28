@@ -8,6 +8,7 @@ import { RemoteGameController } from './controllers/RemoteGameController.js';
 import { FPS, REFRESH_RATE } from './macros.js';
 import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+import { AIGameController } from './controllers/AIGameController.js';
 
 
 var frameID;
@@ -99,8 +100,17 @@ export class Application  {
 				gameID: gameID,
 				app: this
 			});
-		} else {
+		} 
+		else if (gameType == "Local") {
 			this.gameController = new LocalGameController({ 
+				scene: this.scene,
+				player1Data: player1Data, 
+				player2Data: player2Data,
+				app: this
+			});
+		}
+		else {
+			this.gameController = new AIGameController({ 
 				scene: this.scene,
 				player1Data: player1Data, 
 				player2Data: player2Data,
@@ -121,7 +131,7 @@ export class Application  {
 		
 		const coords = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
 		new TWEEN.Tween(coords)
-			.to({x: 0, y: 0.15, z: 1.2 }, 5000)
+			.to({x: 0, y: 0.15, z: 1.2 }, 1500)
 			.easing(TWEEN.Easing.Cubic.Out)
 			.onUpdate(() =>this.camera.position.set(coords.x, coords.y, coords.z))
 			.onComplete(() => this.gameCanStart = true)
