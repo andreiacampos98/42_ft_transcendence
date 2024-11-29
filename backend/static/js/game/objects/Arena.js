@@ -23,11 +23,13 @@ export class Arena extends THREE.Group {
 
 		this.upperBoundary = new THREE.Mesh(
 			new THREE.PlaneGeometry(length, depth),
-			new THREE.MeshBasicMaterial({ transparent: true, opacity: 1 })
+			// new THREE.MeshBasicMaterial({ transparent: true, opacity: 1 })
+			new THREE.MeshNormalMaterial(length, depth),
 		);
 		this.leftBoundary = new THREE.Mesh(
 			new THREE.PlaneGeometry(depth, height),
-			new THREE.MeshBasicMaterial({ transparent: true, opacity: 1 })
+			// new THREE.MeshBasicMaterial({ transparent: true, opacity: 1 })
+			new THREE.MeshNormalMaterial(length, depth),
 		);
 		this.lowerBoundary = this.upperBoundary.clone();
 		this.rightBoundary = this.leftBoundary.clone();
@@ -36,7 +38,7 @@ export class Arena extends THREE.Group {
 		this.lowerBoundary.position.set(0, -this.semiHeight + this.semiDepth, 0);
 		this.leftBoundary.position.set(-this.semiLength, 0, 0);
 		this.rightBoundary.position.set(this.semiLength, 0, 0);
-		this.visible = false;
+		// this.visible = false;
 
 		this.add(this.lowerBoundary, this.upperBoundary, this.leftBoundary, this.rightBoundary);
 	}

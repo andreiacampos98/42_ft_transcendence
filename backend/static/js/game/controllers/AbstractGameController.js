@@ -38,7 +38,7 @@ export class AbstractGameController extends THREE.Group {
 	build({ onPaddleHit=null }) {
 		this.arena = new Arena();
 		this.ball = new Ball({ onPaddleHit: onPaddleHit });
-		// this.arcade = new Arcade(this.app);
+		this.arcade = new Arcade(this.app);
 		// this.arcade2 = new Arcade(this.app);
 		// this.arcade2.position.x = -0.6;
 		// this.arcade3 = new Arcade(this.app);
@@ -58,7 +58,7 @@ export class AbstractGameController extends THREE.Group {
 	update(delta) {
 		this.player1.update(this.pressedKeys);
 		this.player2.update(this.pressedKeys, this.ball, this.player1);
-		// this.arcade.update(this.pressedKeys);
+		this.arcade.update(this.pressedKeys);
 
 		if (this.stats.isGameOver())
 			return;
