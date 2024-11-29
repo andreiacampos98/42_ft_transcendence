@@ -12,18 +12,22 @@ export class AIPlayer extends AbstractPlayer {
 			picture: picture,
 			keybinds: keybinds
 		});
+		this.lastTimeUpdated = Date.now();
+		this.nextPos = this.position;
 	}
 
 	update(pressedKeys=null, ball, player) {
+		if (Date.now() - this.lastTimeUpdated < 1000) {
+			this.paddle.position.lerp(this.nextPos, 0.1);
+			return ;		
+		}
 		let ball_destination = null;
 		// if (ball.direction.x == DIRECTION.RIGHT)
-			// ball_destination = this.get_future_path(ball);
-		let final_pos = this.final_AI_position(ball_destination, player.paddle.position.y);
-		console.log('FINAL POS', final_pos);
-		console.log('CURR POS', this.paddle.position);
-
-		this.paddle.position.lerp(final_pos, 0.5);
+		// ball_destination = this.get_future_path(ball);
+		this.nextPos = this.final_AI_position(ball_destination, player.paddle.position.y);
+		
 		// this.paddle.position.set(...final_pos);
+		this.lastTimeUpdated = Date.now();
 	}
 
 	get_future_path(ball) {
