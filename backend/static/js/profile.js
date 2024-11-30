@@ -53,11 +53,18 @@ async function loadDonutChart() {
 		method: "GET",
 	});
 	const stats = await response.json();
+
+	if (stats.remote_time_played + stats.ai_time_played + stats.local_time_played + stats.tournament_time_played == 0)
+		return ;
+	console.log(stats.remote_time_played,stats.ai_time_played,stats.local_time_played,stats.tournament_time_played);
 	
 	const remoteTime = Math.round(stats.remote_time_played / 60);
 	const aiTime = Math.round(stats.ai_time_played / 60);
 	const localTime = Math.round(stats.local_time_played / 60);
 	const tournamentTime = Math.round(stats.tournament_time_played / 60);
+	
+	console.log(remoteTime, aiTime, localTime, tournamentTime);
+
 	var options = {
 		chart: {
 			type: 'donut',
@@ -159,6 +166,10 @@ async function loadBarLineChart() {
 	});
 	console.log('TOTAL GAMES', totalGames);
 	console.log('WIN RATES', winRates);
+
+	const hasNoWeekGames = totalGames.every(gamesPerDay => gamesPerDay == 0);
+	if (hasNoWeekGames)
+		return ;
 
 	var options = {
 		chart: {
