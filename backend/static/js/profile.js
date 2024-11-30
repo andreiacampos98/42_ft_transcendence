@@ -54,26 +54,20 @@ async function loadDonutChart() {
 	});
 	const stats = await response.json();
 	
-	var remoteTime = 0;
-	var aiTime = 0;
-	var localTime = 0;
-	var tournamentTime = 0;
-	var unit = 'idk';
-	if ((stats.remote_time_played > 0 && stats.remote_time_played < 60) || (stats.ai_time_played > 0 && stats.ai_time_played < 60) || (stats.local_time_played > 0 &&  stats.local_time_played < 60) || (stats.tournament_time_played > 0 && stats.tournament_time_played < 60))
-	{
-		remoteTime = Math.round(stats.remote_time_played);
-		aiTime = Math.round(stats.ai_time_played);
-		localTime = Math.round(stats.local_time_played);
-		tournamentTime = Math.round(stats.tournament_time_played);
-		unit = "Sec";
-	}
-	else
-	{
-		remoteTime = Math.round(stats.remote_time_played / 60);
-		aiTime = Math.round(stats.ai_time_played / 60);
-		localTime = Math.round(stats.local_time_played / 60);
-		tournamentTime = Math.round(stats.tournament_time_played / 60);
-		unit = 'Min'
+	var remoteTime = stats.remote_time_played;
+	var aiTime = stats.ai_time_played;
+	var localTime = stats.local_time_played;
+	var tournamentTime = stats.tournament_time_played;
+	var unit = 'Sec';
+	
+	const totalTime = remoteTime + aiTime + localTime + tournamentTime;
+	
+	if (totalTime >= 60){
+		remoteTime = Math.round(remoteTime / 60);
+		aiTime = Math.round(aiTime / 60);
+		localTime = Math.round(localTime / 60);
+		tournamentTime = Math.round(tournamentTime / 60);
+		unit = "Min";
 	}
 
 	var options = {
