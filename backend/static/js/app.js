@@ -45,7 +45,7 @@ const appendScripts = () => {
 const mutationsCallback = (mutations) => {
 	localStorage.removeItem('htmx-history-cache')
 	// Ignore second set of mutations
-	console.log(lastRoute, currRoute, window.location.pathname)
+	console.log('Last Route: ', lastRoute, 'Curr Route: ', currRoute, 'Path name: ', window.location.pathname)
 	if (currRoute == window.location.pathname)
 		return ;
 	
@@ -96,8 +96,38 @@ window.addEventListener('htmx:beforeRequest', (event) => {
 window.addEventListener('popstate', (event) => {
 	console.log("event");
     const currentUrl = window.location.pathname;
+	const pathName = window.location.pathname;
+    const queryParams = new URLSearchParams(window.location.search);
 
-    if (currRoute !== currentUrl) {
+    const hasAccessToken = queryParams.has('access_token');
+
+    if (pathName === '/home/' && hasAccessToken) {
+        console.log('Redirecionando para a página inicial sem parâmetros.');
+        //history.pushState(null, '', '/home/');
+        htmx.ajax('GET', '/home/', {
+            target: '#main',
+            swap: 'innerHTML'
+        }).then(() => {
+            appendScripts();
+        });
+        return;
+    }
+
+	else if ((currentUrl === '/' || currentUrl === '/verifyemail/' || currentUrl === '/otp/') && 
+        (currRoute !== '/' && currRoute !== '/verifyemail/' && currRoute !== '/otp/' && currRoute !== '/signup/')) 
+	{
+        console.log('Tentativa de voltar para a página de login detectada.');
+        history.pushState(null, '', currRoute); 
+        htmx.ajax('GET', currRoute, {
+            target: '#main',
+            swap: 'innerHTML'
+        }).then(() => {
+            appendScripts();
+        });
+        return;
+    }
+
+    else if (currRoute !== currentUrl) {
         currRoute = currentUrl;
 
         htmx.ajax('GET', currentUrl, {
