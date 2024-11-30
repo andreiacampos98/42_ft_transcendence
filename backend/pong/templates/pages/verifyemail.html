@@ -13,17 +13,17 @@
                 <div class="input-group">
                     <label for="code">Code:</label>
                     <div class="code-input d-flex align-items-center">
-                        <input type="text" maxlength="1" id="digit1" oninput="handleInput(this, 'digit2')" onpaste="handlePaste(event)">
+                        <input type="text" maxlength="1" id="digit1" oninput="handleInput(this, 'digit2')" onpaste="handlePaste(event)" onkeydown="handleBackspace(event, this, null)">
                         -
-                        <input type="text" maxlength="1" id="digit2" oninput="handleInput(this, 'digit3')">
+                        <input type="text" maxlength="1" id="digit2" oninput="handleInput(this, 'digit3')" onkeydown="handleBackspace(event, this, 'digit1')" >
                         -
-                        <input type="text" maxlength="1" id="digit3" oninput="handleInput(this, 'digit4')">
+                        <input type="text" maxlength="1" id="digit3" oninput="handleInput(this, 'digit4')" onkeydown="handleBackspace(event, this, 'digit2')" >
                         -
-                        <input type="text" maxlength="1" id="digit4" oninput="handleInput(this, 'digit5')">
+                        <input type="text" maxlength="1" id="digit4" oninput="handleInput(this, 'digit5')" onkeydown="handleBackspace(event, this, 'digit3')" >
                         -
-                        <input type="text" maxlength="1" id="digit5" oninput="handleInput(this, 'digit6')">
+                        <input type="text" maxlength="1" id="digit5" oninput="handleInput(this, 'digit6')" onkeydown="handleBackspace(event, this, 'digit4')" >
                         -
-                        <input type="text" maxlength="1" id="digit6" oninput="handleInput(this)">
+                        <input type="text" maxlength="1" id="digit6" oninput="handleInput(this)" onkeydown="handleBackspace(event, this, 'digit5')" >
                     </div>
                     
                       <!-- Hidden input to store the full code -->
