@@ -29,7 +29,6 @@ async function friends_add(event, userId1, userId2) {
 	}
 	else{
         localStorage.setItem('access_token', data.access_token);
-        history.pushState(null, '', `/users/${userId2}`);
 		htmx.ajax('GET', `/users/${userId2}`, {
 			target: '#main'
 		});
@@ -64,7 +63,6 @@ async function friends_remove(event, userId1, userId2) {
 	}
 	else{
         localStorage.setItem('access_token', data.access_token);
-        history.pushState(null, '', `/users/${userId2}`);
 		htmx.ajax('GET', `/users/${userId2}`, {
 			target: '#main'
 		});
