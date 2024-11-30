@@ -48,7 +48,7 @@ export class AbstractGameController extends THREE.Group {
 		this.add(this.player1.paddle);
 		this.add(this.player2.paddle);
 		this.add(this.ball);
-		// this.add(this.arcade);
+		this.add(this.arcade);
 		// this.add(this.arcade, this.arcade2, this.arcade3);
 
 		this.fillPlayerHUD(this.player1, 'p1');
