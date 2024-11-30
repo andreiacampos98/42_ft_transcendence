@@ -10,27 +10,32 @@
 	<div id="camera"></div>
 	<div id="scoreboard" class="d-flex justify-content-center align-items-center">
 		<div id="p1"></div>
-		<div id="score">0&nbsp;:&nbsp;0</div>
+		<img id="p1-img" src="{% static 'assets/icons/avatar.png' %}" alt="P1 profile">
+		<div class="d-flex">
+			<div id="p1-score">0</div>
+			<div id="p2-score">0</div>
+		</div>
+		<img id="p2-img" src="{% static 'assets/icons/avatar.png' %}" alt="P2 profile">
 		<div id="p2"></div>
+	</div>
+	<div id="loader-container" class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+		<div id="loader"></div>
+		<div id="loading-message">Connecting ...</div>
 	</div>
 </div>
 
 <script type="module">
-	import { MyApp } from '/static/js/game/MyApp.js';
-
-	document.getElementById('canvas-container').style.color = '#FFF';
-	document.getElementById('scoreboard').style.color = '#FFF';
+	import { Application } from '/static/js/game/Application.js';
 
 	const userID = document.getElementById('metadata').getAttribute('data-user-id');
 	const username = document.getElementById('metadata').getAttribute('data-username');
-
-	let app = new MyApp();
+	console.log(document.querySelector('.profile-pic').src);
+	let app = new Application();
 	app.init({ 
-		player1Data: {'id': userID, 'username': username},
+		player1Data: {'id': userID, 'username': username, 'picture': document.querySelector('.profile-pic').src},
 		player2Data: {'id': '', 'username': 'Anonymous'},
 		gameType: 'Local' 
 	});
-	app.render();
 </script>
 
 {% endblock %}

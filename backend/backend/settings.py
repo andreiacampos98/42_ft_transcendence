@@ -156,6 +156,9 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
+CSRF_ENABLED = False
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -166,7 +169,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
         "OPTIONS": {
-            "min_length": 10,
+            "min_length": 10 if not DEBUG else 2,
         },
     },
     {

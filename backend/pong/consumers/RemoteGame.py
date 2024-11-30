@@ -38,11 +38,11 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 
 		if event == 'GAME_END':
 			await self.on_game_end(message['data'])
-
-		await self.channel_layer.group_send( self.game_channel, {
-			"type": "broadcast",
-			"message": text_data
-		})
+		else:
+			await self.channel_layer.group_send( self.game_channel, {
+				"type": "broadcast",
+				"message": text_data
+			})
 
 	# ! ============================== MESSAGING ===============================
 
@@ -53,6 +53,13 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		data = json.loads(event['message'])
 		self.game_channel = f'remote_game_{data['gameID']}'
 		await self.send(event['message'])
+
+	async def send_to_opponent(self, event):
+		message = json.loads(event['message'])
+
+		if message['sender_id'] != self.user.id:
+			ic(f'Sending STOPPED_MOVING event from {message['sender_id']} to {self.user.id}, {self.user.username}...')
+			await self.send(event['message'])
 	
 	async def signal_disconnection(self, event):
 		self.has_opponent_disconnected = True
@@ -132,10 +139,13 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 			ic(f'Pairing {self.user.id} - {self.user.username}')
 			await self.pair_player(available_rooms[0])
 		else:
+			ic(self.user.picture)
+			ic(self.user.picture.url)
 			user_data = {
 				'id': self.user.id,
 				'username': self.scope['user'].username,
-				'channel_name': self.channel_name
+				'channel_name': self.channel_name,
+				'picture': self.user.picture.url,
 			}
 			self.set_waiting_room(self.user.id, user_data)
 
@@ -151,6 +161,7 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		curr_player = {
 			'id': self.user.id,
 			'username': self.scope['user'].username,
+			'picture': self.user.picture.url
 		}
 		host_player = self.get_waiting_room(host_room_id)
 		game = await self.create_new_game(host_player['id'])
@@ -175,3 +186,4 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 			})
 		})
 		self.del_waiting_room(host_player['id'])
+

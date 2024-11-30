@@ -313,17 +313,7 @@ def user_update(request, pk):
 
 		if 'picture' in request.FILES:
 			user.picture = request.FILES['picture']
-		else:
-			if user.picture and "http" in user.picture.url:
-				ic(user.picture.url)
-				uri = user.picture.url
-				adjusted_url = uri[7:] if len(uri) > 7 else uri
-				decoded_url = unquote(adjusted_url)
-				ic(decoded_url)
-				user.picture = decoded_url
-			else:
-				ic(user.picture)
-				data['picture'] = user.picture
+		
 	
 		new_username = data.get('username', None)
 		if Users.objects.filter(username=new_username).exists() and user.username != new_username:
@@ -854,7 +844,12 @@ def game_create_helper(data: dict):
 		user2.status = "Playing"
 		user2.save()
 
-	return JsonResponse(serializer.data, status=201)
+	game_data = serializer.data
+	game_data['user1_id'] = UsersSerializer(Users.objects.get(pk=game_data['user1_id'])).data
+	if game_data['user2_id']:
+		game_data['user2_id'] = UsersSerializer(Users.objects.get(pk=game_data['user2_id'])).data
+
+	return JsonResponse(game_data, status=201)
 
 
 def game_create(request=None):
@@ -1627,6 +1622,17 @@ def gameonline(request):
 		'friends': friends,
 	}
 	return render(request,'pages/gameonline.html', context)
+
+@login_required
+def gameai(request):
+	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	user_id = request.user.id
+	context = {
+		'user_id': user_id,
+		'friends': friends,
+	}
+	return render(request,'pages/gameai.html', context)
 
 @login_required
 def gametournament(request):
