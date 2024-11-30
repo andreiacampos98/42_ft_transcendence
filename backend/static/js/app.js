@@ -1,5 +1,6 @@
 var currRoute = '';
 var lastRoute = '';
+var lastQuery = '';
 
 const routeScripts = {
 	'/tournaments/ongoing/': ['ongoing-tourn'],
@@ -45,18 +46,19 @@ const appendScripts = () => {
 const mutationsCallback = (mutations) => {
 	localStorage.removeItem('htmx-history-cache')
 	// Ignore second set of mutations
-	console.log('Last Route: ', lastRoute, 'Curr Route: ', currRoute, 'Path name: ', window.location.pathname)
 	if (currRoute == window.location.pathname)
 		return ;
 	
 	lastRoute = currRoute;
 	currRoute = window.location.pathname;
-
+	lastQuery = window.location.search;
+	
 	if (currRoute.startsWith('/tournaments/ongoing/'))
 		myTournament.updateUI({isPhaseOver: false});
 	// else if (currRoute.startsWith('/tournaments/ongoing/') && lastRoute.startsWith('/gametournament'))
 	// 	return ;
 	appendScripts();
+	console.log('Last Route: ', lastRoute, 'Curr Route: ', currRoute, 'Path name: ', window.location.pathname)
 	
 };
 
@@ -86,6 +88,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 //Handles attempts from a player to navigate away from an ongoing tournament
 window.addEventListener('htmx:beforeRequest', (event) => {
 	let nextRoute = event.detail.pathInfo.finalPath;
+	console.log(event.detail);
 	if (myUser.attemptedToLeaveTournament(currRoute, nextRoute))
 		handleTournamentLeave(event);
 	else if (myUser.attemptedToLeaveRemoteGame(currRoute, nextRoute))
@@ -96,38 +99,8 @@ window.addEventListener('htmx:beforeRequest', (event) => {
 window.addEventListener('popstate', (event) => {
 	console.log("event");
     const currentUrl = window.location.pathname;
-	const pathName = window.location.pathname;
-    const queryParams = new URLSearchParams(window.location.search);
-
-    const hasAccessToken = queryParams.has('access_token');
-
-    if (pathName === '/home/' && hasAccessToken) {
-        console.log('Redirecionando para a página inicial sem parâmetros.');
-        //history.pushState(null, '', '/home/');
-        htmx.ajax('GET', '/home/', {
-            target: '#main',
-            swap: 'innerHTML'
-        }).then(() => {
-            appendScripts();
-        });
-        return;
-    }
-
-	else if ((currentUrl === '/' || currentUrl === '/verifyemail/' || currentUrl === '/otp/') && 
-        (currRoute !== '/' && currRoute !== '/verifyemail/' && currRoute !== '/otp/' && currRoute !== '/signup/')) 
-	{
-        console.log('Tentativa de voltar para a página de login detectada.');
-        history.pushState(null, '', currRoute); 
-        htmx.ajax('GET', currRoute, {
-            target: '#main',
-            swap: 'innerHTML'
-        }).then(() => {
-            appendScripts();
-        });
-        return;
-    }
-
-    else if (currRoute !== currentUrl) {
+	
+	if (currRoute !== currentUrl) {
         currRoute = currentUrl;
 
         htmx.ajax('GET', currentUrl, {

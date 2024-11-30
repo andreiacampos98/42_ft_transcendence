@@ -1357,17 +1357,22 @@ def login42(request):
 			user.save()
 			login(request, user)
 
-			# Criação da URL com os parâmetros necessários para redirecionar o frontend
-			# redirect_url = f"{settings.BASE_URL}/home?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home"
-			redirect_url = request.build_absolute_uri(reverse('home') + f"?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home")
-
-			response = HttpResponseRedirect(redirect_url)
+			response = HttpResponseRedirect(reverse('home')) 
 			response.set_cookie(
 				'refresh_token',
 				user_tokens.get('refresh'),
-				httponly=True, 
+				httponly=False, 
 				secure=True, 
-				samesite='Lax'   
+				samesite='Lax',
+				max_age=3600
+			)
+			response.set_cookie(
+				'access_token',
+				user_tokens.get('access'),
+				httponly=False, 
+				secure=True, 
+				samesite='Lax',
+				max_age=120 
 			)
 			# Redireciona o usuário para a URL com os tokens
 			return response
@@ -1397,18 +1402,23 @@ def login42(request):
 			myuser.save()
 			login(request, user)
 
-			# Criação da URL com os parâmetros necessários para redirecionar o frontend
-			# redirect_url = f"{settings.BASE_URL}/home?message=User%20created%20and%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home"
-			redirect_url = request.build_absolute_uri(reverse('home') + f"?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home")
-
-			# Redireciona o usuário para a URL com os tokens
-			response = HttpResponseRedirect(redirect_url)
+		
+			response = HttpResponseRedirect(reverse('home')) 
 			response.set_cookie(
 				'refresh_token',
 				user_tokens.get('refresh'),
-				httponly=True, 
+				httponly=False, 
 				secure=True, 
-				samesite='Lax'   
+				samesite='Lax',
+				max_age=3600
+			)
+			response.set_cookie(
+				'access_token',
+				user_tokens.get('access'),
+				httponly=False, 
+				secure=True, 
+				samesite='Lax',
+				max_age=120
 			)
 			# Redireciona o usuário para a URL com os tokens
 			return response
