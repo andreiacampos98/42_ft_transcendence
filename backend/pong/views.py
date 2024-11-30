@@ -564,7 +564,7 @@ def get_user_notifications(request, user_id):
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'GET':
-		notifications = Notifications.objects.filter(user_id = user_id)
+		notifications = Notifications.objects.filter(user_id = user_id).order_by('-created_at')
 		serializer = NotificationsSerializer(notifications, many=True)
 		response_data = {
 			'access_token': new_token,
