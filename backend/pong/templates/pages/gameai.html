@@ -15,7 +15,7 @@
 			<div id="p1-score">0</div>
 			<div id="p2-score">0</div>
 		</div>
-		<img id="p2-img" src="{% static 'assets/icons/avatar.png' %}" alt="P2 profile">
+		<img id="p2-img" src="/media/matrix.jpg" alt="P2 profile">
 		<div id="p2"></div>
 	</div>
 	<div id="loader-container" class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
@@ -33,7 +33,7 @@
 	let app = new Application();
 	app.init({ 
 		player1Data: {'id': userID, 'username': username, 'picture': document.querySelector('.profile-pic').src},
-		player2Data: {'id': '2', 'username': 'AI'},
+		player2Data: {'id': '1', 'username': 'aiuser2024'},
 		gameType: 'AI' 
 	});
 </script>
