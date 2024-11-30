@@ -1,20 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
-# Caminho do arquivo de configuração do Nginx com variáveis a substituir
-TEMPLATE_FILE="default.conf"
-OUTPUT_FILE="default.conf"
+# Substituir variáveis de ambiente no arquivo de configuração
+envsubst '$CERTIFY_PATH $DOMAIN $DOMAIN_NAME' < /etc/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf.tmp
+mv /etc/nginx/conf.d/default.conf.tmp /etc/nginx/conf.d/default.conf
 
-# Verifica se as variáveis de ambiente necessárias estão definidas
-if [[ -z "$CERTIFY_PATH" ]]; then
-    echo "Erro: CERTIFY_PATH não está definido."
-    exit 1
-fi
+echo "Variáveis substituídas com sucesso!"
 
-# Substitui as variáveis de ambiente no arquivo template
-envsubst '$CERTIFY_PATH' < "$TEMPLATE_FILE" > "$OUTPUT_FILE"
-
-# Exibe o arquivo final para verificação (opcional)
-echo "Arquivo final gerado: $OUTPUT_FILE"
-cat "$OUTPUT_FILE"
-
-nginx -g "daemon off;"
