@@ -72,7 +72,7 @@
 			</div>
 			<div class="side-profile d-flex align-items-center">
 				<div id="change-info1">
-					{% if "http" in user_view.picture %}
+					{% if "http" in user_view.picture.url %}
 						<img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture }}" alt="Profile">
 					{% else %}
 						<img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="Profile">
