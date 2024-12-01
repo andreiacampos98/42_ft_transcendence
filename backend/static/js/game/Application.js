@@ -40,11 +40,8 @@ export class Application  {
      * initializes the application
      */
     init({player1Data, player2Data, gameType, gameID=null}) {
-		document.getElementById('loader-container').textContent = 'Building 3D scene...';
-
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x101010 );
-		this.scene.add(new Axis(this));
 
 		this.scene.add(new THREE.AmbientLight(0xFFFFFF, 1));
 		this.buildRoomScene();
