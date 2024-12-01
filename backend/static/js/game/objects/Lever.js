@@ -15,7 +15,7 @@ export class Lever extends THREE.Group {
 
 	build(x) {
 		let body = new THREE.Mesh(
-			new THREE.CylinderGeometry(LEVER_TOP_RADIUS, LEVER_BOTTOM_RADIUS, LEVER_HEIGHT), 
+			new THREE.CylinderGeometry(LEVER_TOP_RADIUS, LEVER_BOTTOM_RADIUS, LEVER_HEIGHT, 8, 8), 
 			new THREE.MeshPhongMaterial({color: '#666666'})
 		);
 
