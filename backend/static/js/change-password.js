@@ -1,11 +1,8 @@
-// Get the modal
-var modal = document.getElementById("modal");
-// Get the button that opens the modal
-var btn = document.getElementById("open-change-password-modal");
-// Get the  element that closes the modal
 
+var modal = document.getElementById("modal");
+var btn = document.getElementById("open-change-password-modal");
 var goback = document.getElementById("cancel-change-password-button");
-// When the user clicks the button, open the modal 
+
 btn.onclick = function() {
 	modal.style.display = "block";
 }
@@ -14,7 +11,6 @@ goback.onclick = function() {
 	modal.style.display = "none";
 }
 
-// When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
 	if (event.target == modal) {
 		modal.style.display = "none";
@@ -22,7 +18,6 @@ window.onclick = function(event) {
 }
 
 async function getChangePassword() {
-	console.log("getChangePassword called");
 	let token = localStorage.getItem("access_token");
 	const userId = document.querySelector('button[onclick="getChangePassword()"]').getAttribute('data-user-id');
 	const formData = new FormData(document.getElementById("change-password-form"));
@@ -48,7 +43,6 @@ async function getChangePassword() {
 		});
 	}
 	else {
-		console.log(data.redirect_url);
 		localStorage.setItem('access_token', data.access_token);
 		modal.style.display = "none";
 		var modal3 = document.getElementById("modal3");

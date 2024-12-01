@@ -50,7 +50,6 @@ export class Lever extends THREE.Group {
 			})
 		);
 		base.position.set(0, 0.01, 0);
-		// leverBase1.rotation.set(LEVER_DEFAULT_ROTATION, 0, 0);
 		baseBall.position.set(0, 0.01, 0);
 
 		this.add(this.upperLever);

@@ -18,8 +18,6 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		self.has_opponent_disconnected = False
 
 		await self.queue_up()
-		for key in self.get_game_queue():
-			ic(key, self.get_waiting_room(key))
 	
 	async def disconnect(self, code):
 		self.del_waiting_room(self.user.id)
@@ -28,8 +26,6 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 				"type": "signal.disconnection",
 				"message": {}
 			})
-		for key in self.get_game_queue():
-			ic(key, self.get_waiting_room(key))
 		return await super().disconnect(code)
 	
 	async def receive(self, text_data=None):
@@ -58,7 +54,6 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		message = json.loads(event['message'])
 
 		if message['sender_id'] != self.user.id:
-			ic(f'Sending STOPPED_MOVING event from {message['sender_id']} to {self.user.id}, {self.user.username}...')
 			await self.send(event['message'])
 	
 	async def signal_disconnection(self, event):
@@ -96,17 +91,13 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		game_results = self.get_game_results(game_id)
 		
 		if game_results is not None:
-			ic(f'Data for game {game_id} already exists, {self.user.username}')
-			ic(game_results)
 			game_update_helper(game_results, game_id)
 			self.del_game_results(game_id)
 		else:
-			ic(f'Storing game {game_id} with {self.user.username} data...')
 			del data['id']
 			self.set_game_results(game_id, data)
 
 		if game_results is None and self.has_opponent_disconnected:
-			ic(f'Opponent of {self.user.username} disc. Updating game {game_id}')
 			game_update_helper(data, game_id)
 			self.del_game_results(game_id)
 		
@@ -130,17 +121,11 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		"""
 
 		available_rooms = self.get_game_queue()
-		for key in available_rooms:
-			ic(key, self.get_waiting_room(key))
 		if self.user.id in available_rooms:
-			ic(f'{self.user.id} - {self.user.username} already in the waiting rooms')
 			return
 		if self.redis.hlen('remote_game_queue') > 0:
-			ic(f'Pairing {self.user.id} - {self.user.username}')
 			await self.pair_player(available_rooms[0])
 		else:
-			ic(self.user.picture)
-			ic(self.user.picture.url)
 			user_data = {
 				'id': self.user.id,
 				'username': self.scope['user'].username,
@@ -166,7 +151,6 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		host_player = self.get_waiting_room(host_room_id)
 		game = await self.create_new_game(host_player['id'])
 
-		# ! I HAVE TO CHANGE THE GAME CHANNEL OF BOTH HOST AND CLIENT
 		self.game_channel = f'remote_game_{game['id']}'
 		self.game_id = game['id']
 

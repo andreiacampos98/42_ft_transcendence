@@ -1,44 +1,41 @@
 function interpolateColor(startColor, endColor, factor) {
-	const result = startColor.slice(); // Create a copy of the start color
+	const result = startColor.slice();
 	factor = Math.min(factor, 1);
 	for (let i = 0; i < 3; i++) {
-		// Interpolate each color component (R, G, B)
 		result[i] = Math.round(result[i] + factor * (endColor[i] - startColor[i]));
 	}
 	return result;
 }
 
-// Convert RGB array to hex color string
 function rgbToHex(rgb) {
 	return `#${rgb.map(x => x.toString(16).padStart(2, '0')).join('')}`;
 }
 
-// Main function to apply the background color to all divs with class 'square'
 function applyGradientToHeatmap() {
-	const rallyLengthSquares = document.querySelectorAll('.square-length'); // Select all divs with class 'square'
-	const ballSpeedSquares = document.querySelectorAll('.square-speed'); // Select all divs with class 'square'
-	const startColor = [255, 255, 255]; // RGB for #FFFFFF (white)
-	const endColor = [253, 180, 39];  // RGB for #F8D082 (light orange)
+	const rallyLengthSquares = document.querySelectorAll('.square-length');
+	const ballSpeedSquares = document.querySelectorAll('.square-speed');
+	const startColor = [255, 255, 255];
+	const endColor = [253, 180, 39]; 
 	const FAST_BALL_SPEED = 2;
 	const HIGH_RALLY_LENGTH = 50;
 
 	rallyLengthSquares.forEach(square => {
-		const value = parseInt(square.textContent); // Get the text inside the div and convert to integer
-		const factor = value / HIGH_RALLY_LENGTH; // Calculate the interpolation factor (0 to 1)
+		const value = parseInt(square.textContent);
+		const factor = value / HIGH_RALLY_LENGTH;
 
-		const interpolatedColor = interpolateColor(startColor, endColor, factor); // Get the interpolated color
-		const hexColor = rgbToHex(interpolatedColor); // Convert the RGB color to hex format
+		const interpolatedColor = interpolateColor(startColor, endColor, factor);
+		const hexColor = rgbToHex(interpolatedColor);
 
-		square.style.backgroundColor = hexColor; // Apply the background color to the div
+		square.style.backgroundColor = hexColor;
 	});
 	ballSpeedSquares.forEach(square => {
-		const value = parseInt(square.textContent); // Get the text inside the div and convert to integer
-		const factor = value / FAST_BALL_SPEED; // Calculate the interpolation factor (0 to 1)
+		const value = parseInt(square.textContent);
+		const factor = value / FAST_BALL_SPEED;
 
-		const interpolatedColor = interpolateColor(startColor, endColor, factor); // Get the interpolated color
-		const hexColor = rgbToHex(interpolatedColor); // Convert the RGB color to hex format
+		const interpolatedColor = interpolateColor(startColor, endColor, factor);
+		const hexColor = rgbToHex(interpolatedColor);
 
-		square.style.backgroundColor = hexColor; // Apply the background color to the div
+		square.style.backgroundColor = hexColor;
 	});
 }
 
@@ -46,17 +43,14 @@ function fillHeatmap(rallyLengths, ballSpeeds){
 	const rallyLengthLabels = document.querySelectorAll('.square-length');
 	const ballSpeedLabels = document.querySelectorAll('.square-speed');
 
-	console.log(rallyLengths, ballSpeeds);
 
 	rallyLengths.forEach((rally, i) => {
-		console.log(rally, i);
 		rallyLengthLabels[i].textContent = rally
 	});
 	ballSpeeds.forEach((speed, i) => ballSpeedLabels[i].textContent = speed);
 	
 }
 
-// Call the function to apply the background gradient on page load
 
 
 async function loadCharts() {
@@ -65,7 +59,6 @@ async function loadCharts() {
 		method: "GET",
 	});
 	const data = await response.json();
-	console.log(data);
 
 	const rallyLengths = data.map((goal) => goal.rally_length);
 	const ballSpeeds = data.map((goal) => goal.ball_speed);
@@ -88,7 +81,6 @@ async function loadCharts() {
 		gameState[user2ID].state.push(gameState[user2ID].score);
 	});
 
-	console.log(gameState);
 
 	var options = {
 		chart: {

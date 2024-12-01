@@ -41,7 +41,6 @@ document.getElementById('signupForm').addEventListener('submit', async function(
     });
 	const data = await response.json();
 	if (!response.ok) {
-		console.log('Login in failed');
 		errorMessage.textContent = data.message;
 		errorMessage.style.display = 'block';
 		return ;

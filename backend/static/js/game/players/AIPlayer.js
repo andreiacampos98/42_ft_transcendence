@@ -7,7 +7,6 @@ import { DIRECTION, PADDLE_OFFSET, ARENA_SEMI_HEIGHT, ARENA_SEMI_LENGTH,
 	PADDLE_BOTTOM_LIMIT,
 	PADDLE_TOP_LIMIT} from '../macros.js';
 import { AbstractPlayer } from './AbstractPlayer.js';
-import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 
 export class AIPlayer extends AbstractPlayer {
 	constructor ({id=null, username='Local Player', x, picture=null, keybinds}) {
@@ -26,10 +25,6 @@ export class AIPlayer extends AbstractPlayer {
 	}
 
 	update(pressedKeys=null, ball, player) {
-		// if (this.followingBall && ball.direction.x != DIRECTION.RIGHT)
-		// 	this.nextPos = this.paddle.position;
-		// this.paddle.position.lerp(this.nextPos, 0.1);
-		// this.followingBall = (ball.direction.x == DIRECTION.RIGHT);
 		let targetPos = this.nextPos.clone();
 		if (this.paddle.position.y > this.nextPos.y)
 			targetPos.y = Math.max(this.paddle.position.y - PADDLE_SPEED, this.nextPos.y);
@@ -50,85 +45,22 @@ export class AIPlayer extends AbstractPlayer {
 	}
 
 	predictBallPath(ball) {
-		// goals = false;
-		// while (!goals) {
+		let t = (PADDLE_OFFSET - BALL_RADIUS - ball.position.x) / ball.direction.x;
 
-			let t = -1;
-			// let temp_ball = {
-			// 	'direction': ball.direction,
-			// 	'position': {
-			// 		'x': ball.position.x,
-			// 		'y': ball.position.y
-			// 	},
-			// };
-			//for upper wall
-			// if (t == -1 && temp > 0){
-			// 	t = temp;
-			// 	temp_ball.direction.y *= -1;
-			// 	temp_ball.position.y = 0;
-			// 	temp_ball.position.x = t * ball.direction.x + BALL_RADIUS + ball.position.x;
-			// }
-			// //for lower wall
-			// temp = (ARENA_SEMI_HEIGHT * 2 - ball.position.y - BALL_RADIUS) / ball.direction.y;
-			// if ((t == -1 && temp > 0) || ( t != -1 && temp < t && temp > 0)) {
-			// 	t = temp;
-			// 	temp_ball.direction.y *= -1;
-			// 	temp_ball.position.y = ARENA_SEMI_HEIGHT * 2;
-			// 	temp_ball.position.x = t * ball.direction.x + BALL_RADIUS + ball.position.x;
+		let nextBallY = t * ball.direction.y + ball.position.y;
+		let newY = 0;
+		if (nextBallY > ARENA_SEMI_HEIGHT)
+			newY = 2 * ARENA_SEMI_HEIGHT - nextBallY;
+		else if (nextBallY < -1 * ARENA_SEMI_HEIGHT)
+			newY = -2 * ARENA_SEMI_HEIGHT + nextBallY ;
+		else
+			newY = nextBallY;
 
-			// }
-			//for aiwall wall
-			t = (PADDLE_OFFSET - BALL_RADIUS - ball.position.x) / ball.direction.x;
-			// if ((t == -1 && temp > 0) || ( t != -1 && temp < t && temp > 0)) {
-
-			let nextBallY = t * ball.direction.y + ball.position.y;
-			//console.log("next ball y = ", nextBallY);
-			// console.log('Next Ball y=', nextBallY);
-			//let limitY = ARENA_SEMI_HEIGHT - 2*ARENA_SEMI_DEPTH - PADDLE_SEMI_HEIGHT;
-			let newY = 0;
-			if (nextBallY > ARENA_SEMI_HEIGHT)
-			{
-				newY = 2 * ARENA_SEMI_HEIGHT - nextBallY;
-				console.log("Upper limit");
-			}
-			else if (nextBallY < -1 * ARENA_SEMI_HEIGHT)
-			{
-				newY = -2 * ARENA_SEMI_HEIGHT + nextBallY ;
-				console.log("Lower limit initial ", nextBallY, " final ", newY, "semi height ", ARENA_SEMI_HEIGHT);
-			}
-			else
-			{
-				newY = nextBallY;
-				console.log("NO limit");
-			}
-			
-			// console.log('Moving to y=', newY);
-
-			// temp_ball.direction.x *= -1;
-			// temp_ball.position.x = ARENA_SEMI_LENGTH * 2;
-			// temp_ball.position.y = t * ball.direction.y + BALL_RADIUS + ball.position.y;
-			if (newY + PADDLE_SEMI_HEIGHT > ARENA_SEMI_HEIGHT - 2 * ARENA_SEMI_DEPTH)
-				newY = ARENA_SEMI_HEIGHT - PADDLE_SEMI_HEIGHT - 2 * ARENA_SEMI_DEPTH;
-			if (newY - PADDLE_SEMI_HEIGHT < -1 * ARENA_SEMI_HEIGHT + 2 * ARENA_SEMI_DEPTH)
-				newY = -1 * ARENA_SEMI_HEIGHT + PADDLE_SEMI_HEIGHT + 2 * ARENA_SEMI_DEPTH;
-			return new THREE.Vector3(PADDLE_OFFSET, newY, 0.01);
-			// }	
-			// //for player wall
-			// temp = (-1 * ball.position.x - BALL_RADIUS) / ball.direction.x;
-			// if ((t == -1 && temp > 0) || ( t != -1 && temp < t && temp > 0)) {
-			// 	t = temp;
-			// 	temp_ball.direction.x *= -1;
-			// 	temp_ball.position.x = 0;
-			// 	temp_ball.position.y = t * ball.direction.y + BALL_RADIUS + ball.position.y;
-			// }
-			// // ball = temp_ball;
-			// if (t < 0){
-			// 	console.log("Ball outside the arena??");
-			// 	// exit(1);
-			// }
-		// }
-		// t = (PADDLE_OFFSET - ball.position.x) / ball.direction.x;
-		// return (t * ball.direction.y + ball.position.y);
+		if (newY + PADDLE_SEMI_HEIGHT > ARENA_SEMI_HEIGHT - 2 * ARENA_SEMI_DEPTH)
+			newY = ARENA_SEMI_HEIGHT - PADDLE_SEMI_HEIGHT - 2 * ARENA_SEMI_DEPTH;
+		if (newY - PADDLE_SEMI_HEIGHT < -1 * ARENA_SEMI_HEIGHT + 2 * ARENA_SEMI_DEPTH)
+			newY = -1 * ARENA_SEMI_HEIGHT + PADDLE_SEMI_HEIGHT + 2 * ARENA_SEMI_DEPTH;
+		return new THREE.Vector3(PADDLE_OFFSET, newY, 0.01);
 	};
 
 	getFinalAIPosition(ball_destination, enemy_pos) {

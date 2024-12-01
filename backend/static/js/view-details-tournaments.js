@@ -26,7 +26,6 @@ async function detailTournamentGames(button) {
 	const data = await response.json();
 	if (!response.ok && response.status != 401) {
 		localStorage.setItem('access_token', data.access_token);
-		console.error(data.message);
 		return ;
 	}
 	else if (!response.ok && response.status == 401) {
@@ -45,7 +44,7 @@ async function detailTournamentGames(button) {
 	headerDiv.classList.add('header2', 'd-flex', 'align-items-center', 'justify-content-evenly');
 	
 	const headers = ["", "Phase", "Duration", "Player 1", "Score", "Player 2"];
-	const widths = ["100px", null, null, null, null, null]; // Defina as larguras conforme necessário
+	const widths = ["100px", null, null, null, null, null];
 	headers.forEach((headerText, index) => {
 		const span = document.createElement('span');
 		span.classList.add('title');
@@ -90,13 +89,13 @@ async function detailTournamentGames(button) {
 				? `https://${decodeURIComponent(user.picture).slice(14)}`
 				: user.picture;
 	
-			// Nome do usuário
+			
 			const userName = document.createElement('span');
 			userName.classList.add('score');
 			if (scoreClass) userName.classList.add(scoreClass);
 			userName.textContent = user.username;
 	
-			// Adicionar a imagem e o nome como filhos do hyperlink
+			
 			userLink.appendChild(userProfilePic);
 			userLink.appendChild(userName);
 	
@@ -109,7 +108,7 @@ async function detailTournamentGames(button) {
 		score.style.paddingRight = "0";
 		score.textContent = `${game.game.nb_goals_user1} - ${game.game.nb_goals_user2}`;
 	
-		// Criando links com imagem e nome para os jogadores
+		
 		const user1LinkElement = createUserLink(
 			game.game.user1,
 			game.game.nb_goals_user1 > game.game.nb_goals_user2 ? 'tour-game-winner' : null
@@ -120,18 +119,18 @@ async function detailTournamentGames(button) {
 			game.game.nb_goals_user2 > game.game.nb_goals_user1 ? 'tour-game-winner' : null
 		);
 	
-		// Adicionando links ao layout
+		
 		const player1Span = document.createElement('span');
 		player1Span.classList.add('content', 'last');
 		player1Span.style.fontSize = "inherit";
 		player1Span.style.paddingRight = "0";
-		player1Span.appendChild(user1LinkElement); // Append do elemento retornado
+		player1Span.appendChild(user1LinkElement); 
 	
 		const player2Span = document.createElement('span');
 		player2Span.classList.add('content', 'last');
 		player2Span.style.fontSize = "inherit";
 		player2Span.style.paddingRight = "0";
-		player2Span.appendChild(user2LinkElement); // Append do elemento retornado
+		player2Span.appendChild(user2LinkElement); 
 	
 		details.appendChild(phase);
 		details.appendChild(duration);
@@ -142,7 +141,7 @@ async function detailTournamentGames(button) {
 		matchBlock2.appendChild(details);
 		gameBlock.appendChild(matchBlock2);
 	
-		// Adicionar link de detalhes do jogo
+		
 		const gameDetailLink = document.createElement('a');
 		gameDetailLink.onclick = function() {
 			history.pushState(null, '', `/games/${game.game.id}/stats`);

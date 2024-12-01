@@ -23,12 +23,10 @@ export class Arena extends THREE.Group {
 
 		this.upperBoundary = new THREE.Mesh(
 			new THREE.PlaneGeometry(length, depth),
-			// new THREE.MeshBasicMaterial({ transparent: true, opacity: 1 })
 			new THREE.MeshNormalMaterial(length, depth),
 		);
 		this.leftBoundary = new THREE.Mesh(
 			new THREE.PlaneGeometry(depth, height),
-			// new THREE.MeshBasicMaterial({ transparent: true, opacity: 1 })
 			new THREE.MeshNormalMaterial(length, depth),
 		);
 		this.lowerBoundary = this.upperBoundary.clone();

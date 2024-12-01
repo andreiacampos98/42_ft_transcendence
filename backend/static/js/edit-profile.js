@@ -55,7 +55,6 @@ async function onSaveButtonClick(event, userId) {
     event.preventDefault(); 
     const formData = new FormData(document.getElementById("edit-profile-form"));
     let token = localStorage.getItem("access_token");
-	console.log(document.getElementById("edit-profile-form"));
 
     const response = await fetch(`/users/${userId}/update`, {
         method: "POST",
@@ -87,6 +86,5 @@ async function onSaveButtonClick(event, userId) {
 }
 
 function triggerFileInput() {
-    // Programmatically click the hidden input
     document.getElementById('profile-picture-input').click();
 }

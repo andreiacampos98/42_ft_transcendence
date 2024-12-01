@@ -2,15 +2,6 @@ from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from .models import *
 
-# Serializers define the API representation.
-# Django Rest Framework uses serializers to handle converting data between 
-# JSON or XML and native Python objects. 
-# There are a number of helpful serializers we can import that will make serializing
-#  our objects easier. 
-# The most common one we use is a ModelSerializer, 
-# which conveniently can be used to serialize data for Company objects:
-
-
 class UsersSerializer(serializers.ModelSerializer):
 
 	class Meta:

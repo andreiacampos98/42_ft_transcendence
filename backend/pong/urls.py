@@ -8,11 +8,6 @@ from .consumers.Tournament import TournamentConsumer
 from .consumers.RemoteGame import RemoteGameQueueConsumer
 from .consumers.TournamentGame import TournamentGameConsumer
 
-# Routers provide an easy way of automatically determining the URL conf.
-#router = DefaultRouter()
-#router.register('users', UsersViewSet)
-
-
 
 urlpatterns = [
 
@@ -60,7 +55,6 @@ urlpatterns = [
     path('leaderboard', views.leaderboard, name='leaderboard'),
     path('currentplace/<int:user_id>', views.current_place, name='current-place'),
     path('graph/<int:user_id>', views.win_rate_nb_games_day, name='win-rate-nb-games'),
-    # path('stats/<int:user_id>/update', views.user_stats_update, name='user-stats-update'),
     path('stats/users', views.user_stats_all, name='user-stats-all'),
 
 	#! Games
@@ -68,7 +62,6 @@ urlpatterns = [
     path('games/update/<int:game_id>', views.game_update, name='game-update'),
     
     #! Goals
-    #path('games/<int:game_id>/goals/add', views.game_goals_create, name='game-goals-create'),
     path('games/<int:game_id>/goals', views.game_goals, name='game-goals'),
 
 	#! Tournaments
@@ -76,7 +69,6 @@ urlpatterns = [
     path('tournaments/<int:tournament_id>/users/<int:user_id>/join', views.tournament_join, name='tournament-join'),
     path('tournaments/<int:tournament_id>', views.tournament_update, name='tournament-update'),
     path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournament-list-users'),
-    # path('tournaments/<int:tournament_id>/advance', views.tournament_advance_phase, name='tournament-advance-phase'),
     path('tournaments/<int:tournament_id>/games', views.tournament_list_games, name='tournament-list-games'),
     path('tournaments/games/user/<int:user_id>', views.tournament_list_user_games, name='tournament-list-user-games'),
     path('tournaments/user/<int:user_id>', views.tournament_list_user, name='tournament-list-user'),

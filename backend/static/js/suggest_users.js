@@ -16,7 +16,6 @@ async function getSuggestions() {
 	});
 	const data = await response.json();
 	if (!response.ok && response.status != 401) {
-		console.error(`Error getting suggestions: ${data.message}`);
 		localStorage.setItem('access_token', data.access_token);
 		return ;
 	}
@@ -35,7 +34,6 @@ async function getSuggestions() {
 	suggestionsBox.style.display = data.data.length ? 'block' : 'none'; 
 
 	data.data.forEach(user => {
-		console.log(user);
 		const userBlock = document.createElement('div');
 		userBlock.classList.add('user-block');
 		userBlock.classList.add('d-flex');

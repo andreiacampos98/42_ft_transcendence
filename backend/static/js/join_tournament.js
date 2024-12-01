@@ -1,7 +1,6 @@
 document.querySelectorAll('.open-register-tournament-modal').forEach(button => {
     button.addEventListener('click', function() {
         var tournamentId = this.getAttribute('data-tournament-id');
-        console.log(tournamentId)
         var userId = document.getElementById('registration').getAttribute('data-user-id');
         
         var confirmButton = document.getElementById('registration');
@@ -20,7 +19,7 @@ var modal2 = document.getElementById("modal");
 goback.onclick = function() {
   modal2.style.display = "none";
 }
-// When the user clicks anywhere outside of the modal, close it
+
 window.onclick = function(event) {
   if (event.target == modal2) {
     modal2.style.display = "none";
@@ -42,7 +41,6 @@ async function registerTournament() {
     var formData = {
         "alias": alias
     };
-    console.log(formData)
     
     try {
         const response = await fetch(`/tournaments/${tournamentId}/users/${userId}/join`, {
@@ -72,7 +70,6 @@ async function registerTournament() {
             localStorage.setItem('access_token', data.access_token);
         }
     } catch (error) {
-        console.error('Error:', error);
         alert('An error occurred: ' + error.message);
     }
 }

@@ -27,23 +27,19 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     });
 	const data = await response.json();
 	if (!response.ok) {
-		console.error('Error:', response);
         errorMessage.textContent = data.message;
 		errorMessage.style.display = 'block';
 		return ;
 	}
 	
-	console.log(data);
 
 	if (data.data.hasOwnProperty('otp')) {
 		t_email = data.email;
-		console.log(t_email, data.email);
 		history.pushState(null, '', `/otp/`);
 		htmx.ajax('GET', `/otp/`, {
 			target: '#main',
 		});
 	} else {
-		console.log('Login in successful');
 		localStorage.setItem("access_token", data.access_token); 
 		localStorage.setItem("refresh_token", data.refresh_token); 
 		history.pushState(null, '', `/home/`);

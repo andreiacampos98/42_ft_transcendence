@@ -30,7 +30,6 @@ export class Ball extends THREE.Object3D {
 	}
 
 	move(controller, delta) {
-		// console.log(delta);
 		const { arena, player1, player2 } = controller;
 
 		this.position.x += (this.direction.x * this.speed.x * delta);
@@ -94,13 +93,13 @@ export class Ball extends THREE.Object3D {
 		if (isPlayer) {
 			this.position.x = paddle.position.x + PADDLE_SEMI_LENGTH + this.radius;
 			this.speed.x += BALL_ACCELERATION;
-			this.speed.y += BALL_ACCELERATION * (Math.random()); // Adjust Y speed
+			this.speed.y += BALL_ACCELERATION * (Math.random());
 			this.direction.x = DIRECTION.RIGHT;
 		}
 		else {
 			this.position.x = paddle.position.x - PADDLE_SEMI_LENGTH - this.radius;
 			this.speed.x += BALL_ACCELERATION;
-			this.speed.y += BALL_ACCELERATION * (Math.random()); // Adjust Y speed
+			this.speed.y += BALL_ACCELERATION * (Math.random());
 			this.direction.x = DIRECTION.LEFT;
 		}	
 

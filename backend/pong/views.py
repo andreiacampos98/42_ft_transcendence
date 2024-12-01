@@ -26,8 +26,6 @@ import pyotp
 import json, requests
 from icecream import ic
 from .models import Users
-# Since we want to create an API endpoint for reading, creating, and updating 
-# Company objects, we can use Django Rest Framework mixins for such actions.
 
 from django.db.models import Q, Count, Case, When, IntegerField
 from django.http import JsonResponse, HttpResponseRedirect
@@ -53,56 +51,39 @@ total_phase_matches = dict(zip(
 
 
 def validate_token(request):
-    """Validates the access token in the request headers."""
-    jwt_authenticator = JWTAuthentication()
-    try:
-        auth_result = jwt_authenticator.authenticate(request)
-        if auth_result is None:
-            return None
-        user, validated_token = auth_result
-        return user
-    except InvalidToken as e:
-        ic("Invalid Token:", str(e))
-    except Exception as e:
-        ic("Unknown error:", str(e))
+	"""Validates the access token in the request headers."""
+	jwt_authenticator = JWTAuthentication()
+	auth_result = jwt_authenticator.authenticate(request)
+	if auth_result is None:
+		return None
+	user, validated_token = auth_result
+	return user
 
 
 def refresh_access_token(refresh_token):
-    """Refreshes the access token using Django's JWT logic."""
-    try:
-        refresh = RefreshToken(refresh_token)
-        new_access_token = str(refresh.access_token)
-        return new_access_token
-    except Exception as e:
-        ic("Failed to refresh token:", str(e))
-        return None
+	"""Refreshes the access token using Django's JWT logic."""
+	refresh = RefreshToken(refresh_token)
+	new_access_token = str(refresh.access_token)
+	return new_access_token
 
 
 def check_token(request):
 	if request.method == 'GET':
-		ic("check")
 		jwt_authenticator = JWTAuthentication()
 		token_valid = None
 
-		# Step 1: Attempt to authenticate the token
 		try:
 			auth_result = jwt_authenticator.authenticate(request)
 			if auth_result:
 				user, validated_token = auth_result
 				token_valid = True 
 		except Exception as e:
-			# Token is likely invalid
 			token_valid = False
-		ic(token_valid)
-		# Step 2: Refresh the token if invalid
 		if not token_valid:
-			ic(token_valid)
-			ic("aqui1")
 			refresh_token_value = request.COOKIES.get('refresh_token')
 			
 			if refresh_token_value:
 				try:
-					ic("aqui")
 					refresh = RefreshToken(refresh_token_value)
 					new_access_token = str(refresh.access_token)
 					response_data = {'access_token': new_access_token}
@@ -112,7 +93,6 @@ def check_token(request):
 			else:
 				return JsonResponse({'message': 'Refresh token not found or expired.'}, status=401)
 
-		# Step 3: If the token is valid, return a confirmation response
 		return JsonResponse({'message': 'The token is valid.'}, status=200)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
 
@@ -142,10 +122,8 @@ def send_code_verify_email(request):
 		if request.session.get('email_valid_date') is not None:
 			del request.session['email_valid_date']
 		request.session['email_secret_key'] = totp.secret
-		valid_date = datetime.now() + timedelta(minutes=2) # data ate quando o codigo e valido
+		valid_date = datetime.now() + timedelta(minutes=2)
 		request.session['email_valid_date'] = str(valid_date) 
-		ic(code)
-		ic(settings.EMAIL_HOST_USER)
 		send_mail(
 			'Email Verification',
 			f'Please use the following code to verify the email: {code}',
@@ -182,7 +160,6 @@ def user_create(request):
 			username = data.get('username')
 			password1 = data.get('password')
 			password2 = data.get('reconfirm')
-			ic([username, password1, password2])
 		except json.JSONDecodeError:
 			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
 
@@ -224,8 +201,6 @@ def verifyemail(request):
 			code = data.get('code')
 			password1 = data.get('password')
 			username = data.get('username')
-			ic(email)
-			ic(code)
 		except json.JSONDecodeError:
 			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
 		email_secret_key = request.session.get('email_secret_key')
@@ -233,14 +208,8 @@ def verifyemail(request):
 
 		if email_secret_key and email_valid_date is not None:
 			valid_date1 = datetime.fromisoformat(email_valid_date)
-			ic(email_secret_key)
-			ic(email_valid_date)
-			ic(valid_date1)
-			ic(datetime.now())
 			if valid_date1 > datetime.now():
 				totp1 = pyotp.TOTP(email_secret_key, interval=120)
-				ic(totp1)
-				ic(totp1.verify(code))
 				if totp1.verify(code):
 					if Users.objects.filter(username=username).exists():
 						return JsonResponse({'message': 'Username already exists! Please try another username.'}, status=400)
@@ -266,7 +235,6 @@ def verifyemail(request):
 							'access_token': user_tokens.get('access'),
 							'refresh_token': user_tokens.get('refresh')
 						}, status=201)
-						ic(user_tokens.get('refresh'))
 						if request.session.get('email_secret_key') is not None:
 							del request.session['email_secret_key']
 						if request.session.get('email_valid_date') is not None:
@@ -296,7 +264,6 @@ def user_update(request, pk):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	user = get_object_or_404(Users, pk=pk)
@@ -326,7 +293,6 @@ def user_update(request, pk):
 		if description:
 			user.description = description
 		user.save()
-		ic("Aqui1")
 		return JsonResponse({'message': 'User updated.', 'access_token': new_token }, status=201)
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
@@ -339,7 +305,6 @@ def user_password(request, pk):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 
 	if request.method == 'POST':
@@ -347,9 +312,6 @@ def user_password(request, pk):
 		old_password = request.POST.get('old_password')
 		new_password1 = request.POST.get('password1')
 		new_password2 = request.POST.get('password2')
-		ic(old_password)
-		ic(new_password1)
-		ic(new_password2)
 
 		if not user.check_password(old_password):
 			return JsonResponse({'message': 'Old password is incorrect.', 'access_token': new_token}, status=400)
@@ -370,9 +332,7 @@ def user_password(request, pk):
 		
 		user.set_password(new_password1)
 		user.save()
-		ic("user is saved")
 		update_session_auth_hash(request, user)
-		ic("update")
 		return JsonResponse({'message': 'Password updated successfully', 'access_token': new_token}, status=200)
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
@@ -385,7 +345,6 @@ def search_suggestions(request):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	term = request.GET.get('term', '')
@@ -422,7 +381,6 @@ def get_user_friends(request, user_id):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'GET':
@@ -445,7 +403,6 @@ def add_remove_friend(request, user1_id, user2_id):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'POST':
@@ -496,7 +453,6 @@ def accept_friend(request, user1_id, user2_id):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'PATCH':
@@ -531,7 +487,6 @@ def decline_friend(request, user1_id, user2_id):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'PATCH':
@@ -563,7 +518,6 @@ def get_user_notifications(request, user_id):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'GET':
@@ -584,7 +538,6 @@ def delete_user_notification(request, user_id, notif_id):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 
 	if request.method == 'DELETE':
@@ -605,7 +558,6 @@ def update_notification(request, notif_id):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 
 	if request.method == 'PATCH':
@@ -947,7 +899,6 @@ def tournament_create(request):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method != 'POST':
@@ -989,7 +940,6 @@ def tournament_create(request):
 	if not tour_user_serializer.is_valid():
 		return JsonResponse({'message': tour_user_serializer.errors["alias"], 'tour errors': tour_user_serializer.errors, 'access_token': new_token}, status=400)
 	tour_user_serializer.save()
-	ic(data['host_id'])
 	user= Users.objects.get(pk=data['host_id'])
 	user.status = "Playing"
 	user.save()
@@ -1070,7 +1020,6 @@ def tournament_join(request, tournament_id, user_id):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 
 	if request.method != 'POST':	
@@ -1086,7 +1035,6 @@ def tournament_join(request, tournament_id, user_id):
 	data['tournament_id'] = tournament_id
 	data['user_id'] = user_id
 	nickname = data.get('alias', '')
-	ic(nickname)
 	if nickname == '':
 		return JsonResponse({'message': 'The nickname is blank', 'access_token': new_token}, status=400)
 	if len(nickname) > 64:
@@ -1155,7 +1103,6 @@ def tournament_list_games(request, tournament_id):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method != 'GET':
@@ -1194,17 +1141,14 @@ def tournament_list_user_games(request, user_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Method not allowed', 'method': request.method}, status=405)
 
-	# Get all TournamentsGames instances and respective Games instances
 	temp = TournamentsGames.objects.all()
 	temp_games = list(map(lambda x: x.game_id, temp))
 	games = GamesSerializer(temp_games, many=True).data
 
-	# For each TournamentsGames attach the Games instance for easier filtering
 	all_tour_games = TournamentsGamesSerializer(temp, many=True).data
 	for game, tgame in zip(games, all_tour_games):
 		tgame['game'] = game
 
-	# SELECT the TournamentsGames instances WHERE game.user1_id or game.user2_id is user_id
 	user_tour_games = list(filter(lambda g: g['game']['user1_id'] == user_id or \
 		g['game']['user2_id'] == user_id, all_tour_games))
 
@@ -1301,11 +1245,9 @@ def get_access_token(host, code):
 		'redirect_uri': f'https://{host}/home42/',
 		'code': code,
 	})
-	ic(response.text)
 	if response.status_code == 200:
 		token_data = response.json()
 		access_token = token_data.get('access_token')
-		ic(access_token)
 		return access_token
 	
 	else:
@@ -1353,7 +1295,6 @@ def login42(request):
 	username = user_info.get('login')
 	id42 = user_info.get('id')
 
-	# Verifique se o usuário já existe no banco de dados
 	searchuser = Users.objects.filter(user_42=id42)
 
 	if searchuser.exists():
@@ -1394,8 +1335,6 @@ def login42(request):
 		myuser.user_42 = id42
 		myuser.email = user_info.get('email')
 		myuser.picture = user_info.get('image', {}).get('versions', {}).get('medium')
-		ic(myuser.picture)
-		ic(myuser.picture.url)
 		myuser.save()
 
 		UserStats.objects.create(user_id=myuser)
@@ -1436,16 +1375,15 @@ def send_otp(request):
 	user = Users.objects.get(username=username)
 	if not user:
 		return JsonResponse({'message': 'There is no user'}, status=400)
-	totp=pyotp.TOTP(pyotp.random_base32(), interval=120) #a password e valida durante 120 segundos
+	totp=pyotp.TOTP(pyotp.random_base32(), interval=120) 
 	otp = totp.now()
 	if request.session.get('otp_secret_key') is not None:
 		del request.session['otp_secret_key']
 	if request.session.get('otp_valid_date') is not None:
 		del request.session['otp_valid_date']
 	request.session['otp_secret_key'] = totp.secret
-	valid_date = datetime.now() + timedelta(minutes=2) # data ate quando o codigo e valido
+	valid_date = datetime.now() + timedelta(minutes=2)
 	request.session['otp_valid_date'] = str(valid_date) 
-	ic(otp)
 	send_mail(
 		'Email Verification OTP',
 		f'Your OTP for email verification is: {otp}',
@@ -1463,7 +1401,6 @@ def toggle2fa(request, user_id):
 		refresh_token = request.COOKIES.get('refresh_token')
 		new_token = refresh_access_token(refresh_token)
 		if new_token is None:
-			ic("invalid token")
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'POST':
@@ -1473,7 +1410,6 @@ def toggle2fa(request, user_id):
 
 		except json.JSONDecodeError:
 			return JsonResponse({'message': 'Invalid JSON.', 'access_token': new_token}, status=400)
-		ic(enabled)
 		user = Users.objects.get(pk=user_id)
 		user.two_factor = enabled
 		user.save()
@@ -1558,16 +1494,11 @@ def otp_view(request):
 		otp_secret_key = request.session.get('otp_secret_key')
 		otp_valid_date = request.session.get('otp_valid_date')
 
-		ic(otp)
-		ic(otp_secret_key)
-		ic(otp_valid_date)
 
 		if otp_secret_key and otp_valid_date is not None:
 			valid_date = datetime.fromisoformat(otp_valid_date)
 			if valid_date > datetime.now():
 				totp = pyotp.TOTP(otp_secret_key, interval=120)
-				ic(totp)
-				ic(totp.verify(otp))
 				if totp.verify(otp):
 					user = get_object_or_404(Users, username=username)
 					user_tokens = user.tokens()
@@ -1678,7 +1609,6 @@ def tournaments(request):
 	leaders = leaderboard(request)
 	top_users = json.loads(leaders.content)
 	current=current_place(request, user_id)
-	ic(current_place)
 	context = {
 		'act_user':act_user,
 		'friends': friends,
@@ -1722,7 +1652,6 @@ def tournamentstats(request, tournament_id):
 		'tour_games': tour_games,
 		'user_id': user_id
 	}
-	ic(context)
 	return render(request,'pages/tournament_overview.html', context)
 
 @login_required
@@ -1742,7 +1671,6 @@ def gamestats(request, game_id):
 		'goals': data_goals,
 		'user_id': user_id
 	}
-	ic(context)
 	return render(request,'pages/game_stats.html', context)
 
 @login_required
@@ -1886,7 +1814,6 @@ def calculate_placements(tournament_id):
 		user_stats.nb_tournaments_played += 1
 		user_stats.tournament_time_played += tournament.duration
 		user_stats.save()
-		ic(user_stats)
 
 	
 	tournament = Tournaments.objects.get(pk=tournament_id)

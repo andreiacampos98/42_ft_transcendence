@@ -20,26 +20,18 @@ const appendScripts = () => {
 
 	Object.keys(routeScripts).every(key => {
 		if (currRoute.startsWith(key)) {
-			console.log('Current route: ', key);
 			route = key;
-			// appendScripts(key);
 			return false;
 		}
 		return true;
 	});
 
-	if (!route) {
-		console.log('NO SCRIPTS TO ADD');
+	if (!route)
 		return ;
-	}
-
-	console.log('ROUTE ', route)
-	console.log('SCRIPTS ', routeScripts[route])
 
 	routeScripts[route].forEach(file => {		
 		let script = document.createElement('script');
 		script.src = file.startsWith('https') ? file : `/static/js/${file}.js`;
-		console.log(`Added: `, script.src);
 		document.body.appendChild(script);
 	});
 };
@@ -47,28 +39,24 @@ const appendScripts = () => {
 const destroyChart = () => {
     if (charts["line"]) {
         charts["line"].destroy();
-        charts["line"] = null; // Reset the reference
+        charts["line"] = null; 
     }
 	if (charts["donut"]) {
         charts["donut"].destroy();
-        charts["donut"] = null; // Reset the reference
+        charts["donut"] = null; 
     }
 	if (charts["bar-line"]) {
         charts["bar-line"].destroy();
-        charts["bar-line"] = null; // Reset the reference
+        charts["bar-line"] = null; 
     }
 };
 
 const mutationsCallback = (mutations) => {
 	localStorage.removeItem('htmx-history-cache')
-	// Ignore second set of mutations
-	// console.log(lastRoute, currRoute, window.location.pathname);
+	
 	destroyChart();
-	console.log(`IM THROUGH`);
-	if (currRoute == window.location.pathname) {
-		console.error(`Curr: ${currRoute}; Last: ${lastRoute}; Path: ${window.location.pathname}`);
+	if (currRoute == window.location.pathname)
 		return ;
-	}
 	
 	lastRoute = currRoute;
 	currRoute = window.location.pathname;
@@ -76,10 +64,8 @@ const mutationsCallback = (mutations) => {
 	
 	if (currRoute.startsWith('/tournaments/ongoing/'))
 		myTournament.updateUI({isPhaseOver: false});
-	// else if (currRoute.startsWith('/tournaments/ongoing/') && lastRoute.startsWith('/gametournament'))
-	// 	return ;
+	
 	appendScripts();
-	console.log('Last Route: ', lastRoute, 'Curr Route: ', currRoute, 'Path name: ', window.location.pathname)
 	
 };
 
@@ -100,16 +86,13 @@ const handleTournamentLeave = (event) => {
 		document.getElementById('leave-tournament-button').click();
 };
 
-// Detecs navigation to inject the JS scripts linked to that route
 window.addEventListener('DOMContentLoaded', (event) => {
 	observeHTML();
 	mutationsCallback();
 });
 
-//Handles attempts from a player to navigate away from an ongoing tournament
 window.addEventListener('htmx:beforeRequest', (event) => {
 	let nextRoute = event.detail.pathInfo.finalPath;
-	console.log(event.detail);
 	if (myUser.attemptedToLeaveTournament(currRoute, nextRoute))
 		handleTournamentLeave(event);
 	else if (myUser.attemptedToLeaveRemoteGame(currRoute, nextRoute))

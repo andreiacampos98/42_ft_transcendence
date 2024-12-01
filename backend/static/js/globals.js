@@ -13,16 +13,12 @@ class User {
 			return ;
 		this[prop] = new WebSocket(url);
 		this[prop].onmessage = (event) => {
-			console.log(JSON.parse(event.data));
 			onmessage(event);
 		}
-		this[prop].onopen = (event) => console.log(`Opened WS ${url}`, event);
 		this[prop].onerror = (event) => {
-			console.error(`WS ${url}`, event);
 			this[prop] = null;	
 		};
 		this[prop].onclose = (event) => {
-			console.log(`Closed WS ${url}`, event);
 			this[prop] = null;	
 		};
 	}
@@ -70,20 +66,16 @@ class Tournament {
 	onPlayerJoined({phase, players}) {
 		this.setFirstPhase(phase);
 		this.phasePlayers[this.currPhase] = players;
-		console.log('TOURNAMENT PLAYERS', this.phasePlayers);
 		this.updateUI({});
 	}
 	
 	onPlayerLeft({players}) {
 		this.phasePlayers[this.currPhase] = players;
-		console.log('TOURNAMENT PLAYERS', this.phasePlayers);
 		this.resetFirstPhaseUI();
 		this.updateUI({});
 	}
 
 	onPhaseStart({phase, games, players}) {
-		console.log(`BEGINNING ${phase}`, games, players);
-		console.log(`CURRENT PHASE`, this.currPhase);
 		this.currPhase = phase;
 		games.forEach(tourGame => {
 			let gameID = tourGame.game_id.id;
@@ -94,7 +86,6 @@ class Tournament {
 			this.phaseGames[phase][gameID][user2] = 0;
 		});
 
-		console.log(this.phasePlayers);
 		document.querySelector('.tourn-status').textContent = `The ${this.currPhase} phase is ongoing.`;
 		this.phasePlayers[phase] = players;
 		this.updateUI({});
@@ -106,8 +97,6 @@ class Tournament {
 	}
 
 	onPhaseEnd({phase, next_phase, results, winner=null}) {
-		console.log(`ENDING (${phase} -> ${next_phase})`, results);
-		console.log(`CURRENT PHASE`, this.currPhase);
 		results.forEach(game => {
 			this.phaseGames[phase][game.id][game.username1] = game.score1;
 			this.phaseGames[phase][game.id][game.username2] = game.score2;
@@ -118,7 +107,6 @@ class Tournament {
 
 		if (winner)
 			this.onTournamentEnd(winner);
-		console.log(this.phaseGames);
 	}
 
 	onTournamentEnd(winner){
@@ -168,7 +156,6 @@ class Tournament {
 		let currPhaseIndex = phaseNames.indexOf(this.currPhase);
 		let lastPhaseIndex = phaseNames.indexOf(this.lastPhase);
 
-		console.log(firstPhaseIndex, currPhaseIndex, lastPhaseIndex);
 		phaseNames.forEach((phase, i) => {
 			if (i < firstPhaseIndex || i > currPhaseIndex)
 				return ;
@@ -177,8 +164,6 @@ class Tournament {
 				.entries(this.phaseGames[phase])
 				.map(([id, gameScore]) => Object.values(gameScore))
 				.flat();
-			console.log(phase, players, scores);
-			console.log(window.location.pathname);
 			this.updatePlayerSlots(phase, players, scores);
 			if (i <= lastPhaseIndex)
 				this.highlightPlayerPaths(phase, scores, isPhaseOver);
@@ -189,7 +174,6 @@ class Tournament {
 		const query = `.${cssSelector}.player`;
 		const slots = document.querySelectorAll(query);
 		
-		console.log(query, players, scores, slots);
 		players.forEach((player, i) => {
 			slots[i].querySelector("span.name").textContent = player.alias;
 			let uri = player.user.picture;

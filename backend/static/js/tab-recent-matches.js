@@ -29,10 +29,10 @@ function onTournamentsClick() {
 function formatTimestamp_day(timestamp) {
     const date = new Date(timestamp);
 
-    // Array with the abbreviated month names
+    
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    // Get the day, month, year, hours, minutes, and seconds from the date object
+    
     const day = String(date.getUTCDate()).padStart(2, '0');
     const month = monthNames[date.getUTCMonth()];
     const year = date.getUTCFullYear();
@@ -45,16 +45,16 @@ function formatTimestamp_day(timestamp) {
 	return `${day}th, ${month}. ${year}`;
 }
 
-// Function to convert the content of the div
+
 function formatDays(div_class) {
-    // Get the div element by its ID
+    
     const dateDivs = document.querySelectorAll(div_class);
 
-	// Loop through each div and convert its content
+	
 	dateDivs.forEach(div => {
-		const isoTimestamp = div.textContent; // Get the ISO date string from the div
-		const formattedDate = formatTimestamp_day(isoTimestamp); // Format the date
-		div.textContent = formattedDate; // Set the formatted date back into the div
+		const isoTimestamp = div.textContent; 
+		const formattedDate = formatTimestamp_day(isoTimestamp); 
+		div.textContent = formattedDate; 
 	});
 }
 
@@ -65,20 +65,20 @@ function formatTimestamp_second(timestamp) {
     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
     const seconds = String(date.getUTCSeconds()).padStart(2, '0');
 
-    // Format the result as dd, mmm yyyy hh:mm:ss
+    
     return `${hours}:${minutes}:${seconds}`;
 }
 
-// Function to convert the content of the div
+
 function formatRecordsTimestamp(div_class) {
-    // Get the div element by its ID
+    
     const dateDivs = document.querySelectorAll(div_class);
 
-    // Loop through each div and convert its content
+    
     dateDivs.forEach(div => {
-        const isoTimestamp = div.textContent; // Get the ISO date string from the div
-        const formattedDate = formatTimestamp_second(isoTimestamp); // Format the date
-        div.textContent = formattedDate; // Set the formatted date back into the div
+        const isoTimestamp = div.textContent; 
+        const formattedDate = formatTimestamp_second(isoTimestamp); 
+        div.textContent = formattedDate; 
     });
 }
 
@@ -97,7 +97,7 @@ function placement_func(placement) {
     }
 }
 
-// Converter colocações
+
 function formatTournamentPlacements() {
     const place = document.querySelectorAll(".placement");
     place.forEach(div => {
@@ -110,7 +110,7 @@ function formatTournamentPlacements() {
     });
 }
 
-// Calcular a diferença de tempo
+
 function calculateTimeDifference(duration) {
     let totalSeconds = Math.floor(parseInt(duration));
     const minutes = Math.floor(totalSeconds / 60);
@@ -119,7 +119,7 @@ function calculateTimeDifference(duration) {
     return `${minutes}:${formattedSeconds} min`;
 }
 
-// Converter duração
+
 function formatGameDurations() {
     const places = document.querySelectorAll(".duration");
     places.forEach(div => {
@@ -133,7 +133,7 @@ document.getElementById('tab-games').onclick = () => onGamesClick();
 document.getElementById('tab-tournaments').onclick = () => onTournamentsClick();
 document.getElementById('tab-profile').onclick = () => onProfileClick();
 
-formatTournamentPlacements(); // Converte colocações
-formatGameDurations(); // Converte durações
-formatDays(".date-day"); // Converte datas
-formatRecordsTimestamp(".date-second"); // Converte datas
+formatTournamentPlacements(); 
+formatGameDurations(); 
+formatDays(".date-day"); 
+formatRecordsTimestamp(".date-second"); 

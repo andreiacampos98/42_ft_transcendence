@@ -32,7 +32,6 @@ async function toggleFriendsDrawer(user_id) {
 	
 	if (!response.ok && response.status != 401) {
 		localStorage.setItem('access_token', data.access_token);
-		console.error(data.message);
 		return ;
 	}
 	else if (!response.ok && response.status == 401) {
@@ -54,8 +53,6 @@ async function toggleFriendsDrawer(user_id) {
 	sidebar.replaceChildren(); 
 
 	friends.forEach((friend) => {
-		console.log(friend);
-
 		const friendBlock = document.createElement('div');
 		friendBlock.classList.add('friend-block');
 		friendBlock.id = 'friend2';

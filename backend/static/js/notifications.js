@@ -11,7 +11,6 @@ async function removeNotification(notificationId, listItem){
 	const data = await response.json();
 	if (!response.ok && response.status != 401){
         localStorage.setItem('access_token', data.access_token);
-		console.error(`Error deleting notification: ${data.message}`);
     }
     else if(response.status == 401){
         alert("As your session has expired, you will be logged out.");
@@ -41,7 +40,6 @@ async function getNotifications() {
 
     if (!response.ok && response.status != 401) {
         localStorage.setItem('access_token', data.access_token);
-		console.error(`Error getting notifications: ${data.message}`);
 		return ;
 	}
 	else if (!response.ok && response.status == 401) {
@@ -97,11 +95,7 @@ async function getNotifications() {
 		const date = new Date(notification.created_at);
 
 		const formattedDate = date.toLocaleDateString('en-GB', {day: '2-digit', month: '2-digit'});
-
-		// Format time as "hh:mm"
 		const formattedTime = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false});
-
-		// Combine date and time
 		timestamp.textContent = `${formattedDate}, ${formattedTime}`;
 		
 		listItem.appendChild(profilePic);
@@ -157,10 +151,8 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
     }
 
     try {
-        console.log(`Handling notification action: ${status} for notification ${notificationId}`);
 
         if (status === 'accept') {
-            console.log(`Sending friend accept request for user ${userId} and user ${otherUserId}`);
 
             let token = localStorage.getItem("access_token");
             const friendAcceptResponse = await fetch(`/friends/accept/${userId}/${otherUserId}`, {
@@ -184,7 +176,6 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
             }
             else{
                 localStorage.setItem('access_token', data_friend.access_token);
-                console.log('Friend accept request successful');
                 token = localStorage.getItem("access_token");
                 const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
                     method: 'PATCH',
@@ -207,11 +198,9 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
                 }
                 else{
                     localStorage.setItem('access_token', data_notification.access_token);
-                    console.log('Notification update request successful');
                 }
             }
         } else if (status === 'decline') {
-            console.log(`Friend decline request successful`);
             let token = localStorage.getItem("access_token");
             const friendDeclineResponse = await fetch(`/friends/decline/${userId}/${otherUserId}`, {
                 method: 'PATCH',
@@ -233,7 +222,6 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
                 });
             }
             else {
-                console.log(`Sending decline notification request for notification ${notificationId}`);
                 let token = localStorage.getItem("access_token");
 
                 const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
@@ -259,13 +247,11 @@ async function handleNotificationAction(notificationId, status, userId, otherUse
                 }
                 else{
                     localStorage.setItem('access_token', data_reponse.access_token);
-                    console.log('Notification decline request successful');
                 }
             }
         }
         getNotifications();
     } catch (error) {
-        console.error('Error handling notification action:', error);
     }
 }
 
@@ -281,10 +267,8 @@ function closeModal() {
 document.addEventListener('click', function (event) {
     const modal = document.getElementById('modal-notif');
     
-    // Ensure the modal exists before trying to access it
     if (!modal) return;
 
-    // Check if the click occurred outside the modal
     if (event.target === modal) {
         modal.style.display = 'none';
     }
@@ -297,10 +281,8 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
     }
 
     try {
-        console.log(`Handling notification action: ${status} for notification ${notificationId}`);
 
         if (status === 'accept') {
-            console.log(`Sending friend accept request for user ${userId} and user ${otherUserId}`);
             
             let token = localStorage.getItem("access_token");
             const friendAcceptResponse = await fetch(`/friends/accept/${userId}/${otherUserId}`, {
@@ -324,7 +306,6 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
             }
             else{
                 localStorage.setItem('access_token', data_friend.access_token);
-                console.log('Friend accept request successful');
                 token = localStorage.getItem("access_token");
                 const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
                     method: 'PATCH',
@@ -355,7 +336,6 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                     if (acceptButton) acceptButton.style.display = "none";
                     if (removeFriendButton) removeFriendButton.style.display = "block";
 
-                    console.log('Notification update request successful');
                     history.pushState(null, '', `/`);
                     htmx.ajax('GET', `/`, {
                         target: '#main'
@@ -363,7 +343,6 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                 }
             }
         } else if (status === 'decline') {
-            console.log(`Friend decline request successful`);
             let token = localStorage.getItem("access_token");
             const friendDeclineResponse = await fetch(`/friends/decline/${userId}/${otherUserId}`, {
                 method: 'PATCH',
@@ -385,7 +364,6 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                 });
             }
             else {
-                console.log(`Sending decline notification request for notification ${notificationId}`);
                 token = localStorage.getItem("access_token");
                 const notificationUpdateResponse = await fetch(`/notifications/update/${notificationId}`, {
                     method: 'PATCH',
@@ -418,7 +396,6 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                     if (acceptButton) acceptButton.style.display = "none";
                     if (addFriendButton) addFriendButton.style.display = "block";
 
-                    console.log('Notification decline request successful');
                 }
             }
         }
@@ -429,6 +406,5 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
         });
 
     } catch (error) {
-        console.error('Error handling notification action:', error);
     }
 }

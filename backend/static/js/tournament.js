@@ -53,7 +53,6 @@ async function onCreateButtonClick()
 		"alias": alias,
 		"status": 'Open'
 	};
-	console.log(formData)
 
 	const response = await fetch(`/tournaments/create`, {
 		method: "POST",
@@ -75,7 +74,7 @@ async function onCreateButtonClick()
 			target: '#main'
 		});
 	} else {
-		const tournamentId = data.data.id; // Ajuste conforme o formato da resposta
+		const tournamentId = data.data.id;
 		myUser.userID = data.data.host_id;
 		myUser.tournamentID = tournamentId;
 		history.pushState(null, '', `/tournaments/ongoing/${tournamentId}`);

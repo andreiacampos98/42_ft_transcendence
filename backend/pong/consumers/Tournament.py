@@ -29,21 +29,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		self.tournament_channel = f'tournament_{self.tournament_id}'
 		self.tournament_capacity = (await self.get_tournament()).capacity
 
-		# Add user to the tournament wide channel
 		await self.channel_layer.group_add(self.tournament_channel, self.channel_name)
 
-		# Create cache in redis about tournament (if it does not exist) and about the user
 		await self.create_cache()
 		await self.broadcast_player_list()
-		
-		ic(self.get_cache(self.tournament_channel))
 		if self.is_tournament_full():
 			first_phase = self.get_cache(self.tournament_channel)['curr_phase']
 			await self.begin_phase(first_phase, True)
 		
 
 	async def disconnect(self, code):
-		# Remove the player from cache
 		players = self.get_cache(f'{self.tournament_channel}_players')
 		player_id = f'{self.user.id}'
 
@@ -51,13 +46,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			del players[player_id]
 			self.set_cache(f'{self.tournament_channel}_players', players)
 		
-		# Remove the tournament while the tournament hasn't started yet
 		tournament = await self.get_tournament()
 		
 		if tournament.status == 'Open':
 			await tournament_leave(self.tournament_id, self.user.id)
-			ic(f'LEFT: {self.user.username} from tournament {tournament.id} while "{tournament.status}"')
-
 			players = list(map(lambda x: x['tour_user'], players.values()))
 
 			await self.channel_layer.group_send(self.tournament_channel, {
@@ -69,8 +61,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					}
 				})
 			})
-
-		ic(f'DISCONNECT: {self.user.username} from tournament {tournament.id} while "{tournament.status}"')
 		
 		return await super().disconnect(code)
 	
@@ -140,8 +130,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def leave_tournament(self, tournament):
 		if tournament.status == 'Open':
 			await tournament_leave(self.tournament_id, self.user.id)
-			ic(f'LEFT: {self.user.username} from tournament {tournament.id} while "{tournament.status}"')
-
 			players = self.get_cache(f'{self.tournament_channel}_players')
 			del players[f'{self.user.id}']
 			self.set_cache(f'{self.tournament_channel}_players', players)
@@ -157,8 +145,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					}
 				})
 			})
-
-		ic(f'DISCONNECT: {self.user.username} from tournament {tournament.id} while "{tournament.status}"')
 		await super().disconnect()
 
 
@@ -221,8 +207,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	@database_sync_to_async
 	def store_last_phase_results(self, phase):
 		tournament_games = self.get_cache(f'{self.tournament_channel}_games')
-
-		ic('UPDATING GAMES')
 		for game_id, game_data in tournament_games[phase].items():
 			tournament_update_game_helper(self.tournament_id, game_id, game_data)
 
@@ -260,7 +244,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		players = self.get_cache(f'{self.tournament_channel}_players')
 		users_data = list(map(lambda x: x['tour_user'], players.values()))
 
-		# Broadcast current list to all users
 		await self.channel_layer.group_send(self.tournament_channel, {
 			"type": "broadcast", 
 			"message": json.dumps({
@@ -280,11 +263,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		game_id = f'{game_data['id']}'
 
-		if game_id in tournament_games[curr_phase]:
-			ic(f'Data for game {game_id} ({curr_phase}) already exists')
-			ic(tournament_games[curr_phase][game_id])
-		else:
-			ic(f'Storing game {game_id} ({curr_phase}) data...')
+		if game_id not in tournament_games[curr_phase]:
 			del game_data['id']
 			tournament_games[curr_phase][game_id] = game_data
 			self.set_cache(f'{self.tournament_channel}_games', tournament_games)
@@ -334,8 +313,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		tournament_state['curr_phase_finished_games'] = 0
 		self.set_cache(self.tournament_channel, tournament_state)
 		
-		ic('PHASE_END', tournament_state)
-
 		results, winner = await self.store_last_phase_results(tournament_state['last_phase']) 
 
 		await self.channel_layer.group_send(self.tournament_channel, {

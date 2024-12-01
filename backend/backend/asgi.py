@@ -7,15 +7,6 @@ For more information on this file, see
 https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 """
 
-# import os
-# from chat.routing import ws_urlpatternsication(),
-#         "websocket": AuthMiddlewareStack(
-#             # PresenceConsumer.as_asgi()
-#             URLRouter(pong.urls.websocket_urlpatterns)
-#         ),
-#     }
-# )
-
 import os, django
 from django.core.asgi import get_asgi_application
 

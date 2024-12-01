@@ -15,7 +15,6 @@ export class RemotePlayer extends AbstractPlayer {
 	}
 
 	update(pressedKeys) {
-		//! REPOR COM KEYBINDS == NULL
 		if (this.keybinds == null)
 			return ;
 

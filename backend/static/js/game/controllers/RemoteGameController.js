@@ -54,7 +54,6 @@ export class RemoteGameController extends AbstractGameController {
 		this.players[this.player2.id] = this.player2;
 		this.stats = new GameStats(this.player1, this.player2);
 		this.stats.gameID = gameID;
-		console.log(this.stats.gameID);
 	}
 
 	registerSocketEvents(){
@@ -67,7 +66,6 @@ export class RemoteGameController extends AbstractGameController {
 				this.ball.sync(data.ball);
 		}
 
-		myUser.gameSocket.onerror = (ev) => console.error(ev);
 	}
 
 	build() {
@@ -92,8 +90,6 @@ export class RemoteGameController extends AbstractGameController {
 
 	sendGameResults() {
 		const results = this.stats.assembleGameResults();
-		console.log(`WINNER:`, this.stats.winner, 'SCORE:', this.stats.score);
-		console.log('SENDING DATA TO SERVER...');
 
 		myUser.gameSocket.send(JSON.stringify({
 			'event': 'GAME_END',

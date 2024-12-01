@@ -72,7 +72,6 @@ export class AbstractGameController extends THREE.Group {
 	}
 
 	fillPlayerHUD(player, selector) {
-		console.log(player);
 		const playerName = document.getElementById(selector);
 		playerName.textContent = `${player.username}`;
 		

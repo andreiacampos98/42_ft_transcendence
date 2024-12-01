@@ -85,7 +85,6 @@ export class GameStats {
 			
 			stats[scorer].score++;
 
-			// Greatest Deficit Overcome
 			if (stats[p1].score == stats[p2].score) {
 				stats[scorer].maxOvercome = Math.max(stats[scorer].overcome + 1, stats[scorer].maxOvercome);
 				stats[scorer].canOvercome = false;
@@ -98,13 +97,11 @@ export class GameStats {
 			else if (stats[p2].score < stats[p1].score) 
 				stats[p2].canOvercome = true;
 	
-			// Biggest Lead
 			stats[scorer].lead = stats[scorer].score - stats[loser].score;
 			stats[p1].maxLead = Math.max(stats[p1].lead, stats[p1].maxLead);
 			stats[p2].maxLead = Math.max(stats[p2].lead, stats[p2].maxLead);
 			stats[loser].lead = 0;
 			
-			// Most Consecutive Goals
 			stats[scorer].consecutive++;
 			stats[p1].maxConsecutive = Math.max(stats[p1].consecutive, stats[p1].maxConsecutive);
 			stats[p2].maxConsecutive = Math.max(stats[p2].consecutive, stats[p2].maxConsecutive);
@@ -138,7 +135,6 @@ export class GameStats {
 			},
 			"goals": this.goals				
 		};
-		console.log('GAME REPORT', results);
 		return results;
 	}
 

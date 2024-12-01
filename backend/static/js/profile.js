@@ -129,11 +129,9 @@ async function loadDonutChart() {
 	};
 	if (!charts['donut']) {
 		charts['donut'] = new ApexCharts(document.querySelector('#chart1'), options);
-		console.log(charts['donut'].el)
 	}
 	else {
 		charts['donut'].el = document.querySelector('#chart1');
-		console.log(charts['donut'].el)
 	}
 	
 	charts['donut'].render();
@@ -172,8 +170,6 @@ async function loadBarLineChart() {
 		const weekday = (timestamp.getDay() + 6) % 7;
 		totalGames[weekday] = numGames;
 	});
-	console.log('TOTAL GAMES', totalGames);
-	console.log('WIN RATES', winRates);
 
 	const hasNoWeekGames = totalGames.every(gamesPerDay => gamesPerDay == 0);
 	if (hasNoWeekGames)

@@ -8,18 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const accessToken = getCookie('access_token');
     const refresh_token = getCookie('refresh_token');
 
-    if (accessToken) {
-        // Armazena o token no localStorage
+    if (accessToken)
         localStorage.setItem('access_token', accessToken);
-        console.log('Access token armazenado no localStorage:', accessToken);
-    } else {
-        console.warn('Access token não encontrado nos cookies.');
-    }
-    if (refresh_token) {
-        // Armazena o token no localStorage
+    if (refresh_token)
         localStorage.setItem('access_token', refresh_token);
-        console.log('Access token armazenado no localStorage:', refresh_token);
-    } else {
-        console.warn('Access token não encontrado nos cookies.');
-    }
 });

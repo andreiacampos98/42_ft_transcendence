@@ -45,7 +45,6 @@
 
 	const userID = document.getElementById('metadata').getAttribute('data-user-id');
 	const username = document.getElementById('metadata').getAttribute('data-username');
-	console.log(document.querySelector('.profile-pic').src);
 	let app = new Application();
 	app.init({ 
 		player1Data: {'id': userID, 'username': username, 'picture': document.querySelector('.profile-pic').src},
