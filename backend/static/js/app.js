@@ -99,6 +99,23 @@ window.addEventListener('htmx:beforeRequest', (event) => {
 		myUser.disconnectSocket('gameSocket');
 });
 
+
+window.addEventListener('popstate', (event) => {
+	console.log("event");
+    const currentUrl = window.location.pathname;
+	
+	if (currRoute !== currentUrl) {
+        currRoute = currentUrl;
+
+        htmx.ajax('GET', currentUrl, {
+            target: '#main',
+			swap: 'innerHTML'
+        }).then(() => {
+            appendScripts();
+        });
+    }
+});
+
 //! ============================ GLOBAL VARIABLES ============================
 
 let charts = {
