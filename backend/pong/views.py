@@ -1904,15 +1904,12 @@ def delete_profile(request, id):
 
 
 def mask_email(email):
-    try:
-        local, domain = email.split('@', 1)
-        
-        if len(local) < 4:
-            raise ValueError("O e-mail deve ter pelo menos 4 caracteres antes do '@'")
-        
-        masked_local = local[:3] + '*' * (len(local) - 3)
-        
-        return f"{masked_local}@{domain}"
-    
-    except ValueError as e:
-        return None
+	local, domain = email.split('@', 1)
+	
+	if len(local) < 4:
+		return email
+	
+	masked_local = local[:3] + '*' * (len(local) - 3)
+	
+	return f"{masked_local}@{domain}"
+
