@@ -16,7 +16,7 @@ export class AIGameController extends AbstractGameController {
 
 	createPlayers(player1Data, player2Data) {
 		const { id: p1ID, username: p1Username, picture: p1Picture } = player1Data;
-		const { id: p2ID, username: p2Username } = player2Data;
+		const { id: p2ID, username: p2Username, picture: p2Picture } = player2Data;
 		
 		this.player1 = new LocalPlayer({ 
 			id: p1ID, 
@@ -30,6 +30,7 @@ export class AIGameController extends AbstractGameController {
 			username: p2Username,
 			x: PADDLE_OFFSET,
 			keybinds: null,
+			picture: p2Picture
 		});
 
 		this.stats = new GameStats(this.player1, this.player2);

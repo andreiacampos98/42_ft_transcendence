@@ -1,6 +1,6 @@
 django
 djangorestframework
-gunicorn
+uvicorn
 python-dotenv
 crispy-bootstrap4
 tzdata

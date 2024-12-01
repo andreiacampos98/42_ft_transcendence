@@ -1,6 +1,4 @@
-var currRoute = '';
-var lastRoute = '';
-var lastQuery = '';
+var currRoute = '', lastRoute = '';
 
 const routeScripts = {
 	'/tournaments/ongoing/': ['ongoing-tourn'],
@@ -30,8 +28,10 @@ const appendScripts = () => {
 		return true;
 	});
 
-	if (!route)
+	if (!route) {
+		console.log('NO SCRIPTS TO ADD');
 		return ;
+	}
 
 	console.log('ROUTE ', route)
 	console.log('SCRIPTS ', routeScripts[route])
@@ -39,6 +39,7 @@ const appendScripts = () => {
 	routeScripts[route].forEach(file => {		
 		let script = document.createElement('script');
 		script.src = file.startsWith('https') ? file : `/static/js/${file}.js`;
+		console.log(`Added: `, script.src);
 		document.body.appendChild(script);
 	});
 };
@@ -61,11 +62,12 @@ const destroyChart = () => {
 const mutationsCallback = (mutations) => {
 	localStorage.removeItem('htmx-history-cache')
 	// Ignore second set of mutations
-	console.log(lastRoute, currRoute, window.location.pathname)
+	// console.log(lastRoute, currRoute, window.location.pathname);
+	console.log(`Current route: ${currRoute}; Pathname: ${window.location.pathname}`);
 	destroyChart();
+	console.log(`IM THROUGH`);
 	if (currRoute == window.location.pathname)
 		return ;
-	
 	
 	lastRoute = currRoute;
 	currRoute = window.location.pathname;

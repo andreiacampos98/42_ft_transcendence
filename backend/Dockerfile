@@ -25,4 +25,4 @@ CMD source /.venv/bin/activate \
 	&& python3 manage.py makemigrations \
 	&& python3 manage.py migrate \
 	&& python3 manage.py create_aiuser  \
-    && gunicorn backend.wsgi:application --bind 0.0.0.0:8002
+    && uvicorn backend.wsgi:application --bind 0.0.0.0:8002

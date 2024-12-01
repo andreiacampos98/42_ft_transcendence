@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GameStats.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nunomiguel533 <nunomiguel533@student.42    +#+  +:+       +#+        */
+/*   By: crypto <crypto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/11/23 11:54:59 by nunomiguel5      ###   ########.fr       */
+/*   Updated: 2024/12/01 13:24:13 by crypto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,14 +150,5 @@ export class GameStats {
 		this.loser = this.winner == this.player1 ? this.player2 : this.player1;
 
 		return true;
-	}
-
-	storeTournamentGameScore() {
-		const currPhase = myTournament.currPhase;
-		const p1 = this.player1.username;
-		const p2 = this.player2.username;
-		
-		myTournament.phaseGames[currPhase][this.gameID][p1] = this.score[p1];
-		myTournament.phaseGames[currPhase][this.gameID][p2] = this.score[p2];
 	}
 }

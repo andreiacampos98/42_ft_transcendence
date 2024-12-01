@@ -64,6 +64,7 @@ async function loadDonutChart() {
 
 	if (totalTime == 0)
 		return ;
+	
 	if (totalTime >= 60){
 		remoteTime = Math.round(remoteTime / 60);
 		aiTime = Math.round(aiTime / 60);
