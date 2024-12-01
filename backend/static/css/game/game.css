@@ -67,29 +67,51 @@
 }
 
 #p1, #p2 {
-	/* width: 300px; */
+	font-size: 20px;
+}
+
+#p1, #p2, #final-p1, #final-p2 {
 	margin-inline: 16px;
 }
 
-#p1-img, #p2-img {
-	width: 50px;
-	height: 50px;
+#p1-img, #p2-img, #winner-img {
+	width: 60px;
+	height: 60px;
 	object-fit: cover;
 	border-radius: 50%;
-
 }
 
-#loader-container {
+#winner-img {
+	width: 100px;
+	height: 100px;
+}
+
+#loader-container, #winner-container {
 	transition: background-color 0.5s ease;
 	border-top-left-radius: 10px;
 	background-color: #00000055;
-	z-index: -101;
 	position: fixed;
 }
 
 #loading-message {
     color: #FFFFFF;
     font-weight: bold;
+}
+
+#winner-container {
+	visibility: hidden;
+	background-color: #000000BB;
+}
+
+#winner-message {
+	color: white;
+	font-size: 24px;
+	margin-top: 16px;
+}
+
+#winner-name {
+	color: #F8D082;
+	font-weight: bold;
 }
 
 #loader {

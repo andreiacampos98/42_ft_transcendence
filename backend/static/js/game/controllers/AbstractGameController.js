@@ -68,6 +68,7 @@ export class AbstractGameController extends THREE.Group {
 
 		this.ball.speed.x = this.ball.speed.y = 0;
 		this.sendGameResults();
+		this.displayEndGame();
 	}
 
 	fillPlayerHUD(player, selector) {
@@ -80,10 +81,22 @@ export class AbstractGameController extends THREE.Group {
 
 		if(!player.picture)
 			return ;
-		else if (player.picture.includes('http')) 
+		else if (player.picture.includes('http') && player.id != 1) 
 			playerImage.src = `https://${decodeURIComponent(uri).slice(14)}`
 		else 
 			playerImage.src = uri;
+	}
+
+	displayEndGame() {
+		document.getElementById('scoreboard').remove();
+		
+		const winnerContainer = document.getElementById('winner-container');
+		winnerContainer.style.visibility = 'visible';
+
+		const winnerName = document.getElementById('winner-name');
+		const winnerImg = document.getElementById('winner-img');
+		winnerName.textContent = this.stats.winner.username;
+		winnerImg.src = this.stats.winner.picture;
 	}
 
 	createPlayers() {}

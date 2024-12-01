@@ -27,13 +27,10 @@ export class Arcade extends THREE.Object3D {
 		if (this.lever2)
 			this.lever2.update(pressedKeys);
 
-		// console.log(this.children);
 		this.children[0].children[1].material[1].map.offset.x += 0.01;
 		this.children[0].children[1].material[1].map.offset.y += 0.01;
 		this.children[0].children[0].material[1].map.offset.x -= 0.01;
 		this.children[0].children[0].material[1].map.offset.y -= 0.01;
-
-		console.log(this.children[0].children);
 	}
 
 	lerp (start, end, t) {

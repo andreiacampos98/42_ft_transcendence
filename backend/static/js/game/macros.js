@@ -5,7 +5,7 @@ export const DIRECTION = Object.freeze({
 	RIGHT: 1,
 });
 
-export const BALL_START_SPEED = 0.1;
+export const BALL_START_SPEED = 0.4;
 export const BALL_ACCELERATION = 0.01;
 export const BALL_RADIUS = 0.01;
 export const BALL_COLOR = 0xFFFFFF;
