@@ -5,7 +5,7 @@ class Command(BaseCommand):
 	help = 'Cria um usuário AI automaticamente'
 
 	def handle(self, *args, **kwargs):
-		username = "aiuser2024"
+		username = "AI BOT"
 		password = "Aiuser@2024"
 
 		# Verifica se o usuário já existe

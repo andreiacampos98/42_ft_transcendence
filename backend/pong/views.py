@@ -972,7 +972,7 @@ def tournament_create(request):
 
 	tour_serializer = TournamentsSerializer(data=data)
 	if not tour_serializer.is_valid():
-		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_serializer.errors, 'access_token': new_token}, status=400)
+		return JsonResponse({'message': tour_serializer.errors.name, 'tour errors': tour_serializer.errors, 'access_token': new_token}, status=400)
 
 	tournament = tour_serializer.save()
 	user_data = {
@@ -983,7 +983,7 @@ def tournament_create(request):
 
 	tour_user_serializer = TournamentsUsersSerializer(data=user_data)
 	if not tour_user_serializer.is_valid():
-		return JsonResponse({'message': 'Error in the serializer.', 'tour errors': tour_user_serializer.errors, 'access_token': new_token}, status=400)
+		return JsonResponse({'message': tour_user_serializer.errors["alias"], 'tour errors': tour_user_serializer.errors, 'access_token': new_token}, status=400)
 	tour_user_serializer.save()
 	ic(data['host_id'])
 	user= Users.objects.get(pk=data['host_id'])
