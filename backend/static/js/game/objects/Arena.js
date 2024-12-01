@@ -38,7 +38,7 @@ export class Arena extends THREE.Group {
 		this.lowerBoundary.position.set(0, -this.semiHeight + this.semiDepth, 0);
 		this.leftBoundary.position.set(-this.semiLength, 0, 0);
 		this.rightBoundary.position.set(this.semiLength, 0, 0);
-		// this.visible = false;
+		this.visible = false;
 
 		this.add(this.lowerBoundary, this.upperBoundary, this.leftBoundary, this.rightBoundary);
 	}

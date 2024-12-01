@@ -53,6 +53,7 @@ export class Application  {
 		document.getElementById('main-content').appendChild(this.gui.domElement);
 
 		this.scene.add(new THREE.AmbientLight(0xFFFFFF, 1));
+		this.buildRoomScene();
 	
 		this.stats = new Stats();
         this.stats.showPanel(0);
@@ -80,6 +81,32 @@ export class Application  {
 		this.canvas.appendChild( this.renderer.domElement );
 		setTimeout(() => document.getElementById('scoreboard').style.visibility = 'visible', 500);
     }
+
+	buildRoomScene(){
+		let backWall = new THREE.Mesh(
+			new THREE.PlaneGeometry(3, 1.5),
+			new THREE.MeshPhongMaterial({color: 0x222222})
+		);
+		backWall.position.z = -0.3;
+
+		let floor = backWall.clone();
+		floor.position.set(0, -0.5, 0);
+		floor.rotation.set(-Math.PI / 2, 0 ,0);
+
+		let light = new THREE.SpotLight(0xAA0000, 10, 3, Math.PI / 6, 0, 1);
+		light.position.set(-1, 1, 1);
+		this.scene.add(light);
+
+		let light2 = new THREE.SpotLight(0x00AAAA, 10, 3, Math.PI / 6, 0, 1);
+		light2.position.set(1, 1, 1);
+		this.scene.add(light2);
+		// this.scene.add(new THREE.SpotLightHelper(light));
+		// this.scene.add(new THREE.SpotLightHelper(light2));
+		
+
+		this.scene.add(backWall);
+		this.scene.add(floor);
+	}
 
 	loadAssets(callback) {
 		new FBXLoader().load(
@@ -127,14 +154,25 @@ export class Application  {
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
         this.camera = new THREE.PerspectiveCamera( 30, aspect, 0.1, 50 )
-        this.camera.position.set(0, 0.5, 3);
+        this.camera.position.set(0, 2, 3);
 		
-		const coords = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
-		new TWEEN.Tween(coords)
-			.to({x: 0, y: 0.15, z: 1.2 }, 1500)
+		const params = { 
+			x: this.camera.position.x, 
+			y: this.camera.position.y, 
+			z: this.camera.position.z, 
+			fov: this.camera.fov
+		};
+		new TWEEN.Tween(params)
+			.to({x: 0, y: 0.05, z: 0.65, fov: 45}, 2000)
 			.easing(TWEEN.Easing.Cubic.Out)
-			.onUpdate(() =>this.camera.position.set(coords.x, coords.y, coords.z))
-			.onComplete(() => this.gameCanStart = true)
+			.onUpdate(() => {
+				this.camera.position.set(params.x, params.y, params.z);
+				this.camera.fov = params.fov;
+				this.camera.updateProjectionMatrix();
+			})
+			.onComplete(() => {
+				this.gameCanStart = true; 
+			})
 			.start()
     }
 
