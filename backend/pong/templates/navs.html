@@ -61,17 +61,28 @@
                 </div>
             
                 <div id="notifications" ></div>
-                <a  hx-get="{% url 'user-profile' user.id %}"
-                    hx-trigger="click"
-                    hx-target="#main"
-                    hx-push-url="true"
-                    onclick="checkTokenBeforeNavigation(event)">
-                    {% if "http" in user.picture.url %}
-                        <img class="profile-pic" src="{{ user.picture }}" alt="Profile">
-                    {% else %}
-                        <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
-                    {% endif %}
-                </a>
+                {% if page == "profile" %}
+                    <a>
+                        {% if "http" in user.picture.url %}
+                            <img class="profile-pic" src="{{ user.picture }}" alt="Profile">
+                        {% else %}
+                            <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <a  hx-get="{% url 'user-profile' user.id %}"
+                        hx-trigger="click"
+                        hx-target="#main"
+                        hx-push-url="true"
+                        onclick="checkTokenBeforeNavigation(event)">
+                        {% if "http" in user.picture.url %}
+                            <img class="profile-pic" src="{{ user.picture }}" alt="Profile">
+                        {% else %}
+                            <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
+                        {% endif %}
+                    </a>
+                {% endif %}
+
             </div>
             
         </div>

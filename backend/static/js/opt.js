@@ -40,6 +40,19 @@ function handleInput(current, nextId) {
     // Update the hidden input with the full code
     updateHiddenCode();
 }
+
+function handleBackspace(event, current, prevId) {
+    // Check if the Backspace key is pressed and the current box is empty
+    if (event.key === "Backspace" && current.value === "" && prevId) {
+      // Move focus to the previous box and clear its value
+      const prevInput = document.getElementById(prevId);
+      prevInput.focus();
+      prevInput.value = ""; // Clear the previous box
+      updateHiddenCode(); // Update the hidden input
+      event.preventDefault(); // Prevent the browser from handling Backspace in the usual way
+    }
+}
+
 function updateHiddenCode() {
     // Concatenate the values from each input box
     const code = Array.from({ length: 6 }, (_, i) => 
