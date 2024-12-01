@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import  Stats  from 'three/addons/libs/stats.module.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Axis } from './objects/Axis.js';
@@ -27,7 +26,6 @@ export class Application  {
         // other attributes
         this.renderer = null;
         this.controls = null;
-		this.gui = null;
 		this.gameController = null;
 		this.activateControls = true;
 
@@ -48,10 +46,6 @@ export class Application  {
         this.scene.background = new THREE.Color( 0x101010 );
 		this.scene.add(new Axis(this));
 
-		this.gui = new GUI({ autoPlace: false });
-		this.gui.domElement.id = 'gui';
-		document.getElementById('main-content').appendChild(this.gui.domElement);
-
 		this.scene.add(new THREE.AmbientLight(0xFFFFFF, 1));
 		this.buildRoomScene();
 	
@@ -59,10 +53,6 @@ export class Application  {
         this.stats.showPanel(0);
         document.body.appendChild(this.stats.dom);
 
-		const orbitFolder = this.gui.addFolder('Mouse Controls');
-        orbitFolder.add(this, 'activateControls', false).name("Active")
-			.onChange((value) => this.setActivateControls(value));
-		
         this.renderer = new THREE.WebGLRenderer({antialias:true});
         this.renderer.setPixelRatio( window.innerWidth / window.innerHeight );
         this.renderer.setClearColor("#000000");

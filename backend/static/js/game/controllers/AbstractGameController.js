@@ -96,7 +96,8 @@ export class AbstractGameController extends THREE.Group {
 		const winnerName = document.getElementById('winner-name');
 		const winnerImg = document.getElementById('winner-img');
 		winnerName.textContent = this.stats.winner.username;
-		winnerImg.src = this.stats.winner.picture;
+		if (this.stats.winner.picture)
+			winnerImg.src = this.stats.winner.picture;
 	}
 
 	createPlayers() {}

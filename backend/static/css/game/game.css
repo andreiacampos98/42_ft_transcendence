@@ -9,12 +9,6 @@
 	display: none;
 }
 
-#gui { 
-    position: absolute;
-    top: 0px;
-    right: 100px;
-}
-
 #scoreboard {
 	border-radius: 10px 10px 0px 0px;
 	background-color: #000000AA;
