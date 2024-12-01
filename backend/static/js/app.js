@@ -63,11 +63,12 @@ const mutationsCallback = (mutations) => {
 	localStorage.removeItem('htmx-history-cache')
 	// Ignore second set of mutations
 	// console.log(lastRoute, currRoute, window.location.pathname);
-	console.log(`Current route: ${currRoute}; Pathname: ${window.location.pathname}`);
 	destroyChart();
 	console.log(`IM THROUGH`);
-	if (currRoute == window.location.pathname)
+	if (currRoute == window.location.pathname) {
+		console.error(`Curr: ${currRoute}; Last: ${lastRoute}; Path: ${window.location.pathname}`);
 		return ;
+	}
 	
 	lastRoute = currRoute;
 	currRoute = window.location.pathname;
@@ -113,23 +114,6 @@ window.addEventListener('htmx:beforeRequest', (event) => {
 		handleTournamentLeave(event);
 	else if (myUser.attemptedToLeaveRemoteGame(currRoute, nextRoute))
 		myUser.disconnectSocket('gameSocket');
-});
-
-
-window.addEventListener('popstate', (event) => {
-	console.log("event");
-    const currentUrl = window.location.pathname;
-	
-	if (currRoute !== currentUrl) {
-        currRoute = currentUrl;
-
-        htmx.ajax('GET', currentUrl, {
-            target: '#main',
-			swap: 'innerHTML'
-        }).then(() => {
-            appendScripts();
-        });
-    }
 });
 
 //! ============================ GLOBAL VARIABLES ============================
