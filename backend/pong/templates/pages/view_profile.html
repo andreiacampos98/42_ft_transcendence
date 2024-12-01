@@ -140,9 +140,12 @@
 						</form>
 					{% endif %}
 				</div>
-				
+				<div class="save-cancel align-items-center justify-content-between" id="save-cancel" style="display: none;">
+					<button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+					<button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick('{{ user_id }}')">Go back</button>
+				</div>
 				<form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;width: 360px;">
-					<input type="file" id="profile-picture-input" name="picture" style="display: none;">
+					<input type="file" id="profile-picture-input" name="picture" style="display: none;" accept="image/*">
 					<div class="email-joined-edit d-flex align-items-start flex-column">
 						<label for="username-input">
 							<h5 class="text-block d-flex" style="color:#FFFFFFC0;font-weight: unset;font-size: x-small;"> 
