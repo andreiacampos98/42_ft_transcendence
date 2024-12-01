@@ -1513,6 +1513,7 @@ def loginview(request):
 				response_data = {
 					'message': 'You have successfully logged in.',
 					'username': user.username,
+					'email':user.email,
 					'redirect_url': 'home',
 					'data': {'otp': True }
 				}
