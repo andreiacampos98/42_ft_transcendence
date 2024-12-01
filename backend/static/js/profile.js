@@ -61,7 +61,9 @@ async function loadDonutChart() {
 	var unit = 'Sec';
 	
 	const totalTime = remoteTime + aiTime + localTime + tournamentTime;
-	
+
+	if (totalTime == 0)
+		return ;
 	if (totalTime >= 60){
 		remoteTime = Math.round(remoteTime / 60);
 		aiTime = Math.round(aiTime / 60);
@@ -171,6 +173,10 @@ async function loadBarLineChart() {
 	});
 	console.log('TOTAL GAMES', totalGames);
 	console.log('WIN RATES', winRates);
+
+	const hasNoWeekGames = totalGames.every(gamesPerDay => gamesPerDay == 0);
+	if (hasNoWeekGames)
+		return ;
 
 	var options = {
 		chart: {
