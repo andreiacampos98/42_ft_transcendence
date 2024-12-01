@@ -30,7 +30,7 @@ body {
     padding-inline: 48px;
     padding-block: 32px;
     min-height: 600px;
-    width: 400px;
+    min-width: 400px;
 	border-top-left-radius: 10px;
 	border-bottom-left-radius: 10px;
     text-align: center;

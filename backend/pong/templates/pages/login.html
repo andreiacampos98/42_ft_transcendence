@@ -4,7 +4,7 @@
 {% block body %}
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
     <script defer src="{% static 'js/login.js' %}"></script>
-    <div class="login-container">
+    <div class="login-container d-flex">
         <div class="login-container2">
             <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
             <h3 class="title" id="nice" >Nice to see you back :)</h3>
@@ -41,6 +41,13 @@
             <br>
             <h6>© 42 Porto 2024</h6>
             </div>
+        </div>
+        <div>
+            <img style="
+                width: 786px;
+                height: 600px;
+                border-radius: 0px 8px 8px 0px;
+            " src="{% static 'assets/images/us.jpeg' %}" alt="">
         </div>
     </div>
 {% endblock %}
