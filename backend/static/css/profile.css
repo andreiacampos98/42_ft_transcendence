@@ -524,6 +524,6 @@ input:checked + .slider:before {
 }
 
 #button-inside img {
-	width: 40px;
-	height: 40px;
+	width: 30px;
+	height: 30px;
 }
