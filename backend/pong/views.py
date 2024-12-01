@@ -145,6 +145,7 @@ def send_code_verify_email(request):
 		valid_date = datetime.now() + timedelta(minutes=2) # data ate quando o codigo e valido
 		request.session['email_valid_date'] = str(valid_date) 
 		ic(code)
+		ic(settings.EMAIL_HOST_USER)
 		send_mail(
 			'Email Verification',
 			f'Please use the following code to verify the email: {code}',
@@ -1374,17 +1375,14 @@ def login42(request):
 				samesite='Lax',
 				max_age=120 
 			)
-			# Redireciona o usuário para a URL com os tokens
 			return response
 	else:
-		# Caso o usuário não exista, crie um novo
 		i = 0
 		original_username = username 
 		while Users.objects.filter(username=username).exists():
 			i += 1
 			username = f"{original_username}{i}"
 
-		# Criação do novo usuário
 		myuser = Users.objects.create_user(username=username, password="password")
 		myuser.user_42 = id42
 		myuser.email = user_info.get('email')
@@ -1420,7 +1418,6 @@ def login42(request):
 				samesite='Lax',
 				max_age=120
 			)
-			# Redireciona o usuário para a URL com os tokens
 			return response
 
 	return JsonResponse({'message': 'User login failed'}, status=400)
