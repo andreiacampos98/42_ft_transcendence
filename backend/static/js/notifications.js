@@ -277,14 +277,18 @@ function closeModal() {
     modal.style.display = 'none';
 }
 
-// Close the modal if the user clicks outside of it
-window.onclick = function(event) {
+
+document.addEventListener('click', function (event) {
     const modal = document.getElementById('modal-notif');
-    if (event.target == modal) {
+    
+    // Ensure the modal exists before trying to access it
+    if (!modal) return;
+
+    // Check if the click occurred outside the modal
+    if (event.target === modal) {
         modal.style.display = 'none';
     }
-}
-
+});
 
 async function handleNotificationProfile(notificationId, status, userId, otherUserId, event) {
     if (event) {
