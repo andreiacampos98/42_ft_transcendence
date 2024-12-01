@@ -7,6 +7,8 @@ import { DIRECTION, PADDLE_OFFSET, ARENA_SEMI_HEIGHT, ARENA_SEMI_LENGTH,
 	PADDLE_BOTTOM_LIMIT,
 	PADDLE_TOP_LIMIT} from '../macros.js';
 import { AbstractPlayer } from './AbstractPlayer.js';
+import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
+
 
 export class AIPlayer extends AbstractPlayer {
 	constructor ({id=null, username='Local Player', x, picture=null, keybinds}) {
@@ -34,7 +36,7 @@ export class AIPlayer extends AbstractPlayer {
 		this.paddle.position.lerp(targetPos, 0.5);
 		
 		if (Date.now() - this.lastTimeUpdated < 1000)
-			return ;	
+			return ;
 		this.blinkPaddle();
 		let ballDestination = null;
 		if (ball.direction.x == DIRECTION.RIGHT) 

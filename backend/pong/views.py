@@ -52,12 +52,15 @@ total_phase_matches = dict(zip(
 
 def validate_token(request):
 	"""Validates the access token in the request headers."""
-	jwt_authenticator = JWTAuthentication()
-	auth_result = jwt_authenticator.authenticate(request)
-	if auth_result is None:
-		return None
-	user, validated_token = auth_result
-	return user
+	try:
+		jwt_authenticator = JWTAuthentication()
+		auth_result = jwt_authenticator.authenticate(request)
+		if auth_result is None:
+			return None
+		user, validated_token = auth_result
+		return user
+	except Exception as e:
+		pass
 
 
 def refresh_access_token(refresh_token):
@@ -1092,7 +1095,11 @@ def list_user_tournaments(user_id):
 		tournament = Tournaments.objects.get(pk=acc.tournament_id.id)
 		user_tourns.append(tournament)
 
-	return zip(user_tourns, user_tourn_accs)
+	# user_tourns.sort(key=lambda x: x.created_at, reverse=True)
+
+	zipped_data = list(zip(user_tourns, user_tourn_accs))
+	zipped_data.sort(key=lambda x: x[0].created_at, reverse=True)
+	return zipped_data
 
 #! --------------------------------------- Tournaments Games ---------------------------------------
 

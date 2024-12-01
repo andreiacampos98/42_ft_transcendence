@@ -68,7 +68,8 @@ export class AbstractGameController extends THREE.Group {
 
 		this.ball.speed.x = this.ball.speed.y = 0;
 		this.sendGameResults();
-		this.displayEndGame();
+		if (this.type != 'Tournament')
+			this.displayEndGame();
 	}
 
 	fillPlayerHUD(player, selector) {

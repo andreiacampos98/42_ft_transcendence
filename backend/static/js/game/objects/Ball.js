@@ -32,8 +32,11 @@ export class Ball extends THREE.Object3D {
 	move(controller, delta) {
 		const { arena, player1, player2 } = controller;
 
-		this.position.x += (this.direction.x * this.speed.x * delta);
-		this.position.y += (this.direction.y * this.speed.y * delta);
+		this.position.x += (this.direction.x * this.speed.x );
+		this.position.y += (this.direction.y * this.speed.y );
+
+		console.log(this.position.x, this.position.y);
+		// console.log(this.direction.x * this.speed.x, this.direction.x, this.speed.x);
 		
 		this.collideWithVerticalBounds(arena);
 		this.collideWithPaddle(player1.paddle, true);
