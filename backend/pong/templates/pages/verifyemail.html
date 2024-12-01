@@ -10,19 +10,14 @@
             <h4 class="title" ><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
             <h3 class="title" id="nice" >Welcome to our platform</h3>
             <form id="verifyForm" method="POST" onsubmit="return submitCode(event);">
+                <label for="code" style="text-align: center;width: 100%;padding-bottom: 11px;">We've sent a code to your inbox, if you'd kindly go check it and put it here we would be so happy.</label>
                 <div class="input-group">
-                    <label for="code">Code:</label>
                     <div class="code-input d-flex align-items-center">
                         <input type="text" maxlength="1" id="digit1" oninput="handleInput(this, 'digit2')" onpaste="handlePaste(event)" onkeydown="handleBackspace(event, this, null)">
-                        -
                         <input type="text" maxlength="1" id="digit2" oninput="handleInput(this, 'digit3')" onkeydown="handleBackspace(event, this, 'digit1')" >
-                        -
                         <input type="text" maxlength="1" id="digit3" oninput="handleInput(this, 'digit4')" onkeydown="handleBackspace(event, this, 'digit2')" >
-                        -
                         <input type="text" maxlength="1" id="digit4" oninput="handleInput(this, 'digit5')" onkeydown="handleBackspace(event, this, 'digit3')" >
-                        -
                         <input type="text" maxlength="1" id="digit5" oninput="handleInput(this, 'digit6')" onkeydown="handleBackspace(event, this, 'digit4')" >
-                        -
                         <input type="text" maxlength="1" id="digit6" oninput="handleInput(this)" onkeydown="handleBackspace(event, this, 'digit5')" >
                     </div>
                     
