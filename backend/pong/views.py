@@ -311,6 +311,8 @@ def user_update(request, pk):
 				user.email=email
 			except ValidationError:
 				return JsonResponse({'message': 'Invalid email format.', 'access_token': new_token}, status=400)	
+		if len(user.username) < 5:
+			return JsonResponse({'message': 'The Username needs to have more than 5 letters.'}, status=400)
 		if 'picture' in request.FILES:
 			user.picture = request.FILES['picture']
 		new_username = data.get('username', None)
