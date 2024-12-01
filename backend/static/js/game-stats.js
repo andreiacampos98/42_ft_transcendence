@@ -1,5 +1,6 @@
 function interpolateColor(startColor, endColor, factor) {
 	const result = startColor.slice(); // Create a copy of the start color
+	factor = Math.min(factor, 1);
 	for (let i = 0; i < 3; i++) {
 		// Interpolate each color component (R, G, B)
 		result[i] = Math.round(result[i] + factor * (endColor[i] - startColor[i]));
@@ -19,7 +20,7 @@ function applyGradientToHeatmap() {
 	const startColor = [255, 255, 255]; // RGB for #FFFFFF (white)
 	const endColor = [253, 180, 39];  // RGB for #F8D082 (light orange)
 	const FAST_BALL_SPEED = 2;
-	const HIGH_RALLY_LENGTH = 15;
+	const HIGH_RALLY_LENGTH = 50;
 
 	rallyLengthSquares.forEach(square => {
 		const value = parseInt(square.textContent); // Get the text inside the div and convert to integer

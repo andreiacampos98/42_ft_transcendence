@@ -519,9 +519,12 @@
 	</div>
 </div>
 <script>
-	const profile= document.getElementById('tab-profile');
-	const tournaments= document.getElementById('tab-tournaments');
-	const games= document.getElementById('tab-games');
+	if (!profile)
+		var profile= document.getElementById('tab-profile');
+	if (!tournaments)
+		var tournaments= document.getElementById('tab-tournaments');
+	if (!games)
+		var games= document.getElementById('tab-games');
 	profile.addEventListener('click', function(e){
 		checkTokenBeforeNavigation(e);
 	})
