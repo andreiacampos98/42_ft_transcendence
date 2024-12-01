@@ -3,25 +3,44 @@
 
 {% block body %}
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <link rel="stylesheet" href="{% static 'css/verify.css' %}">
     <script defer src="{% static 'js/login.js' %}"></script>
     <script defer src="{% static 'js/opt.js' %}"></script>
     <div class="login-container">
         <div class="login-container2">
             <h4 class="title"><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
-            <p>A code was sent to your email {{ user.email }}</p>
+            <h3 class="title" id="nice" >A code was sent to </h3>
             <form id="otpForm" method="POST" onsubmit="return submitOtp(event);">
                 <div class="input-group">
                     <label for="otp">Code: </label>
-                    <input type="number" id="otp" name="otp" placeholder="Please insert the code sent to your email" required>
+                    <div class="code-input d-flex align-items-center">
+                        <input type="text" maxlength="1" id="digit1" oninput="handleInput(this, 'digit2')" onpaste="handlePaste(event)" onkeydown="handleBackspace(event, this, null)">
+                        -
+                        <input type="text" maxlength="1" id="digit2" oninput="handleInput(this, 'digit3')" onkeydown="handleBackspace(event, this, 'digit1')">
+                        -
+                        <input type="text" maxlength="1" id="digit3" oninput="handleInput(this, 'digit4')" onkeydown="handleBackspace(event, this, 'digit2')">
+                        -
+                        <input type="text" maxlength="1" id="digit4" oninput="handleInput(this, 'digit5')" onkeydown="handleBackspace(event, this, 'digit3')">
+                        -
+                        <input type="text" maxlength="1" id="digit5" oninput="handleInput(this, 'digit6')" onkeydown="handleBackspace(event, this, 'digit4')">
+                        -
+                        <input type="text" maxlength="1" id="digit6" oninput="handleInput(this)" onkeydown="handleBackspace(event, this, 'digit5')">
+                    </div>
+                    
+                      <!-- Hidden input to store the full code -->
+                    <input type="hidden" id="otp" name="otp"  required>
                 </div>
                 <p id="errorMessage" class="error-message"></p>
                 <p>If you didn't receive your code, please 
-                    <a onclick="resend_code()" style="color: blue;">click here</a> to resend the code
+                    <a class="resend" onclick="resend_code()" style="color: blue;">click here</a> to resend the code
                 </p>
                 <button type="submit">Confirm</button>
             </form>
             <br>
-            <h6>© 42 Porto 2024</h6>
+            <div class="bottom">
+                <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
+                <h6>© 42 Porto 2024</h6>
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -6,37 +6,36 @@
     <script defer src="{% static 'js/login42.js' %}"></script>
     <div class="main-content d-flex justify-content-center align-items-center non_compressed"  id="main-content">
         <div class="local options">
-            <button class="main-button">
-                <a 
-                hx-get="{% url 'gamelocal' %}"
-                hx-swap="innerHTML"
-                hx-trigger="click"
-                hx-target="#main"
-                hx-push-url="true">Local</a>
+            <button hx-get="{% url 'gamelocal' %}"
+            hx-trigger="click"
+            hx-target="#main"
+            hx-push-url="true"
+            class="main-button">
+                Local
             </button>
             <h3>LOCAL</h3>
             <p>Share your keyboard with a friend and play together on the same computer! </p>
         </div>
 		<div class="ai options">
-            <button class="main-button">
-                <a 
-                hx-get="{% url 'gamelocal' %}"
-                hx-swap="innerHTML"
-                hx-trigger="click"
-                hx-target="#main"
-                hx-push-url="true">AI</a>
+            <button 
+            hx-get="{% url 'gameai' %}"
+            hx-trigger="click"
+            hx-target="#main"
+            hx-push-url="true"
+            class="main-button">
+                AI
             </button>
             <h3>AI</h3>
             <p>Try your best and compete against our challenging AI bot! </p>
         </div>
         <div class="online options">
-            <button class="main-button">
-                <a  
-                hx-get="{% url 'gameonline' %}"
-                hx-swap="innerHTML"
-                hx-trigger="click"
-                hx-target="#main"
-                hx-push-url="true">Online</a>
+            <button 
+            hx-get="{% url 'gameonline' %}"
+            hx-trigger="click"
+            hx-target="#main"
+            hx-push-url="true"
+            class="main-button">
+                Online
             </button>
             <h3>ONLINE</h3>
             <p>Play against players worldwide. The better you are, the tougher the opponents! </p>

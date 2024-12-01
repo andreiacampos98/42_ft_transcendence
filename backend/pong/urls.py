@@ -24,6 +24,7 @@ urlpatterns = [
     path('home/', views.home, name="home"),
     path('gamelocal/', views.gamelocal, name="gamelocal"),
     path('gameonline/', views.gameonline, name="gameonline"),
+    path('gameai/', views.gameai, name="gameai"),
     path('gametournament/', views.gametournament, name="gametournament"),
 
     path('tournaments/', views.tournaments, name="tournaments"),

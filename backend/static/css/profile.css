@@ -51,6 +51,10 @@ textarea, #username-input, #email-input {
 	background-color: #101d27;
 	border: none;
 	color: white;
+	padding: 5px;
+	padding-left: 9px;
+	font-size: small;
+	margin-top: 5px;
 }
 
 .description{
@@ -508,4 +512,18 @@ input:checked + .slider:before {
 
 .game-link{
 	text-decoration:none;
+}
+
+#button-inside {
+	position: relative;
+    top: -10%; /* Center vertically */
+    left: 61%; /* Center horizontally */
+    transform: translate(-50%, -50%);
+	background: none;
+	border: none;
+}
+
+#button-inside img {
+	width: 40px;
+	height: 40px;
 }

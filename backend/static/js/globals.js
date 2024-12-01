@@ -158,7 +158,7 @@ class Tournament {
 		const playerSlots = document.querySelectorAll(`.${this.firstPhase}.player`);
 		playerSlots.forEach((slot, i) => {
 			slot.querySelector("span.name").textContent = `Player ${i}`;
-			slot.querySelector("img").src = '/static/assets/icons/avatar.png'
+			slot.querySelector("img").src = '/static/assets/icons/avatar.png';
 		});
 	}
 

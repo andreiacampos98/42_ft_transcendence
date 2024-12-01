@@ -6,7 +6,7 @@
 /*   By: nunomiguel533 <nunomiguel533@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/11/15 11:35:45 by nunomiguel5      ###   ########.fr       */
+/*   Updated: 2024/11/23 11:54:59 by nunomiguel5      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,10 @@ export class GameStats {
 		this.gameID = 0;
 		this.gameStats = {};
 		this.scoredFirst = null;
-		this.startTime = null
-		this.gameScore = null;
+		this.startTime = null;
+		this.scoreHUD = {};
+		this.scoreHUD1 = null;
+		this.scoreHUD2 = null;
 		this.init();
 	}
 
@@ -32,13 +34,8 @@ export class GameStats {
 		this.startTime = new Date().getTime();
 		this.score[this.player1.username] = 0;
 		this.score[this.player2.username] = 0;
-		this.gameScore = document.getElementById('score');
-		
-		//! Testing
-		// this.goals = TEST_GOALS;
-		// this.calculateSmallStats();
-		// this.calculateAdvancedStats();
-		// this.sendGameResults();
+		this.scoreHUD[this.player1.username] = document.getElementById('p1-score')
+		this.scoreHUD[this.player2.username] = document.getElementById('p2-score')
 	}
 
 	registerGoal(scorer, ball) {
@@ -50,8 +47,16 @@ export class GameStats {
 		};
 		this.score[scorer.username] += 1;
 		this.goals.push(goal);
-		this.gameScore.textContent = 
-		`${this.score[this.player1.username]} : ${this.score[this.player2.username]}`;
+		this.updateHUD(scorer);
+	}
+
+	updateHUD(scorer) {
+		this.scoreHUD[this.player1.username].textContent = `${this.score[this.player1.username]}`;
+		this.scoreHUD[this.player2.username].textContent = `${this.score[this.player2.username]}`;
+
+		let animationClass = scorer.username == this.player1.username ? 'p1-scored-goal' : 'p2-scored-goal';
+		this.scoreHUD[scorer.username].classList.add(animationClass);
+		setTimeout(() => this.scoreHUD[scorer.username].classList.remove(animationClass), 500);
 	}
 
 	calculateSmallStats() {

@@ -10,7 +10,12 @@
 	<div id="camera"></div>
 	<div id="scoreboard" class="d-flex justify-content-center align-items-center">
 		<div id="p1"></div>
-		<div id="score">0&nbsp;:&nbsp;0</div>
+		<img id="p1-img" src="{% static 'assets/icons/avatar.png' %}" alt="P1 profile">
+		<div class="d-flex">
+			<div id="p1-score">0</div>
+			<div id="p2-score">0</div>
+		</div>
+		<img id="p2-img" src="{% static 'assets/icons/avatar.png' %}" alt="P2 profile">
 		<div id="p2"></div>
 	</div>
 	<div id="loader-container" class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
@@ -21,7 +26,7 @@
 </div>
 
 <script type="module">
-	import { MyApp } from '/static/js/game/MyApp.js';
+	import { Application } from '/static/js/game/Application.js';
 
 	const { 
 		user1_id: p1 , user2_id: p2, 
@@ -32,11 +37,7 @@
 		'gameSocket',
 		`wss://${window.location.host}/wss/tournaments/${tourID}/games/${gameInstance.id}`,
 		(event) => {
-			document.getElementById('loader-container').remove();
-			document.getElementById('canvas-container').style.color = '#FFF';
-			document.getElementById('scoreboard').style.color = '#FFF';
-			
-			let app = new MyApp();
+			let app = new Application();
 			app.init({ 
 				player1Data: {'id': p1.id, 'username': p1.username},
 				player2Data: {'id': p2.id, 'username': p2.username},

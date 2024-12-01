@@ -1,11 +1,12 @@
-import { GameStats } from './GameStats.js';
-import { LocalPlayer } from './LocalPlayer.js';
+import { GameStats } from '../GameStats.js';
+import { LocalPlayer } from '../players/LocalPlayer.js';
 import { AbstractGameController } from './AbstractGameController.js';
-import { PADDLE_OFFSET_X, ARENA_SEMI_LENGTH, STANDARD_KEYBINDS, ALTERNATE_KEYBINDS } from './macros.js';
+import { PADDLE_OFFSET, STANDARD_KEYBINDS, ALTERNATE_KEYBINDS } from '../macros.js';
+import { AIPlayer } from '../players/AIPlayer.js';
 
-export class LocalGameController extends AbstractGameController {
-	constructor({ player1Data, player2Data }) {
-		super({type: "Local"});
+export class AIGameController extends AbstractGameController {
+	constructor({ player1Data, player2Data, app }) {
+		super({type: "AI", app: app });
 		
 		this.registerKeybinds();
 		this.createPlayers(player1Data, player2Data);
@@ -14,20 +15,21 @@ export class LocalGameController extends AbstractGameController {
 	}
 
 	createPlayers(player1Data, player2Data) {
-		const { id: p1ID, username: p1Username } = player1Data;
+		const { id: p1ID, username: p1Username, picture: p1Picture } = player1Data;
 		const { id: p2ID, username: p2Username } = player2Data;
 		
 		this.player1 = new LocalPlayer({ 
 			id: p1ID, 
 			username: p1Username, 
-			x: -ARENA_SEMI_LENGTH + PADDLE_OFFSET_X,
-			keybinds: STANDARD_KEYBINDS
+			x: -(PADDLE_OFFSET),
+			keybinds: STANDARD_KEYBINDS,
+			picture: p1Picture
 		});
-		this.player2 = new LocalPlayer({
+		this.player2 = new AIPlayer({
 			id: p2ID, 
 			username: p2Username,
-			x: ARENA_SEMI_LENGTH - PADDLE_OFFSET_X,
-			keybinds: ALTERNATE_KEYBINDS
+			x: PADDLE_OFFSET,
+			keybinds: null,
 		});
 
 		this.stats = new GameStats(this.player1, this.player2);
@@ -37,7 +39,7 @@ export class LocalGameController extends AbstractGameController {
 		const formData = {
 		    "user1_id": this.player1.id,
 		    "user2_id": this.player2.id,
-		    "type": "Local"
+		    "type": "AI"
 		}
 
 		const response = await fetch(`/games/create`, {
@@ -50,6 +52,8 @@ export class LocalGameController extends AbstractGameController {
 
 		const gameData = await response.json();
 		this.stats.gameID = gameData.id;
+		const p1Image = document.getElementById('p1-img');
+		p1Image.src = this.player1.picture;
 	}
 
 	async sendGameResults() {

@@ -846,7 +846,12 @@ def game_create_helper(data: dict):
 		user2.status = "Playing"
 		user2.save()
 
-	return JsonResponse(serializer.data, status=201)
+	game_data = serializer.data
+	game_data['user1_id'] = UsersSerializer(Users.objects.get(pk=game_data['user1_id'])).data
+	if game_data['user2_id']:
+		game_data['user2_id'] = UsersSerializer(Users.objects.get(pk=game_data['user2_id'])).data
+
+	return JsonResponse(game_data, status=201)
 
 
 def game_create(request=None):
@@ -1626,6 +1631,17 @@ def gameonline(request):
 		'friends': friends,
 	}
 	return render(request,'pages/gameonline.html', context)
+
+@login_required
+def gameai(request):
+	user_id = request.user.id
+	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
+	user_id = request.user.id
+	context = {
+		'user_id': user_id,
+		'friends': friends,
+	}
+	return render(request,'pages/gameai.html', context)
 
 @login_required
 def gametournament(request):

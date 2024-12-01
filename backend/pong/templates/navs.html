@@ -62,18 +62,28 @@
                 </div>
             
                 <div id="notifications" ></div>
-                <a  hx-get="{% url 'user-profile' user.id %}"
-                    hx-trigger="click"
-                    hx-swap="innerHTML"
-                    hx-target="#main"
-                    hx-push-url="true"
-                    onclick="checkTokenBeforeNavigation(event)">
-                    {% if "http" in user.picture.url %}
-                        <img class="profile-pic" src="{{ user.picture }}" alt="Profile">
-                    {% else %}
-                        <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
-                    {% endif %}
-                </a>
+                {% if page == "profile" %}
+                    <a>
+                        {% if "http" in user.picture.url %}
+                            <img class="profile-pic" src="{{ user.picture }}" alt="Profile">
+                        {% else %}
+                            <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <a  hx-get="{% url 'user-profile' user.id %}"
+                        hx-trigger="click"
+                        hx-target="#main"
+                        hx-push-url="true"
+                        onclick="checkTokenBeforeNavigation(event)">
+                        {% if "http" in user.picture.url %}
+                            <img class="profile-pic" src="{{ user.picture }}" alt="Profile">
+                        {% else %}
+                            <img class="profile-pic" src="{{ user.picture.url }}" alt="Profile">
+                        {% endif %}
+                    </a>
+                {% endif %}
+
             </div>
             
         </div>
@@ -87,62 +97,66 @@
                 </button>
                 <div class="selects d-flex justify-content-center">
                     <button class="select-item d-flex align-items-center">
-                        <a class="side-menu_a" 
-                            hx-get="{% url 'home' %}"
-                            hx-swap="innerHTML"
-                            hx-trigger="click"
-                            hx-target="#main"
-                            hx-push-url="true"
-                            onclick="checkTokenBeforeNavigation(event)">
-                            <!-- data-url="{% url 'home' %}" data-page="home" 
-                            data-icon="{% static 'assets/icons/pong.png' %}" 
-                            data-highlight="{% static 'assets/icons/pong-highlight.png' %}" 
-                            onclick="loadPage(event)"> -->
-                            {% if page == "home" %}
-                                <img class="icon" id="highlight-icon1" src="{% static 'assets/icons/pong-highlight.png' %}" alt="Ping Pong">
-                                <span class="icon-title" id="highlight-span1">Singles</span>
-                            {% else %}
-                                <img class="icon" src="{% static 'assets/icons/pong.png' %}" alt="Ping Pong">
-                                <span class="icon-title">Singles</span>
-                            {% endif %}
-                        </a>
+                        {% if page == "home" %}
+                            <a class="side-menu_a">
+                                <!-- data-url="{% url 'home' %}" data-page="home" 
+                                data-icon="{% static 'assets/icons/pong.png' %}" 
+                                data-highlight="{% static 'assets/icons/pong-highlight.png' %}" 
+                                onclick="loadPage(event)"> -->
+                                    <img class="icon" id="highlight-icon1" src="{% static 'assets/icons/pong-highlight.png' %}" alt="Ping Pong">
+                                    <span class="icon-title" id="highlight-span1">Singles</span>
+                            </a>
+                        {% else %}
+                            <a class="side-menu_a" 
+                                hx-get="{% url 'home' %}"
+							    hx-swap="outerHTML"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true"
+                                onclick="checkTokenBeforeNavigation(event)">
+                                    <img class="icon" src="{% static 'assets/icons/pong.png' %}" alt="Ping Pong">
+                                    <span class="icon-title">Singles</span>
+                            </a>
+                        {% endif %}
                     </button>
                     <button class="select-item d-flex align-items-center">
-                        <a class="side-menu_a"  
-                            hx-get="{% url 'tournaments' %}"
-							hx-swap="innerHTML"
-                            hx-trigger="click"
-                            hx-target="#main"
-                            hx-push-url="true"
-                            onclick="checkTokenBeforeNavigation(event)">
-                            <!-- data-url="{% url 'tournaments' %}" data-page="tournaments" data-icon="{% static 'assets/icons/tournament.png' %}" data-highlight="{% static 'assets/icons/tournament-highlight.png' %}" onclick="loadPage(event)"> -->
-                            {% if page == "tournament" %}
+                        {% if page == "tournament" %}
+                            <a class="side-menu_a">
                                 <img class="icon" id="highlight-icon2" src="{% static 'assets/icons/tournament-highlight.png' %}" alt="Ping Pong">
                                 <span class="icon-title" id="highlight-span2">Tournaments</span>
-                            
-                            {% else %}
-                                <img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="Tournament">
-                                <span class="icon-title">Tournaments</span>
-                            {% endif %}
-                        </a>
+                            </a>
+                        {% else %}
+                            <a class="side-menu_a"  
+                                hx-get="{% url 'tournaments' %}"
+							    hx-swap="outerHTML"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true"
+                                onclick="checkTokenBeforeNavigation(event)">
+                                    <img class="icon" src="{% static 'assets/icons/tournament.png' %}" alt="Tournament">
+                                    <span class="icon-title">Tournaments</span>
+                            </a>
+                        {% endif %}
                     </button>
                     <button class="select-item d-flex align-items-center">
-                        <a class="side-menu_a" 
-                            hx-get="{% url 'user-profile' user.id %}"
-							hx-swap="innerHTML"
-                            hx-trigger="click"
-                            hx-target="#main"
-                            hx-push-url="true"
-                            onclick="checkTokenBeforeNavigation(event)">
-                            <!-- data-url="{% url 'user-profile' user.id %}" data-page="profile" data-icon="{% static 'assets/icons/profile.png' %}" data-highlight="{% static 'assets/icons/profile-highlight.png' %}" onclick="loadPage(event)"> -->
-                            {% if page == "profile" %}
-                                <img class="icon" id="highlight-icon3" src="{% static 'assets/icons/profile-highlight.png' %}" alt="Ping Pong">
-                                <span class="icon-title" id="highlight-span3">User</span>
-                            {% else %}
-                                <img class="icon" src="{% static 'assets/icons/profile.png' %}" alt="User">
-                                <span class="icon-title">User</span>
-                            {% endif %}
-                        </a>
+                        {% if page == "profile" %}
+                            <a class="side-menu_a">
+                                <!-- data-url="{% url 'user-profile' user.id %}" data-page="profile" data-icon="{% static 'assets/icons/profile.png' %}" data-highlight="{% static 'assets/icons/profile-highlight.png' %}" onclick="loadPage(event)"> -->
+                                    <img class="icon" id="highlight-icon3" src="{% static 'assets/icons/profile-highlight.png' %}" alt="Ping Pong">
+                                    <span class="icon-title" id="highlight-span3">User</span>
+                            </a>
+                        {% else %}
+                            <a class="side-menu_a" 
+                                hx-get="{% url 'user-profile' user.id %}"
+							    hx-swap="outerHTML"
+                                hx-trigger="click"
+                                hx-target="#main"
+                                hx-push-url="true"
+                                onclick="checkTokenBeforeNavigation(event)">
+                                    <img class="icon" src="{% static 'assets/icons/profile.png' %}" alt="User">
+                                    <span class="icon-title">User</span>
+                            </a>
+                        {% endif %}
                     </button>
                     <button class="select-item d-flex align-items-center logout-icon" onclick="onSignout()">
                         <img class="logout-img" src="{% static 'assets/icons/logout.png' %}" alt="logout">

@@ -1,6 +1,9 @@
 function onEditButtonClick() {
 	document.getElementById("save-cancel").style.display = "flex";
 	document.getElementById("edit-change1").style.display = "none";
+    document.getElementById("username-stat").style.display = "none";
+    document.getElementById("button-inside").style.display = "inherit";
+    document.getElementById("online-stat").style.display = "none !important";
 	document.getElementById("edit-change1").classList.remove("d-flex");
     document.getElementById("edit-profile-button").style.display = "none";
     document.getElementById("save-profile-button").style.display = "inline-block";
@@ -27,7 +30,10 @@ function onEditButtonClick() {
 
 function onCancelButtonClick(userId) {
 	document.getElementById("edit-change1").style.display = "flex";
+    document.getElementById("username-stat").style.display = "inherit";
+    document.getElementById("online-stat").style.display = "inherit";
 	document.getElementById("save-cancel").style.display = "none";
+	document.getElementById("button-inside").style.display = "none";
 	document.getElementById("save-cancel").classList.remove("d-flex");
     document.getElementById("edit-profile-button").style.display = "flex";
     document.getElementById("save-profile-button").style.display = "none";
@@ -78,4 +84,9 @@ async function onSaveButtonClick(event, userId) {
 			target: '#main'  
 		}).then(() => appendScripts());
 	}
+}
+
+function triggerFileInput() {
+    // Programmatically click the hidden input
+    document.getElementById('profile-picture-input').click();
 }

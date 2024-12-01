@@ -54,10 +54,22 @@ async function loadDonutChart() {
 	});
 	const stats = await response.json();
 	
-	const remoteTime = Math.round(stats.remote_time_played / 60);
-	const aiTime = Math.round(stats.ai_time_played / 60);
-	const localTime = Math.round(stats.local_time_played / 60);
-	const tournamentTime = Math.round(stats.tournament_time_played / 60);
+	var remoteTime = stats.remote_time_played;
+	var aiTime = stats.ai_time_played;
+	var localTime = stats.local_time_played;
+	var tournamentTime = stats.tournament_time_played;
+	var unit = 'Sec';
+	
+	const totalTime = remoteTime + aiTime + localTime + tournamentTime;
+	
+	if (totalTime >= 60){
+		remoteTime = Math.round(remoteTime / 60);
+		aiTime = Math.round(aiTime / 60);
+		localTime = Math.round(localTime / 60);
+		tournamentTime = Math.round(tournamentTime / 60);
+		unit = "Min";
+	}
+
 	var options = {
 		chart: {
 			type: 'donut',
@@ -91,7 +103,7 @@ async function loadDonutChart() {
 						show: true,
 						total: {
 							show: true,
-							label: 'Min',
+							label: unit,
 							color: '#fff',
 						},
 						value: {
@@ -147,7 +159,7 @@ async function loadBarLineChart() {
 			return ;
 		
 		const weekday = (timestamp.getDay() + 6) % 7;
-		winRates[weekday] = winRate;
+		winRates[weekday] = winRate/100 * rawTotalGames[i];
 	});
 	rawTotalGames.forEach((numGames, i) => {
 		const timestamp = new Date(dailyRawStats[i].day);
@@ -198,7 +210,7 @@ async function loadBarLineChart() {
 				data: totalGames
 			}, 
 			{
-				name: 'Win Rate (%)',
+				name: 'Number of Games Won',
 				type: 'line',
 				data: winRates,
 				stroke: {

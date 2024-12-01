@@ -71,32 +71,43 @@
 				</div>
 			</div>
 			<div class="side-profile d-flex align-items-center">
-				<div id="change-info1">
+				<div id="change-info1" style="width: 324px;">
 					{% if "http" in user_view.picture.url %}
 						<img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture }}" alt="Profile">
 					{% else %}
 						<img class="profile-big" id="profile-picture-preview" src="{{ user_view.picture.url }}" alt="Profile">
 					{% endif %}
-					<h3 class="description"> {{ user_view.username }} </h3>
+					<button type="button" id="button-inside" style="display:none;" onclick="triggerFileInput()">
+						<img id="profile-picture-preview" src="{% static 'assets/icons/edit1.png' %}" alt="Profile">
+					</button>
+					<h3 id="username-stat" class="description"> {{ user_view.username }} </h3>
 				</div>
-				<span class="friend-block1 d-flex justify-content-center" data-status="{{ user_view.status }}"> {{ user_view.status }} </span>
+				<span id="online-stat" class="friend-block1 justify-content-center" data-status="{{ user_view.status }}"> {{ user_view.status }} </span>
 				<div id="edit-change1" class="edit-change d-flex align-items-center justify-content-center">
 					{% if is_own_profile %}
-						<div class="edit-change d-flex align-items-center justify-content-between">
-							<button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
-								<img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
-								Edit Profile
-							</button>
-
 						{% if user_view.user_42 is None %}
-							<button class="change" id="open-change-password-modal">
-								<span class="change-b d-flex align-items-center" id="change">
-									<img class="small-icon" src="{% static 'assets/icons/password.png' %}">
-									Change Password
-								</span>
-							</button>
+							<div class="edit-change d-flex align-items-center justify-content-between">
+								<button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
+									<img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
+									Edit Profile
+								</button>
+
+								<button class="change" id="open-change-password-modal">
+									<span class="change-b d-flex align-items-center" id="change">
+										<img class="small-icon" src="{% static 'assets/icons/password.png' %}">
+										Change Password
+									</span>
+								</button>
+								
+							</div>
+						{% else %}
+							<div class="edit-change d-flex align-items-center justify-content-center">
+								<button class="edit align-items-center justify-content-center" id="edit-profile-button" onclick="onEditButtonClick()">
+									<img class="small-icon" src="{% static 'assets/icons/edit.png' %}">
+									Edit Profile
+								</button>
+							</div>
 						{% endif %}
-						</div>
 					{% elif is_friend %}
 						{% if friendship_status %}
 							<button class="edit friend-status d-flex align-items-center justify-content-center" id="remove-friend-button">
@@ -129,39 +140,34 @@
 						</form>
 					{% endif %}
 				</div>
-				<div class="save-cancel align-items-center justify-content-between" id="save-cancel" style="display: none;">
-					<button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
-					<button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick('{{ user_id }}')">Go back</button>
-				</div>
-				<form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;">
-					<input type="file" id="profile-picture-input" name="picture" accept="image/*">
-					<div class="email-joined-edit d-flex align-items-center">
+				
+				<form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;width: 360px;">
+					<input type="file" id="profile-picture-input" name="picture" style="display: none;">
+					<div class="email-joined-edit d-flex align-items-start flex-column">
 						<label for="username-input">
-							<h5 class="text-block d-flex"> 
-								<img style="width: 15px; height: 15px;" src="{% static 'assets/icons/profile.png' %}">
+							<h5 class="text-block d-flex" style="color:#FFFFFFC0;font-weight: unset;font-size: x-small;"> 
 								Username
 							</h5>
 						</label>
-						<input style="text-align: right; " type="text" id="username-input" name="username" value="{{ user_view.username }}" required>
+						<input style="text-align: left; " type="text" id="username-input" name="username" value="{{ user_view.username }}" required>
 					</div>
-					<label for="description-input">Description</label>
+					<label style="width: 100%;text-align: left;color: #FFFFFFC0; font-weight: unset;font-size: x-small;" for="description-input">Description</label>
 					{% if user_view.description is None or user_view.description == "" %}
 						<textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50"></textarea>
 					{% else %}
 						<textarea style="text-align: center; "id="description-input" name="description" rows="4" cols="50">{{ user_view.description }}</textarea>
 					{% endif %}
 					
-					<div class="email-joined-edit d-flex align-items-center">
+					<div class="email-joined-edit d-flex align-items-start flex-column">
 						<label for="email-input">
-							<h5 class="text-block d-flex" style="color: #FFFFFFC0;"> 
-								<img src="{% static 'assets/icons/at.png' %}">
+							<h5 class="text-block d-flex" style="color: #FFFFFFC0;font-weight: unset;font-size: x-small;"> 
 								Email
 							</h5>
 						</label>
 						{% if user_view.email is None or user_view.email == "" %}
-							<input style="text-align: right; " type="email" id="email-input" name="email" value="" required>
+							<input style="text-align: left; " type="email" id="email-input" name="email" value="" required>
 						{% else %}
-							<input style="text-align: right; " type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
+							<input style="text-align: left; " type="email" id="email-input" name="email" value="{{ user_view.email }}" required>
 						{% endif %}
 					</div>
 				</form>
@@ -207,6 +213,10 @@
 						</h5>
                     {% endif %}
 
+				</div>
+				<div class="save-cancel align-items-center justify-content-between" id="save-cancel" style="display: none;">
+					<button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+					<button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick()">Go back</button>
 				</div>
 			</div>
 		</div>

@@ -43,11 +43,29 @@ const appendScripts = () => {
 	});
 };
 
+const destroyChart = () => {
+    if (charts["line"]) {
+        charts["line"].destroy();
+        charts["line"] = null; // Reset the reference
+    }
+	if (charts["donut"]) {
+        charts["donut"].destroy();
+        charts["donut"] = null; // Reset the reference
+    }
+	if (charts["bar-line"]) {
+        charts["bar-line"].destroy();
+        charts["bar-line"] = null; // Reset the reference
+    }
+};
+
 const mutationsCallback = (mutations) => {
 	localStorage.removeItem('htmx-history-cache')
 	// Ignore second set of mutations
+	console.log(lastRoute, currRoute, window.location.pathname)
+	destroyChart();
 	if (currRoute == window.location.pathname)
 		return ;
+	
 	
 	lastRoute = currRoute;
 	currRoute = window.location.pathname;

@@ -1,7 +1,3 @@
-export const BALL_START_SPEED = 0.6;
-export const BALL_SPEEDUP_FACTOR = 0.06;
-export const BALL_RADIUS = 1.25;
-
 export const DIRECTION = Object.freeze({
 	UP: 1,
 	DOWN: -1,
@@ -9,18 +5,37 @@ export const DIRECTION = Object.freeze({
 	RIGHT: 1,
 });
 
-export const PADDLE_SEMI_LENGTH = 0.25;
-export const PADDLE_SEMI_HEIGHT = 3.75;
-export const PADDLE_SPEED = 3.5;
-export const PADDLE_OFFSET_X = 7;
+export const BALL_START_SPEED = 0.1;
+export const BALL_ACCELERATION = 0.01;
+export const BALL_RADIUS = 0.01;
+export const BALL_COLOR = 0xFFFFFF;
 
-export const ARENA_SEMI_HEIGHT = 20;
-export const ARENA_SEMI_LENGTH = 30;
-export const ARENA_SEMI_DEPTH = 0.25;
+export const ARENA_SEMI_HEIGHT = 0.143;
+export const ARENA_SEMI_LENGTH = 0.2;
+export const ARENA_SEMI_DEPTH = 0.01;
+
+export const PADDLE_SEMI_LENGTH = 0.005;
+export const PADDLE_SEMI_HEIGHT = ARENA_SEMI_LENGTH / 6;
+export const PADDLE_SEMI_DEPTH = 0.01;
+export const PADDLE_SPEED = 0.015;
+export const PADDLE_OFFSET = 0.8 * ARENA_SEMI_LENGTH - PADDLE_SEMI_LENGTH;
+export const PADDLE_TOP_LIMIT = ARENA_SEMI_HEIGHT - 2*ARENA_SEMI_DEPTH - PADDLE_SEMI_HEIGHT;
+export const PADDLE_BOTTOM_LIMIT = -PADDLE_TOP_LIMIT;
+
+export const LEVER_TOP_RADIUS = 0.005;
+export const LEVER_BOTTOM_RADIUS = 0.005;
+export const LEVER_BALL_RADIUS = 0.015;
+export const LEVER_HEIGHT = 0.045;
+export const LEVER_MAX_ROTATION = Math.PI * 0.2;
+export const LEVER_DEFAULT_ROTATION = Math.PI * 0.07;
+export const LEVER_MIN_ROTATION = -Math.PI * 0.1;
+export const LEVER_ROTATION_STEP = -0.15;
 
 export const MAX_GOALS = 5;
+export const PLAYER_COLOR_1 = 0xCC0000;
+export const PLAYER_COLOR_2 = 0x00FFFF;
 
-export const FPS = 50;
+export const FPS = 144;
 export const REFRESH_RATE = 1000 / FPS;
 
 export const STANDARD_KEYBINDS = {
@@ -33,8 +48,7 @@ export const ALTERNATE_KEYBINDS = {
 	'down': 'ArrowDown'
 };
 
-
-//! DEPENDENCY INJECTION TESTING
+//! ================== DEPENDENCY INJECTION TESTING ================== 
 
 export var TEST_GOALS = [
 	{
