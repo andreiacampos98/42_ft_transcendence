@@ -1507,13 +1507,14 @@ def loginview(request):
 		if user is not None:
 			user.status = "Online"
 			user.save()
+			email = mask_email(user.email)
 			if user.two_factor:
 				request.session['username'] = username
 				send_otp(request)
 				response_data = {
 					'message': 'You have successfully logged in.',
 					'username': user.username,
-					'email':user.email,
+					'email':email,
 					'redirect_url': 'home',
 					'data': {'otp': True }
 				}
@@ -1899,3 +1900,19 @@ def delete_profile(request, id):
 		Users.objects.filter(id=id).delete()
 		return JsonResponse({'message': 'User deleted'}, status=200)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
+
+
+
+def mask_email(email):
+    try:
+        local, domain = email.split('@', 1)
+        
+        if len(local) < 4:
+            raise ValueError("O e-mail deve ter pelo menos 4 caracteres antes do '@'")
+        
+        masked_local = local[:3] + '*' * (len(local) - 3)
+        
+        return f"{masked_local}@{domain}"
+    
+    except ValueError as e:
+        return None
