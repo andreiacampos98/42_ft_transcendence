@@ -53,7 +53,7 @@ async function getNotifications() {
 	}
     localStorage.setItem('access_token', data.access_token);
 	const notificationList = document.getElementById('notificationList');
-	notificationList.innerHTML = '';  // Clear existing notifications
+    notificationList.replaceChildren(); 
 
 	data.notifications.forEach(notification => {
 		const listItem = document.createElement('li');
@@ -75,11 +75,20 @@ async function getNotifications() {
 		const textContent = document.createElement('h4');
 		textContent.classList.add('description-notif');
 
-		textContent.innerHTML = `<a class="name-notif">${notification.other_user_id.username}</a> ${notification.description}`;
-		textContent.onclick = function() {
+		const usernameLink = document.createElement('a');
+        usernameLink.classList.add('name-notif');
+        usernameLink.textContent = notification.other_user_id.username;
+
+        const description = document.createTextNode(` ${notification.description}`);
+
+        textContent.appendChild(usernameLink);
+        textContent.appendChild(description);
+
+        textContent.onclick = function() {
 			history.pushState(null, '', `/users/${notification.other_user_id.id}`);
 			htmx.ajax('GET', `/users/${notification.other_user_id.id}`, {
-				target: '#main'  
+				target: '#main',
+                swap: 'innerHTML'
 			});
 		};
 
@@ -327,8 +336,8 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                 }
                 else if(notificationUpdateResponse.status == 401){
                     alert("As your session has expired, you will be logged out.");
-                    history.pushState(null, '', `/`);
-                    htmx.ajax('GET', `/`, {
+                    history.pushState(null, '', `/notifications/${userId}`);
+                    htmx.ajax('GET', `/notifications/${userId}`, {
                         target: '#main'
                     });
                 }
@@ -343,7 +352,10 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
                     if (removeFriendButton) removeFriendButton.style.display = "block";
 
                     console.log('Notification update request successful');
-                    window.location.reload();
+                    history.pushState(null, '', `/`);
+                    htmx.ajax('GET', `/`, {
+                        target: '#main'
+                    });
                 }
             }
         } else if (status === 'decline') {
@@ -407,7 +419,10 @@ async function handleNotificationProfile(notificationId, status, userId, otherUs
             }
         }
 
-        window.location.reload();
+        history.pushState(null, '', `/notifications/${userId}`);
+        htmx.ajax('GET', `/notifications/${userId}`, {
+            target: '#main'
+        });
 
     } catch (error) {
         console.error('Error handling notification action:', error);

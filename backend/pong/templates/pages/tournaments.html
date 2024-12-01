@@ -28,6 +28,7 @@
                             <a class="side-menu_a" 
                                 hx-get="{% url 'user-profile' top_users.0.user.id %}"
                                 hx-trigger="click"
+                                hx-swap="innerHTML"
                                 hx-target="#main"
                                 hx-push-url="true">
                                 {% if "http" in top_users.0.user.picture %}
@@ -56,6 +57,7 @@
                                 hx-get="{% url 'user-profile' top_users.1.user.id %}"
                                 hx-trigger="click"
                                 hx-target="#main"
+                                hx-swap="innerHTML"
                                 hx-push-url="true">
                                 {% if "http" in top_users.1.user.picture %}
                                     <img class="profile-pic2 second" src="https://{{ top_users.1.user.picture|urlunquote|slice:'14:' }}" alt="Profile a">
@@ -83,6 +85,7 @@
                                 hx-get="{% url 'user-profile' top_users.2.user.id %}"
                                 hx-trigger="click"
                                 hx-target="#main"
+                                hx-swap="innerHTML"
                                 hx-push-url="true">
                                 {% if "http" in top_users.2.user.picture %}
                                     <!-- <img class="profile-pic2 third" src="{{ top_users.2.user.picture }}" alt="Profile a">

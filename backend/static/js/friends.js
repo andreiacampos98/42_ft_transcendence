@@ -51,7 +51,7 @@ async function toggleFriendsDrawer(user_id) {
 			return entry.user1_id;
 	});
 
-	sidebar.innerHTML = '';
+	sidebar.replaceChildren(); 
 
 	friends.forEach((friend) => {
 		console.log(friend);
@@ -88,7 +88,8 @@ async function toggleFriendsDrawer(user_id) {
 		friendBlock.onclick = function() {
 			history.pushState(null, '', `/users/${friend.id}`);
 			htmx.ajax('GET', `/users/${friend.id}`, {
-				target: '#main'
+				target: '#main',
+				swap: 'innerHTML'
 			});
 		};
 

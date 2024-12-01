@@ -35,6 +35,7 @@
         <div class="top-bar d-flex justify-content-between align-items-center">
             <form  
                 hx-get="{% url 'search-users' %}"
+                hx-swap="innerHTML"
                 hx-trigger="submit"
                 hx-target="#main"
                 hx-push-url="true"

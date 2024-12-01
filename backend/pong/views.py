@@ -145,6 +145,7 @@ def send_code_verify_email(request):
 		valid_date = datetime.now() + timedelta(minutes=2) # data ate quando o codigo e valido
 		request.session['email_valid_date'] = str(valid_date) 
 		ic(code)
+		ic(settings.EMAIL_HOST_USER)
 		send_mail(
 			'Email Verification',
 			f'Please use the following code to verify the email: {code}',
@@ -274,7 +275,7 @@ def verifyemail(request):
 							'refresh_token',
 							user_tokens.get('refresh'),
 							httponly=True, 
-							secure=False, 
+							secure=True, 
 							samesite='Lax'   
 						)
 						return response
@@ -309,12 +310,11 @@ def user_update(request, pk):
 				validate_email(email)
 				user.email=email
 			except ValidationError:
-				return JsonResponse({'message': 'Invalid email format.', 'access_token': new_token}, status=400)
-
+				return JsonResponse({'message': 'Invalid email format.', 'access_token': new_token}, status=400)	
+		if len(user.username) < 5:
+			return JsonResponse({'message': 'The Username needs to have more than 5 letters.'}, status=400)
 		if 'picture' in request.FILES:
 			user.picture = request.FILES['picture']
-		
-	
 		new_username = data.get('username', None)
 		if Users.objects.filter(username=new_username).exists() and user.username != new_username:
 			return JsonResponse({'message': 'Username already exists.', 'access_token': new_token}, status=400)
@@ -347,6 +347,9 @@ def user_password(request, pk):
 		old_password = request.POST.get('old_password')
 		new_password1 = request.POST.get('password1')
 		new_password2 = request.POST.get('password2')
+		ic(old_password)
+		ic(new_password1)
+		ic(new_password2)
 
 		if not user.check_password(old_password):
 			return JsonResponse({'message': 'Old password is incorrect.', 'access_token': new_token}, status=400)
@@ -367,9 +370,10 @@ def user_password(request, pk):
 		
 		user.set_password(new_password1)
 		user.save()
-
+		ic("user is saved")
 		update_session_auth_hash(request, user)
-		return JsonResponse({'message': 'Password updated successfully', 'access_token': new_token, 'redirect_url': reverse('user-profile', args=[user.id])}, status=200)
+		ic("update")
+		return JsonResponse({'message': 'Password updated successfully', 'access_token': new_token}, status=200)
 	else:
 		return JsonResponse({'message': 'Invalid request method.', 'access_token': new_token, 'method': request.method}, status=405)
 
@@ -563,7 +567,7 @@ def get_user_notifications(request, user_id):
 			return JsonResponse({'message': "Invalid refresh token"}, status=401)
 		
 	if request.method == 'GET':
-		notifications = Notifications.objects.filter(user_id = user_id)
+		notifications = Notifications.objects.filter(user_id = user_id).order_by('-created_at')
 		serializer = NotificationsSerializer(notifications, many=True)
 		response_data = {
 			'access_token': new_token,
@@ -1107,6 +1111,14 @@ def tournament_leave(tournament_id, user_id):
 	user.status = "Online"
 	user.save()
 
+def tournament_leave_1(request, tournament_id, user_id):	
+	user_tour = get_object_or_404(TournamentsUsers, tournament_id=tournament_id, user_id=user_id)
+	user_tour.delete()
+	user = Users.objects.get(pk=user_id)
+	user.status = "Online"
+	user.save()
+	return JsonResponse({'message': 'The user leave the tournament'}, status=201)
+
 def tournament_list_users(request, tournament_id):
 	if request.method != 'GET':
 		return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
@@ -1353,33 +1365,37 @@ def login42(request):
 			user.save()
 			login(request, user)
 
-			# Criação da URL com os parâmetros necessários para redirecionar o frontend
-			# redirect_url = f"{settings.BASE_URL}/home?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home"
-			redirect_url = request.build_absolute_uri(reverse('home') + f"?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home")
-
-			response = HttpResponseRedirect(redirect_url)
+			response = HttpResponseRedirect(reverse('home')) 
 			response.set_cookie(
 				'refresh_token',
 				user_tokens.get('refresh'),
-				httponly=True, 
-				secure=False, 
-				samesite='Lax'   
+				httponly=False, 
+				secure=True, 
+				samesite='Lax',
+				max_age=3600
 			)
-			# Redireciona o usuário para a URL com os tokens
+			response.set_cookie(
+				'access_token',
+				user_tokens.get('access'),
+				httponly=False, 
+				secure=True, 
+				samesite='Lax',
+				max_age=120 
+			)
 			return response
 	else:
-		# Caso o usuário não exista, crie um novo
 		i = 0
 		original_username = username 
 		while Users.objects.filter(username=username).exists():
 			i += 1
 			username = f"{original_username}{i}"
 
-		# Criação do novo usuário
 		myuser = Users.objects.create_user(username=username, password="password")
 		myuser.user_42 = id42
 		myuser.email = user_info.get('email')
 		myuser.picture = user_info.get('image', {}).get('versions', {}).get('medium')
+		ic(myuser.picture)
+		ic(myuser.picture.url)
 		myuser.save()
 
 		UserStats.objects.create(user_id=myuser)
@@ -1391,20 +1407,24 @@ def login42(request):
 			myuser.save()
 			login(request, user)
 
-			# Criação da URL com os parâmetros necessários para redirecionar o frontend
-			# redirect_url = f"{settings.BASE_URL}/home?message=User%20created%20and%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home"
-			redirect_url = request.build_absolute_uri(reverse('home') + f"?message=You%20are%20now%20logged%20in&access_token={user_tokens.get('access')}&refresh_token={user_tokens.get('refresh')}&redirect_url=home")
-
-			# Redireciona o usuário para a URL com os tokens
-			response = HttpResponseRedirect(redirect_url)
+		
+			response = HttpResponseRedirect(reverse('home')) 
 			response.set_cookie(
 				'refresh_token',
 				user_tokens.get('refresh'),
-				httponly=True, 
-				secure=False, 
-				samesite='Lax'   
+				httponly=False, 
+				secure=True, 
+				samesite='Lax',
+				max_age=3600
 			)
-			# Redireciona o usuário para a URL com os tokens
+			response.set_cookie(
+				'access_token',
+				user_tokens.get('access'),
+				httponly=False, 
+				secure=True, 
+				samesite='Lax',
+				max_age=120
+			)
 			return response
 
 	return JsonResponse({'message': 'User login failed'}, status=400)
@@ -1489,12 +1509,14 @@ def loginview(request):
 		if user is not None:
 			user.status = "Online"
 			user.save()
+			email = mask_email(user.email)
 			if user.two_factor:
 				request.session['username'] = username
 				send_otp(request)
 				response_data = {
 					'message': 'You have successfully logged in.',
 					'username': user.username,
+					'email':email,
 					'redirect_url': 'home',
 					'data': {'otp': True }
 				}
@@ -1518,7 +1540,7 @@ def loginview(request):
 				'refresh_token',
 				user_tokens.get('refresh'),
 				httponly=True, 
-				secure=False, 
+				secure=True, 
 				samesite='Lax'
 			)
 
@@ -1563,7 +1585,7 @@ def otp_view(request):
 							'refresh_token',
 							user_tokens.get('refresh'),
 							httponly=True, 
-							secure=False, 
+							secure=True, 
 							samesite='Lax'   
 						)
 
@@ -1577,15 +1599,6 @@ def otp_view(request):
 
 	return render(request, 'pages/otp.html')
 
-
-def resetpassword(request):
-	return render(request, 'pages/password_reset.html')
-
-def resetcode(request):
-	return render(request, 'pages/reset_code.html')
-
-def setnewpassword(request):
-	return render(request, 'pages/set_new_password.html')
 
 @login_required
 def home(request):
@@ -1889,3 +1902,16 @@ def delete_profile(request, id):
 		Users.objects.filter(id=id).delete()
 		return JsonResponse({'message': 'User deleted'}, status=200)
 	return JsonResponse({'message': 'Invalid request method.', 'method': request.method}, status=405)
+
+
+
+def mask_email(email):
+	local, domain = email.split('@', 1)
+	
+	if len(local) < 4:
+		return email
+	
+	masked_local = local[:3] + '*' * (len(local) - 3)
+	
+	return f"{masked_local}@{domain}"
+

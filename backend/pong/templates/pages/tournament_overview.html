@@ -28,6 +28,7 @@
 
 								<a  hx-get="{% url 'user-profile' tour_user.user_id.id %}"
 									hx-trigger="click"
+									hx-swap="innerHTML"
 									hx-target="#main"
 									hx-push-url="true">
 									{% if "http" in tour_user.user_id.picture.url %}

@@ -34,23 +34,6 @@ urlpatterns = [
     path('games/<int:game_id>/stats', views.gamestats, name="game-stats"),
     path('tournaments/<int:tournament_id>/stats', views.tournamentstats, name="tournament-stats"),
 
-    path('password-reset/', 
-            auth_views.PasswordResetView.as_view(template_name='pages/password_reset.html'), 
-            name='password_reset'),
-    path('password-reset/done', 
-            auth_views.PasswordResetDoneView.as_view(template_name='pages/password_reset_done.html'), 
-            name='password_reset_done'),
-    path('password-reset-confirm/<uidb64>/<token>', 
-            auth_views.PasswordResetConfirmView.as_view(template_name='pages/password_reset_confirm.html'), 
-            name='password_reset_confirm'),
-    path('password-reset-complete', 
-            auth_views.PasswordResetCompleteView.as_view(template_name='pages/password_reset_complete.html'), 
-            name='password_reset_complete'),
-    #path('password_reset/', views.resetpassword, name='password_reset'),
-    #path('reset_code/', views.resetcode, name='reset_code'),
-    #path('set_new_password/', views.setnewpassword, name='set_new_password'),
-    #path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
-
     #! Users
     path('users/detail/<int:pk>', views.user_detail, name='user-detail'),
     path('users/<int:id>', views.profile, name='user-profile'),
@@ -91,7 +74,6 @@ urlpatterns = [
 	#! Tournaments
     path('tournaments/create', views.tournament_create, name='tournament-create'),
     path('tournaments/<int:tournament_id>/users/<int:user_id>/join', views.tournament_join, name='tournament-join'),
-    # path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave, name='tournament-leave'),
     path('tournaments/<int:tournament_id>', views.tournament_update, name='tournament-update'),
     path('tournaments/<int:tournament_id>/users', views.tournament_list_users, name='tournament-list-users'),
     # path('tournaments/<int:tournament_id>/advance', views.tournament_advance_phase, name='tournament-advance-phase'),
@@ -119,6 +101,7 @@ urlpatterns = [
     path('debug/games/goals', views.game_goals_all, name='game-goals-all'),
     path('debug/games/<int:game_id>/stats', views.game_stats, name='debug-game-stats'),
     path('debug/games/stats', views.game_stats_all, name='debug-game-stats-all'),
+    path('tournaments/<int:tournament_id>/users/<int:user_id>/leave', views.tournament_leave_1, name='tournament-leave'),
 ] 
 
 websocket_urlpatterns = [

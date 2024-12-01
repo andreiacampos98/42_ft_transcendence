@@ -1,5 +1,6 @@
 var currRoute = '';
 var lastRoute = '';
+var lastQuery = '';
 
 const routeScripts = {
 	'/tournaments/ongoing/': ['ongoing-tourn'],
@@ -58,6 +59,7 @@ const destroyChart = () => {
 };
 
 const mutationsCallback = (mutations) => {
+	localStorage.removeItem('htmx-history-cache')
 	// Ignore second set of mutations
 	console.log(lastRoute, currRoute, window.location.pathname)
 	destroyChart();
@@ -67,12 +69,14 @@ const mutationsCallback = (mutations) => {
 	
 	lastRoute = currRoute;
 	currRoute = window.location.pathname;
-
+	lastQuery = window.location.search;
+	
 	if (currRoute.startsWith('/tournaments/ongoing/'))
 		myTournament.updateUI({isPhaseOver: false});
 	// else if (currRoute.startsWith('/tournaments/ongoing/') && lastRoute.startsWith('/gametournament'))
 	// 	return ;
 	appendScripts();
+	console.log('Last Route: ', lastRoute, 'Curr Route: ', currRoute, 'Path name: ', window.location.pathname)
 	
 };
 
@@ -102,10 +106,28 @@ window.addEventListener('DOMContentLoaded', (event) => {
 //Handles attempts from a player to navigate away from an ongoing tournament
 window.addEventListener('htmx:beforeRequest', (event) => {
 	let nextRoute = event.detail.pathInfo.finalPath;
+	console.log(event.detail);
 	if (myUser.attemptedToLeaveTournament(currRoute, nextRoute))
 		handleTournamentLeave(event);
 	else if (myUser.attemptedToLeaveRemoteGame(currRoute, nextRoute))
 		myUser.disconnectSocket('gameSocket');
+});
+
+
+window.addEventListener('popstate', (event) => {
+	console.log("event");
+    const currentUrl = window.location.pathname;
+	
+	if (currRoute !== currentUrl) {
+        currRoute = currentUrl;
+
+        htmx.ajax('GET', currentUrl, {
+            target: '#main',
+			swap: 'innerHTML'
+        }).then(() => {
+            appendScripts();
+        });
+    }
 });
 
 //! ============================ GLOBAL VARIABLES ============================

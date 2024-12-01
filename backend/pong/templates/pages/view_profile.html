@@ -140,9 +140,12 @@
 						</form>
 					{% endif %}
 				</div>
-				
+				<div class="save-cancel align-items-center justify-content-between" id="save-cancel" style="display: none;">
+					<button class="confirm" id="save-profile-button" style="display:none;" onclick="onSaveButtonClick(event, '{{ user_id }}' )">Save Profile</button>
+					<button class="cancel" id="cancel-edit-button" style="display:none;" onclick="onCancelButtonClick('{{ user_id }}')">Go back</button>
+				</div>
 				<form id="edit-profile-form" method="POST" enctype="multipart/form-data" style="display:none;width: 360px;">
-					<input type="file" id="profile-picture-input" name="picture" style="display: none;">
+					<input type="file" id="profile-picture-input" name="picture" style="display: none;" accept="image/*">
 					<div class="email-joined-edit d-flex align-items-start flex-column">
 						<label for="username-input">
 							<h5 class="text-block d-flex" style="color:#FFFFFFC0;font-weight: unset;font-size: x-small;"> 
@@ -358,6 +361,7 @@
 								{% if game.type != "Local" %}
 									<a hx-get="{% url 'game-stats' game.id %}"
 										hx-trigger="click"
+										hx-swap="innerHTML"
 										hx-target="#main"
 										hx-push-url="true">
 										<div class="icon">
@@ -406,6 +410,7 @@
 											{% if game.user1_id != NULL %}
 												<a  hx-get="{% url 'user-profile' game.user1_id.id %}"
 													hx-trigger="click"
+													hx-swap="innerHTML"
 													hx-target="#main"
 													hx-push-url="true">
 													{% if "http" in game.user1_id.picture.url %}
@@ -423,6 +428,7 @@
 											{% if game.user2_id != NULL %}
 												<a  hx-get="{% url 'user-profile' game.user2_id.id %}"
 												hx-trigger="click"
+												hx-swap="innerHTML"
 												hx-target="#main"
 												hx-push-url="true">
 												{% if "http" in game.user2_id.picture.url %}
@@ -472,6 +478,7 @@
 											<a  hx-get="{% url 'user-profile'  tour.winner_id.id %}"
 												hx-trigger="click"
 												hx-target="#main"
+												hx-swap="innerHTML"
 												hx-push-url="true">
 												{% if "http" in tour.winner_id.picture.url %}
 													<img class="profile-pic" src="https://{{ tour.winner_id.picture.url|urlunquote|slice:'14:' }}" alt="42">
@@ -484,6 +491,7 @@
 												<a hx-get="{% url 'tournament-stats' tour.id %}"
 													hx-trigger="click"
 													hx-target="#main"
+													hx-swap="innerHTML"
 													hx-push-url="true">
 													<img src="{% static 'assets/icons/detail.png' %}" alt="detail">
 												</a>

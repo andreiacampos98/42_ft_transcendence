@@ -29,7 +29,9 @@ async function friends_add(event, userId1, userId2) {
 	}
 	else{
         localStorage.setItem('access_token', data.access_token);
-		window.location.reload();
+		htmx.ajax('GET', `/users/${userId2}`, {
+			target: '#main'
+		});
     }
 		
     return false;
@@ -61,7 +63,9 @@ async function friends_remove(event, userId1, userId2) {
 	}
 	else{
         localStorage.setItem('access_token', data.access_token);
-		window.location.reload();
+		htmx.ajax('GET', `/users/${userId2}`, {
+			target: '#main'
+		});
     }
 	
     return false;

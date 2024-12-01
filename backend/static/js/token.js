@@ -16,7 +16,9 @@ async function checkTokenBeforeNavigation(event) {
         alert("Your session has expired. Redirecting to login.");
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
-        // Redirect to login page
-        window.location.href = '/';
+        history.pushState(null, '', `/`);
+        htmx.ajax('GET', `/`, {
+            target: '#main'  
+        });
     }
 }
