@@ -20,6 +20,7 @@ window.onclick = function(event) {
 }
 
 function formatDate(timestamp) {
+	console.log(timestamp);
 	const date = new Date(timestamp);
 	
 	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -43,7 +44,8 @@ function formatRecordsTimestamp(divClass) {
 	const recordTimeDivs = document.querySelectorAll(divClass);
 	
 	recordTimeDivs.forEach(div => {
-		div.textContent = formatDate(div.textContent);
+		if (div.textContent != "None")
+			div.textContent = formatDate(div.textContent);
 	});
 }
 
