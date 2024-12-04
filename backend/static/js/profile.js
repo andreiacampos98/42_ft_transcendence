@@ -127,14 +127,17 @@ async function loadDonutChart() {
 			enabled: false        
 		}
 	};
-	if (!charts['donut']) {
-		charts['donut'] = new ApexCharts(document.querySelector('#chart1'), options);
-	}
-	else {
-		charts['donut'].el = document.querySelector('#chart1');
-	}
-	
-	charts['donut'].render();
+	// if (!charts['donut']) {
+	// 	charts['donut'] = new ApexCharts(document.querySelector('#chart1'), options);
+	// 	console.log('Creating new donut');
+	// }
+	// else {
+	// 	charts['donut'].el = document.querySelector('#chart1');
+	// 	console.log('Updating donut');
+	// }
+
+	let chart = new ApexCharts(document.querySelector('#chart1'), options);
+	chart.render();
 }
 
 async function loadBarLineChart() {
@@ -262,12 +265,15 @@ async function loadBarLineChart() {
 		}
 	};
 	
-	if (!charts['bar-line']) 
-		charts['bar-line'] = new ApexCharts(document.querySelector('#chart2'), options);
-	else 
-		charts['bar-line'].el = document.querySelector('#chart2');
+	// if (!charts['bar-line']) 
+	// 	charts['bar-line'] = new ApexCharts(document.querySelector('#chart2'), options);
+	// else 
+	// 	charts['bar-line'].el = document.querySelector('#chart2');
 	
-	charts['bar-line'].render();
+	// charts['bar-line'].render();
+
+	let chart = new ApexCharts(document.querySelector('#chart2'), options);
+	chart.render();
 }
 
 

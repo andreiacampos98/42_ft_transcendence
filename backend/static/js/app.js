@@ -1,82 +1,20 @@
 var currRoute = '', lastRoute = '';
+htmx.config.historyCacheSize = 0;
 
-const routeScripts = {
-	'/tournaments/ongoing/': ['ongoing-tourn'],
-	'/tournaments/': ['tournament', 'join_tournament'],
-	'/users/': [
-		'https://cdn.jsdelivr.net/npm/apexcharts',
-		'profile', 
-		'edit-profile', 
-		'change-password', 
-		'friends-add-remove', 
-		'tab-recent-matches', 
-		'view-details-tournaments',
-		'enable2factor'
-	],
-};
+// const routeScripts = {
+// 	'/users/': [
+// 		'https://cdn.jsdelivr.net/npm/apexcharts',
+// 	],
+// };
 
-const appendScripts = () => {
-	let route = null;
+// const loadApexCharts = () => {
+// 	let script = document.createElement('script');
+// 	script.src = 'https://cdn.jsdelivr.net/npm/apexcharts.js';
+// 	script.defer = true;
+// 	console.log(`Loaded ${script.src}`);
+// 	document.body.appendChild(script);
+// };
 
-	Object.keys(routeScripts).every(key => {
-		if (currRoute.startsWith(key)) {
-			route = key;
-			return false;
-		}
-		return true;
-	});
-
-	if (!route)
-		return ;
-
-	routeScripts[route].forEach(file => {		
-		let script = document.createElement('script');
-		script.src = file.startsWith('https') ? file : `/static/js/${file}.js`;
-		document.body.appendChild(script);
-	});
-};
-
-const destroyChart = () => {
-    if (charts["line"]) {
-        charts["line"].destroy();
-        charts["line"] = null; 
-    }
-	if (charts["donut"]) {
-        charts["donut"].destroy();
-        charts["donut"] = null; 
-    }
-	if (charts["bar-line"]) {
-        charts["bar-line"].destroy();
-        charts["bar-line"] = null; 
-    }
-};
-
-const mutationsCallback = (mutations) => {
-	localStorage.removeItem('htmx-history-cache')
-	
-	destroyChart();
-	if (currRoute == window.location.pathname)
-		return ;
-	
-	lastRoute = currRoute;
-	currRoute = window.location.pathname;
-	lastQuery = window.location.search;
-	
-	if (currRoute.startsWith('/tournaments/ongoing/'))
-		myTournament.updateUI({isPhaseOver: false});
-	
-	appendScripts();
-	
-};
-
-const observeHTML = () => {
-	const targetNode = document.getElementById('main');
-	const config = { 'childList': true };
-	
-	const observer = new MutationObserver(mutationsCallback);
-
-	observer.observe(targetNode, config);
-};
 
 //! ============================ EVENT LISTENERS / HANDLERS ============================
 
@@ -85,11 +23,6 @@ const handleTournamentLeave = (event) => {
 	if (!currRoute.startsWith('/gametournament'))
 		document.getElementById('leave-tournament-button').click();
 };
-
-window.addEventListener('DOMContentLoaded', (event) => {
-	observeHTML();
-	mutationsCallback();
-});
 
 window.addEventListener('htmx:beforeRequest', (event) => {
 	let nextRoute = event.detail.pathInfo.finalPath;
@@ -100,26 +33,19 @@ window.addEventListener('htmx:beforeRequest', (event) => {
 });
 
 
-window.addEventListener('popstate', (event) => {
-	console.log("event");
-    const currentUrl = window.location.pathname;
-	
-	if (currRoute !== currentUrl) {
-        currRoute = currentUrl;
+window.addEventListener('htmx:afterRequest', (event) => {
+	lastRoute = currRoute;
+	currRoute = event.detail.pathInfo.finalPath;
 
-        htmx.ajax('GET', currentUrl, {
-            target: '#main',
-			swap: 'innerHTML'
-        }).then(() => {
-            appendScripts();
-        });
-    }
+	if (currRoute.startsWith('/tournaments/ongoing/'))
+		myTournament.updateUI({isPhaseOver: false});
 });
 
-//! ============================ GLOBAL VARIABLES ============================
-
-let charts = {
-	'donut': null,
-	'bar-line': null,
-	'line': null
-};
+window.addEventListener('popstate', (event) => {
+	if (confirm("You're about to leave the tournament. Are you sure?")) {
+		myUser.leaveTournament();
+    } else {
+        history.pushState(null, null, currRoute);
+		myTournament.updateUI({isPhaseOver: false});
+    }
+});
