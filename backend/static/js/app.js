@@ -42,6 +42,10 @@ window.addEventListener('htmx:afterRequest', (event) => {
 });
 
 window.addEventListener('popstate', (event) => {
+	let nextRoute = window.location.pathname;
+
+	if (!myUser.attemptedToLeaveTournament(currRoute, nextRoute))
+		return ;
 	if (confirm("You're about to leave the tournament. Are you sure?")) {
 		myUser.leaveTournament();
     } else {
