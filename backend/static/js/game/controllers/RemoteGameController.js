@@ -108,7 +108,7 @@ export class RemoteGameController extends AbstractGameController {
 		myTournament.onGameEnd( this.stats.gameID, this.player1.username,
 			this.player2.username, this.stats.score );
 		setTimeout(() => {
-			history.pushState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
+			history.replaceState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
 			htmx.ajax('GET', `/tournaments/ongoing/${myUser.tournamentID}`, {
 				target: '#main'  
 			});

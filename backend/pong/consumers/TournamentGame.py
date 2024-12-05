@@ -32,6 +32,8 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 		return await super().disconnect(code)
 	
 	async def receive(self, text_data=None):
+		# message = json.loads(text_data)
+
 		await self.channel_layer.group_send(self.game_channel, {
 			"type": "broadcast",
 			"message": text_data
@@ -43,3 +45,5 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=event["message"])
 
 	# ! ============================= DATABASE ACCESS ==========================
+
+	# async def on_timeout(self):

@@ -291,6 +291,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		players = {k:v for k,v in players.items() if not v['has_finished_playing']}
 		self.set_cache(f'{self.tournament_channel}_players', players)
+
+		ic(players)
 	
 		await self.channel_layer.group_send(self.tournament_channel, {
 			"type": "broadcast", 

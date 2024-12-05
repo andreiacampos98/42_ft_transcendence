@@ -133,6 +133,50 @@ class Tournament {
 		myUser.disconnectSocket('tournamentSocket');
 	}
 
+	onTimeout(gameID, p1, p2) {
+		console.log(`P1 ID: ${p1.id}, P2 ID: ${p2.id}, User ID: ${myUser.userID}`);
+		let gameReport = {
+			"id": gameID, 
+			"duration": 0,
+			"nb_goals_user1": p1.id == myUser.userID ? 5 : 0,
+			"nb_goals_user2": p2.id == myUser.userID ? 5 : 0,
+			"game_stats": {
+				"shorter_rally": 0,
+				"longer_rally": 0,
+				"average_rally": 0,
+				"min_ball_speed": 0,
+				"max_ball_speed": 0,
+				"average_ball_speed": 0,
+				"greatest_deficit_overcome": 0,
+				"gdo_user": p1.id == myUser.userID ? p1.id : p2.id,
+				"most_consecutive_goals": 0,
+				"mcg_user": p1.id == myUser.userID ? p1.id : p2.id,
+				"biggest_lead": 0,
+				"bg_user": p1.id == myUser.userID ? p1.id : p2.id,
+			},
+			"user1_stats": {
+				"scored_first": false
+			},
+			"user2_stats": {
+				"scored_first": false
+			},
+			"goals": []		
+		};
+
+		this.phaseGames[this.currPhase][gameID][p1.username] = p1.id == myUser.userID ? 5 : 0;
+		this.phaseGames[this.currPhase][gameID][p2.username] = p2.id == myUser.userID ? 5 : 0;
+
+		myUser.tournamentSocket.send(JSON.stringify({
+			'event': 'GAME_END',
+			'data': gameReport
+		}));
+		myUser.disconnectSocket('gameSocket');
+		history.replaceState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
+		htmx.ajax('GET', `/tournaments/ongoing/${myUser.tournamentID}`, {
+			target: '#main'
+		});
+	}
+
 	reset(){
 		this.id = 0;
 		this.phasePlayers = {

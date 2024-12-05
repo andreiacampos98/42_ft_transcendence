@@ -35,7 +35,7 @@ export class Ball extends THREE.Object3D {
 		this.position.x += (this.direction.x * this.speed.x );
 		this.position.y += (this.direction.y * this.speed.y );
 
-		console.log(this.position.x, this.position.y);
+		// console.log(this.position.x, this.position.y);
 		// console.log(this.direction.x * this.speed.x, this.direction.x, this.speed.x);
 		
 		this.collideWithVerticalBounds(arena);

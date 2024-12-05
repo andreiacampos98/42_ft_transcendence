@@ -839,6 +839,8 @@ def game_update_helper(data, game_id):
 	player1.status = "Online"
 	player1.save()
 
+	ic(data)
+
 	player2 = None
 	if game.type != "Local":
 		player2 = Users.objects.get(pk=game.user2_id.id)

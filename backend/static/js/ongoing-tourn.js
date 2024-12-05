@@ -22,18 +22,12 @@ var modal = document.getElementById("modal");
 var btn = document.getElementById("leave-tournament-button");
 var goback = document.getElementById("cancel");
 
-btn.onclick = function() {
-  modal.style.display = "block";
-}
-
-goback.onclick = function() {
-  modal.style.display = "none";
-}
-
+if (btn)
+	btn.onclick = () => modal.style.display = "block";
+goback.onclick = () => modal.style.display = "none";
 window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
+	if (event.target == modal)
+		modal.style.display = "none";
 }
 
 document.getElementById('leaver').onclick = (event) => myUser.leaveTournament();

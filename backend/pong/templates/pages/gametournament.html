@@ -27,16 +27,22 @@
 
 <script type="module">
 	import { Application } from '/static/js/game/Application.js';
+	import { CONNECTION_TIMEOUT } from '/static/js/game/macros.js';
 
 	const { 
 		user1_id: p1 , user2_id: p2, 
 		game_id: gameInstance, tournament_id: tourID 
 	} = myUser.tournamentGameData;
+
+	console.log(myUser);
+
+	let connectionTimedOut = true;
 	
 	myUser.connectSocket(
 		'gameSocket',
 		`wss://${window.location.host}/wss/tournaments/${tourID}/games/${gameInstance.id}`,
 		(event) => {
+			connectionTimedOut = false;
 			let app = new Application();
 			app.init({ 
 				player1Data: {'id': p1.id, 'username': p1.username},
@@ -49,5 +55,10 @@
 			app.render();
 		}
 	);
+
+	setTimeout(() => {
+		if (connectionTimedOut)
+			myTournament.onTimeout(gameInstance.id, p1, p2);
+	}, CONNECTION_TIMEOUT);
 </script>
 {% endblock %}

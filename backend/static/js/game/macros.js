@@ -35,7 +35,9 @@ export const MAX_GOALS = 5;
 export const PLAYER_COLOR_1 = 0xCC0000;
 export const PLAYER_COLOR_2 = 0x00FFFF;
 
-export const FPS = 40;
+export const CONNECTION_TIMEOUT = 5000;
+
+export const FPS = 80;
 export const REFRESH_RATE = 1000 / FPS;
 
 export const STANDARD_KEYBINDS = {
