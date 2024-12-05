@@ -162,9 +162,18 @@ class Tournament {
 			},
 			"goals": []		
 		};
-
+		let other = p1.id == myUser.userID ? p2 : p1;
 		this.phaseGames[this.currPhase][gameID][p1.username] = p1.id == myUser.userID ? 5 : 0;
 		this.phaseGames[this.currPhase][gameID][p2.username] = p2.id == myUser.userID ? 5 : 0;
+
+		console.log(other);
+		for (let i = 0; i < this.phasePlayers[this.currPhase].length; i++) {
+			console.log(this.phasePlayers[this.currPhase][i].user_id);
+			if (this.phasePlayers[this.currPhase][i].user_id == other.id)
+				this.phasePlayers[this.currPhase][i].disconnected = true;
+		}
+
+		console.log(this.phasePlayers);
 
 		myUser.tournamentSocket.send(JSON.stringify({
 			'event': 'GAME_END',
@@ -235,8 +244,14 @@ class Tournament {
 		const slots = document.querySelectorAll(query);
 		
 		players.forEach((player, i) => {
-			slots[i].querySelector("span.name").textContent = player.alias;
+			if (player.disconnected) {
+				slots[i].querySelector("span.name").textContent = 'DISCONNECTED';
+				slots[i].querySelector("span.name").classList.add('player-disconnected');
+			}
+			else
+				slots[i].querySelector("span.name").textContent = player.alias;
 			let uri = player.user.picture;
+
 			if (uri.includes('http')) 
 				slots[i].querySelector("img").src = `https://${decodeURIComponent(uri).slice(14)}`;
 			else 

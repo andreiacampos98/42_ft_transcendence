@@ -183,3 +183,8 @@
 	background-color: #2b3d4f;
 	transition: all 0.5s ease;
 }
+
+.player-disconnected {
+	color: red !important;
+	font-weight: bold;
+}
