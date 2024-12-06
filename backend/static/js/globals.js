@@ -132,6 +132,27 @@ class Tournament {
 		this.reset();
 		myUser.disconnectSocket('tournamentSocket');
 	}
+	
+	onCancelTournament(){
+		const handler = () => {
+			document.querySelector('.tourn-status').textContent = 'This tournament has been cancelled. Reason: 2 or more players left.';
+			document.querySelector('.tourn-status').style.color = '#FF0000';
+			this.reset();
+			myUser.disconnectSocket('gameSocket');
+			myUser.disconnectSocket('tournamentSocket');
+		}
+
+		if (currRoute.startsWith('/tournaments/ongoing')) {
+			handler();
+			return ;
+		}
+
+		history.replaceState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
+		htmx.ajax('GET', '/tournaments', {
+			target: '#main'
+		}).then(() => handler());
+		
+	}
 
 	onTimeout(gameID, p1, p2) {
 		console.log(`P1 ID: ${p1.id}, P2 ID: ${p2.id}, User ID: ${myUser.userID}`);

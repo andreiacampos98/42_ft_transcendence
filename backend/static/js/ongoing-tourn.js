@@ -10,9 +10,13 @@ myUser.connectSocket(
 		else if (eventType == 'PLAYER_LEFT')
 			myTournament.onPlayerLeft(data);
 		else if (eventType == 'PHASE_START')
-			setTimeout(() => myTournament.onPhaseStart(data), 2100);
+			timeoutID1 = setTimeout(() => myTournament.onPhaseStart(data), 2100);
 		else if (eventType == 'PHASE_END')
-			setTimeout(() => myTournament.onPhaseEnd(data), 1100);
+			timeoutID2 = setTimeout(() => myTournament.onPhaseEnd(data), 1100);
+		else if (eventType == 'CANCEL_TOURNAMENT') {
+			clearTimeout();
+			myTournament.onCancelTournament();
+		}
 	}
 );
 
