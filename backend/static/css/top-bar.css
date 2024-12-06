@@ -14,29 +14,29 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60vw; /* Adjust width as needed */
+    width: 60vw;
 }
 
 .search-container input {
-    width: 100%; /* Adjust width to leave space for icon */
+    width: 100%;
     padding: 10px;
     border: 1px solid #1D2731;
     border-radius: 5px;
     background-color: #1D2731;
-    outline: none; /* Remove default focus outline */
+    outline: none;
     color: #FFFFFF;
 }
 
 #searchButton {
     position: absolute;
-    right: 10px; /* Adjust as needed */
+    right: 10px;
     background: none;
     border: none;
     cursor: pointer;
 }
 
 #searchButton img {
-    width: 20px; /* Adjust icon size as needed */
+    width: 20px;
     height: 20px;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .top-right {
-    margin-left: auto; /* Ensures this section is pushed to the far right */
+    margin-left: auto;
     margin-right: 45px;
 }
 

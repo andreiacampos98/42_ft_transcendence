@@ -17,8 +17,8 @@
 }
 
 #inner-modal{
-	position: absolute; /* Now position relative to the parent div */
-    top: -29%;             /* Stick to the top */
+	position: absolute; 
+    top: -29%;             
     right: 0; 
 	overflow: hidden;
 	height: 230px;
@@ -49,14 +49,14 @@
 }
 
 #notificationList li:not(:last-child) {
-    border-bottom: 1px solid grey; /* Add grey top border */
+    border-bottom: 1px solid grey; 
 }
 
 .time-text-button {
     display: flex;
     flex-direction: column;
     margin: 10px;
-    /*justify-content: space-between;*/
+    
     height: 100px;
 	width: 236px;
 }
@@ -83,7 +83,7 @@
 	cursor: pointer;
 }
 
-/*.description-notif {
+
     font-size: larger;
 }*/
 
