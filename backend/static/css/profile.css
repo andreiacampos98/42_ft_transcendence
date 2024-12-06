@@ -1,9 +1,12 @@
 #main-wrapper {
 	width: 100%;
 	gap: 20px;
+	/*height: inherit;*/
+	/*overflow: visible;*/
 }
 
 #profile-main {
+	/*width: 30%; */
 	flex-shrink: 0;
 	width:initial;
 	padding-top: 80px;
@@ -11,7 +14,7 @@
 
 .side-profile {
 	flex-direction: column;
-	width: 15vw; 
+	width: 15vw; /* Adjust width as needed */
 	padding: 20px;
 	border-radius: 8px;
 	color: #FFFFFF;
@@ -83,6 +86,7 @@ textarea, #username-input, #email-input {
 .edit-change, .save-cancel {
 	width: 360px;
 	height: 52.3px;
+	
 }
 
 
@@ -234,6 +238,7 @@ textarea, #username-input, #email-input {
 	width: 50%;
 	height: 100%;
 	margin: 5px;
+
 }
 
 .two-joined {
@@ -246,6 +251,7 @@ textarea, #username-input, #email-input {
 	border-radius: 8px;
 	background-color: #ffffff0C;
 	border: 1px solid #ffffff2a;
+	
 }
 
 .donut {
@@ -256,6 +262,8 @@ textarea, #username-input, #email-input {
 	width: 50%;
 	height: 100%;
 	margin: 5px;
+	
+
 }
 
 .profile-foot {
@@ -280,6 +288,7 @@ textarea, #username-input, #email-input {
 	border: 1px solid #ffffff2a;
 	width: 35%;
 	height: 100%;
+
 }
 
 .record-info {
@@ -321,7 +330,7 @@ textarea, #username-input, #email-input {
 	width: 15vw;
 	height: 100px;
 	margin-left: 10px;
-	background-color: #101d27; 
+	background-color: #101d27; /* Light gray background for graphs */
 	border-radius: 8px;
 }
 
@@ -373,8 +382,10 @@ textarea, #username-input, #email-input {
 }
 
 .match-history-list {
+	
 	overflow-y: auto;
 	width: 100%;
+
 }
 
 
@@ -420,19 +431,24 @@ textarea, #username-input, #email-input {
 	width: 100%;
 }
 
+
+/* The switch - the box around the slider */
 .switch {
 	position: relative;
 	display: inline-block;
 	width: 43px;
 	height: 20px;
+
 }
 
+/* Hide default HTML checkbox */
 .switch input {
 	opacity: 0;
 	width: 0;
 	height: 0;
 }
 
+/* The slider */
 .slider {
 	position: absolute;
 	cursor: pointer;
@@ -461,13 +477,14 @@ input:checked + .slider {
 	background-color: #F8D082;
 }
 
+
 input:checked + .slider:before {
 	-webkit-transform: translateX(20px);
 	-ms-transform: translateX(20px);
 	transform: translateX(20px);
 }
 
-
+/* Rounded sliders */
 .slider.round {
 	border-radius: 34px;
 	height: 20px;
@@ -499,8 +516,8 @@ input:checked + .slider:before {
 
 #button-inside {
 	position: relative;
-    top: -10%; 
-    left: 61%; 
+    top: -10%; /* Center vertically */
+    left: 61%; /* Center horizontally */
     transform: translate(-50%, -50%);
 	background: none;
 	border: none;

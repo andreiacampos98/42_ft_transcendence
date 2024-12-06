@@ -153,8 +153,9 @@
 }
 
 .rally-len, .ball-speed  {
+    /*background: url('../assets/images/rally-len.png') no-repeat;*/
     background: linear-gradient(to right, #ffffff00, #f8d18218);
-    background-size: cover; 
+    background-size: cover; /* Make the image cover the entire div */
     width: 90%;
     border-radius: 8px;
     border: 1px solid #ffffff2a;
@@ -226,7 +227,7 @@
 
 
 #chart3 {
-    width: 70%;   
-    height: 70%;  
-    margin: 0 auto; 
+    width: 70%;   /* Set the width of the chart */
+    height: 70%;  /* Set the height of the chart */
+    margin: 0 auto; /* Center the chart */
 }

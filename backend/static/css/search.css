@@ -4,9 +4,9 @@
 
 }
 .square {
-    margin: 5px;           
+    margin: 5px;           /* Space between squares */
 	padding: 8px;
-    flex-direction: column; 
+    flex-direction: column; /* Align content center */
     text-decoration: none;
     color: #f2f2f2;
 	margin-right: 20px;
@@ -23,6 +23,8 @@
 	font-weight: inherit;
     font-size: inherit;
     width: inherit;
+    /* overflow-x: scroll;
+	overflow-y: hidden*/
     white-space: nowrap;
     overflow: hidden;
 	text-overflow: ellipsis;
@@ -47,9 +49,9 @@
 }
 
 .circular-image {
-    width: 100px;          
-    height: 130px;         
+    width: 100px;          /* Sets the width to 60px */
+    height: 130px;         /* Ensures the height is the same, making it a square */
 	object-fit: cover;
-    display: block;       
+    display: block;       /* Removes extra spacing below the image */
 	margin-bottom: 8px;
 }
