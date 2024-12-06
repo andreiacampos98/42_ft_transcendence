@@ -64,7 +64,7 @@
 	font-size: 20px;
 }
 
-#p1, #p2, #final-p1, #final-p2 {
+#p1, #p2 {
 	margin-inline: 16px;
 }
 
@@ -93,19 +93,52 @@
 }
 
 #winner-container {
+	transition: opacity 0.5s ease-out;
 	visibility: hidden;
+	opacity: 0;
 	background-color: #000000BB;
 }
 
 #winner-message {
 	color: white;
 	font-size: 24px;
-	margin-top: 16px;
+	margin-block: 16px;
 }
 
 #winner-name {
 	color: #F8D082;
 	font-weight: bold;
+}
+
+#play-again-button, #go-back-button {
+	border: 1px solid #143c59;
+    padding-block: 8px;
+    padding-inline: 16px;
+    border-radius: 8px;
+    color: white;
+    background-color: #0B2233;
+}
+
+#play-again-button:hover {
+	transition: all 0.3s ease;
+	cursor: pointer;
+	font-weight: bold;
+	background-color: #F8D082;
+	border-radius:#f8d082;
+	color: #A48955;
+}
+
+#go-back-button {
+	font-weight: bold;
+	border-color: transparent;
+	background-color: transparent;
+}
+
+#go-back-button:hover {
+	transition: all 0.3s ease;
+	cursor: pointer;
+	background-color: #FFFFFF11;
+	border-color: #FFFFFF44;
 }
 
 #loader {

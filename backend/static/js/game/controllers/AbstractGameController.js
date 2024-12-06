@@ -92,6 +92,7 @@ export class AbstractGameController extends THREE.Group {
 		
 		const winnerContainer = document.getElementById('winner-container');
 		winnerContainer.style.visibility = 'visible';
+		winnerContainer.style.opacity = 1;
 
 		const winnerName = document.getElementById('winner-name');
 		const winnerImg = document.getElementById('winner-img');

@@ -51,7 +51,7 @@ class User {
 		myUser.disconnectSocket('tournamentSocket');
 		myUser.disconnectSocket('gameSocket');
 		myTournament.reset();
-		history.pushState(null, '', `/tournaments/`);
+		history.replaceState(null, '', `/tournaments/`);
 		htmx.ajax('GET', `/tournaments/`, {
 			target: '#main'  
 		});
