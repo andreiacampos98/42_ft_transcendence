@@ -47,6 +47,7 @@
 		`wss://${window.location.host}/wss/games/remote/queue`,
 		(event) => {
 			const { player1, player2, ball, gameID } = JSON.parse(event.data);
+			console.log(player1, player2, ball, gameID);
 
 			let app = new Application();
 			app.init({player1Data: player1, 

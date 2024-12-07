@@ -97,7 +97,10 @@ export class AbstractGameController extends THREE.Group {
 		const winnerName = document.getElementById('winner-name');
 		const winnerImg = document.getElementById('winner-img');
 		winnerName.textContent = this.stats.winner.username;
-		if (this.stats.winner.picture)
+		console.log(this.stats.winner.picture);
+		if (this.stats.winner.picture && this.stats.winner.picture.includes('/media'))
+			winnerImg.src = `https://${decodeURIComponent(this.stats.winner.picture).slice(14)}`;
+		else if (this.stats.winner.picture)
 			winnerImg.src = this.stats.winner.picture;
 	}
 
