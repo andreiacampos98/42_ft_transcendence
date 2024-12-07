@@ -9,18 +9,14 @@
 	<div id="canvas-container" style="width: 100%; height: 100%; z-index: -100;"></div>
 	<div id="camera"></div>
 	<div id="scoreboard" class="d-flex justify-content-center align-items-center">
-		<div class="d-flex flex-column justify-content-center align-items-center">
-			<img id="p1-img" src="{% static 'assets/icons/avatar.png' %}" alt="P1 profile">
-			<div id="p1"></div>
-		</div>
+		<div id="p1"></div>
+		<img id="p1-img" src="{% static 'assets/icons/avatar.png' %}" alt="P1 profile">
 		<div class="d-flex">
 			<div id="p1-score">0</div>
 			<div id="p2-score">0</div>
 		</div>
-		<div class="d-flex flex-column justify-content-center align-items-center">
-			<img id="p2-img" src="/media/matrix.jpg" alt="P2 profile">
-			<div id="p2"></div>
-		</div>
+		<img id="p2-img" src="/media/matrix.jpg" alt="P2 profile">
+		<div id="p2"></div>
 	</div>
 	<div id="loader-container" class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
 		<div id="loader"></div>
