@@ -14,7 +14,7 @@ export class RemotePlayer extends AbstractPlayer {
 		this.onUpdate = onUpdate;
 	}
 
-	update(pressedKeys) {
+	update(pressedKeys, delta) {
 		if (this.keybinds == null)
 			return ;
 
@@ -23,14 +23,14 @@ export class RemotePlayer extends AbstractPlayer {
 
 		if (pressedKeys[upKey]) {
 			targetPos.y = Math.min(
-				this.paddle.position.y + PADDLE_SPEED,
+				this.paddle.position.y + PADDLE_SPEED * delta,
 				ARENA_SEMI_HEIGHT - 2*ARENA_SEMI_DEPTH - PADDLE_SEMI_HEIGHT
 			);
 		}
 		
 		if (pressedKeys[downKey]){
 			targetPos.y = Math.max(
-				this.paddle.position.y - PADDLE_SPEED,
+				this.paddle.position.y - PADDLE_SPEED * delta,
 				-(ARENA_SEMI_HEIGHT - 2*ARENA_SEMI_DEPTH - PADDLE_SEMI_HEIGHT)
 			);
 		}

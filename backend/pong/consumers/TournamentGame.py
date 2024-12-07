@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from icecream import ic
 import json
-
+from channels.exceptions import StopConsumer
 
 
 class TournamentGameConsumer(AsyncWebsocketConsumer):
@@ -29,9 +29,20 @@ class TournamentGameConsumer(AsyncWebsocketConsumer):
 			})
 
 	async def disconnect(self, code):
+		ic(code)
+		if code != 3000:
+			await self.channel_layer.group_send(self.game_channel, {
+				"type": "broadcast",
+				"message": json.dumps({
+					'event': 'DISCONNECT',
+					'data': {}
+				})
+			})
 		return await super().disconnect(code)
 	
 	async def receive(self, text_data=None):
+		message = json.loads(text_data)
+
 		await self.channel_layer.group_send(self.game_channel, {
 			"type": "broadcast",
 			"message": text_data

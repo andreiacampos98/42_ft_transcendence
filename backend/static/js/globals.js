@@ -19,6 +19,7 @@ class User {
 			this[prop] = null;	
 		};
 		this[prop].onclose = (event) => {
+			console.log(`Closing ${url}`);
 			this[prop] = null;	
 		};
 	}
@@ -51,7 +52,7 @@ class User {
 		myUser.disconnectSocket('tournamentSocket');
 		myUser.disconnectSocket('gameSocket');
 		myTournament.reset();
-		history.pushState(null, '', `/tournaments/`);
+		history.replaceState(null, '', `/tournaments/`);
 		htmx.ajax('GET', `/tournaments/`, {
 			target: '#main'  
 		});
@@ -61,6 +62,7 @@ class User {
 class Tournament {
 	constructor() {
 		this.reset();
+		this.isCancelled = false;
 	}
 
 	onPlayerJoined({phase, players}) {
@@ -76,6 +78,8 @@ class Tournament {
 	}
 
 	onPhaseStart({phase, games, players}) {
+		if (this.isCancelled)
+			return ;
 		this.currPhase = phase;
 		games.forEach(tourGame => {
 			let gameID = tourGame.game_id.id;
@@ -113,6 +117,8 @@ class Tournament {
 	}
 
 	onPhaseEnd({phase, next_phase, results, winner=null}) {
+		if (this.isCancelled)
+			return ;
 		results.forEach(game => {
 			this.phaseGames[phase][game.id][game.username1] = game.score1;
 			this.phaseGames[phase][game.id][game.username2] = game.score2;
@@ -131,6 +137,81 @@ class Tournament {
 		this.updatePlayerSlots('winner', [winner]);
 		this.reset();
 		myUser.disconnectSocket('tournamentSocket');
+	}
+	
+	onCancelTournament(){
+		this.isCancelled = true;
+		const handler = () => {
+			document.querySelector('.tourn-status').textContent = 'This tournament has been cancelled. Reason: 2 or more players left.';
+			document.querySelector('.tourn-status').style.color = '#FF0000';
+			this.reset();
+			myUser.disconnectSocket('gameSocket');
+			myUser.disconnectSocket('tournamentSocket');
+		}
+
+		if (currRoute.startsWith('/tournaments/ongoing')) {
+			handler();
+			return ;
+		}
+
+		history.replaceState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
+		htmx.ajax('GET', '/tournaments', {
+			target: '#main'
+		}).then(() => handler());
+		
+	}
+
+	onTimeout(gameID, p1, p2) {
+		console.log(`P1 ID: ${p1.id}, P2 ID: ${p2.id}, User ID: ${myUser.userID}`);
+		let gameReport = {
+			"id": gameID, 
+			"duration": 0,
+			"nb_goals_user1": p1.id == myUser.userID ? 5 : 0,
+			"nb_goals_user2": p2.id == myUser.userID ? 5 : 0,
+			"game_stats": {
+				"shorter_rally": 0,
+				"longer_rally": 0,
+				"average_rally": 0,
+				"min_ball_speed": 0,
+				"max_ball_speed": 0,
+				"average_ball_speed": 0,
+				"greatest_deficit_overcome": 0,
+				"gdo_user": p1.id == myUser.userID ? p1.id : p2.id,
+				"most_consecutive_goals": 0,
+				"mcg_user": p1.id == myUser.userID ? p1.id : p2.id,
+				"biggest_lead": 0,
+				"bg_user": p1.id == myUser.userID ? p1.id : p2.id,
+			},
+			"user1_stats": {
+				"scored_first": false
+			},
+			"user2_stats": {
+				"scored_first": false
+			},
+			"goals": []		
+		};
+		let other = p1.id == myUser.userID ? p2 : p1;
+		this.phaseGames[this.currPhase][gameID][p1.username] = p1.id == myUser.userID ? 5 : 0;
+		this.phaseGames[this.currPhase][gameID][p2.username] = p2.id == myUser.userID ? 5 : 0;
+
+		console.log(other);
+		for (let i = 0; i < this.phasePlayers[this.currPhase].length; i++) {
+			console.log(this.phasePlayers[this.currPhase][i].user_id);
+			if (this.phasePlayers[this.currPhase][i].user_id == other.id)
+				this.phasePlayers[this.currPhase][i].disconnected = true;
+		}
+
+		console.log(this.phasePlayers);
+
+		myUser.tournamentSocket.send(JSON.stringify({
+			'event': 'GAME_END',
+			'data': gameReport
+		}));
+		myUser.disconnectSocket('gameSocket');
+		history.replaceState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
+		htmx.ajax('GET', `/tournaments/ongoing/${myUser.tournamentID}`, {
+			target: '#main'
+		});
 	}
 
 	reset(){
@@ -191,8 +272,14 @@ class Tournament {
 		const slots = document.querySelectorAll(query);
 		
 		players.forEach((player, i) => {
-			slots[i].querySelector("span.name").textContent = player.alias;
+			if (player.disconnected) {
+				slots[i].querySelector("span.name").textContent = 'DISCONNECTED';
+				slots[i].querySelector("span.name").classList.add('player-disconnected');
+			}
+			else
+				slots[i].querySelector("span.name").textContent = player.alias;
 			let uri = player.user.picture;
+
 			if (uri.includes('http')) 
 				slots[i].querySelector("img").src = `https://${decodeURIComponent(uri).slice(14)}`;
 			else 

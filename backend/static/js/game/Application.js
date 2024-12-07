@@ -146,9 +146,8 @@ export class Application  {
 		let then = Date.now();
 		const updateCallback = (() => {
 			this.stats.begin();
-			
 			if (this.gameCanStart)
-				this.gameController.update((Date.now() - then) / 1000);
+				this.gameController.update(FPS / this.calculateFPS());
 			then = Date.now();
 			this.renderer.render(this.scene, this.camera);
 			frameID = requestAnimationFrame( this.render.bind(this) );
@@ -158,7 +157,7 @@ export class Application  {
 		}).bind(this);
 
 		if (window.location.pathname.startsWith('/game'))
-			timeoutID = setTimeout(updateCallback, (Math.random() + 2) * REFRESH_RATE);
+			timeoutID = setTimeout(updateCallback, REFRESH_RATE);
 
 		
 		

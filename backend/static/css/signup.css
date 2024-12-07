@@ -3,7 +3,7 @@ body {
 	font-size: small;
     margin: 0;
     padding: 0;
-    background: #0B3C5D url('../assets/images/42logo.png') no-repeat center center fixed;
+    background: #061e2f url('../assets/images/42logo.png') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;

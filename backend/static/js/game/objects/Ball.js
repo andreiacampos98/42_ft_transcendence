@@ -32,15 +32,15 @@ export class Ball extends THREE.Object3D {
 	move(controller, delta) {
 		const { arena, player1, player2 } = controller;
 
-		this.position.x += (this.direction.x * this.speed.x );
-		this.position.y += (this.direction.y * this.speed.y );
+		this.position.x += (this.direction.x * this.speed.x * Math.min(delta, 2));
+		this.position.y += (this.direction.y * this.speed.y * Math.min(delta, 2));
 
-		console.log(this.position.x, this.position.y);
+		// console.log(this.position.x, this.position.y);
 		// console.log(this.direction.x * this.speed.x, this.direction.x, this.speed.x);
 		
 		this.collideWithVerticalBounds(arena);
-		this.collideWithPaddle(player1.paddle, true);
-		this.collideWithPaddle(player2.paddle, false);
+		this.collideWithPaddle(player1.paddle, true, delta);
+		this.collideWithPaddle(player2.paddle, false, delta);
 		return this.collidedWithGoals(arena, player1, player2);
 	}
 
@@ -63,7 +63,7 @@ export class Ball extends THREE.Object3D {
 			this.direction.y = DIRECTION.UP;
 	}
 
-	collideWithPaddle(paddle, isPlayer){
+	collideWithPaddle(paddle, isPlayer, delta){
 		const paddleRange = {
 			'x': {
 				'start': paddle.position.x - PADDLE_SEMI_LENGTH,
@@ -96,13 +96,13 @@ export class Ball extends THREE.Object3D {
 		if (isPlayer) {
 			this.position.x = paddle.position.x + PADDLE_SEMI_LENGTH + this.radius;
 			this.speed.x += BALL_ACCELERATION;
-			this.speed.y += BALL_ACCELERATION * (Math.random());
+			this.speed.y += BALL_ACCELERATION;
 			this.direction.x = DIRECTION.RIGHT;
 		}
 		else {
 			this.position.x = paddle.position.x - PADDLE_SEMI_LENGTH - this.radius;
 			this.speed.x += BALL_ACCELERATION;
-			this.speed.y += BALL_ACCELERATION * (Math.random());
+			this.speed.y += BALL_ACCELERATION;
 			this.direction.x = DIRECTION.LEFT;
 		}	
 

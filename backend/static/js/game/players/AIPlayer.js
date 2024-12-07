@@ -26,7 +26,7 @@ export class AIPlayer extends AbstractPlayer {
 		this.originalColor = this.paddle.material.color.clone();
 	}
 
-	update(pressedKeys=null, ball, player) {
+	update(pressedKeys=null, delta, ball, player) {
 		let targetPos = this.nextPos.clone();
 		if (this.paddle.position.y > this.nextPos.y)
 			targetPos.y = Math.max(this.paddle.position.y - PADDLE_SPEED, this.nextPos.y);

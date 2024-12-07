@@ -52,6 +52,7 @@ export class RemoteGameController extends AbstractGameController {
 		});
 		this.players[this.player1.id] = this.player1;
 		this.players[this.player2.id] = this.player2;
+		console.log(this);
 		this.stats = new GameStats(this.player1, this.player2);
 		this.stats.gameID = gameID;
 	}
@@ -60,16 +61,21 @@ export class RemoteGameController extends AbstractGameController {
 		myUser.gameSocket.onmessage = (ev) => {
 			const { event, data } = JSON.parse(ev.data);
 			
-			if (event == 'UPDATE')
+			if (event == 'UPDATE') {
 				this.players[data.id].move(data.y);
+			}
 			else if (event == 'SYNC')
 				this.ball.sync(data.ball);
-		}
-
+			else if (event == 'DISCONNECT' && this.type == 'Tournament' && !this.stats.isGameOver()) {
+				myTournament.onTimeout(this.stats.gameID, this.player1, this.player2);
+			}
+		};
 	}
 
 	build() {
 		const onPaddleHit = () => {
+			if (!myUser.gameSocket)
+				return ;
 			myUser.gameSocket.send(JSON.stringify({
 				'event': 'SYNC',
 				'data': {
@@ -95,7 +101,7 @@ export class RemoteGameController extends AbstractGameController {
 			'event': 'GAME_END',
 			'data': results
 		}));
-		myUser.gameSocket.close();
+		myUser.gameSocket.close(3000);
 		
 		if (!myUser.tournamentSocket)
 			return ;
@@ -108,7 +114,7 @@ export class RemoteGameController extends AbstractGameController {
 		myTournament.onGameEnd( this.stats.gameID, this.player1.username,
 			this.player2.username, this.stats.score );
 		setTimeout(() => {
-			history.pushState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
+			history.replaceState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
 			htmx.ajax('GET', `/tournaments/ongoing/${myUser.tournamentID}`, {
 				target: '#main'  
 			});

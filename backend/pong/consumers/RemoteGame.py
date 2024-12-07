@@ -100,7 +100,7 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 		if game_results is None and self.has_opponent_disconnected:
 			game_update_helper(data, game_id)
 			self.del_game_results(game_id)
-		
+			
 	@database_sync_to_async
 	def create_new_game(self, host_id):
 		new_game_data = {
@@ -133,6 +133,8 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 				'picture': self.user.picture.url,
 			}
 			self.set_waiting_room(self.user.id, user_data)
+		
+		ic(self.get_game_queue())
 
 
 	async def pair_player(self, host_room_id):

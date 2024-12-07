@@ -51,8 +51,8 @@ export class AbstractGameController extends THREE.Group {
 	}
 
 	update(delta) {
-		this.player1.update(this.pressedKeys);
-		this.player2.update(this.pressedKeys, this.ball, this.player1);
+		this.player1.update(this.pressedKeys, delta);
+		this.player2.update(this.pressedKeys, delta, this.ball, this.player1);
 		this.arcade.update(this.pressedKeys);
 
 		if (this.stats.isGameOver())
@@ -92,6 +92,7 @@ export class AbstractGameController extends THREE.Group {
 		
 		const winnerContainer = document.getElementById('winner-container');
 		winnerContainer.style.visibility = 'visible';
+		winnerContainer.style.opacity = 1;
 
 		const winnerName = document.getElementById('winner-name');
 		const winnerImg = document.getElementById('winner-img');
