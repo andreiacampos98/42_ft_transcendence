@@ -133,6 +133,8 @@ class RemoteGameQueueConsumer(AsyncWebsocketConsumer):
 				'picture': self.user.picture.url,
 			}
 			self.set_waiting_room(self.user.id, user_data)
+		
+		ic(self.get_game_queue())
 
 
 	async def pair_player(self, host_room_id):

@@ -52,6 +52,7 @@ export class RemoteGameController extends AbstractGameController {
 		});
 		this.players[this.player1.id] = this.player1;
 		this.players[this.player2.id] = this.player2;
+		console.log(this);
 		this.stats = new GameStats(this.player1, this.player2);
 		this.stats.gameID = gameID;
 	}
@@ -60,14 +61,12 @@ export class RemoteGameController extends AbstractGameController {
 		myUser.gameSocket.onmessage = (ev) => {
 			const { event, data } = JSON.parse(ev.data);
 			
-			if (event == 'UPDATE')
+			if (event == 'UPDATE') {
 				this.players[data.id].move(data.y);
+			}
 			else if (event == 'SYNC')
 				this.ball.sync(data.ball);
 			else if (event == 'DISCONNECT' && this.type == 'Tournament' && !this.stats.isGameOver()) {
-				console.log('RECEIVED DISCONNECT EVENT');
-				console.log(this.stats.isGameOver());
-				console.log(this.stats);
 				myTournament.onTimeout(this.stats.gameID, this.player1, this.player2);
 			}
 		};
@@ -75,6 +74,8 @@ export class RemoteGameController extends AbstractGameController {
 
 	build() {
 		const onPaddleHit = () => {
+			if (!myUser.gameSocket)
+				return ;
 			myUser.gameSocket.send(JSON.stringify({
 				'event': 'SYNC',
 				'data': {
