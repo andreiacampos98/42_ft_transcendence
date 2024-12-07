@@ -62,6 +62,7 @@ class User {
 class Tournament {
 	constructor() {
 		this.reset();
+		this.isCancelled = false;
 	}
 
 	onPlayerJoined({phase, players}) {
@@ -77,6 +78,8 @@ class Tournament {
 	}
 
 	onPhaseStart({phase, games, players}) {
+		if (this.isCancelled)
+			return ;
 		this.currPhase = phase;
 		games.forEach(tourGame => {
 			let gameID = tourGame.game_id.id;
@@ -114,6 +117,8 @@ class Tournament {
 	}
 
 	onPhaseEnd({phase, next_phase, results, winner=null}) {
+		if (this.isCancelled)
+			return ;
 		results.forEach(game => {
 			this.phaseGames[phase][game.id][game.username1] = game.score1;
 			this.phaseGames[phase][game.id][game.username2] = game.score2;
@@ -135,6 +140,7 @@ class Tournament {
 	}
 	
 	onCancelTournament(){
+		this.isCancelled = true;
 		const handler = () => {
 			document.querySelector('.tourn-status').textContent = 'This tournament has been cancelled. Reason: 2 or more players left.';
 			document.querySelector('.tourn-status').style.color = '#FF0000';

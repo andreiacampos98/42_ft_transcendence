@@ -33,7 +33,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_add(self.tournament_channel, self.channel_name)
 		await self.create_cache()
 		await self.broadcast_player_list()
-		
+
 		if self.is_tournament_full():
 			first_phase = self.get_cache_key(self.tournament_channel)['curr_phase']
 			await self.begin_phase(first_phase, True)
@@ -60,10 +60,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				self.push_disconnected_user()
 			self.set_cache_value(f'{self.tournament_channel}', tournament)
 			
-		# ic(f'DISCONNECTED USERS: {self.get_number_disconnected_users()}')
-		# if self.get_number_disconnected_users() >= 2:
-		# 	ic(f'CANCELLATION - Tournament was cancelled.')
-		# 	await self.cancel_tournament()
+		ic(f'DISCONNECTED USERS: {self.get_number_disconnected_users()}')
+		if self.get_number_disconnected_users() >= 2:
+			ic(f'CANCELLATION - Tournament was cancelled.')
+			await self.cancel_tournament()
 
 		tournament = await self.get_tournament()
 		

@@ -5,6 +5,7 @@ myUser.connectSocket(
 		const message = JSON.parse(event.data);
 		const { event: eventType, data } = message;
 
+		let timeoutID1 = undefined, timeoutID2 = undefined;
 		if (eventType == 'PLAYER_JOINED')
 			myTournament.onPlayerJoined(data);
 		else if (eventType == 'PLAYER_LEFT')
@@ -14,6 +15,7 @@ myUser.connectSocket(
 		else if (eventType == 'PHASE_END')
 			timeoutID2 = setTimeout(() => myTournament.onPhaseEnd(data), 1100);
 		else if (eventType == 'CANCEL_TOURNAMENT') {
+			clearTimeout();
 			clearTimeout();
 			myTournament.onCancelTournament();
 		}
