@@ -45,7 +45,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
 		errorMessage.style.display = 'block';
 		return ;
 	}
-    history.pushState(null, '', `/verifyemail/`);
+    //history.pushState(null, '', `/verifyemail/`);
 	htmx.ajax('GET', `/verifyemail/`, {
 		target: '#main'  
 	});

@@ -35,7 +35,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
 	if (data.data.hasOwnProperty('otp')) {
 		t_email = data.email;
-		history.pushState(null, '', `/otp/`);
+		//history.pushState(null, '', `/otp/`);
 		htmx.ajax('GET', `/otp/`, {
 			target: '#main',
 		});
