@@ -1,20 +1,6 @@
 var currRoute = '', lastRoute = '';
+
 htmx.config.historyCacheSize = 0;
-
-// const routeScripts = {
-// 	'/users/': [
-// 		'https://cdn.jsdelivr.net/npm/apexcharts',
-// 	],
-// };
-
-// const loadApexCharts = () => {
-// 	let script = document.createElement('script');
-// 	script.src = 'https://cdn.jsdelivr.net/npm/apexcharts.js';
-// 	script.defer = true;
-// 	console.log(`Loaded ${script.src}`);
-// 	document.body.appendChild(script);
-// };
-
 
 //! ============================ EVENT LISTENERS / HANDLERS ============================
 

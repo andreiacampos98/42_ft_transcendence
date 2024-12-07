@@ -120,6 +120,7 @@ def send_code_verify_email(request):
 			return JsonResponse({'message': 'Invalid JSON.'}, status=400)
 		totp=pyotp.TOTP(pyotp.random_base32(), interval=120)
 		code = totp.now()
+		ic(code)
 		if request.session.get('email_secret_key') is not None:
 			del request.session['email_secret_key']
 		if request.session.get('email_valid_date') is not None:

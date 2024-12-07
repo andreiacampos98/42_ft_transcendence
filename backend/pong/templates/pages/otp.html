@@ -5,8 +5,8 @@
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
     <link rel="stylesheet" href="{% static 'css/verify.css' %}">
     <script defer src="{% static 'js/opt.js' %}"></script>
-    <div class="login-container">
-        <div class="login-container2">
+    <div class="login-container d-flex">
+        <div class="login-container2"style="width: 400px;">
             <h4 class="title"><img src="{% static 'assets/icons/42logosmall.png' %}"> My Website</h4>
             <h3 class="title" id="nice" >A code was sent to </h3>
             <form id="otpForm" method="POST" onsubmit="return submitOtp(event);">
@@ -36,6 +36,20 @@
                 <img class="divider" src="{% static 'assets/icons/divider.png' %}" width="100%">
                 <h6>© 42 Porto 2024</h6>
             </div>
+        </div>
+        <div style="overflow: hidden;border-radius: 0px 8px 8px 0px;">
+            <img style="
+                overflow: hidden; /* Ensures cropped area */
+                position: relative; /* Contains the zoomed image */
+                left: -110px;
+                top: 4px;
+                transform: scale(1.1);
+                transform-origin: center;
+                width: 844px;
+                height: 657px;
+                border-radius: 0px 8px 8px 0px;
+                object-fit: cover;
+            " src="{% static 'assets/images/us.jpeg' %}" alt="">
         </div>
     </div>
 {% endblock %}
