@@ -42,11 +42,18 @@
             <h6>© 42 Porto 2024</h6>
             </div>
         </div>
-        <div>
+        <div style="overflow: hidden;border-radius: 0px 8px 8px 0px;">
             <img style="
-                width: 786px;
-                height: 600px;
+                overflow: hidden; /* Ensures cropped area */
+                position: relative; /* Contains the zoomed image */
+                left: -110px;
+                top: 4px;
+                transform: scale(1.1);
+                transform-origin: center;
+                width: 844px;
+                height: 657px;
                 border-radius: 0px 8px 8px 0px;
+                object-fit: cover;
             " src="{% static 'assets/images/us.jpeg' %}" alt="">
         </div>
     </div>

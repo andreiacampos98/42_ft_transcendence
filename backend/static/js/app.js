@@ -104,6 +104,13 @@ window.addEventListener('popstate', (event) => {
 	console.log("event");
     const currentUrl = window.location.pathname;
 	
+	if (currRoute.includes("/tournaments/ongoing/")) {
+		let nextRoute = event.detail.pathInfo.finalPath;
+		//if (myUser.attemptedToLeaveTournament(currRoute, nextRoute))
+		//	myUser.leaveTournament();
+		
+	}
+
 	if (currRoute !== currentUrl) {
         currRoute = currentUrl;
 
