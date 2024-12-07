@@ -161,12 +161,13 @@ async function loadCharts() {
 		colors: ['#F8D082', '#336181'],
 	};
 
-	if (!charts['line']) 
-		charts['line'] = new ApexCharts(document.querySelector('#chart3'), options);
-	else 
-		charts['line'].el = document.querySelector('#chart3');
+	// if (!charts['line']) 
+	// 	charts['line'] = new ApexCharts(document.querySelector('#chart3'), options);
+	// else 
+	// 	charts['line'].el = document.querySelector('#chart3');
 	
-	charts['line'].render();
+	let chart = new ApexCharts(document.querySelector('#chart3'), options);
+	chart.render();
 }
 
 loadCharts();

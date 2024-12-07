@@ -89,6 +89,22 @@ class Tournament {
 		document.querySelector('.tourn-status').textContent = `The ${this.currPhase} phase is ongoing.`;
 		this.phasePlayers[phase] = players;
 		this.updateUI({});
+
+		myUser.tournamentGameData = null;
+		games.forEach(game => {
+			let user1ID = game.user1_id.id;
+			let user2ID = game.user2_id.id;
+			if (myUser.userID == user1ID || myUser.userID == user2ID)
+				myUser.tournamentGameData = game;
+		})
+		
+		if (!myUser.tournamentGameData)
+			return ;
+
+		history.pushState(null, '', `/gametournament/`);
+		htmx.ajax('GET', `/gametournament/`, {
+			target: '#main'  
+		});
 	}
 
 	onGameEnd(gameID, p1, p2, scores) {

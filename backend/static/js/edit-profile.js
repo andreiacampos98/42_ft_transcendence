@@ -48,7 +48,7 @@ function onCancelButtonClick(userId) {
     history.replaceState(null, '', `/users/${userId}`);
     htmx.ajax('GET', `/users/${userId}`, {
         target: '#main'  
-    }).then(() => appendScripts());
+    });
 }
 
 async function onSaveButtonClick(event, userId) {
@@ -81,7 +81,7 @@ async function onSaveButtonClick(event, userId) {
 		history.replaceState(null, '', `/users/${userId}`);
 		htmx.ajax('GET', `/users/${userId}`, {
 			target: '#main'  
-		}).then(() => appendScripts());
+		});
 	}
 }
 
