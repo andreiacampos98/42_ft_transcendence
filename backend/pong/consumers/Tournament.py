@@ -31,9 +31,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		self.tournament_has_started = False
 
 		await self.channel_layer.group_add(self.tournament_channel, self.channel_name)
-
 		await self.create_cache()
 		await self.broadcast_player_list()
+		
 		if self.is_tournament_full():
 			first_phase = self.get_cache_key(self.tournament_channel)['curr_phase']
 			await self.begin_phase(first_phase, True)
