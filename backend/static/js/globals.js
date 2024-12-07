@@ -19,6 +19,7 @@ class User {
 			this[prop] = null;	
 		};
 		this[prop].onclose = (event) => {
+			console.log(`Closing ${url}`);
 			this[prop] = null;	
 		};
 	}

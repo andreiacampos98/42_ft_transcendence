@@ -34,10 +34,11 @@
 		game_id: gameInstance, tournament_id: tourID 
 	} = myUser.tournamentGameData;
 
-	console.log(myUser);
+	console.log(myUser.tournamentGameData);
+	if (myUser.gameSocket)
+		console.log(myUser.gameSocket.url);
 
 	let connectionTimedOut = true;
-	
 	myUser.connectSocket(
 		'gameSocket',
 		`wss://${window.location.host}/wss/tournaments/${tourID}/games/${gameInstance.id}`,
@@ -57,8 +58,10 @@
 	);
 
 	setTimeout(() => {
-		if (connectionTimedOut)
+		if (connectionTimedOut) {
 			myTournament.onTimeout(gameInstance.id, p1, p2);
+			console.log('CONNECTION TIMED OUT');
+		}
 	}, CONNECTION_TIMEOUT);
 </script>
 {% endblock %}

@@ -64,6 +64,12 @@ export class RemoteGameController extends AbstractGameController {
 				this.players[data.id].move(data.y);
 			else if (event == 'SYNC')
 				this.ball.sync(data.ball);
+			else if (event == 'DISCONNECT'){
+				console.log('RECEIVED DISCONNECT EVENT');
+				myTournament.onTimeout(this.stats.gameID, this.player1, this.player2);
+			}
+			else if (event == 'GAME_END')
+				myUser.disconnectSocket('gameSocket');
 		}
 
 	}
@@ -95,7 +101,6 @@ export class RemoteGameController extends AbstractGameController {
 			'event': 'GAME_END',
 			'data': results
 		}));
-		myUser.gameSocket.close();
 		
 		if (!myUser.tournamentSocket)
 			return ;

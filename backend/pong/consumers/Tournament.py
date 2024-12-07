@@ -38,7 +38,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			first_phase = self.get_cache_key(self.tournament_channel)['curr_phase']
 			await self.begin_phase(first_phase, True)
 			await self.channel_layer.group_send(self.tournament_channel, {
-				"type": "broadcast", 
+				"type": "communicate.tournament.start", 
 				"message": json.dumps({
 					'event': 'TOURNAMENT_STARTED',
 					'data': {}
@@ -55,15 +55,15 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			del players[player_id]
 			self.set_cache_value(f'{self.tournament_channel}_players', players)
 
-			ic(f'DISCONNECTION - User #{self.user.id}-"{self.user.username}" disconnected.')
 			if self.tournament_has_started:
+				ic(f'DISCONNECTION - User #{self.user.id}-"{self.user.username}" disconnected.')
 				self.push_disconnected_user()
 			self.set_cache_value(f'{self.tournament_channel}', tournament)
 			
-		ic(f'DISCONNECTED USERS: {self.get_number_disconnected_users()}')
-		if self.get_number_disconnected_users() >= 2:
-			ic(f'CANCELLATION - Tournament was cancelled.')
-			await self.cancel_tournament()
+		# ic(f'DISCONNECTED USERS: {self.get_number_disconnected_users()}')
+		# if self.get_number_disconnected_users() >= 2:
+		# 	ic(f'CANCELLATION - Tournament was cancelled.')
+		# 	await self.cancel_tournament()
 
 		tournament = await self.get_tournament()
 		
@@ -92,14 +92,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.on_game_end(message['data'])
 		elif event == 'LEAVE':
 			tournament = await self.get_tournament()
-			await self.leave_tournament(tournament)
-		elif event == 'TOURNAMENT_STARTED':
-			self.tournament_has_started = True
+			await self.leave_tournament(tournament)			
 
 	# ! ============================== MESSAGING ===============================
 
 	async def broadcast(self, event):		
 		await self.send(text_data=event["message"])
+
+	async def communicate_tournament_start(self, event):
+		ic(f'{self.user.username} - TOURNAMENT STARTED')
+		self.tournament_has_started = True
 	
 	# ! ============================= REDIS ACCESS =============================
 
@@ -323,8 +325,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		players = {k:v for k,v in players.items() if not v['has_finished_playing']}
 		self.set_cache_value(f'{self.tournament_channel}_players', players)
 
-		ic(players)
-	
 		await self.channel_layer.group_send(self.tournament_channel, {
 			"type": "broadcast", 
 			"message": json.dumps({
