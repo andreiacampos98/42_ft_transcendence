@@ -119,8 +119,8 @@ export class Application  {
     initCamera() {
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
 
-        this.camera = new THREE.PerspectiveCamera( 30, aspect, 0.1, 50 )
-        this.camera.position.set(0, 2, 3);
+        this.camera = new THREE.PerspectiveCamera( 80, aspect, 0.1, 50 )
+        this.camera.position.set(0, 2, 1);
 		
 		const params = { 
 			x: this.camera.position.x, 
@@ -129,11 +129,12 @@ export class Application  {
 			fov: this.camera.fov
 		};
 		new TWEEN.Tween(params)
-			.to({x: 0, y: 0.05, z: 0.65, fov: 45}, 2000)
+			.to({x: 0, y: 0, z: 0.75, fov: 45}, 2000)
 			.easing(TWEEN.Easing.Cubic.Out)
 			.onUpdate(() => {
 				this.camera.position.set(params.x, params.y, params.z);
 				this.camera.fov = params.fov;
+				this.camera.lookAt(0, 0, 0);
 				this.camera.updateProjectionMatrix();
 			})
 			.onComplete(() => {
