@@ -1670,6 +1670,7 @@ def gamestats(request, game_id):
 	friends = Friends.objects.filter(Q(user1_id=user_id) | Q(user2_id=user_id))
 	stats = game_stats(request, game_id)
 	data_stats = json.loads(stats.content)
+
 	goals = game_goals(request, game_id)
 	data_goals = json.loads(goals.content)
 	game = json.loads(get_game(request, game_id).content)['data']

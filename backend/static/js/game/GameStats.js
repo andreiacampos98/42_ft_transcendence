@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GameStats.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: crypto <crypto@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ncarvalh <ncarvalh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:34:16 by ncarvalh          #+#    #+#             */
-/*   Updated: 2024/12/01 13:24:13 by crypto           ###   ########.fr       */
+/*   Updated: 2024/12/08 11:56:06 by ncarvalh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ export class GameStats {
 			'timestamp': new Date().toISOString(),
 			'user': scorer.id,
 			'rally_length': ball.rally,
-			'ball_speed': parseFloat(ball.speed.x.toFixed(2)),
+			'ball_speed': parseFloat((ball.speed.x * 100).toFixed(2)),
 		};
 		this.score[scorer.username] += 1;
 		this.goals.push(goal);
@@ -67,9 +67,9 @@ export class GameStats {
 		this.gameStats["longer_rally"] = Math.round(Math.max(...rallys));
 		this.gameStats["average_rally"] = Math.round(rallys.reduce((sum, rally) => sum + rally, 0) / rallys.length);
 
-		this.gameStats["min_ball_speed"] = parseFloat(Math.min(...speeds).toFixed(1));
-		this.gameStats["max_ball_speed"] = parseFloat(Math.max(...speeds).toFixed(1));
-		this.gameStats["average_ball_speed"] = parseFloat((speeds.reduce((sum, speed) => sum + speed, 0) / speeds.length).toFixed(1));	
+		this.gameStats["min_ball_speed"] = parseFloat(Math.min(...speeds).toFixed(2));
+		this.gameStats["max_ball_speed"] = parseFloat(Math.max(...speeds).toFixed(2));
+		this.gameStats["average_ball_speed"] = parseFloat((speeds.reduce((sum, speed) => sum + speed, 0) / speeds.length).toFixed(2));	
 	}
 
 	calculateAdvancedStats() {
@@ -135,6 +135,7 @@ export class GameStats {
 			},
 			"goals": this.goals				
 		};
+		console.log(results);
 		return results;
 	}
 

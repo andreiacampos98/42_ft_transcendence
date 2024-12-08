@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { BALL_ACCELERATION, BALL_START_SPEED, BALL_RADIUS,
 	PADDLE_SEMI_HEIGHT, PADDLE_SEMI_LENGTH, DIRECTION, 
 	ARENA_SEMI_DEPTH, BALL_COLOR,
-	FPS
 } from '../macros.js';
 
 export class Ball extends THREE.Object3D { 
@@ -29,18 +28,18 @@ export class Ball extends THREE.Object3D {
 		this.add(this.ball);
 	}
 
-	move(controller, delta) {
+	move(controller) {
 		const { arena, player1, player2 } = controller;
 
-		this.position.x += (this.direction.x * this.speed.x * Math.min(delta, 2));
-		this.position.y += (this.direction.y * this.speed.y * Math.min(delta, 2));
+		this.position.x += (this.direction.x * this.speed.x);
+		this.position.y += (this.direction.y * this.speed.y);
 
 		// console.log(this.position.x, this.position.y);
 		// console.log(this.direction.x * this.speed.x, this.direction.x, this.speed.x);
 		
 		this.collideWithVerticalBounds(arena);
-		this.collideWithPaddle(player1.paddle, true, delta);
-		this.collideWithPaddle(player2.paddle, false, delta);
+		this.collideWithPaddle(player1.paddle, true);
+		this.collideWithPaddle(player2.paddle, false);
 		return this.collidedWithGoals(arena, player1, player2);
 	}
 
@@ -63,7 +62,7 @@ export class Ball extends THREE.Object3D {
 			this.direction.y = DIRECTION.UP;
 	}
 
-	collideWithPaddle(paddle, isPlayer, delta){
+	collideWithPaddle(paddle, isPlayer){
 		const paddleRange = {
 			'x': {
 				'start': paddle.position.x - PADDLE_SEMI_LENGTH,
@@ -108,7 +107,8 @@ export class Ball extends THREE.Object3D {
 
 		if (this.onPaddleHit != null)
 			this.onPaddleHit();
-		this.rally += 1;
+		else
+			this.rally += 1;
 	}
 
 	reset({ direction }) {
@@ -125,6 +125,7 @@ export class Ball extends THREE.Object3D {
 		this.speed.x = speed.x;
 		this.speed.y = speed.y;
 		this.direction = direction;
+		this.rally += 1;
 	}
 
 	dispose() {

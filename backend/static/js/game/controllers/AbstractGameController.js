@@ -50,15 +50,15 @@ export class AbstractGameController extends THREE.Group {
 		this.fillPlayerHUD(this.player2, 'p2');
 	}
 
-	update(delta) {
-		this.player1.update(this.pressedKeys, delta);
-		this.player2.update(this.pressedKeys, delta, this.ball, this.player1);
+	update() {
+		this.player1.update(this.pressedKeys);
+		this.player2.update(this.pressedKeys, this.ball, this.player1);
 		this.arcade.update(this.pressedKeys);
 
 		if (this.stats.isGameOver())
 			return;
 
-		const scorer = this.ball.move(this, delta);
+		const scorer = this.ball.move(this);
 		if (scorer != null) {
 			this.stats.registerGoal(scorer, this.ball);
 			this.ball.reset({});
@@ -97,11 +97,21 @@ export class AbstractGameController extends THREE.Group {
 		const winnerName = document.getElementById('winner-name');
 		const winnerImg = document.getElementById('winner-img');
 		winnerName.textContent = this.stats.winner.username;
-		console.log(this.stats.winner.picture);
-		if (this.stats.winner.picture && this.stats.winner.picture.includes('/media'))
-			winnerImg.src = `https://${decodeURIComponent(this.stats.winner.picture).slice(14)}`;
+		console.log(`this.player1.picture: ${this.player1.picture}`);
+		console.log(`this.player2.picture: ${this.player2.picture}`);
+		console.log(`winner.picture ${this.stats.winner.picture}`);
+		
+		if (this.stats.winner.picture && 
+			this.stats.winner.picture.includes('/media') &&
+			this.stats.winner.picture.includes('https')) {
+				console.log('42 image');
+				winnerImg.src = `https://${decodeURIComponent(this.stats.winner.picture).slice(14)}`;
+			}
 		else if (this.stats.winner.picture)
+		{
+			console.log('Something else');
 			winnerImg.src = this.stats.winner.picture;
+		}
 	}
 
 	createPlayers() {}

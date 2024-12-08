@@ -48,7 +48,7 @@ export class Application  {
 		this.loadAssets((object) => {
 			this.arcadeModel = object;
 			this.initGameController(player1Data, player2Data, gameType, gameID);
-			this.render();
+			this.render(0);
 			document.getElementById('loader-container').remove();
 		});
 		
@@ -145,23 +145,20 @@ export class Application  {
 
     render () {
 		let then = Date.now();
+		this.stats.begin();
 		const updateCallback = (() => {
-			this.stats.begin();
 			if (this.gameCanStart)
-				this.gameController.update(FPS / this.calculateFPS());
+				this.gameController.update();
 			then = Date.now();
 			this.renderer.render(this.scene, this.camera);
-			frameID = requestAnimationFrame( this.render.bind(this) );
 			TWEEN.update();
-			
 			this.stats.end();
+
+			this.render();
 		}).bind(this);
 
 		if (window.location.pathname.startsWith('/game'))
-			timeoutID = setTimeout(updateCallback, REFRESH_RATE);
-
-		
-		
+			timeoutID = setTimeout(updateCallback, 32);
     }
 
 	calculateFPS() {

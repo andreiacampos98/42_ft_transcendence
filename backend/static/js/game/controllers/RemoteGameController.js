@@ -22,6 +22,8 @@ export class RemoteGameController extends AbstractGameController {
 		const { id: p2ID, username: p2Username, picture: p2Picture } = player2Data;
 		const currPlayerID = document.getElementById('metadata').getAttribute('data-user-id');
 		const onUpdate = (id, username, targetY) => {
+			if (!myUser.gameSocket)
+				return ;
 			myUser.gameSocket.send(JSON.stringify({
 				'event': 'UPDATE',
 				'data': {

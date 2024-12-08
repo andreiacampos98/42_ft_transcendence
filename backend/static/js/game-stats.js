@@ -29,7 +29,7 @@ function applyGradientToHeatmap() {
 		square.style.backgroundColor = hexColor;
 	});
 	ballSpeedSquares.forEach(square => {
-		const value = parseInt(square.textContent);
+		const value = parseFloat(square.textContent);
 		const factor = value / FAST_BALL_SPEED;
 
 		const interpolatedColor = interpolateColor(startColor, endColor, factor);
