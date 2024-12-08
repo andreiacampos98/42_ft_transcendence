@@ -1,8 +1,8 @@
 all:
-	docker compose up
+	docker compose up --build
 
 dev: 
-	docker compose -f docker-compose-dev.yml up
+	docker compose -f docker-compose-dev.yml up --build
 
 detach:
 	docker compose up -d
