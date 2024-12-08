@@ -282,11 +282,11 @@ def user_update(request, pk):
 				user.email=email
 			except ValidationError:
 				return JsonResponse({'message': 'Invalid email format.', 'access_token': new_token}, status=400)	
-		if len(user.username) < 5 or len(user.username) > 12:
+		new_username = data.get('username', None)
+		if len(new_username) < 5 or len(new_username) > 12:
 			return JsonResponse({'message': 'The Username needs to have 5 to 12 characters.'}, status=400)
 		if 'picture' in request.FILES:
 			user.picture = request.FILES['picture']
-		new_username = data.get('username', None)
 		if Users.objects.filter(username=new_username).exists() and user.username != new_username:
 			return JsonResponse({'message': 'Username already exists.', 'access_token': new_token}, status=400)
 
