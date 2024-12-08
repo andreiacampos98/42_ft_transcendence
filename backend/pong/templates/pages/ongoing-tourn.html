@@ -18,11 +18,9 @@
 					</span>
 
 				</div>
-				{% if tournament.status == 'Open' %}
 				<button style="margin-bottom: 10px; border: none; background: none; margin-left: auto;" class="change modal-button" id="leave-tournament-button" data-user-id="{{ user_id }}" data-tournament-id="{{ tournament_id }}">
 					<img src="{% static 'assets/icons/leave-tournament.png' %}" alt="Leave Tournament">
 				</button>
-				{% endif %}
 			</div>
 			<div id="modal" class="m">
                 <div class="m-content d-flex align-items-center flex-column">

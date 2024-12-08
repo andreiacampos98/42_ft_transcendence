@@ -155,7 +155,7 @@ class Tournament {
 		}
 
 		history.replaceState(null, '', `/tournaments/ongoing/${myUser.tournamentID}`);
-		htmx.ajax('GET', '/tournaments', {
+		htmx.ajax('GET', `/tournaments/ongoing/${myUser.tournamentID}`, {
 			target: '#main'
 		}).then(() => handler());
 		
@@ -273,6 +273,8 @@ class Tournament {
 		const slots = document.querySelectorAll(query);
 		console.log(cssSelector, players, scores);
 		players.forEach((player, i) => {
+			if (!slots[i])
+				return ;
 			if (player.disconnected) {
 				slots[i].querySelector("span.name").textContent = 'DISCONNECTED';
 				slots[i].querySelector("span.name").classList.add('player-disconnected');

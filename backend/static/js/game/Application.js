@@ -48,7 +48,7 @@ export class Application  {
 		this.loadAssets((object) => {
 			this.arcadeModel = object;
 			this.initGameController(player1Data, player2Data, gameType, gameID);
-			this.render(0);
+			this.render();
 			document.getElementById('loader-container').remove();
 		});
 		

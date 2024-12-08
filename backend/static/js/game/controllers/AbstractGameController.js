@@ -3,6 +3,17 @@ import { Ball } from '../objects/Ball.js';
 import { Arena } from '../objects/Arena.js';
 import { Arcade } from '../objects/Arcade.js';
 
+if (!onKeydown)
+	var onKeydown = (event, pressedKeys) => {
+		if (event.key in pressedKeys)
+			pressedKeys[event.key] = true;
+	};
+
+if (!onKeyup)
+	var onKeyup = (event, pressedKeys) => {
+		if (event.key in pressedKeys)
+			pressedKeys[event.key] = false;
+	};
 
 export class AbstractGameController extends THREE.Group {
 	constructor ({ type, app }) {
@@ -25,14 +36,8 @@ export class AbstractGameController extends THREE.Group {
 			'ArrowUp': false, 'ArrowDown': false
 		};
 
-		document.addEventListener('keydown', (event) => {
-			if (event.key in this.pressedKeys) 
-				this.pressedKeys[event.key] = true;
-		});
-		document.addEventListener('keyup', (event) => {
-			if (event.key in this.pressedKeys)
-				this.pressedKeys[event.key] = false;
-		});
+		document.addEventListener('keydown', (event) => onKeydown(event, this.pressedKeys));
+		document.addEventListener('keyup', (event) => onKeyup(event, this.pressedKeys));
 	}
 
 	build({ onPaddleHit=null }) {
@@ -102,8 +107,8 @@ export class AbstractGameController extends THREE.Group {
 		console.log(`winner.picture ${this.stats.winner.picture}`);
 		
 		if (this.stats.winner.picture && 
-			this.stats.winner.picture.includes('/media') &&
-			this.stats.winner.picture.includes('https')) {
+			this.stats.winner.picture.includes('intra.42.fr') &&
+			this.stats.winner.picture.includes('/media')) {
 				console.log('42 image');
 				winnerImg.src = `https://${decodeURIComponent(this.stats.winner.picture).slice(14)}`;
 			}

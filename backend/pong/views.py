@@ -170,8 +170,8 @@ def user_create(request):
 		if not username or not email or not password1 or not password2:
 			return JsonResponse({'message': 'All fields are required.'}, status=400)
 		
-		if len(username) < 5:
-			return JsonResponse({'message': 'The Username needs to have more than 5 letters.'}, status=400)
+		if len(username) < 5 or len(username) > 12:
+			return JsonResponse({'message': 'The Username needs to have 5 to 12 characters.'}, status=400)
 
 		if Users.objects.filter(username=username).exists():
 			return JsonResponse({'message': 'Username already exists! Please try another username.'}, status=400)
@@ -282,8 +282,8 @@ def user_update(request, pk):
 				user.email=email
 			except ValidationError:
 				return JsonResponse({'message': 'Invalid email format.', 'access_token': new_token}, status=400)	
-		if len(user.username) < 5:
-			return JsonResponse({'message': 'The Username needs to have more than 5 letters.'}, status=400)
+		if len(user.username) < 5 or len(user.username) > 12:
+			return JsonResponse({'message': 'The Username needs to have 5 to 12 characters.'}, status=400)
 		if 'picture' in request.FILES:
 			user.picture = request.FILES['picture']
 		new_username = data.get('username', None)
@@ -928,8 +928,8 @@ def tournament_create(request):
 	if len(name) > 64:
 		return JsonResponse({'message': 'The name of the tournament is too long.', 'access_token': new_token}, status=400)
 	
-	if len(nickname) > 64:
-		return JsonResponse({'message': 'The nickname is too long.', 'access_token': new_token}, status=400)
+	if len(nickname) < 5 or len(nickname) > 12:
+		return JsonResponse({'message': 'The nickname needs to have 5 to 12 characters.', 'access_token': new_token}, status=400)
 
 	tour_serializer = TournamentsSerializer(data=data)
 	if not tour_serializer.is_valid():
@@ -1038,13 +1038,18 @@ def tournament_join(request, tournament_id, user_id):
 	except KeyError as e:
 		return JsonResponse({'message': f'Missing key: {str(e)}', 'access_token': new_token}, status=400)
 
+	tournament = Tournaments.objects.get(pk=tournament_id)
+	users = TournamentsUsers.objects.filter(tournament_id=tournament_id)
+	if len(users) >= tournament.capacity:
+		return JsonResponse({'message': f'Tournament is full.', 'access_token': new_token}, status=400)
+
 	data['tournament_id'] = tournament_id
 	data['user_id'] = user_id
 	nickname = data.get('alias', '')
 	if nickname == '':
 		return JsonResponse({'message': 'The nickname is blank', 'access_token': new_token}, status=400)
-	if len(nickname) > 64:
-		return JsonResponse({'message': 'The nickname is too long.', 'access_token': new_token}, status=400)
+	if len(nickname) < 5 or len(nickname) > 12:
+		return JsonResponse({'message': 'The nickname needs to have 5 to 12 characters.', 'access_token': new_token}, status=400)
 		
 	serializer = TournamentsUsersSerializer(data=data)
 	if not serializer.is_valid():

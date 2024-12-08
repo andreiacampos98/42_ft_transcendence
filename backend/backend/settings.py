@@ -39,7 +39,7 @@ USER_INFO_URL_A=os.getenv("USER_INFO_URL")
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 LOGOUT_REDIRECT_URL = 'login'

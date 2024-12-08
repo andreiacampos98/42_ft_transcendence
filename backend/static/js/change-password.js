@@ -3,9 +3,10 @@ var modal = document.getElementById("modal");
 var btn = document.getElementById("open-change-password-modal");
 var goback = document.getElementById("cancel-change-password-button");
 
-btn.onclick = function() {
-	modal.style.display = "block";
-}
+if (btn)
+	btn.onclick = function() {
+		modal.style.display = "block";
+	}
 
 goback.onclick = function() {
 	modal.style.display = "none";
