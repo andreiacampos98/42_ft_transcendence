@@ -25,10 +25,11 @@
 
 .options p {
     color: #FFFFFF;
-    font-size: x-small;
+    font-size: 12px;
     font-weight: normal;
     text-align: center;
     padding-left: 20px;
     padding-right: 20px;
+	margin-top: 4px;
 	width: 25vw;
 }

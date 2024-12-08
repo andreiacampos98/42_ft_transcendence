@@ -227,11 +227,19 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		for tour_game in games:
 			user1 = tour_game.game_id.user1_id
 			user2 = tour_game.game_id.user2_id
+			tour_user1 = TournamentsUsers.objects.get(
+				tournament_id=self.tournament_id, user_id=user1.id)
+			tour_user2 = TournamentsUsers.objects.get(
+				tournament_id=self.tournament_id, user_id=user2.id)
+
 			game_data = TournamentsGamesSerializer(tour_game).data
 			game_data['game_id'] = GamesSerializer(tour_game.game_id).data
 			game_data['user1_id'] = UsersSerializer(user1).data
 			game_data['user2_id'] = UsersSerializer(user2).data
+			game_data['tour_user1_id'] = TournamentsUsersSerializer(tour_user1).data
+			game_data['tour_user2_id'] = TournamentsUsersSerializer(tour_user2).data
 			game_data['phase'] = phase.lower()
+
 			games_data.append(game_data)
 
 		return games_data

@@ -30,7 +30,7 @@
 	import { CONNECTION_TIMEOUT } from '/static/js/game/macros.js';
 
 	const { 
-		user1_id: p1 , user2_id: p2, 
+		user1_id: p1 , user2_id: p2,
 		game_id: gameInstance, tournament_id: tourID 
 	} = myUser.tournamentGameData;
 
@@ -46,8 +46,8 @@
 			connectionTimedOut = false;
 			let app = new Application();
 			app.init({ 
-				player1Data: {'id': p1.id, 'username': p1.username},
-				player2Data: {'id': p2.id, 'username': p2.username},
+				player1Data: {'id': p1.id, 'username': p1.username, 'picture': p1.picture},
+				player2Data: {'id': p2.id, 'username': p2.username, 'picture': p2.picture},
 				gameSocket: myUser.gameSocket,
 				tournamentSocket: myUser.tournamentSocket,
 				gameType: "Tournament",

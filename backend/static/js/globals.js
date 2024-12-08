@@ -253,6 +253,7 @@ class Tournament {
 		let currPhaseIndex = phaseNames.indexOf(this.currPhase);
 		let lastPhaseIndex = phaseNames.indexOf(this.lastPhase);
 
+		console.log(this);
 		phaseNames.forEach((phase, i) => {
 			if (i < firstPhaseIndex || i > currPhaseIndex)
 				return ;
@@ -270,7 +271,7 @@ class Tournament {
 	updatePlayerSlots(cssSelector, players, scores) {
 		const query = `.${cssSelector}.player`;
 		const slots = document.querySelectorAll(query);
-		
+		console.log(cssSelector, players, scores);
 		players.forEach((player, i) => {
 			if (player.disconnected) {
 				slots[i].querySelector("span.name").textContent = 'DISCONNECTED';
