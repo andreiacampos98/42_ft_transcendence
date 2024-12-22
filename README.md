@@ -8,6 +8,8 @@ The 42 school's Common Core final project is called `ft_transcendence`. Leveragi
 Transcendence is splitted into modules, each one approaching a different techology or concept. It's up to each team to decide which modules to tackle.
 As stated by this version of the [subject](./subject.pdf), we chose the following modules:
 
+<br>
+
 <details>
 	<summary><strong>📚 Click here to check the modules we chose</strong></summary>
 	<br>
