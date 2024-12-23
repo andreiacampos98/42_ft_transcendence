@@ -5,7 +5,7 @@ This project was graded <strong>115/100</strong>.
 
 The 42 school's Common Core final project is called `ft_transcendence`. Leveraging technologies like Javascript, Django, Docker and more, `ft_transcendence` is designed to introduce students to the world of web development, by creating their own Web Application. **Its purpose?** To offer players the opportunity to play an old game of Pong :)
 
-Transcendence is splitted into modules, each one approaching a different techology or concept. It's up to each team to decide which modules to tackle.
+Transcendence is split into modules, each one approaching a different technology or concept. It's up to each team to decide which modules to tackle.
 As stated by this version of the [subject](./subject.pdf), we chose the following modules:
 
 <br>
