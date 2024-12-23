@@ -48,12 +48,14 @@ tournaments.
 			<img src="https://img.shields.io/badge/HTML-FF751B?style=for-the-badge&logo=HTML5&logoColor=FFFFFF" alt="HTML">
 			<img src="https://img.shields.io/badge/CSS-00DDFF?style=for-the-badge&logo=CSS3&logoColor=FFFFFF" alt="CSS">
 			<img src="https://img.shields.io/badge/Javascript-FFAB00?style=for-the-badge&logo=Javascript&logoColor=FFFFFF" alt="Javascript">
-			<img src="https://img.shields.io/badge/-Python-blue?style=for-the-badge&logo=Python&logoColor=FFFFFF" alt="Python">
-			<img src="https://img.shields.io/badge/PostgreSQL-5f2000?style=for-the-badge&logo=PostgreSQL&logoColor=FFFFFF" alt="PostgreSQL">
-			<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=FFFFFF" alt="Docker">
 			<img src="https://img.shields.io/badge/Bootstrap-C635F8?style=for-the-badge&logo=Bootstrap&logoColor=FFFFFF" alt="Bootstrap">
-			<img src="https://img.shields.io/badge/Django-44B78B?style=for-the-badge&logo=Django&logoColor=FFFFFF" alt="Django">
 			<img src="https://img.shields.io/badge/ThreeJS-FFFFFF?style=for-the-badge&logo=Three.js&logoColor=000000" alt="ThreeJS">
+			<img src="https://img.shields.io/badge/PostgreSQL-5f2000?style=for-the-badge&logo=PostgreSQL&logoColor=FFFFFF" alt="PostgreSQL">
+			<img src="https://img.shields.io/badge/-Python-blue?style=for-the-badge&logo=Python&logoColor=FFFFFF" alt="Python">
+			<img src="https://img.shields.io/badge/Django-44B78B?style=for-the-badge&logo=Django&logoColor=FFFFFF" alt="Django">
+			<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=FFFFFF" alt="Docker">
+			<img src="https://img.shields.io/badge/NGINX-33ff32?style=for-the-badge&logo=NGINX&logoColor=FFFFFF" alt="NGINX">
+			<img src="https://img.shields.io/badge/Redis-ff4432?style=for-the-badge&logo=Redis&logoColor=FFFFFF" alt="Redis">
 			<img src="https://img.shields.io/badge/Figma-purple?style=for-the-badge&logo=Figma&logoColor=FFFFFF" alt="Figma">
 			<img src="https://img.shields.io/badge/JWT-ff3274?style=for-the-badge&logo=jsonwebtokens&logoColor=FFFFFF" alt="JWT">
 			<img src="https://img.shields.io/badge/Websockets-ffffff?style=for-the-badge" alt="Websockets">
